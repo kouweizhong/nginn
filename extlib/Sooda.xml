@@ -1,0 +1,2649 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sooda</name>
+    </assembly>
+    <members>
+        <member name="T:Sooda.Collections.ObjectToSoodaObjectAssociation">
+            <summary>
+            A dictionary with keys of type Object and values of type SoodaObject
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the ObjectToSoodaObjectAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.Add(System.Object,Sooda.SoodaObject)">
+            <summary>
+            Adds an element with the specified key and value to this ObjectToSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The Object key of the element to add.
+            </param>
+            <param name="value">
+            The SoodaObject value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.Contains(System.Object)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Object key to locate in this ObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.ContainsKey(System.Object)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Object key to locate in this ObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.ContainsValue(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The SoodaObject value to locate in this ObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectAssociation.Remove(System.Object)">
+            <summary>
+            Removes the element with the specified key from this ObjectToSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The Object key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectAssociation.Item(System.Object)">
+            <summary>
+            Gets or sets the SoodaObject associated with the given Object
+            </summary>
+            <param name="key">
+            The Object whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this ObjectToSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this ObjectToSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation">
+            <summary>
+            A dictionary with keys of type object and values of type ISoodaObjectFactory
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the ObjectToSoodaObjectFactoryAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Add(System.Object,Sooda.ISoodaObjectFactory)">
+            <summary>
+            Adds an element with the specified key and value to this ObjectToSoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The object key of the element to add.
+            </param>
+            <param name="value">
+            The ISoodaObjectFactory value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Contains(System.Object)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The object key to locate in this ObjectToSoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.ContainsKey(System.Object)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The object key to locate in this ObjectToSoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.ContainsValue(Sooda.ISoodaObjectFactory)">
+            <summary>
+            Determines whether this ObjectToSoodaObjectFactoryAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ISoodaObjectFactory value to locate in this ObjectToSoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this ObjectToSoodaObjectFactoryAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Remove(System.Object)">
+            <summary>
+            Removes the element with the specified key from this ObjectToSoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The object key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Item(System.Object)">
+            <summary>
+            Gets or sets the ISoodaObjectFactory associated with the given object
+            </summary>
+            <param name="key">
+            The object whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this ObjectToSoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToSoodaObjectFactoryAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this ObjectToSoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.ObjectToWeakSoodaObjectAssociation">
+            <summary>
+            A dictionary with keys of type Object and values of type WeakSoodaObject
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the ObjectToWeakSoodaObjectAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Add(System.Object,Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Adds an element with the specified key and value to this ObjectToWeakSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The Object key of the element to add.
+            </param>
+            <param name="value">
+            The WeakSoodaObject value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Contains(System.Object)">
+            <summary>
+            Determines whether this ObjectToWeakSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Object key to locate in this ObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToWeakSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.ContainsKey(System.Object)">
+            <summary>
+            Determines whether this ObjectToWeakSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Object key to locate in this ObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToWeakSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.ContainsValue(Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Determines whether this ObjectToWeakSoodaObjectAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The WeakSoodaObject value to locate in this ObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this ObjectToWeakSoodaObjectAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Remove(System.Object)">
+            <summary>
+            Removes the element with the specified key from this ObjectToWeakSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The Object key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Item(System.Object)">
+            <summary>
+            Gets or sets the WeakSoodaObject associated with the given Object
+            </summary>
+            <param name="key">
+            The Object whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this ObjectToWeakSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.ObjectToWeakSoodaObjectAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this ObjectToWeakSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaDataSourceCollection">
+            <summary>
+            A collection of elements of type SoodaDataSource
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoodaDataSourceCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.#ctor(Sooda.SoodaDataSource[])">
+            <summary>
+            Initializes a new instance of the SoodaDataSourceCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.#ctor(Sooda.Collections.SoodaDataSourceCollection)">
+            <summary>
+            Initializes a new instance of the SoodaDataSourceCollection class, containing elements
+            copied from another instance of SoodaDataSourceCollection
+            </summary>
+            <param name="items">
+            The SoodaDataSourceCollection whose elements are to be added to the new SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.AddRange(Sooda.SoodaDataSource[])">
+            <summary>
+            Adds the elements of an array to the end of this SoodaDataSourceCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.AddRange(Sooda.Collections.SoodaDataSourceCollection)">
+            <summary>
+            Adds the elements of another SoodaDataSourceCollection to the end of this SoodaDataSourceCollection.
+            </summary>
+            <param name="items">
+            The SoodaDataSourceCollection whose elements are to be added to the end of this SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.Add(Sooda.SoodaDataSource)">
+            <summary>
+            Adds an instance of type SoodaDataSource to the end of this SoodaDataSourceCollection.
+            </summary>
+            <param name="value">
+            The SoodaDataSource to be added to the end of this SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.Contains(Sooda.SoodaDataSource)">
+            <summary>
+            Determines whether a specfic SoodaDataSource value is in this SoodaDataSourceCollection.
+            </summary>
+            <param name="value">
+            The SoodaDataSource value to locate in this SoodaDataSourceCollection.
+            </param>
+            <returns>
+            true if value is found in this SoodaDataSourceCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.IndexOf(Sooda.SoodaDataSource)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this SoodaDataSourceCollection
+            </summary>
+            <param name="value">
+            The SoodaDataSource value to locate in the SoodaDataSourceCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.Insert(System.Int32,Sooda.SoodaDataSource)">
+            <summary>
+            Inserts an element into the SoodaDataSourceCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the SoodaDataSource is to be inserted.
+            </param>
+            <param name="value">
+            The SoodaDataSource to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.Remove(Sooda.SoodaDataSource)">
+            <summary>
+            Removes the first occurrence of a specific SoodaDataSource from this SoodaDataSourceCollection.
+            </summary>
+            <param name="value">
+            The SoodaDataSource value to remove from this SoodaDataSourceCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaDataSourceCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this SoodaDataSourceCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Collections.SoodaDataSourceCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the SoodaDataSource at the given index in this SoodaDataSourceCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaDataSourceCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by SoodaDataSourceCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaObjectCollection">
+            <summary>
+            A collection of elements of type SoodaObject
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoodaObjectCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.#ctor(Sooda.SoodaObject[])">
+            <summary>
+            Initializes a new instance of the SoodaObjectCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.#ctor(Sooda.Collections.SoodaObjectCollection)">
+            <summary>
+            Initializes a new instance of the SoodaObjectCollection class, containing elements
+            copied from another instance of SoodaObjectCollection
+            </summary>
+            <param name="items">
+            The SoodaObjectCollection whose elements are to be added to the new SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.AddRange(Sooda.SoodaObject[])">
+            <summary>
+            Adds the elements of an array to the end of this SoodaObjectCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.AddRange(Sooda.Collections.SoodaObjectCollection)">
+            <summary>
+            Adds the elements of another SoodaObjectCollection to the end of this SoodaObjectCollection.
+            </summary>
+            <param name="items">
+            The SoodaObjectCollection whose elements are to be added to the end of this SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.Add(Sooda.SoodaObject)">
+            <summary>
+            Adds an instance of type SoodaObject to the end of this SoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The SoodaObject to be added to the end of this SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.Contains(Sooda.SoodaObject)">
+            <summary>
+            Determines whether a specfic SoodaObject value is in this SoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The SoodaObject value to locate in this SoodaObjectCollection.
+            </param>
+            <returns>
+            true if value is found in this SoodaObjectCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.IndexOf(Sooda.SoodaObject)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this SoodaObjectCollection
+            </summary>
+            <param name="value">
+            The SoodaObject value to locate in the SoodaObjectCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.Insert(System.Int32,Sooda.SoodaObject)">
+            <summary>
+            Inserts an element into the SoodaObjectCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the SoodaObject is to be inserted.
+            </param>
+            <param name="value">
+            The SoodaObject to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.Remove(Sooda.SoodaObject)">
+            <summary>
+            Removes the first occurrence of a specific SoodaObject from this SoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The SoodaObject value to remove from this SoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this SoodaObjectCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the SoodaObject at the given index in this SoodaObjectCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaObjectCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by SoodaObjectCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaObjectToInt32Association">
+            <summary>
+            A dictionary with keys of type SoodaObject and values of type Int32
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoodaObjectToInt32Association class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.Add(Sooda.SoodaObject,System.Int32)">
+            <summary>
+            Adds an element with the specified key and value to this SoodaObjectToInt32Association.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to add.
+            </param>
+            <param name="value">
+            The Int32 value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.Contains(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToInt32Association contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToInt32Association.
+            </param>
+            <returns>
+            true if this SoodaObjectToInt32Association contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.ContainsKey(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToInt32Association contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToInt32Association.
+            </param>
+            <returns>
+            true if this SoodaObjectToInt32Association contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.ContainsValue(System.Int32)">
+            <summary>
+            Determines whether this SoodaObjectToInt32Association contains a specific value.
+            </summary>
+            <param name="value">
+            The Int32 value to locate in this SoodaObjectToInt32Association.
+            </param>
+            <returns>
+            true if this SoodaObjectToInt32Association contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToInt32Association.Remove(Sooda.SoodaObject)">
+            <summary>
+            Removes the element with the specified key from this SoodaObjectToInt32Association.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToInt32Association.Item(Sooda.SoodaObject)">
+            <summary>
+            Gets or sets the Int32 associated with the given SoodaObject
+            </summary>
+            <param name="key">
+            The SoodaObject whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToInt32Association.Keys">
+            <summary>
+            Gets a collection containing the keys in this SoodaObjectToInt32Association.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToInt32Association.Values">
+            <summary>
+            Gets a collection containing the values in this SoodaObjectToInt32Association.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation">
+            <summary>
+            A dictionary with keys of type SoodaObject and values of type NameValueCollection
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoodaObjectToNameValueCollectionAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Add(Sooda.SoodaObject,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Adds an element with the specified key and value to this SoodaObjectToNameValueCollectionAssociation.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to add.
+            </param>
+            <param name="value">
+            The NameValueCollection value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Contains(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToNameValueCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToNameValueCollectionAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToNameValueCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.ContainsKey(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToNameValueCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToNameValueCollectionAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToNameValueCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.ContainsValue(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Determines whether this SoodaObjectToNameValueCollectionAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The NameValueCollection value to locate in this SoodaObjectToNameValueCollectionAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToNameValueCollectionAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Remove(Sooda.SoodaObject)">
+            <summary>
+            Removes the element with the specified key from this SoodaObjectToNameValueCollectionAssociation.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Item(Sooda.SoodaObject)">
+            <summary>
+            Gets or sets the NameValueCollection associated with the given SoodaObject
+            </summary>
+            <param name="key">
+            The SoodaObject whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this SoodaObjectToNameValueCollectionAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToNameValueCollectionAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this SoodaObjectToNameValueCollectionAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.SoodaObjectToObjectAssociation">
+            <summary>
+            A dictionary with keys of type SoodaObject and values of type Object
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoodaObjectToObjectAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.Add(Sooda.SoodaObject,System.Object)">
+            <summary>
+            Adds an element with the specified key and value to this SoodaObjectToObjectAssociation.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to add.
+            </param>
+            <param name="value">
+            The Object value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.Contains(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToObjectAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.ContainsKey(Sooda.SoodaObject)">
+            <summary>
+            Determines whether this SoodaObjectToObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The SoodaObject key to locate in this SoodaObjectToObjectAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.ContainsValue(System.Object)">
+            <summary>
+            Determines whether this SoodaObjectToObjectAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The Object value to locate in this SoodaObjectToObjectAssociation.
+            </param>
+            <returns>
+            true if this SoodaObjectToObjectAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.SoodaObjectToObjectAssociation.Remove(Sooda.SoodaObject)">
+            <summary>
+            Removes the element with the specified key from this SoodaObjectToObjectAssociation.
+            </summary>
+            <param name="key">
+            The SoodaObject key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToObjectAssociation.Item(Sooda.SoodaObject)">
+            <summary>
+            Gets or sets the Object associated with the given SoodaObject
+            </summary>
+            <param name="key">
+            The SoodaObject whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToObjectAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this SoodaObjectToObjectAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.SoodaObjectToObjectAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this SoodaObjectToObjectAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToISoodaObjectFactoryAssociation">
+            <summary>
+            A dictionary with keys of type String and values of type ISoodaObjectFactory
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToISoodaObjectFactoryAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Add(System.String,Sooda.ISoodaObjectFactory)">
+            <summary>
+            Adds an element with the specified key and value to this StringToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to add.
+            </param>
+            <param name="value">
+            The ISoodaObjectFactory value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.ContainsValue(Sooda.ISoodaObjectFactory)">
+            <summary>
+            Determines whether this StringToISoodaObjectFactoryAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ISoodaObjectFactory value to locate in this StringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToISoodaObjectFactoryAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the ISoodaObjectFactory associated with the given String
+            </summary>
+            <param name="key">
+            The String whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToISoodaObjectFactoryAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToObjectToSoodaObjectAssociation">
+            <summary>
+            A dictionary with keys of type String and values of type ObjectToSoodaObjectAssociation
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToObjectToSoodaObjectAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Add(System.String,Sooda.Collections.ObjectToSoodaObjectAssociation)">
+            <summary>
+            Adds an element with the specified key and value to this StringToObjectToSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to add.
+            </param>
+            <param name="value">
+            The ObjectToSoodaObjectAssociation value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToObjectToSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToObjectToSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.ContainsValue(Sooda.Collections.ObjectToSoodaObjectAssociation)">
+            <summary>
+            Determines whether this StringToObjectToSoodaObjectAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ObjectToSoodaObjectAssociation value to locate in this StringToObjectToSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToSoodaObjectAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToObjectToSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the ObjectToSoodaObjectAssociation associated with the given String
+            </summary>
+            <param name="key">
+            The String whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToObjectToSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToSoodaObjectAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToObjectToSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation">
+            <summary>
+            A dictionary with keys of type String and values of type ObjectToWeakSoodaObjectAssociation
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToObjectToWeakSoodaObjectAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Add(System.String,Sooda.Collections.ObjectToWeakSoodaObjectAssociation)">
+            <summary>
+            Adds an element with the specified key and value to this StringToObjectToWeakSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to add.
+            </param>
+            <param name="value">
+            The ObjectToWeakSoodaObjectAssociation value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToObjectToWeakSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToWeakSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToObjectToWeakSoodaObjectAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToWeakSoodaObjectAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.ContainsValue(Sooda.Collections.ObjectToWeakSoodaObjectAssociation)">
+            <summary>
+            Determines whether this StringToObjectToWeakSoodaObjectAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ObjectToWeakSoodaObjectAssociation value to locate in this StringToObjectToWeakSoodaObjectAssociation.
+            </param>
+            <returns>
+            true if this StringToObjectToWeakSoodaObjectAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToObjectToWeakSoodaObjectAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the ObjectToWeakSoodaObjectAssociation associated with the given String
+            </summary>
+            <param name="key">
+            The String whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToObjectToWeakSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToObjectToWeakSoodaObjectAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToObjectToWeakSoodaObjectAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToSoodaObjectCollectionAssociation">
+            <summary>
+            A dictionary with keys of type String and values of type SoodaObjectCollection
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToSoodaObjectCollectionAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Add(System.String,Sooda.Collections.SoodaObjectCollection)">
+            <summary>
+            Adds an element with the specified key and value to this StringToSoodaObjectCollectionAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to add.
+            </param>
+            <param name="value">
+            The SoodaObjectCollection value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToSoodaObjectCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToSoodaObjectCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToSoodaObjectCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToSoodaObjectCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.ContainsValue(Sooda.Collections.SoodaObjectCollection)">
+            <summary>
+            Determines whether this StringToSoodaObjectCollectionAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The SoodaObjectCollection value to locate in this StringToSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToSoodaObjectCollectionAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToSoodaObjectCollectionAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the SoodaObjectCollection associated with the given String
+            </summary>
+            <param name="key">
+            The String whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToSoodaObjectCollectionAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToSoodaObjectCollectionAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToSoodaObjectCollectionAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation">
+            <summary>
+            A dictionary with keys of type string and values of type ObjectToSoodaObjectFactoryAssociation
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToStringToISoodaObjectFactoryAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Add(System.String,Sooda.Collections.ObjectToSoodaObjectFactoryAssociation)">
+            <summary>
+            Adds an element with the specified key and value to this StringToStringToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The string key of the element to add.
+            </param>
+            <param name="value">
+            The ObjectToSoodaObjectFactoryAssociation value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToStringToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The string key to locate in this StringToStringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToStringToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToStringToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The string key to locate in this StringToStringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToStringToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.ContainsValue(Sooda.Collections.ObjectToSoodaObjectFactoryAssociation)">
+            <summary>
+            Determines whether this StringToStringToISoodaObjectFactoryAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ObjectToSoodaObjectFactoryAssociation value to locate in this StringToStringToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this StringToStringToISoodaObjectFactoryAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToStringToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The string key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the ObjectToSoodaObjectFactoryAssociation associated with the given string
+            </summary>
+            <param name="key">
+            The string whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToStringToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToStringToISoodaObjectFactoryAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToStringToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation">
+            <summary>
+            A dictionary with keys of type String and values of type WeakSoodaObjectCollection
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the StringToWeakSoodaObjectCollectionAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Add(System.String,Sooda.Collections.WeakSoodaObjectCollection)">
+            <summary>
+            Adds an element with the specified key and value to this StringToWeakSoodaObjectCollectionAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to add.
+            </param>
+            <param name="value">
+            The WeakSoodaObjectCollection value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Contains(System.String)">
+            <summary>
+            Determines whether this StringToWeakSoodaObjectCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToWeakSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToWeakSoodaObjectCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.ContainsKey(System.String)">
+            <summary>
+            Determines whether this StringToWeakSoodaObjectCollectionAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The String key to locate in this StringToWeakSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToWeakSoodaObjectCollectionAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.ContainsValue(Sooda.Collections.WeakSoodaObjectCollection)">
+            <summary>
+            Determines whether this StringToWeakSoodaObjectCollectionAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The WeakSoodaObjectCollection value to locate in this StringToWeakSoodaObjectCollectionAssociation.
+            </param>
+            <returns>
+            true if this StringToWeakSoodaObjectCollectionAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Remove(System.String)">
+            <summary>
+            Removes the element with the specified key from this StringToWeakSoodaObjectCollectionAssociation.
+            </summary>
+            <param name="key">
+            The String key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Item(System.String)">
+            <summary>
+            Gets or sets the WeakSoodaObjectCollection associated with the given String
+            </summary>
+            <param name="key">
+            The String whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this StringToWeakSoodaObjectCollectionAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.StringToWeakSoodaObjectCollectionAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this StringToWeakSoodaObjectCollectionAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.TypeToISoodaObjectFactoryAssociation">
+            <summary>
+            A dictionary with keys of type Type and values of type ISoodaObjectFactory
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the TypeToISoodaObjectFactoryAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Add(System.Type,Sooda.ISoodaObjectFactory)">
+            <summary>
+            Adds an element with the specified key and value to this TypeToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The Type key of the element to add.
+            </param>
+            <param name="value">
+            The ISoodaObjectFactory value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Contains(System.Type)">
+            <summary>
+            Determines whether this TypeToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Type key to locate in this TypeToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this TypeToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.ContainsKey(System.Type)">
+            <summary>
+            Determines whether this TypeToISoodaObjectFactoryAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Type key to locate in this TypeToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this TypeToISoodaObjectFactoryAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.ContainsValue(Sooda.ISoodaObjectFactory)">
+            <summary>
+            Determines whether this TypeToISoodaObjectFactoryAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The ISoodaObjectFactory value to locate in this TypeToISoodaObjectFactoryAssociation.
+            </param>
+            <returns>
+            true if this TypeToISoodaObjectFactoryAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Remove(System.Type)">
+            <summary>
+            Removes the element with the specified key from this TypeToISoodaObjectFactoryAssociation.
+            </summary>
+            <param name="key">
+            The Type key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Item(System.Type)">
+            <summary>
+            Gets or sets the ISoodaObjectFactory associated with the given Type
+            </summary>
+            <param name="key">
+            The Type whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this TypeToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.TypeToISoodaObjectFactoryAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this TypeToISoodaObjectFactoryAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.TypeToSoodaRelationTableAssociation">
+            <summary>
+            A dictionary with keys of type Type and values of type SoodaRelationTable
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.#ctor">
+            <summary>
+            Initializes a new empty instance of the TypeToSoodaRelationTableAssociation class
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.Add(System.Type,Sooda.ObjectMapper.SoodaRelationTable)">
+            <summary>
+            Adds an element with the specified key and value to this TypeToSoodaRelationTableAssociation.
+            </summary>
+            <param name="key">
+            The Type key of the element to add.
+            </param>
+            <param name="value">
+            The SoodaRelationTable value of the element to add.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.Contains(System.Type)">
+            <summary>
+            Determines whether this TypeToSoodaRelationTableAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Type key to locate in this TypeToSoodaRelationTableAssociation.
+            </param>
+            <returns>
+            true if this TypeToSoodaRelationTableAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.ContainsKey(System.Type)">
+            <summary>
+            Determines whether this TypeToSoodaRelationTableAssociation contains a specific key.
+            </summary>
+            <param name="key">
+            The Type key to locate in this TypeToSoodaRelationTableAssociation.
+            </param>
+            <returns>
+            true if this TypeToSoodaRelationTableAssociation contains an element with the specified key;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.ContainsValue(Sooda.ObjectMapper.SoodaRelationTable)">
+            <summary>
+            Determines whether this TypeToSoodaRelationTableAssociation contains a specific value.
+            </summary>
+            <param name="value">
+            The SoodaRelationTable value to locate in this TypeToSoodaRelationTableAssociation.
+            </param>
+            <returns>
+            true if this TypeToSoodaRelationTableAssociation contains an element with the specified value;
+            otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.TypeToSoodaRelationTableAssociation.Remove(System.Type)">
+            <summary>
+            Removes the element with the specified key from this TypeToSoodaRelationTableAssociation.
+            </summary>
+            <param name="key">
+            The Type key of the element to remove.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.TypeToSoodaRelationTableAssociation.Item(System.Type)">
+            <summary>
+            Gets or sets the SoodaRelationTable associated with the given Type
+            </summary>
+            <param name="key">
+            The Type whose value to get or set.
+            </param>
+        </member>
+        <member name="P:Sooda.Collections.TypeToSoodaRelationTableAssociation.Keys">
+            <summary>
+            Gets a collection containing the keys in this TypeToSoodaRelationTableAssociation.
+            </summary>
+        </member>
+        <member name="P:Sooda.Collections.TypeToSoodaRelationTableAssociation.Values">
+            <summary>
+            Gets a collection containing the values in this TypeToSoodaRelationTableAssociation.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.WeakSoodaObjectCollection">
+            <summary>
+            A collection of elements of type WeakSoodaObject
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the WeakSoodaObjectCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.#ctor(Sooda.ObjectMapper.WeakSoodaObject[])">
+            <summary>
+            Initializes a new instance of the WeakSoodaObjectCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.#ctor(Sooda.Collections.WeakSoodaObjectCollection)">
+            <summary>
+            Initializes a new instance of the WeakSoodaObjectCollection class, containing elements
+            copied from another instance of WeakSoodaObjectCollection
+            </summary>
+            <param name="items">
+            The WeakSoodaObjectCollection whose elements are to be added to the new WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.AddRange(Sooda.ObjectMapper.WeakSoodaObject[])">
+            <summary>
+            Adds the elements of an array to the end of this WeakSoodaObjectCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.AddRange(Sooda.Collections.WeakSoodaObjectCollection)">
+            <summary>
+            Adds the elements of another WeakSoodaObjectCollection to the end of this WeakSoodaObjectCollection.
+            </summary>
+            <param name="items">
+            The WeakSoodaObjectCollection whose elements are to be added to the end of this WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.Add(Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Adds an instance of type WeakSoodaObject to the end of this WeakSoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The WeakSoodaObject to be added to the end of this WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.Contains(Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Determines whether a specfic WeakSoodaObject value is in this WeakSoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The WeakSoodaObject value to locate in this WeakSoodaObjectCollection.
+            </param>
+            <returns>
+            true if value is found in this WeakSoodaObjectCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.IndexOf(Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this WeakSoodaObjectCollection
+            </summary>
+            <param name="value">
+            The WeakSoodaObject value to locate in the WeakSoodaObjectCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.Insert(System.Int32,Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Inserts an element into the WeakSoodaObjectCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the WeakSoodaObject is to be inserted.
+            </param>
+            <param name="value">
+            The WeakSoodaObject to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.Remove(Sooda.ObjectMapper.WeakSoodaObject)">
+            <summary>
+            Removes the first occurrence of a specific WeakSoodaObject from this WeakSoodaObjectCollection.
+            </summary>
+            <param name="value">
+            The WeakSoodaObject value to remove from this WeakSoodaObjectCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Collections.WeakSoodaObjectCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this WeakSoodaObjectCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Collections.WeakSoodaObjectCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the WeakSoodaObject at the given index in this WeakSoodaObjectCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Collections.WeakSoodaObjectCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by WeakSoodaObjectCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.ObjectMapper.KeyGenerators.TableBasedGeneratorBigint">
+            <Summary>
+            Bigint key generator
+            </Summary>
+        </member>
+        <member name="T:Sooda.QL.GetInvolvedClassesVisitor">
+            <summary>
+            Summary description for GetInvolvedClassesVisitor.
+            </summary> 
+        </member>
+        <member name="T:Sooda.QL.SoqlExpressionCollection">
+            <summary>
+            A collection of elements of type SoqlExpression
+            </summary>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the SoqlExpressionCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.#ctor(Sooda.QL.SoqlExpression[])">
+            <summary>
+            Initializes a new instance of the SoqlExpressionCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.#ctor(Sooda.QL.SoqlExpressionCollection)">
+            <summary>
+            Initializes a new instance of the SoqlExpressionCollection class, containing elements
+            copied from another instance of SoqlExpressionCollection
+            </summary>
+            <param name="items">
+            The SoqlExpressionCollection whose elements are to be added to the new SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.AddRange(Sooda.QL.SoqlExpression[])">
+            <summary>
+            Adds the elements of an array to the end of this SoqlExpressionCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.AddRange(Sooda.QL.SoqlExpressionCollection)">
+            <summary>
+            Adds the elements of another SoqlExpressionCollection to the end of this SoqlExpressionCollection.
+            </summary>
+            <param name="items">
+            The SoqlExpressionCollection whose elements are to be added to the end of this SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.Add(Sooda.QL.SoqlExpression)">
+            <summary>
+            Adds an instance of type SoqlExpression to the end of this SoqlExpressionCollection.
+            </summary>
+            <param name="value">
+            The SoqlExpression to be added to the end of this SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.Contains(Sooda.QL.SoqlExpression)">
+            <summary>
+            Determines whether a specfic SoqlExpression value is in this SoqlExpressionCollection.
+            </summary>
+            <param name="value">
+            The SoqlExpression value to locate in this SoqlExpressionCollection.
+            </param>
+            <returns>
+            true if value is found in this SoqlExpressionCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.IndexOf(Sooda.QL.SoqlExpression)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this SoqlExpressionCollection
+            </summary>
+            <param name="value">
+            The SoqlExpression value to locate in the SoqlExpressionCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.Insert(System.Int32,Sooda.QL.SoqlExpression)">
+            <summary>
+            Inserts an element into the SoqlExpressionCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the SoqlExpression is to be inserted.
+            </param>
+            <param name="value">
+            The SoqlExpression to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.Remove(Sooda.QL.SoqlExpression)">
+            <summary>
+            Removes the first occurrence of a specific SoqlExpression from this SoqlExpressionCollection.
+            </summary>
+            <param name="value">
+            The SoqlExpression value to remove from this SoqlExpressionCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.QL.SoqlExpressionCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this SoqlExpressionCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.QL.SoqlExpressionCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the SoqlExpression at the given index in this SoqlExpressionCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.QL.SoqlExpressionCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by SoqlExpressionCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.QL.SoqlPrettyPrinter">
+            <summary>
+            Summary description for SoqlPrettyPrinter.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.ClassInfo">
+            <summary>
+            Stores database table schema information
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.ClassInfoCollection">
+            <summary>
+            A collection of elements of type ClassInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the ClassInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.#ctor(Sooda.Schema.ClassInfo[])">
+            <summary>
+            Initializes a new instance of the ClassInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.#ctor(Sooda.Schema.ClassInfoCollection)">
+            <summary>
+            Initializes a new instance of the ClassInfoCollection class, containing elements
+            copied from another instance of ClassInfoCollection
+            </summary>
+            <param name="items">
+            The ClassInfoCollection whose elements are to be added to the new ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.AddRange(Sooda.Schema.ClassInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this ClassInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.AddRange(Sooda.Schema.ClassInfoCollection)">
+            <summary>
+            Adds the elements of another ClassInfoCollection to the end of this ClassInfoCollection.
+            </summary>
+            <param name="items">
+            The ClassInfoCollection whose elements are to be added to the end of this ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.Add(Sooda.Schema.ClassInfo)">
+            <summary>
+            Adds an instance of type ClassInfo to the end of this ClassInfoCollection.
+            </summary>
+            <param name="value">
+            The ClassInfo to be added to the end of this ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.Contains(Sooda.Schema.ClassInfo)">
+            <summary>
+            Determines whether a specfic ClassInfo value is in this ClassInfoCollection.
+            </summary>
+            <param name="value">
+            The ClassInfo value to locate in this ClassInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this ClassInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.IndexOf(Sooda.Schema.ClassInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this ClassInfoCollection
+            </summary>
+            <param name="value">
+            The ClassInfo value to locate in the ClassInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.Insert(System.Int32,Sooda.Schema.ClassInfo)">
+            <summary>
+            Inserts an element into the ClassInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the ClassInfo is to be inserted.
+            </param>
+            <param name="value">
+            The ClassInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.Remove(Sooda.Schema.ClassInfo)">
+            <summary>
+            Removes the first occurrence of a specific ClassInfo from this ClassInfoCollection.
+            </summary>
+            <param name="value">
+            The ClassInfo value to remove from this ClassInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.ClassInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this ClassInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.ClassInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the ClassInfo at the given index in this ClassInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.ClassInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by ClassInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.CollectionOnetoManyInfo">
+            <remarks/>
+        </member>
+        <member name="T:Sooda.Schema.CollectionBaseInfo">
+            <remarks/>
+        </member>
+        <member name="T:Sooda.Schema.CollectionBaseInfoCollection">
+            <summary>
+            A collection of elements of type CollectionBaseInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the CollectionBaseInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.#ctor(Sooda.Schema.CollectionBaseInfo[])">
+            <summary>
+            Initializes a new instance of the CollectionBaseInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.#ctor(Sooda.Schema.CollectionBaseInfoCollection)">
+            <summary>
+            Initializes a new instance of the CollectionBaseInfoCollection class, containing elements
+            copied from another instance of CollectionBaseInfoCollection
+            </summary>
+            <param name="items">
+            The CollectionBaseInfoCollection whose elements are to be added to the new CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.AddRange(Sooda.Schema.CollectionBaseInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this CollectionBaseInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.AddRange(Sooda.Schema.CollectionBaseInfoCollection)">
+            <summary>
+            Adds the elements of another CollectionBaseInfoCollection to the end of this CollectionBaseInfoCollection.
+            </summary>
+            <param name="items">
+            The CollectionBaseInfoCollection whose elements are to be added to the end of this CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.Add(Sooda.Schema.CollectionBaseInfo)">
+            <summary>
+            Adds an instance of type CollectionBaseInfo to the end of this CollectionBaseInfoCollection.
+            </summary>
+            <param name="value">
+            The CollectionBaseInfo to be added to the end of this CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.Contains(Sooda.Schema.CollectionBaseInfo)">
+            <summary>
+            Determines whether a specfic CollectionBaseInfo value is in this CollectionBaseInfoCollection.
+            </summary>
+            <param name="value">
+            The CollectionBaseInfo value to locate in this CollectionBaseInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this CollectionBaseInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.IndexOf(Sooda.Schema.CollectionBaseInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this CollectionBaseInfoCollection
+            </summary>
+            <param name="value">
+            The CollectionBaseInfo value to locate in the CollectionBaseInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.Insert(System.Int32,Sooda.Schema.CollectionBaseInfo)">
+            <summary>
+            Inserts an element into the CollectionBaseInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the CollectionBaseInfo is to be inserted.
+            </param>
+            <param name="value">
+            The CollectionBaseInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.Remove(Sooda.Schema.CollectionBaseInfo)">
+            <summary>
+            Removes the first occurrence of a specific CollectionBaseInfo from this CollectionBaseInfoCollection.
+            </summary>
+            <param name="value">
+            The CollectionBaseInfo value to remove from this CollectionBaseInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.CollectionBaseInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this CollectionBaseInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.CollectionBaseInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the CollectionBaseInfo at the given index in this CollectionBaseInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.CollectionBaseInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by CollectionBaseInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.DataSourceInfoCollection">
+            <summary>
+            A collection of elements of type DataSourceInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the DataSourceInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.#ctor(Sooda.Schema.DataSourceInfo[])">
+            <summary>
+            Initializes a new instance of the DataSourceInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.#ctor(Sooda.Schema.DataSourceInfoCollection)">
+            <summary>
+            Initializes a new instance of the DataSourceInfoCollection class, containing elements
+            copied from another instance of DataSourceInfoCollection
+            </summary>
+            <param name="items">
+            The DataSourceInfoCollection whose elements are to be added to the new DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.AddRange(Sooda.Schema.DataSourceInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this DataSourceInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.AddRange(Sooda.Schema.DataSourceInfoCollection)">
+            <summary>
+            Adds the elements of another DataSourceInfoCollection to the end of this DataSourceInfoCollection.
+            </summary>
+            <param name="items">
+            The DataSourceInfoCollection whose elements are to be added to the end of this DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.Add(Sooda.Schema.DataSourceInfo)">
+            <summary>
+            Adds an instance of type DataSourceInfo to the end of this DataSourceInfoCollection.
+            </summary>
+            <param name="value">
+            The DataSourceInfo to be added to the end of this DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.Contains(Sooda.Schema.DataSourceInfo)">
+            <summary>
+            Determines whether a specfic DataSourceInfo value is in this DataSourceInfoCollection.
+            </summary>
+            <param name="value">
+            The DataSourceInfo value to locate in this DataSourceInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this DataSourceInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.IndexOf(Sooda.Schema.DataSourceInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this DataSourceInfoCollection
+            </summary>
+            <param name="value">
+            The DataSourceInfo value to locate in the DataSourceInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.Insert(System.Int32,Sooda.Schema.DataSourceInfo)">
+            <summary>
+            Inserts an element into the DataSourceInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the DataSourceInfo is to be inserted.
+            </param>
+            <param name="value">
+            The DataSourceInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.Remove(Sooda.Schema.DataSourceInfo)">
+            <summary>
+            Removes the first occurrence of a specific DataSourceInfo from this DataSourceInfoCollection.
+            </summary>
+            <param name="value">
+            The DataSourceInfo value to remove from this DataSourceInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.DataSourceInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this DataSourceInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.DataSourceInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the DataSourceInfo at the given index in this DataSourceInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.DataSourceInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by DataSourceInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.FieldInfoCollection">
+            <summary>
+            A collection of elements of type FieldInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the FieldInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.#ctor(Sooda.Schema.FieldInfo[])">
+            <summary>
+            Initializes a new instance of the FieldInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.#ctor(Sooda.Schema.FieldInfoCollection)">
+            <summary>
+            Initializes a new instance of the FieldInfoCollection class, containing elements
+            copied from another instance of FieldInfoCollection
+            </summary>
+            <param name="items">
+            The FieldInfoCollection whose elements are to be added to the new FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.AddRange(Sooda.Schema.FieldInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this FieldInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.AddRange(Sooda.Schema.FieldInfoCollection)">
+            <summary>
+            Adds the elements of another FieldInfoCollection to the end of this FieldInfoCollection.
+            </summary>
+            <param name="items">
+            The FieldInfoCollection whose elements are to be added to the end of this FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.Add(Sooda.Schema.FieldInfo)">
+            <summary>
+            Adds an instance of type FieldInfo to the end of this FieldInfoCollection.
+            </summary>
+            <param name="value">
+            The FieldInfo to be added to the end of this FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.Contains(Sooda.Schema.FieldInfo)">
+            <summary>
+            Determines whether a specfic FieldInfo value is in this FieldInfoCollection.
+            </summary>
+            <param name="value">
+            The FieldInfo value to locate in this FieldInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this FieldInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.IndexOf(Sooda.Schema.FieldInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this FieldInfoCollection
+            </summary>
+            <param name="value">
+            The FieldInfo value to locate in the FieldInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.Insert(System.Int32,Sooda.Schema.FieldInfo)">
+            <summary>
+            Inserts an element into the FieldInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the FieldInfo is to be inserted.
+            </param>
+            <param name="value">
+            The FieldInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.Remove(Sooda.Schema.FieldInfo)">
+            <summary>
+            Removes the first occurrence of a specific FieldInfo from this FieldInfoCollection.
+            </summary>
+            <param name="value">
+            The FieldInfo value to remove from this FieldInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.FieldInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this FieldInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.FieldInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the FieldInfo at the given index in this FieldInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.FieldInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by FieldInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.IncludeInfoCollection">
+            <summary>
+            A collection of elements of type IncludeInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the IncludeInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.#ctor(Sooda.Schema.IncludeInfo[])">
+            <summary>
+            Initializes a new instance of the IncludeInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.#ctor(Sooda.Schema.IncludeInfoCollection)">
+            <summary>
+            Initializes a new instance of the IncludeInfoCollection class, containing elements
+            copied from another instance of IncludeInfoCollection
+            </summary>
+            <param name="items">
+            The IncludeInfoCollection whose elements are to be added to the new IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.AddRange(Sooda.Schema.IncludeInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this IncludeInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.AddRange(Sooda.Schema.IncludeInfoCollection)">
+            <summary>
+            Adds the elements of another IncludeInfoCollection to the end of this IncludeInfoCollection.
+            </summary>
+            <param name="items">
+            The IncludeInfoCollection whose elements are to be added to the end of this IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.Add(Sooda.Schema.IncludeInfo)">
+            <summary>
+            Adds an instance of type IncludeInfo to the end of this IncludeInfoCollection.
+            </summary>
+            <param name="value">
+            The IncludeInfo to be added to the end of this IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.Contains(Sooda.Schema.IncludeInfo)">
+            <summary>
+            Determines whether a specfic IncludeInfo value is in this IncludeInfoCollection.
+            </summary>
+            <param name="value">
+            The IncludeInfo value to locate in this IncludeInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this IncludeInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.IndexOf(Sooda.Schema.IncludeInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this IncludeInfoCollection
+            </summary>
+            <param name="value">
+            The IncludeInfo value to locate in the IncludeInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.Insert(System.Int32,Sooda.Schema.IncludeInfo)">
+            <summary>
+            Inserts an element into the IncludeInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the IncludeInfo is to be inserted.
+            </param>
+            <param name="value">
+            The IncludeInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.Remove(Sooda.Schema.IncludeInfo)">
+            <summary>
+            Removes the first occurrence of a specific IncludeInfo from this IncludeInfoCollection.
+            </summary>
+            <param name="value">
+            The IncludeInfo value to remove from this IncludeInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.IncludeInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this IncludeInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.IncludeInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the IncludeInfo at the given index in this IncludeInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.IncludeInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by IncludeInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.PrecommitValueInfoCollection">
+            <summary>
+            A collection of elements of type PrecommitValueInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the PrecommitValueInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.#ctor(Sooda.Schema.PrecommitValueInfo[])">
+            <summary>
+            Initializes a new instance of the PrecommitValueInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.#ctor(Sooda.Schema.PrecommitValueInfoCollection)">
+            <summary>
+            Initializes a new instance of the PrecommitValueInfoCollection class, containing elements
+            copied from another instance of PrecommitValueInfoCollection
+            </summary>
+            <param name="items">
+            The PrecommitValueInfoCollection whose elements are to be added to the new PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.AddRange(Sooda.Schema.PrecommitValueInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this PrecommitValueInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.AddRange(Sooda.Schema.PrecommitValueInfoCollection)">
+            <summary>
+            Adds the elements of another PrecommitValueInfoCollection to the end of this PrecommitValueInfoCollection.
+            </summary>
+            <param name="items">
+            The PrecommitValueInfoCollection whose elements are to be added to the end of this PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.Add(Sooda.Schema.PrecommitValueInfo)">
+            <summary>
+            Adds an instance of type PrecommitValueInfo to the end of this PrecommitValueInfoCollection.
+            </summary>
+            <param name="value">
+            The PrecommitValueInfo to be added to the end of this PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.Contains(Sooda.Schema.PrecommitValueInfo)">
+            <summary>
+            Determines whether a specfic PrecommitValueInfo value is in this PrecommitValueInfoCollection.
+            </summary>
+            <param name="value">
+            The PrecommitValueInfo value to locate in this PrecommitValueInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this PrecommitValueInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.IndexOf(Sooda.Schema.PrecommitValueInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this PrecommitValueInfoCollection
+            </summary>
+            <param name="value">
+            The PrecommitValueInfo value to locate in the PrecommitValueInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.Insert(System.Int32,Sooda.Schema.PrecommitValueInfo)">
+            <summary>
+            Inserts an element into the PrecommitValueInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the PrecommitValueInfo is to be inserted.
+            </param>
+            <param name="value">
+            The PrecommitValueInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.Remove(Sooda.Schema.PrecommitValueInfo)">
+            <summary>
+            Removes the first occurrence of a specific PrecommitValueInfo from this PrecommitValueInfoCollection.
+            </summary>
+            <param name="value">
+            The PrecommitValueInfo value to remove from this PrecommitValueInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.PrecommitValueInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this PrecommitValueInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.PrecommitValueInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the PrecommitValueInfo at the given index in this PrecommitValueInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.PrecommitValueInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by PrecommitValueInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.RelationInfoCollection">
+            <summary>
+            A collection of elements of type RelationInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the RelationInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.#ctor(Sooda.Schema.RelationInfo[])">
+            <summary>
+            Initializes a new instance of the RelationInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.#ctor(Sooda.Schema.RelationInfoCollection)">
+            <summary>
+            Initializes a new instance of the RelationInfoCollection class, containing elements
+            copied from another instance of RelationInfoCollection
+            </summary>
+            <param name="items">
+            The RelationInfoCollection whose elements are to be added to the new RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.AddRange(Sooda.Schema.RelationInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this RelationInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.AddRange(Sooda.Schema.RelationInfoCollection)">
+            <summary>
+            Adds the elements of another RelationInfoCollection to the end of this RelationInfoCollection.
+            </summary>
+            <param name="items">
+            The RelationInfoCollection whose elements are to be added to the end of this RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.Add(Sooda.Schema.RelationInfo)">
+            <summary>
+            Adds an instance of type RelationInfo to the end of this RelationInfoCollection.
+            </summary>
+            <param name="value">
+            The RelationInfo to be added to the end of this RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.Contains(Sooda.Schema.RelationInfo)">
+            <summary>
+            Determines whether a specfic RelationInfo value is in this RelationInfoCollection.
+            </summary>
+            <param name="value">
+            The RelationInfo value to locate in this RelationInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this RelationInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.IndexOf(Sooda.Schema.RelationInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this RelationInfoCollection
+            </summary>
+            <param name="value">
+            The RelationInfo value to locate in the RelationInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.Insert(System.Int32,Sooda.Schema.RelationInfo)">
+            <summary>
+            Inserts an element into the RelationInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the RelationInfo is to be inserted.
+            </param>
+            <param name="value">
+            The RelationInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.Remove(Sooda.Schema.RelationInfo)">
+            <summary>
+            Removes the first occurrence of a specific RelationInfo from this RelationInfoCollection.
+            </summary>
+            <param name="value">
+            The RelationInfo value to remove from this RelationInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.RelationInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this RelationInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.RelationInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the RelationInfo at the given index in this RelationInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.RelationInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by RelationInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.TableInfoCollection">
+            <summary>
+            A collection of elements of type TableInfo
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.#ctor">
+            <summary>
+            Initializes a new empty instance of the TableInfoCollection class.
+            </summary>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.#ctor(Sooda.Schema.TableInfo[])">
+            <summary>
+            Initializes a new instance of the TableInfoCollection class, containing elements
+            copied from an array.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the new TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.#ctor(Sooda.Schema.TableInfoCollection)">
+            <summary>
+            Initializes a new instance of the TableInfoCollection class, containing elements
+            copied from another instance of TableInfoCollection
+            </summary>
+            <param name="items">
+            The TableInfoCollection whose elements are to be added to the new TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.AddRange(Sooda.Schema.TableInfo[])">
+            <summary>
+            Adds the elements of an array to the end of this TableInfoCollection.
+            </summary>
+            <param name="items">
+            The array whose elements are to be added to the end of this TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.AddRange(Sooda.Schema.TableInfoCollection)">
+            <summary>
+            Adds the elements of another TableInfoCollection to the end of this TableInfoCollection.
+            </summary>
+            <param name="items">
+            The TableInfoCollection whose elements are to be added to the end of this TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.Add(Sooda.Schema.TableInfo)">
+            <summary>
+            Adds an instance of type TableInfo to the end of this TableInfoCollection.
+            </summary>
+            <param name="value">
+            The TableInfo to be added to the end of this TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.Contains(Sooda.Schema.TableInfo)">
+            <summary>
+            Determines whether a specfic TableInfo value is in this TableInfoCollection.
+            </summary>
+            <param name="value">
+            The TableInfo value to locate in this TableInfoCollection.
+            </param>
+            <returns>
+            true if value is found in this TableInfoCollection;
+            false otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.IndexOf(Sooda.Schema.TableInfo)">
+            <summary>
+            Return the zero-based index of the first occurrence of a specific value
+            in this TableInfoCollection
+            </summary>
+            <param name="value">
+            The TableInfo value to locate in the TableInfoCollection.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of the _ELEMENT value if found;
+            -1 otherwise.
+            </returns>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.Insert(System.Int32,Sooda.Schema.TableInfo)">
+            <summary>
+            Inserts an element into the TableInfoCollection at the specified index
+            </summary>
+            <param name="index">
+            The index at which the TableInfo is to be inserted.
+            </param>
+            <param name="value">
+            The TableInfo to insert.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.Remove(Sooda.Schema.TableInfo)">
+            <summary>
+            Removes the first occurrence of a specific TableInfo from this TableInfoCollection.
+            </summary>
+            <param name="value">
+            The TableInfo value to remove from this TableInfoCollection.
+            </param>
+        </member>
+        <member name="M:Sooda.Schema.TableInfoCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the elements of this TableInfoCollection.
+            </summary>
+            <returns>
+            An object that implements System.Collections.IEnumerator.
+            </returns>        
+        </member>
+        <member name="P:Sooda.Schema.TableInfoCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the TableInfo at the given index in this TableInfoCollection.
+            </summary>
+        </member>
+        <member name="T:Sooda.Schema.TableInfoCollection.Enumerator">
+            <summary>
+            Type-specific enumeration class, used by TableInfoCollection.GetEnumerator.
+            </summary>
+        </member>
+        <member name="T:Sooda.Sql.SoqlToSqlConverter">
+            <summary>
+            Summary description for SoqlToSqlConverter.
+            </summary>
+        </member>
+        <member name="T:Sooda.SoodaObjectFilter">
+            <summary>
+            Predicate that returns true when <c>obj</c> matches some condition and
+            should be included in object list.
+            </summary>
+        </member>
+        <member name="T:Sooda.SoodaSerializeOptions">
+            <summary>
+            Specifies options for serializing transactions and objects to XML.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSerializeOptions.DirtyOnly">
+            <summary>
+            Serialize dirty fields only.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSerializeOptions.IncludeNonDirtyFields">
+            <summary>
+            Include non-dirty fields in serialization output. They will be marked as <c>dirty="false"</c>.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSerializeOptions.IncludeNonDirtyObjects">
+            <summary>
+            Include non-dirty objects in serialization output. They will be marked as <c>dirty="false"</c>.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSerializeOptions.IncludeDebugInfo">
+            <summary>
+            Include additional debug information in serialization output. It will be ignored during deserialization.
+            </summary>
+        </member>
+        <member name="T:Sooda.SoodaSnapshotOptions">
+            <summary>
+            Specifies options for creation of object list snapshots using GetList().
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.Default">
+            <summary>
+            Use default options - load data from database, apply changes made within transaction.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.NoTransaction">
+            <summary>
+            Don't apply changes made in transaction. Use this option to perform a database snapshot or
+            when you're sure that none of transaction objects will affect the result. This helps speed
+            things a bit.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.NoWriteObjects">
+            <summary>
+            Don't precommit modified objects
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.VerifyAfterLoad">
+            <summary>
+            Verify objects loaded from the database whether they actually match the 
+            where clause.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.KeysOnly">
+            <summary>
+            Load only the primary key values. Objects will be materialized
+            but fields other than primary keys will require a database query.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.Cache">
+            <summary>
+            Load the collection items from cache if possible.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.NoCache">
+            <summary>
+            Store the collection in cache after loading from the database.
+            </summary>
+        </member>
+        <member name="F:Sooda.SoodaSnapshotOptions.PrefetchRelated">
+            <summary>
+            Use prefetch definition from the schema to load related objects automatically
+            </summary>
+        </member>
+    </members>
+</doc>
