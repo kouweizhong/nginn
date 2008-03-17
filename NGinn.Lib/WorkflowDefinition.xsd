@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WorkflowDefinition" targetNamespace="http://tempuri.org/WorkflowDefinition.xsd" elementFormDefault="qualified" xmlns="http://tempuri.org/WorkflowDefinition.xsd" xmlns:mstns="http://tempuri.org/WorkflowDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Process">
+    <xs:sequence>
+      <xs:element name="places">
+        <!-- miejsca w procesie -->
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="place" type="Place" minOccurs="2" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!-- activity (taski) w procesie -->
+      <xs:element name="tasks">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="task" type="Task" minOccurs="1" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="flows">
+        <!-- przejscia miedzy stanami -->
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="flow" type="Flow" minOccurs="1" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="data-binding" minOccurs="1" maxOccurs="1" type="DataBinding">
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="version" type="xs:int" />
+  </xs:complexType>
+
+  <xs:complexType name="Task">
+    <xs:sequence>
+      <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
+      <xs:element name="splitType" type="JoinType" minOccurs="1" maxOccurs="1" />
+      <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string" />
+    <xs:attribute name="type" use="required" type="TaskType" />
+  </xs:complexType>
+  
+  <xs:complexType name="Flow">
+    <xs:sequence>
+      <xs:element name="from" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="to" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="inputCondition" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="JoinType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AND" />
+      <xs:enumeration value="XOR" />
+      <xs:enumeration value="OR" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="PlaceType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="StartPlace" /><!-- stan poczatkowy -->
+      <xs:enumeration value="EndPlace" /> <!-- stan koncowy -->
+      <xs:enumeration value="Place" /> <!-- stan (bez dodatkowych akcji) -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TaskType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ManualTask" />
+      <xs:enumeration value="ScriptTask" />
+      <xs:enumeration value="SubprocessTask" />
+      <xs:enumeration value="MultiManualTask" />
+      <xs:enumeration value="MultiSubprocessTask" />
+      <xs:enumeration value="TimerTask" />
+      <xs:enumeration value="CallWSTask" />
+      <xs:enumeration value="ExternalTask" />
+      <xs:enumeration value="NotificationTask" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="Place">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" use="required" />
+    <xs:attribute name="type" type="PlaceType" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="DataBinding">
+  </xs:complexType>
+  
+  <xs:complexType name="ManualTask">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ScriptTask">
+    <xs:sequence>
+      <xs:element name="scriptBody" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Subprocess">
+    <xs:sequence>
+      <xs:element name="subprocessName" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="subprocessVersion" type="xs:int" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="CallWSTask">
+    <xs:attribute name="id" use="required" type="xs:string" />
+  </xs:complexType>
+  
+  <xs:complexType name="TimerTask">
+    <xs:sequence>
+      <xs:element name="delayTime" type="xs:duration" minOccurs="1" maxOccurs="1" />
+      <xs:element name="scheme" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ExternalTask">
+  </xs:complexType>
+  
+  <xs:complexType name="NotificationTask">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="id" use="required" type="xs:string" />
+  </xs:complexType>
+  <xs:element name="process" type="Process" />
+</xs:schema>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"  ?>
+<schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.sooda.org/schemas/SoodaSchema.xsd">
+
+    <datasource name="default" type="Sooda.Sql.SqlDataSource" />
+
+	<class name="ProcessDefinitionDb" label="FullName">
+		<table name="ProcessDefinition">
+			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
+            <field name="Name" dbcolumn="name" type="String" size="202" nullable="false" />
+			<field name="Version" dbcolumn="version" type="Integer" nullable="false" />
+            <field name="FullName" dbcolumn="name" type="String" size="202" nullable="false" />
+			<field name="ProcessData" dbcolumn="process_data" type="Blob" nullable="false" />
+		</table>
+	</class>
+    
+	<class name="ProcessInstanceDb">
+		<table name="ProcessInstance">
+			<field name="InstanceId" dbcolumn="inst_id" type="Guid" primaryKey="true" nullable="false" />
+			<field name="DefinitionId" dbcolumn="definition_id" type="String" size="50" nullable="false" />
+			<field name="Status" dbcolumn="status" type="Integer" nullable="false" />
+			<field name="InstanceData" dbcolumn="instance_data" type="Blob" nullable="false" />
+			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
+		</table>
+	</class>
+	
+	<class name="TokenDb">
+		<table name="Token">
+			<field name="Id" dbcolumn="id" type="Guid" primaryKey="true" nullable="false" />
+			<field name="ProcessInstance" dbcolumn="process_instance" type="Guid" nullable="false" />
+			<field name="Mode" dbcolumn="mode" type="Integer" nullable="false" />
+			<field name="Status" dbcolumn="status" type="Integer" nullable="false" />
+			<field name="PlaceId" dbcolumn="place" type="String" size="50" nullable="false" />
+			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
+		</table>
+	</class>
+	
+	<class name="TokenStatus">
+		<table name="TokenStatus">
+			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
+            <field name="Name" dbcolumn="name" type="String" size="202" nullable="false" />
+		</table>
+		<const key="1" name="Ready" />
+		<const key="2" name="Waiting" />
+		<const key="3" name="Error" />
+		<const key="4" name="Cancelled" />
+		<const key="5" name="Finished" />
+	</class>
+</schema>
