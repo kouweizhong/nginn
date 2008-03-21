@@ -20,7 +20,7 @@ namespace NGinn.Lib.Schema
     public class ProcessDefinition
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
-        public static string WORKFLOW_NAMESPACE = "http://tempuri.org/WorkflowDefinition.xsd";
+        public static string WORKFLOW_NAMESPACE = "http://www.nginn.org/WorkflowDefinition.1_0.xsd";
         private IDictionary<string, Place> _places = new Dictionary<string, Place>();
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
 
@@ -167,32 +167,36 @@ namespace NGinn.Lib.Schema
 
         public Place Start
         {
-            get { return null; }
+            get { return _start; }
         }
 
         public Place Finish
         {
-            get { return null; }
+            get { return _finish; }
         }
 
         public void LoadXmlFile(string fileName)
         {
-            using (Stream s = new FileStream(fileName, FileMode.Open))
+            using (StreamReader s = new StreamReader(fileName))
             {
-                LoadXml(s);
+                LoadXml(s.ReadToEnd());
             }
         }
-   
 
-        public void LoadXml(Stream stm)
+        
+        public void LoadXml(string xmlStr)
         {
             XmlDocument doc = new XmlDocument();
             string schemaLocation = Path.Combine(Path.GetDirectoryName(typeof(ProcessDefinition).Assembly.Location), "WorkflowDefinition.xsd");
             XmlReaderSettings rs = new XmlReaderSettings();
             rs.ValidationType = ValidationType.Schema;
-            rs.Schemas.Add(WORKFLOW_NAMESPACE, schemaLocation);
-            XmlReader xr = XmlReader.Create(stm, rs);
-            doc.Load(xr);
+
+            XmlReader schemaRdr = SchemaUtil.GetWorkflowSchemaReader();
+            rs.Schemas.Add(WORKFLOW_NAMESPACE, schemaRdr);
+            using (XmlReader xr = XmlReader.Create(new StringReader(xmlStr), rs))
+            {
+                doc.Load(xr);
+            }
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
             nsmgr.AddNamespace(string.Empty, WORKFLOW_NAMESPACE);
             nsmgr.AddNamespace("wf", WORKFLOW_NAMESPACE);

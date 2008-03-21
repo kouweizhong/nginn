@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
-
+using System.IO;
 namespace NGinn.Engine.Services
 {
     /// <summary>
@@ -10,14 +10,10 @@ namespace NGinn.Engine.Services
     /// </summary>
     public interface IProcessDefinitionRepository
     {
-        string InsertProcessDefinition(ProcessDefinition pd);
-        void UpdateProcessDefinition(ProcessDefinition pd);
-        string GetProcessDefinitionId(string name, int version);
+        string InsertProcessDefinition(string definitionXml);
+        void UpdateProcessDefinition(string definitionXml);
         void DeleteProcessDefinition(string definitionId);
-        ProcessDefinition GetProcessDefinition(string name, int version);
+        string GetProcessDefinitionId(string name, int version);
         ProcessDefinition GetProcessDefinition(string definitionId);
-        IList<string> GetProcessDefinitionNames();
-        IList<int> GetProcessDefinitionVersions(string name);
-        IList<string> GetProcessDefinitionIds();
     }
 }

@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Sooda;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NGinn.Engine.Dao")]
+[assembly: AssemblyTitle("NGinnTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NGinn.Engine.Dao")]
+[assembly: AssemblyProduct("NGinnTest")]
 [assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -21,7 +20,7 @@ using Sooda;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b0f3574b-52cc-43e2-b4f4-905881d93b80")]
+[assembly: Guid("08273113-b852-4303-960f-b0559225a4a1")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -30,8 +29,5 @@ using Sooda;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: Sooda.SoodaStubAssembly(typeof(NGinn.Engine.Dao.ProcessDefinitionDb))]

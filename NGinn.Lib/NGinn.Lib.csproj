@@ -32,6 +32,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Spring.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -47,9 +51,9 @@
     <Compile Include="Schema\Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WorkflowDefinition.xsd">
+    <EmbeddedResource Include="WorkflowDefinition.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </EmbeddedResource>
     <None Include="WorkflowDefinition.xsx">
       <DependentUpon>WorkflowDefinition.xsd</DependentUpon>
     </None>

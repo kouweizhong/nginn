@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="TestProcess1" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+  <places>
+    <place id="start" type="StartPlace">
+    </place>
+    <place id="end" type="EndPlace">
+    </place>
+  </places>
+  <tasks>
+  	<task id="t1" type="ManualTask">
+		<joinType>AND</joinType>
+		<splitType>AND</splitType>
+	</task>
+  </tasks>
+  <flows>
+  	<flow><from>start</from><to>t1</to></flow>
+	<flow><from>t1</from><to>end</to></flow>
+  </flows>
+  <data-binding></data-binding>
+</process>

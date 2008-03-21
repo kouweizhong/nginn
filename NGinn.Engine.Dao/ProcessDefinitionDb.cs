@@ -25,5 +25,22 @@ namespace NGinn.Engine.Dao {
         this(SoodaTransaction.ActiveTransaction) {
       // Do not modify this constructor.
     }
+
+      private void UpdateFullName()
+      {
+          FullName = string.Format("{0}.{1}", Name, Version);
+      }
+
+      protected override void AfterFieldUpdate_Name(object oldValue, object newValue)
+      {
+          base.AfterFieldUpdate_Name(oldValue, newValue);
+          UpdateFullName();
+      }
+
+      protected override void AfterFieldUpdate_Version(object oldValue, object newValue)
+      {
+          base.AfterFieldUpdate_Version(oldValue, newValue);
+          UpdateFullName();
+      }
   }
 }

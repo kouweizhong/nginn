@@ -4,24 +4,24 @@ namespace NGinn.Engine.Dao {
   using System.Diagnostics;
   using System.Data;
   using Sooda;
-  using NGinn.Engine.Dao.Stubs;
+  using NGinnEngineDaoStubs = NGinn.Engine.Dao.Stubs;
   
   
-  public class TokenStatus : NGinn.Engine.Dao.Stubs.TokenStatus_Stub {
+  public class ProcessStatus : NGinnEngineDaoStubs.ProcessStatus_Stub {
     
-    public TokenStatus(SoodaConstructor c) : 
+    public ProcessStatus(SoodaConstructor c) : 
         base(c) {
       // Do not modify this constructor.
     }
     
-    public TokenStatus(SoodaTransaction transaction) : 
+    public ProcessStatus(SoodaTransaction transaction) : 
         base(transaction) {
       // 
       // TODO: Add construction logic here.
       // 
     }
     
-    public TokenStatus() : 
+    public ProcessStatus() : 
         this(SoodaTransaction.ActiveTransaction) {
       // Do not modify this constructor.
     }

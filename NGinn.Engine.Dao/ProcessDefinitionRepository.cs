@@ -7,60 +7,27 @@ using NLog;
 using NGinn.Lib.Schema;
 using System.IO;
 using NGinn.Engine.Dao.TypedQueries;
+using System.Collections;
 
 namespace NGinn.Engine.Dao
 {
+    
     public class ProcessDefinitionRepository : IProcessDefinitionRepository
     {
-        private byte[] SerializePd(ProcessDefinition pd)
-        {
-            MemoryStream ms = new MemoryStream();
-            //YAWN.Engine.Messaging.SerializationUtil.Serialize(pd, ms, YAWN.Engine.Messaging.MessageContentType.SerializedBinary);
-            return ms.GetBuffer();
-        }
-
-        private ProcessDefinition DeserializePd(byte[] data)
-        {
-            MemoryStream ms = new MemoryStream(data);
-            ms.Seek(0, SeekOrigin.Begin);
-            //return (ProcessDefinition)YAWN.Engine.Messaging.SerializationUtil.Deserialize(ms, YAWN.Engine.Messaging.MessageContentType.SerializedBinary);
-            return null;
-        }
+        private Dictionary<string, ProcessDefinition> _pdCache = new Dictionary<string, ProcessDefinition>();
+       
 
 
-        public string InsertProcessDefinition(ProcessDefinition pd)
-        {
-            using (SoodaTransaction st = new SoodaTransaction())
-            {
-                ProcessDefinitionDb pdd = new ProcessDefinitionDb();
-                pdd.Name = pd.Name;
-                pdd.Version = pd.Version;
-                pdd.FullName = string.Format("{0}.{1}", pd.Name, pd.Version);
-                pdd.ProcessData = SerializePd(pd);
-                st.Commit();
-                return pdd.Id.ToString();
-            }
-        }
+        
 
-        public void UpdateProcessDefinition(ProcessDefinition pd)
-        {
-            using (SoodaTransaction st = new SoodaTransaction())
-            {
-                
-                st.Commit();
-            }
-            throw new Exception("The method or operation is not implemented.");
-        }
+        
 
-        public string GetProcessDefinitionId(string name, int version)
+        private ProcessDefinitionDb FindProcessDefinitionInternal(string name, int version)
         {
-            using (SoodaTransaction st = new SoodaTransaction())
-            {
-                ProcessDefinitionDbList lst = ProcessDefinitionDb.GetList(ProcessDefinitionDbField.Name == name && ProcessDefinitionDbField.Version == version);
-                if (lst.Count == 0) return null;
-                if (lst.Count > 1) throw new Exception("Not unique name/version");
-                return lst[0].Id.ToString();
-            }
+            ProcessDefinitionDbList lst = ProcessDefinitionDb.GetList(ProcessDefinitionDbField.Name == name && ProcessDefinitionDbField.Version == version);
+            if (lst.Count == 0) return null;
+            if (lst.Count > 1) throw new Exception("Not unique name/version");
+            return lst[0];
         }
 
         public void DeleteProcessDefinition(string definitionId)
@@ -68,14 +35,22 @@ namespace NGinn.Engine.Dao
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public ProcessDefinition GetProcessDefinition(string name, int version)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
         public ProcessDefinition GetProcessDefinition(string definitionId)
         {
-            throw new Exception("The method or operation is not implemented.");
+            ProcessDefinition pd;
+            lock (this)
+            {
+                if (_pdCache.TryGetValue(definitionId, out pd))
+                    return pd;
+                using (SoodaTransaction st = new SoodaTransaction())
+                {
+                    ProcessDefinitionDb pdb = ProcessDefinitionDb.Load(Int32.Parse(definitionId));
+                    pd = new ProcessDefinition();
+                    pd.LoadXml(pdb.ProcessXml);
+                    _pdCache[pdb.Id.ToString()] = pd;
+                    return pd;
+                }
+            }
         }
 
         public IList<string> GetProcessDefinitionNames()
@@ -92,5 +67,55 @@ namespace NGinn.Engine.Dao
         {
             throw new Exception("The method or operation is not implemented.");
         }
+
+        #region IProcessDefinitionRepository Members
+
+        public string InsertProcessDefinition(string pdXml)
+        {
+            ProcessDefinition pd = new ProcessDefinition();
+            pd.LoadXml(pdXml);
+            using (SoodaTransaction st = new SoodaTransaction())
+            {
+                ProcessDefinitionDb t = FindProcessDefinitionInternal(pd.Name, pd.Version);
+                if (t != null) throw new Exception(string.Format("Process definition {0}.{1} already exists", pd.Name, pd.Version)); 
+                ProcessDefinitionDb pdb = new ProcessDefinitionDb();
+                pdb.Name = pd.Name;
+                pdb.ProcessXml = pdXml;
+                pdb.Version = pd.Version;
+                st.Commit();
+                return pdb.Id.ToString();
+            }
+        }
+
+        public void UpdateProcessDefinition(string definitionXml)
+        {
+            ProcessDefinition pd = new ProcessDefinition();
+            pd.LoadXml(definitionXml);
+            lock (this)
+            {
+                using (SoodaTransaction st = new SoodaTransaction())
+                {
+                    ProcessDefinitionDb t = FindProcessDefinitionInternal(pd.Name, pd.Version);
+                    if (t != null) throw new Exception(string.Format("Process definition {0}.{1} already exists", pd.Name, pd.Version));
+                    ProcessDefinitionDb pdb = new ProcessDefinitionDb();
+                    pdb.Name = pd.Name;
+                    pdb.ProcessXml = definitionXml;
+                    pdb.Version = pd.Version;
+                    st.Commit();
+                    _pdCache.Remove(pdb.Id.ToString());
+                }
+            }
+        }
+
+        public string GetProcessDefinitionId(string name, int version)
+        {
+            using (SoodaTransaction st = new SoodaTransaction())
+            {
+                ProcessDefinitionDb pd = FindProcessDefinitionInternal(name, version);
+                return pd.Id.ToString();
+            }
+        }
+
+        #endregion
     }
 }

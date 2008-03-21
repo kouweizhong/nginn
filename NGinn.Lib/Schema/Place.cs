@@ -99,7 +99,7 @@ namespace NGinn.Lib.Schema
         public static Place LoadPlace(XmlElement el, XmlNamespaceManager nsmgr)
         {
             string type = el.GetAttribute("type");
-            Type t = Type.GetType("YAWN.Lib.Schema." + type);
+            Type t = Type.GetType("NGinn.Lib.Schema." + type);
             if (t == null) throw new Exception("Unknown place type: " + type);
             Place pl = (Place)Activator.CreateInstance(t);
             pl.LoadXml(el, nsmgr);
