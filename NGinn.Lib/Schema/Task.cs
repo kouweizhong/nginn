@@ -16,7 +16,7 @@ namespace NGinn.Lib.Schema
     }
 
     [Serializable]
-    public class Task : NetNode
+    public abstract class Task : NetNode
     {
         
         private JoinType _joinType;
@@ -47,7 +47,14 @@ namespace NGinn.Lib.Schema
             Id = el.GetAttribute("id");
         }
 
-        
+        /// <summary>
+        /// Tells whether transition is immediate (executes immediately in single transaction)
+        /// If the transition is not immediate, system will initiate it and wait for completion.
+        /// </summary>
+        public abstract bool IsImmediate
+        {
+            get;
+        }
 
 
 

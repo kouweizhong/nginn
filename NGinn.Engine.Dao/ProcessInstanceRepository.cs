@@ -104,6 +104,7 @@ namespace NGinn.Engine.Dao
             tok.Status = (NGinn.Engine.TokenStatus)tdb.Status;
             tok.PlaceId = tdb.PlaceId;
             tok.Dirty = false;
+            tok.PersistedVersion = tdb.RecordVersion;
             return tok;
         }
 

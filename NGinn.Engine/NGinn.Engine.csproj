@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveTransition.cs" />
+    <Compile Include="ManualTaskActive.cs" />
     <Compile Include="ProcessInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
@@ -53,6 +55,7 @@
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Services\IResourceManager.cs" />
     <Compile Include="Services\ITokenManager.cs" />
+    <Compile Include="SubprocessTaskActive.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>

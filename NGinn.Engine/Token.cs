@@ -32,14 +32,49 @@ namespace NGinn.Engine
     [Serializable]
     public class Token
     {
+
+        private TokenStatus _status;
+        private TokenMode _mode;
+        private string _placeId;
+
         public string TokenId;
         public string ProcessInstanceId;
-        public string PlaceId;
-        public TokenMode Mode;
-        public TokenStatus Status;
+        
+        public Token()
+        {
+            Dirty = true; 
+        }
+
+        public TokenMode Mode
+        {
+            get { return _mode; }
+            set { _mode = value; Dirty = true; }
+        }
+
+        public TokenStatus Status
+        {
+            get { return _status; }
+            set { _status = value; Dirty = true; }
+        }
+
+        public string PlaceId
+        {
+            get { return _placeId; }
+            set { _placeId = value; Dirty = true; }
+        }
         /// <summary>version number of persisted token record</summary>
         public int PersistedVersion;
         /// <summary>true if token data has been modified</summary>
-        public bool Dirty = false;
+        public bool Dirty;
+        /// <summary>
+        /// List of transitions that have been initiated by the token. If one of these transitions completes
+        /// it will consume the token and cancel all the other transitions
+        /// </summary>
+        public IList<ActiveTransition> ActiveTransitions;
+
+        public override string ToString()
+        {
+            return string.Format("{0}.{1} ({2}). ST: {3}", ProcessInstanceId, TokenId, PlaceId, Status);
+        }
     }
 }

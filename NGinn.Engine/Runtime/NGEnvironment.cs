@@ -17,6 +17,8 @@ namespace NGinn.Engine.Runtime
         private IProcessInstanceRepository _instanceRepository;
         private INGDataStore _dataStore;
         private IProcessInstanceLockManager _lockManager;
+        private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
+
         public NGEnvironment()
         {
             //_appCtx = Spring.Context.Support.ContextRegistry.GetContext();
@@ -48,6 +50,26 @@ namespace NGinn.Engine.Runtime
             set { _lockManager = value; }
         }
 
+        public IDictionary<string, object> EnvironmentVariables
+        {
+            get { return _envVariables; }
+        }
+
+        /// <summary>
+        /// Set environment variable
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void SetEnvVariable(string name, object value)
+        {
+            lock (_envVariables)
+            {
+                if (_envVariables.ContainsKey(name))
+                    _envVariables.Remove(name);
+                _envVariables.Add(name, value);
+            }
+        }
+
         void RunSingleStep()
         {
             //1. select process instance to kick
@@ -60,14 +82,38 @@ namespace NGinn.Engine.Runtime
 
         public string StartProcessInstance(string definitionId, IDictionary<string, object> inputVariables)
         {
+            IDictionary<string, object> tmp = new Dictionary<string, object>(inputVariables);
+
             ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
             if (pd == null) throw new Exception("Process definition not found");
             using (INGDataSession ds = DataStore.OpenSession())
             {
                 ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
+                
+                foreach (VariableDef vd in pd.InputVariables)
+                {
+                    object val = null;
+                    if (tmp.ContainsKey(vd.Name))
+                    {
+                        val = Convert.ChangeType(inputVariables[vd.Name], vd.VariableType);
+                        tmp.Remove(vd.Name);
+                    }
+                    else
+                    {
+                        if (vd.VariableDir == VariableDef.Direction.In || vd.VariableDir == VariableDef.Direction.InOut)
+                        {
+                            if (vd.VariableUsage == VariableDef.Usage.Required)
+                            {
+                                throw new Exception("Missing required input variable: " + vd.Name);
+                            }
+                        }
+                    }
+                    pi.ProcessVariables[vd.Name] = val;
+                }
+
                 log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                 pi.ProcessDefinitionId = definitionId;
-                pi.ProcessVariables = inputVariables;
+                
                 Token tok = pi.CreateNewStartToken();
                 pi.AddToken(tok);
                 InstanceRepository.UpdateProcessInstance(pi, ds);
@@ -112,6 +158,7 @@ namespace NGinn.Engine.Runtime
                         return;
                     }
                     KickToken(tok, pi, ds);
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
                     ds.Commit();
                 }
             }
@@ -132,10 +179,9 @@ namespace NGinn.Engine.Runtime
                 KickDeadToken(tok, inst, ds);
                 return;
             }
-            Place pl = pd.GetPlace(tok.PlaceId);
-            foreach (Task tsk in pl.NodesOut)
+            else
             {
-                
+                inst.KickReadyToken(tok);
             }
         }
 

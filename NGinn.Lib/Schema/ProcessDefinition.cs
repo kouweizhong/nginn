@@ -7,11 +7,33 @@ using NLog;
 
 namespace NGinn.Lib.Schema
 {
+    
+
+    /// <summary>
+    /// Variable definition
+    /// </summary>
     [Serializable]
     public class VariableDef
     {
+        public enum Direction
+        {
+            In,
+            Out,
+            InOut
+        }
+
+        public enum Usage
+        {
+            Optional,
+            Required
+        }
+        public Direction VariableDir;
+        public Usage VariableUsage;
         public string Name;
+        /// <summary>Variable type - supported types are: string, int, double, DateTime, TimeSpan</summary>
         public Type VariableType;
+        /// <summary>Expression that will be used to calculate default value</summary>
+        public string DefaultValueExpr;
     }
 
     
@@ -23,6 +45,8 @@ namespace NGinn.Lib.Schema
         public static string WORKFLOW_NAMESPACE = "http://www.nginn.org/WorkflowDefinition.1_0.xsd";
         private IDictionary<string, Place> _places = new Dictionary<string, Place>();
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
+        private IList<VariableDef> _inputProcessVariables = new List<VariableDef>();
+        private IList<VariableDef> _outputProcessVariables = new List<VariableDef>();
 
         private StartPlace _start = null;
         private EndPlace _finish = null;
@@ -124,45 +148,40 @@ namespace NGinn.Lib.Schema
             NetNode q = GetNode(t.To.Id);
             if (q == null) throw new Exception("Node not defined: " + t.To.Id);
             if (p is Place && q is Place) throw new Exception("Flow cannot connect two places");
-            if (p is Place)
+            if (p is Task && q is Task)
             {
-                Place pp = p as Place;
+                //adding implicit place between p and q
                 Task tq = q as Task;
-            }
-            else if (p is Task)
-            {
                 Task tp = p as Task;
-                if (q is Task) //adding implicit place between p and q
-                {
-                    Task tq = q as Task;
-                    Place ptran = new Place();
-                    ptran.IsImplicit = true;
-                    ptran.Id = "_*_" + tp.Id;
-                    AddPlace(ptran);
-                    Flow f1 = new Flow();
-                    f1.From = tp;
-                    f1.To = ptran;
-                    f1.InputCondition = f1.InputCondition;
-                    Flow f2 = new Flow();
-                    f2.From = ptran;
-                    f2.To = tq;
-                    AddFlow(f1);
-                    AddFlow(f2);
-                }
-                else //q is place
-                {
-                }
+                Place ptran = new Place();
+                ptran.IsImplicit = true;
+                ptran.Id = "_*_" + tp.Id;
+                AddPlace(ptran);
+                Flow f1 = new Flow();
+                f1.From = tp;
+                f1.To = ptran;
+                f1.InputCondition = f1.InputCondition;
+                Flow f2 = new Flow();
+                f2.From = ptran;
+                f2.To = tq;
+                AddFlow(f1);
+                AddFlow(f2);
+            }
+            else
+            {
+                p.AddFlowOut(t);
+                q.AddFlowIn(t);
             }
         }
 
         public IList<VariableDef> InputVariables
         {
-            get { return null; }
+            get { return _inputProcessVariables; }
         }
 
         public IList<VariableDef> OutputVariables
         {
-            get { return null; }
+            get { return _outputProcessVariables; }
         }
 
         public Place Start

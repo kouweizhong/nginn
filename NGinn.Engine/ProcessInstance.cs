@@ -11,6 +11,8 @@ namespace NGinn.Engine
     [Serializable]
     public class ProcessInstance
     {
+        [NonSerialized]
+        private Logger log = LogManager.GetCurrentClassLogger();
         private string _instId;
         private string _definitionId;
         [NonSerialized]
@@ -23,6 +25,7 @@ namespace NGinn.Engine
         private IDictionary<string, Token> _tokens = new Dictionary<string, Token>();
         [NonSerialized]
         private int _persistedVersion;
+        private IList<ActiveTransition> _activeTransitions = new List<ActiveTransition>();
 
         public string ProcessDefinitionId
         {
@@ -38,7 +41,11 @@ namespace NGinn.Engine
         public string InstanceId
         {
             get { return _instId; }
-            set { _instId = value; }
+            set 
+            { 
+                _instId = value;
+                log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", value));
+            }
         }
 
         public int PersistedVersion
@@ -176,6 +183,7 @@ namespace NGinn.Engine
         /// </summary>
         public void Passivate()
         {
+            log.Info("Passivating");
             _tokensInPlaces = null;
             _ctx = null;
             _definition = null;
@@ -187,6 +195,7 @@ namespace NGinn.Engine
         /// </summary>
         public void Activate()
         {
+            log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
             _ctx = Spring.Context.Support.ContextRegistry.GetContext();
             IProcessDefinitionRepository rep = (IProcessDefinitionRepository) _ctx.GetObject("ProcessDefinitionRepository");
             _definition = rep.GetProcessDefinition(ProcessDefinitionId);
@@ -212,36 +221,147 @@ namespace NGinn.Engine
             }
         }
 
+        /// <summary>
+        /// Kick a 'READY' token. It means-> initiate all tasks following current place - only if the tasks can be initiated.
+        /// </summary>
+        /// <param name="tok"></param>
         public void KickReadyToken(Token tok)
         {
+            log.Info("Kicking token {0}", tok.ToString());
             if (_tokens[tok.TokenId] != tok) throw new Exception("invalid token");
             if (tok.Status != TokenStatus.READY) throw new Exception("invalid status");
+            
+            Place pl = Definition.GetPlace(tok.PlaceId);
+            List<ActiveTransition> ats = new List<ActiveTransition>();
+            foreach (Task tsk in pl.NodesOut)
+            {
+                bool b = CanInitiateTransition(tsk);
+                log.Info("Checking if transition {0} can be initiated: {1}", tsk.Id, b);
+                if (b)
+                {
+                    ActiveTransition at = CreateActiveTransitionForTask(tsk);
+                    at.ProcessInstanceId = this.InstanceId;
+                    at.Status = TransitionStatus.Initiated;
+                    
+                    if (tsk.IsImmediate)
+                    {
+                        log.Info("Task {0} is immediate. Will start it now.", tsk.Id);
+                        ats.Clear();
+                        ats.Add(at);
+                        break; //leave the loop
+                    }
+                    else
+                    {
+                        ats.Add(at);
+                    }
+                }
+            }
+            if (ats.Count == 0)
+            {
+                log.Info("No transitions can be initiated. Marking token as WAITING");
+                tok.Status = TokenStatus.WAITING;
+                return;
+            }
 
+            foreach (ActiveTransition at in ats)
+            {
+                InitiateTransition(at);
+            }
         }
-        bool CanInitiateTask(Task tsk)
+
+        /// <summary>
+        /// Transition can be initiated if it has required number (depending on join type) of tokens in statuses:
+        /// READY, WAITING or WAITING_TASK
+        /// </summary>
+        /// <param name="tsk"></param>
+        /// <returns></returns>
+        public bool CanInitiateTransition(Task tsk)
         {
+            if (tsk.JoinType != JoinType.AND) throw new Exception("JOin type not suported");
+            foreach (Place pl in tsk.NodesIn)
+            {
+                if (GetActiveTokensInPlace(pl.Id).Count == 0)
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// List of 'active' tokens, that is tokens suitable for being consumed by a transition,
+        /// or for initiating a transition. It consists of READY and WAITING tokens.
+        /// After initiating a transition, they become WAITING_TASK.
+        /// If the transition is immediate, it will execute and consume the tokens.
+        /// </summary>
+        /// <param name="placeId"></param>
+        /// <returns></returns>
+        private IList<Token> GetActiveTokensInPlace(string placeId)
+        {
+            List<Token> lst = new List<Token>();
+            IList<Token> toks = GetTokensInPlace(placeId);
+            foreach (Token t in toks)
+            {
+                if (t.Status == TokenStatus.READY || t.Status == TokenStatus.WAITING)
+                    lst.Add(t);
+            }
+            return lst;
+        }
+
+        /// <summary>
+        /// Initiate task
+        /// </summary>
+        /// <param name="at"></param>
+        private void InitiateTransition(ActiveTransition at)
+        {
+            log.Info("Initiating transition {0}", at.TaskId);
+            Task tsk = Definition.GetTask(at.TaskId);
+            at.Tokens = new List<string>();
             if (tsk.JoinType == JoinType.AND)
             {
+                foreach (Place p in tsk.NodesIn)
+                {
+                    IList<Token> toks = GetActiveTokensInPlace(p.Id);
+                    if (toks.Count == 0) throw new Exception("Cannot initiate transition - no required token");
+                    at.Tokens.Add(toks[0].TokenId);
+                }
             }
             else if (tsk.JoinType == JoinType.XOR)
             {
+                foreach (Place p in tsk.NodesIn)
+                {
+                    IList<Token> toks = GetActiveTokensInPlace(p.Id);
+                    if (toks.Count > 0)
+                    {
+                        at.Tokens.Add(toks[0].TokenId);
+                        break;
+                    }
+                }
             }
-            else if (tsk.JoinType == JoinType.OR)
-            {
-            }
+            else throw new Exception("Only AND and XOR join supported");
+            //ok, tokens found. So now - please, start the transition
+            
         }
 
-        Token GetActiveTokenInPlace(string placeId)
+        private void TryInitiateTask(ActiveTransition at)
         {
+            Task tsk = Definition.GetTask(at.TaskId);
+            //what now? every task should have its 'active' counterpart.
+
         }
 
-        bool CanInitiateANDTask(Task tsk)
+        private ActiveTransition CreateActiveTransitionForTask(Task tsk)
         {
-            foreach (Place pl in tsk.NodesIn)
+            ActiveTransition at;
+            if (tsk is ManualTask)
             {
-                IList<Token> toks = GetTokensInPlace(pl.Id);
-
+                at = new ManualTaskActive((ManualTask) tsk, this);
             }
+            else if (tsk is SubprocessTask)
+            {
+                at = new SubprocessTaskActive((SubprocessTask) tsk, this);
+            }
+            else throw new Exception();
+            at.ProcessInstanceId = this.InstanceId;
+            return at;
         }
     }
 }

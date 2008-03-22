@@ -47,29 +47,54 @@ namespace NGinn.Lib.Schema
         /// </summary>
         public ICollection<Flow> FlowsIn
         {
-            get { return _flowsOut.Values; }
+            get { return _flowsIn.Values; }
         }
 
         /// <summary>
         /// List of nodes preceding current node.
         /// </summary>
-        public IList<Place> NodesIn
+        public IList<NetNode> NodesIn
         {
-            get { return null; }
+            get 
+            {
+                List<NetNode> l = new List<NetNode>();
+                foreach (Flow fl in FlowsIn)
+                {
+                    l.Add(fl.From);
+                }
+                return l;
+            }
         }
 
         internal void AddFlowIn(Flow f)
         {
             if (f.To != this) throw new Exception("Invalid flow target");
             if (f.From == null) throw new Exception("Missing flow source");
-            _flowsIn[f.From.Id] = f;
+            Flow tm;
+            
+            if (_flowsIn.TryGetValue(f.From.Id, out tm))
+            {
+                if (tm != f) throw new Exception("Flow already defined from " + f.From.Id);
+            }
+            else
+            {
+                _flowsIn[f.From.Id] = f;
+            }
         }
 
         internal void AddFlowOut(Flow f)
         {
             if (f.From != this) throw new Exception("Invalid flow source");
             if (f.To == null) throw new Exception("Missing flow target");
-            _flowsOut[f.To.Id] = f;
+            Flow tm;
+            if (_flowsOut.TryGetValue(f.To.Id, out tm))
+            {
+                if (tm != f) throw new Exception("Flow already defined to " + f.To.Id);
+            }
+            else
+            {
+                _flowsOut[f.To.Id] = f;
+            }
         }
 
         internal virtual void Validate()

@@ -35,6 +35,10 @@ namespace NGinn.Lib.Schema
             set { _assignmentStrategy = value; }
         }
 
+        public override bool IsImmediate
+        {
+            get { return false; }
+        }
         
     }
 }
