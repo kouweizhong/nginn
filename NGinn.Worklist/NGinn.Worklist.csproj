@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C36A860A-1AE3-4882-BA2C-3310342DF712}</ProjectGuid>
+    <ProjectGuid>{2A62D383-3B3A-4D57-9711-367E1D064B80}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NGinn.Engine</RootNamespace>
-    <AssemblyName>NGinn.Engine</AssemblyName>
+    <RootNamespace>NGinn.Worklist</RootNamespace>
+    <AssemblyName>NGinn.Worklist</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,41 +32,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sooda, Version=1.0.0.438, Culture=neutral, PublicKeyToken=102bbd392415062a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Spring.Core.dll</HintPath>
+      <HintPath>..\extlib\Sooda.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveTransition.cs" />
-    <Compile Include="ManualTaskActive.cs" />
-    <Compile Include="ProcessInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
-    <Compile Include="Services\Dao\INGDataSession.cs" />
-    <Compile Include="Services\Dao\INGDataStore.cs" />
-    <Compile Include="Runtime\NGEnvironment.cs" />
-    <Compile Include="Services\INGEnvironment.cs" />
-    <Compile Include="Services\IProcessDefinitionRepository.cs" />
-    <Compile Include="Services\IProcessInstanceLockManager.cs" />
-    <Compile Include="Services\IProcessInstanceRepository.cs" />
-    <Compile Include="Services\IResourceManager.cs" />
-    <Compile Include="Services\ITokenManager.cs" />
-    <Compile Include="Services\IWorkListService.cs" />
-    <Compile Include="SubprocessTaskActive.cs" />
-    <Compile Include="Token.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="Group.cs" />
+    <Compile Include="GroupHierarchy.cs" />
+    <Compile Include="Task.cs" />
+    <EmbeddedResource Include="_DBSchema.bin" />
+    <Compile Include="_Stubs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
-      <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
-      <Name>NGinn.Lib</Name>
-    </ProjectReference>
+    <Content Include="NGinn.Worklist.Schema.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="README.txt" />
+    <None Include="NGinn.Worklist.soodaproject" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

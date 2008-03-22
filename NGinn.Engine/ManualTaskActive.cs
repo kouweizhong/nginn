@@ -13,11 +13,6 @@ namespace NGinn.Engine
          
         }
 
-        public void Initiate()
-        {
-
-        }
-
         public override void Activate()
         {
             base.Activate();
@@ -26,6 +21,14 @@ namespace NGinn.Engine
         public override void Passivate()
         {
             base.Passivate();
+        }
+
+        /// <summary>
+        /// Initiate manual task
+        /// </summary>
+        public override void InitiateTask()
+        {
+            this.CorrelationId = this.ProcessInstanceId;
         }
     }
 }

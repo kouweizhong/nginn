@@ -13,7 +13,8 @@ namespace NGinn.Engine
     }
 
     /// <summary>
-    /// Represents a task instance created during process execution
+    /// Represents an 'active' counterpart of workflow transition (Task). Task is a definition of an activity, and
+    /// ActiveTransition subclasses define instances of particular task with logic for implementing them.
     /// </summary>
     [Serializable]
     public abstract class ActiveTransition
