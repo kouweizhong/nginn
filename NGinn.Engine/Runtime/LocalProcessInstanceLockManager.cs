@@ -12,7 +12,7 @@ namespace NGinn.Engine.Runtime
 
         #region IProcessInstanceLockManager Members
 
-        public bool TryAcquireLock(string instanceId)
+        public bool TryAcquireLock(string instanceId, int timeout)
         {
             lock (this)
             {

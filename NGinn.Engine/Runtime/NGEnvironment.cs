@@ -9,16 +9,17 @@ using NLog;
 
 namespace NGinn.Engine.Runtime
 {
-    public class NGEnvironment : INGEnvironment
+    public class NGEnvironment : INGEnvironment, INGEnvironmentProcessCommunication
     {
         private Spring.Context.IApplicationContext _appCtx;
         private static Logger log = LogManager.GetCurrentClassLogger();
         private IProcessDefinitionRepository _definitionRepository;
         private IProcessInstanceRepository _instanceRepository;
+        private IWorkListService _worklistService;
         private INGDataStore _dataStore;
         private IProcessInstanceLockManager _lockManager;
         private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
-
+        
         public NGEnvironment()
         {
             //_appCtx = Spring.Context.Support.ContextRegistry.GetContext();
@@ -50,6 +51,12 @@ namespace NGinn.Engine.Runtime
             set { _lockManager = value; }
         }
 
+        public IWorkListService WorklistService
+        {
+            get { return _worklistService; }
+            set { _worklistService = value; }
+        }
+
         public IDictionary<string, object> EnvironmentVariables
         {
             get { return _envVariables; }
@@ -70,6 +77,16 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+        public object GetEnvVariable(string name)
+        {
+            lock (_envVariables)
+            {
+                if (_envVariables.ContainsKey(name))
+                    return _envVariables[name];
+                return null;
+            }
+        }
+
         void RunSingleStep()
         {
             //1. select process instance to kick
@@ -86,6 +103,7 @@ namespace NGinn.Engine.Runtime
 
             ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
             if (pd == null) throw new Exception("Process definition not found");
+            
             using (INGDataSession ds = DataStore.OpenSession())
             {
                 ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
@@ -141,7 +159,7 @@ namespace NGinn.Engine.Runtime
         {
             log.Info("Kicking process {0}", instanceId);
 
-            if (!LockManager.TryAcquireLock(instanceId))
+            if (!LockManager.TryAcquireLock(instanceId, 0))
             {
                 log.Info("Failed to lock process {0}. Ignoring");
                 return;
@@ -189,5 +207,30 @@ namespace NGinn.Engine.Runtime
         {
             throw new NotImplementedException();
         }
+
+
+        public void ProcessTaskCompleted(TaskCompletionInfo info)
+        {
+            log.Info("Task completed in process {0}. Id: {1}", info.ProcessInstance, info.CorrelationId);
+            if (!LockManager.TryAcquireLock(info.ProcessInstance, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", info.ProcessInstance);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(info.ProcessInstance, ds);
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(info.ProcessInstance);
+            }
+        }
+
     }
 }

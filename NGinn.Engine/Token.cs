@@ -70,11 +70,21 @@ namespace NGinn.Engine
         /// List of transitions that have been initiated by the token. If one of these transitions completes
         /// it will consume the token and cancel all the other transitions
         /// </summary>
-        public IList<ActiveTransition> ActiveTransitions;
+        public IList<ActiveTransition> ActiveTransitions = new List<ActiveTransition>();
+
+        private IDictionary<string, object> _tokenVariables = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Token variables. Token holds all 'out' variables from the immediately preceding task.
+        /// </summary>
+        public IDictionary<string, object> TokenVariables
+        {
+            get { return _tokenVariables; }
+        }
 
         public override string ToString()
         {
-            return string.Format("{0}.{1} ({2}). ST: {3}", ProcessInstanceId, TokenId, PlaceId, Status);
+            return string.Format("{1} ({2}). ST: {3}", ProcessInstanceId, TokenId, PlaceId, Status);
         }
     }
 }

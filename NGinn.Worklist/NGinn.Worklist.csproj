@@ -47,6 +47,7 @@
     <Compile Include="GroupHierarchy.cs" />
     <Compile Include="Task.cs" />
     <EmbeddedResource Include="_DBSchema.bin" />
+    <Compile Include="WorklistService.cs" />
     <Compile Include="_Stubs.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +55,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NGinn.Worklist.soodaproject" />
+    <None Include="SoodaSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">
+      <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
+      <Name>NGinn.Engine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

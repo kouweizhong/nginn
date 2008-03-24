@@ -74,6 +74,12 @@ namespace NGinn.Engine.Dao
         {
             ProcessDefinition pd = new ProcessDefinition();
             pd.LoadXml(pdXml);
+            List<ValidationMessage> msgs = new List<ValidationMessage>();
+            pd.Validate(msgs);
+            foreach (ValidationMessage vm in msgs)
+            {
+                if (vm.IsError) throw new Exception("Process definition invalid: " + vm.Message);
+            }
             using (SoodaTransaction st = new SoodaTransaction())
             {
                 ProcessDefinitionDb t = FindProcessDefinitionInternal(pd.Name, pd.Version);
@@ -91,6 +97,12 @@ namespace NGinn.Engine.Dao
         {
             ProcessDefinition pd = new ProcessDefinition();
             pd.LoadXml(definitionXml);
+            List<ValidationMessage> msgs = new List<ValidationMessage>();
+            pd.Validate(msgs);
+            foreach (ValidationMessage vm in msgs)
+            {
+                if (vm.IsError) throw new Exception("Process definition invalid: " + vm.Message);
+            }
             lock (this)
             {
                 using (SoodaTransaction st = new SoodaTransaction())

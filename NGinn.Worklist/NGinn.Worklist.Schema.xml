@@ -2,9 +2,9 @@
 <schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.sooda.org/schemas/SoodaSchema.xsd">
 
-    <datasource name="default" type="Sooda.Sql.SqlDataSource" />
+    <datasource name="nginn.worklist" type="Sooda.Sql.SqlDataSource" />
 
-	<class name="User">
+	<class name="User" datasource="nginn.worklist">
 		<table name="User">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="UserId" dbcolumn="user_id" type="String" size="30" nullable="false" />
@@ -14,7 +14,7 @@
 		</table>
 	</class>
 	
-	<class name="Group">
+	<class name="Group" datasource="nginn.worklist">
 		<table name="Group">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="Name" dbcolumn="name" type="String" size="50" nullable="false" />
@@ -25,14 +25,14 @@
 		</table>
 	</class>
 	
-	<class name="GroupHierarchy">
+	<class name="GroupHierarchy" datasource="nginn.worklist">
 		<table name="GroupHierarchy">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="Name" dbcolumn="name" type="String" size="50" nullable="false" />
 		</table>
 	</class>
 	
-	<class name="Task">
+	<class name="Task" datasource="nginn.worklist">
 		<table name="Task">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="Title" dbcolumn="title" type="String" size="100" nullable="false" />

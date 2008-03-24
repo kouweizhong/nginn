@@ -36,7 +36,20 @@ namespace NGinn.Lib.Schema
         public string DefaultValueExpr;
     }
 
-    
+
+    public class ValidationMessage
+    {
+        public bool IsError = false;
+        public string NodeId;
+        public string Message;
+
+        public ValidationMessage(bool isError, string nodeId, string msg)
+        {
+            IsError = isError;
+            Message = msg;
+            NodeId = nodeId;
+        }
+    }
 
     [Serializable]
     public class ProcessDefinition
@@ -71,6 +84,10 @@ namespace NGinn.Lib.Schema
             get { return _places.Values; }
         }
 
+        public ICollection<Task> Tasks
+        {
+            get { return _tasks.Values; }
+        }
 
         public Place GetPlace(string id)
         {
@@ -117,7 +134,9 @@ namespace NGinn.Lib.Schema
 
         public void AddTask(Task t)
         {
-            t.Validate();
+            IList<ValidationMessage> msgs;
+            bool b = t.Validate(out msgs);
+            if (!b) throw new Exception(msgs[0].Message);
             if (t.FlowsOut.Count > 0) throw new Exception("Task cannot contain flows when adding to process definition");
             if (t.FlowsIn.Count > 0) throw new Exception("Task cannot contain flows when adding to process definition");
             NetNode nn = GetNode(t.Id);
@@ -288,6 +307,78 @@ namespace NGinn.Lib.Schema
         public string ToXml()
         {
             return null;
+        }
+
+        public bool Validate(IList<ValidationMessage> msgs)
+        {
+            if (msgs == null) msgs = new List<ValidationMessage>();
+            //check start and finish places
+            if (_start == null)
+            {
+                msgs.Add(new ValidationMessage(true, null, "Missing start place"));
+                return false;
+            }
+            if (_finish == null)
+            {
+                msgs.Add(new ValidationMessage(true, null, "Missing end place"));
+                return false;
+            }
+            //check for places without input or output
+            foreach(Place pl in Places)
+            {
+                if (pl.NodesIn.Count == 0 && pl != _start)
+                    msgs.Add(new ValidationMessage(false, pl.Id, string.Format("Place {0} has no input flows", pl.Id)));
+                if (pl.NodesOut.Count == 0 && pl != _finish)
+                    msgs.Add(new ValidationMessage(false, pl.Id, string.Format("Place {0} has no output flows", pl.Id)));
+            }
+            //check for tasks without input or output
+            foreach (Task t in Tasks)
+            {
+                if (t.NodesIn.Count == 0)
+                    msgs.Add(new ValidationMessage(false, t.Id, string.Format("Task {0} has no input flows", t.Id)));
+                if (t.NodesOut.Count == 0)
+                    msgs.Add(new ValidationMessage(false, t.Id, string.Format("Task {0} has no output flows", t.Id)));
+            }
+            //check for deferred-choice places. Should not have task successors with multiple in-flows (synchronization)
+            foreach (Place p in Places)
+            {
+                if (p.FlowsOut.Count > 1)
+                {
+                    foreach (Task t in p.NodesOut)
+                    {
+                        if (t.NodesIn.Count > 1)
+                        {
+                            msgs.Add(new ValidationMessage(true, p.Id, string.Format("Deferred-choice place ({0}) has a successor task ({0}) with a join.", p.Id, t.Id)));
+                        }
+                    }
+                }
+            }
+            //check if finish node is reachable
+            Queue<string> nodeQ = new Queue<string>();
+            Dictionary<string, string> visited = new Dictionary<string, string>();
+            nodeQ.Enqueue(Start.Id);
+            bool foundFinish = false;
+            while (nodeQ.Count > 0)
+            {
+                string s = nodeQ.Dequeue();
+                visited[s] = s;
+                NetNode nn = GetNode(s);
+                if (nn == _finish)
+                {
+                    foundFinish = true;
+                    break;
+                }
+                foreach (NetNode nout in nn.NodesOut)
+                {
+                    if (!visited.ContainsKey(nout.Id))
+                    {
+                        nodeQ.Enqueue(nout.Id);
+                    }
+                }
+            }
+            if (!foundFinish)
+                msgs.Add(new ValidationMessage(true, null, "Process finish place is not reachable from start"));
+            return msgs.Count == 0;
         }
     }
 

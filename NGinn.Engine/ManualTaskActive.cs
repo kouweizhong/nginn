@@ -5,6 +5,7 @@ using NGinn.Lib.Schema;
 
 namespace NGinn.Engine
 {
+    [Serializable]
     class ManualTaskActive : ActiveTransition
     {
         public ManualTaskActive(ManualTask tsk, ProcessInstance pi)

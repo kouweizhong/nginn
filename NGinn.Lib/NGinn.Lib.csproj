@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schema\EmptyTask.cs" />
     <Compile Include="Schema\Flow.cs" />
     <Compile Include="Schema\ManualTask.cs" />
+    <Compile Include="Schema\MultiManualTask.cs" />
     <Compile Include="Schema\NotificationTask.cs" />
     <Compile Include="Schema\Place.cs" />
     <Compile Include="Schema\ProcessDefinition.cs" />

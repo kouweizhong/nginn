@@ -19,11 +19,15 @@ namespace NGinn.Engine
     [Serializable]
     public abstract class ActiveTransition
     {
+        /// <summary>Process instance Id</summary>
         public string ProcessInstanceId;
+        /// <summary>Correlation id. Warning: it should be unique in scope of a single process. 
+        /// CorrelationId should be present after task has been initiated.</summary>
+        public string CorrelationId;
+        /// <summary>Id of task in a process</summary>
         public string TaskId;
         public IList<string> Tokens;
         public TransitionStatus Status;
-        public string CorrelationId;
         [NonSerialized]
         protected ProcessInstance _processInstance;
 
@@ -57,12 +61,47 @@ namespace NGinn.Engine
             _processInstance = null;
         }
 
+        protected Task ProcessTask
+        {
+            get { return _processInstance.Definition.GetTask(TaskId); }
+        }
+
+        public bool CanInitiateTask()
+        {
+            Dictionary<string, Token> toks = new Dictionary<string, Token>();
+            foreach (string tid in Tokens)
+            {
+                
+            }
+            Task t = ProcessTask;
+            if (t.JoinType == JoinType.AND)
+            {
+                foreach (Place pl in t.NodesIn)
+                {
+                    
+                }
+            }
+            else if (t.JoinType == JoinType.XOR)
+            {
+            }
+            else if (t.JoinType == JoinType.OR)
+            {
+            }
+            return false;
+            
+        }
+
         /// <summary>
         /// Initiate task (start the transition).
         /// If the transition is immediate, this operation will execute the task.
         /// If the transition is not immediate, this will initiate the transition.
+        /// Subclasses should override this function, but should always call base.InitiateTask()
         /// </summary>
-        public abstract void InitiateTask();
+        public virtual void InitiateTask()
+        {
+            if (this.Tokens.Count == 0) throw new Exception("No input tokens");
+
+        }
         
     }
 }

@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveTransition.cs" />
+    <Compile Include="ActiveTransitionFactory.cs" />
     <Compile Include="ManualTaskActive.cs" />
+    <Compile Include="NotificationTaskActive.cs" />
     <Compile Include="ProcessInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="Services\Dao\INGDataStore.cs" />
     <Compile Include="Runtime\NGEnvironment.cs" />
     <Compile Include="Services\INGEnvironment.cs" />
+    <Compile Include="Services\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Services\IProcessDefinitionRepository.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />

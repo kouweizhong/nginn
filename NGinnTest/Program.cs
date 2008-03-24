@@ -21,8 +21,8 @@ namespace NGinnTest
             try
             {
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
-                TestKickProcess();
-                //TestStartProcess();
+                //TestKickProcess();
+                TestStartProcess();
             }
             catch (Exception ex)
             {
