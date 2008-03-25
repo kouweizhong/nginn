@@ -78,6 +78,7 @@
       <xs:enumeration value="CallWSTask" />
       <xs:enumeration value="ExternalTask" />
       <xs:enumeration value="NotificationTask" />
+      <xs:enumeration value="EmptyTask" />
     </xs:restriction>
   </xs:simpleType>
   

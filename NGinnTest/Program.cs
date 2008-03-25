@@ -21,8 +21,9 @@ namespace NGinnTest
             try
             {
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
-                //TestKickProcess();
-                TestStartProcess();
+                //TestDefinitionRepository();
+                TestKickProcess();
+                //TestStartProcess();
             }
             catch (Exception ex)
             {
@@ -32,7 +33,7 @@ namespace NGinnTest
 
         static void TestDefinitionRepository()
         {
-            string pdName = "ProcessExample.xml";
+            string pdName = "TestProcess1.xml";
             ProcessDefinition pd = new ProcessDefinition();
             log.Info("Loading process definition: {0}", pdName);
             pd.LoadXmlFile(pdName);
@@ -50,7 +51,7 @@ namespace NGinnTest
         {
             INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)_ctx.GetObject("ProcessDefinitionRepository");
-            string id = pdr.GetProcessDefinitionId("TestProcess1", 1);
+            string id = pdr.GetProcessDefinitionId("Test_Process_1", 2);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
             string instId = env.StartProcessInstance(id, vars);

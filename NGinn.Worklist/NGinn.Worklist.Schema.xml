@@ -3,7 +3,7 @@
     xmlns="http://www.sooda.org/schemas/SoodaSchema.xsd">
 
     <datasource name="nginn.worklist" type="Sooda.Sql.SqlDataSource" />
-
+  <datasource name="default" type="Sooda.Sql.SqlDataSourceTx" />
 	<class name="User" datasource="nginn.worklist">
 		<table name="User">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />

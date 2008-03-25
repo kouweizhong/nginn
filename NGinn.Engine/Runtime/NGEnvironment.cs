@@ -9,7 +9,7 @@ using NLog;
 
 namespace NGinn.Engine.Runtime
 {
-    public class NGEnvironment : INGEnvironment, INGEnvironmentProcessCommunication
+    public class NGEnvironment : INGEnvironment, INGEnvironmentProcessCommunication, INGEnvironmentContext
     {
         private Spring.Context.IApplicationContext _appCtx;
         private static Logger log = LogManager.GetCurrentClassLogger();
@@ -107,7 +107,9 @@ namespace NGinn.Engine.Runtime
             using (INGDataSession ds = DataStore.OpenSession())
             {
                 ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
-                
+                pi.Environment = this;
+                pi.Activate();
+
                 foreach (VariableDef vd in pd.InputVariables)
                 {
                     object val = null;
@@ -134,6 +136,7 @@ namespace NGinn.Engine.Runtime
                 
                 Token tok = pi.CreateNewStartToken();
                 pi.AddToken(tok);
+                pi.Passivate();
                 InstanceRepository.UpdateProcessInstance(pi, ds);
                 ds.Commit();
                 return pi.InstanceId;
@@ -169,6 +172,8 @@ namespace NGinn.Engine.Runtime
                 using (INGDataSession ds = DataStore.OpenSession())
                 {
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
                     Token tok = pi.SelectReadyTokenForProcessing();
                     if (tok == null)
                     {
@@ -176,6 +181,7 @@ namespace NGinn.Engine.Runtime
                         return;
                     }
                     KickToken(tok, pi, ds);
+                    pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
                     ds.Commit();
                 }

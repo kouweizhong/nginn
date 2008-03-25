@@ -19,9 +19,12 @@ namespace NGinn.Engine
             {
                 at = new SubprocessTaskActive((SubprocessTask)tsk, pi);
             }
+            else if (tsk is EmptyTask)
+            {
+                at = new EmptyTaskActive((EmptyTask)tsk, pi);
+            }
             else throw new Exception();
             at.ProcessInstanceId = pi.InstanceId;
-            at.Activate();
             return at;
         }
     }

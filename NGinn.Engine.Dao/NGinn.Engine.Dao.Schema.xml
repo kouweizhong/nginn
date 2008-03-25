@@ -44,6 +44,19 @@
 			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
 		</table>
 	</class>
-	
-	
+
+  <class name="ActiveTransition">
+    <table name="ActiveTransition">
+      <field name="Id" dbcolumn="id" type="String" size="100" primaryKey="true" nullable="false"/>
+      <field name="ProcessInstance" dbcolumn="process_instance" type="String" size="50" nullable="false" />
+      <field name="TaskId" dbcolumn="task" type="String" size="50" nullable="false" />
+      <field name="Status" dbcolumn="status" type="Integer" nullable="false" />
+      <field name="DeferredChoiceId" dbcolumn="deferred_id" type="String" size="100" nullable="true" />
+      <field name="EnabledDate" dbcolumn="enabled_date" type="DateTime" nullable="true" />
+      <field name="CompletedDate" dbcolumn="completed_date" type="DateTime" nullable="true" />
+      <field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
+      <field name="TransitionData" dbcolumn="transition_data" type="Blob" nullable="false" />
+    </table>
+  </class>
+  
 </schema>

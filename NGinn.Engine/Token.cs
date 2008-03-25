@@ -67,10 +67,10 @@ namespace NGinn.Engine
         /// <summary>true if token data has been modified</summary>
         public bool Dirty;
         /// <summary>
-        /// List of transitions that have been initiated by the token. If one of these transitions completes
+        /// List of transition (correlation ids) that have been initiated by the token. If one of these transitions completes
         /// it will consume the token and cancel all the other transitions
         /// </summary>
-        public IList<ActiveTransition> ActiveTransitions = new List<ActiveTransition>();
+        public IList<string> ActiveTransitions = new List<string>();
 
         private IDictionary<string, object> _tokenVariables = new Dictionary<string, object>();
 

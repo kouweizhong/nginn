@@ -21,7 +21,6 @@ namespace NGinn.Engine.Dao
             pi.PersistedVersion = dbl[0].RecordVersion;
             IList<Token> tokens = GetProcessActiveTokens(instanceId, ds);
             pi.InitTokenInformation(tokens);
-            pi.Activate();
             return pi;
         }
 
@@ -70,7 +69,6 @@ namespace NGinn.Engine.Dao
             pi.InstanceId = pdb.InstanceId;
             pi.ProcessDefinitionId = definitionId;
             pi.InitTokenInformation(new List<Token>());
-            pi.Activate();
             return pi;
         }
 

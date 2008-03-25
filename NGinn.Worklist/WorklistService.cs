@@ -20,12 +20,14 @@ namespace NGinn.Worklist
         {
             using (SoodaTransaction st = StartTransaction())
             {
-                Task tsk = new Task();
-                if (wi.AssigneeGroupId != null) tsk.AssigneeGroup = Group.GetRef(Convert.ToInt32(wi.AssigneeGroupId));
-                if (wi.AssigneeId != null) tsk.Assignee = User.GetRef(Convert.ToInt32(wi.AssigneeId));
+                Task tsk = new Task(st);
+                if (wi.AssigneeGroupId != null) tsk.AssigneeGroup = Group.GetRef(st, Convert.ToInt32(wi.AssigneeGroupId));
+                if (wi.AssigneeId != null) tsk.Assignee = User.GetRef(st, Convert.ToInt32(wi.AssigneeId));
                 tsk.ProcessInstance = wi.ProcessInstanceId;
                 tsk.Title = wi.Title;
-                st.Commit();
+                tsk.TaskId = wi.TaskId;
+                tsk.CreatedDate = DateTime.Now;
+                st.Rollback();
                 return tsk.Id.ToString();
             }
         }

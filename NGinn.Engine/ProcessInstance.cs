@@ -5,6 +5,7 @@ using NGinn.Lib.Schema;
 using NLog;
 using Spring.Context;
 using NGinn.Engine.Services;
+using System.Diagnostics;
 
 namespace NGinn.Engine
 {
@@ -22,8 +23,6 @@ namespace NGinn.Engine
         private string _definitionId;
         [NonSerialized]
         private ProcessDefinition _definition;
-        [NonSerialized]
-        private IApplicationContext _ctx;
         private IDictionary<string, object> _processVariables = new Dictionary<string, object>();
         [NonSerialized]
         private IDictionary<string, IList<Token>> _tokensInPlaces = new Dictionary<string, IList<Token>>();
@@ -33,13 +32,18 @@ namespace NGinn.Engine
         [NonSerialized]
         private bool _activated = false;
         [NonSerialized]
-        private INGEnvironment _environment;
+        private INGEnvironmentContext _environment;
         [NonSerialized]
-        private ActiveTransitionFactory _transitionFactory = new ActiveTransitionFactory();
-
-        private IList<ActiveTransition> _activeTransitions = new List<ActiveTransition>();
-        private int _tokenNumber = 0;
+        private ActiveTransitionFactory _transitionFactory;
+        /// <summary>map: correlation id->transition</summary>
+        private IDictionary<string, ActiveTransition> _activeTransitions = new Dictionary<string, ActiveTransition>();
+        /// <summary>map: task id -> list of active instances of the task</summary>
+        [NonSerialized]
+        private IDictionary<string, IList<ActiveTransition>> _activeTaskTransitions = new Dictionary<string, IList<ActiveTransition>>();
         
+        private int _tokenNumber = 0;
+        private int _transitionNumber = 0;
+
         public string ProcessDefinitionId
         {
             get { return _definitionId; }
@@ -85,7 +89,7 @@ namespace NGinn.Engine
         /// Environment that hosts the process instance. Warning: this property should be set before Activating
         /// process instance
         /// </summary>
-        public INGEnvironment Environment
+        public INGEnvironmentContext Environment
         {
             get { return _environment; }
             set { _environment = value; }
@@ -128,6 +132,24 @@ namespace NGinn.Engine
             _tokensInPlaces = newTokens;
         }
 
+        private void BuildActiveTransitionsInTasks()
+        {
+            Dictionary<string, IList<ActiveTransition>> newTransitions = new Dictionary<string, IList<ActiveTransition>>();
+            foreach (ActiveTransition at in this._activeTransitions.Values)
+            {
+                IList<ActiveTransition> ats;
+                if (!newTransitions.TryGetValue(at.TaskId, out ats))
+                {
+                    ats = new List<ActiveTransition>();
+                    newTransitions[at.TaskId] = ats;
+                }
+                ats.Add(at);
+                
+            }
+            _activeTaskTransitions = newTransitions;
+        }
+        
+
         /// <summary>
         /// Get all tokens in specified place
         /// </summary>
@@ -160,6 +182,22 @@ namespace NGinn.Engine
             {
                 n = _tokenNumber;
                 _tokenNumber++;
+            }
+            return string.Format("{0}.{1}", _instId, n);
+        }
+
+        /// <summary>
+        /// Allocate next active transition Id.
+        /// </summary>
+        /// <returns></returns>
+        private string GetNextTransitionId()
+        {
+            
+            int n;
+            lock(this)
+            {
+                n = _transitionNumber;
+                _transitionNumber++;
             }
             return string.Format("{0}.{1}", _instId, n);
         }
@@ -249,8 +287,8 @@ namespace NGinn.Engine
         {
             log.Info("Passivating");
             _tokensInPlaces = null;
-            _ctx = null;
             _definition = null;
+            _environment = null;
             _activated = false;
         }
         
@@ -263,9 +301,10 @@ namespace NGinn.Engine
             if (_activated) throw new Exception("Process instance already activated");
             if (Environment == null) throw new Exception("Environment not initialized. Please set the 'Environment' property");
             log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
-            IProcessDefinitionRepository rep = (IProcessDefinitionRepository) _ctx.GetObject("ProcessDefinitionRepository");
-            _definition = rep.GetProcessDefinition(ProcessDefinitionId);
+            _transitionFactory = new ActiveTransitionFactory();
+            _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
             BuildTokensInPlaces();
+            BuildActiveTransitionsInTasks();
             _activated = true;
         }
 
@@ -290,8 +329,21 @@ namespace NGinn.Engine
         }
 
         /// <summary>
+        /// Return a list of active transitions for given task
+        /// </summary>
+        /// <param name="placeId"></param>
+        /// <returns></returns>
+        private IList<ActiveTransition> GetActiveInstancesOfTask(string taskId)
+        {
+            IList<ActiveTransition> lst;
+            if (_activeTaskTransitions.TryGetValue(taskId, out lst))
+                return lst;
+            return new List<ActiveTransition>();
+        }
+        
+
+        /// <summary>
         /// Kick a 'READY' token. It means-> initiate all tasks following current place - only if the tasks can be initiated.
-        /// 
         /// </summary>
         /// <param name="tok"></param>
         public void KickReadyToken(Token tok)
@@ -302,55 +354,117 @@ namespace NGinn.Engine
             if (tok.Status != TokenStatus.READY) throw new Exception("invalid status");
             
             Place pl = Definition.GetPlace(tok.PlaceId);
-            List<ActiveTransition> ats = new List<ActiveTransition>();
+            IList<Token> toks = GetActiveTokensInPlace(tok.PlaceId);
+            //Strategy 1: if there are enabled transition (that is, tokens in WAITING_TASK state), 
+            //do nothing and put the token in WAITING state. So actually we will be waiting for the transition
+            //to fire before enabling other transitions
+            foreach (Token tok1 in toks)
+            {
+                if (tok1.Status == TokenStatus.WAITING_TASK)
+                {
+                    log.Info("There are active transitions in this place. Putting token in WAITING state");
+                    tok.Status = TokenStatus.WAITING;
+                    return;
+                }
+            }
+            //Strategy 2: it's up to system to decide which tokens are selected when the transition fires.
+            //so any combination of tokens that enables the transition is good.
+            //However, each enabled transition results in a task being created, and we don't want to create
+            //a task for each combination of tokens for the transition. Therefore we will select only these
+            //tokens that were not used for enabling the same transition
+            //With this algorithm, we create separate groups of tokens that enable particular transition,
+            //and we enable the transition as many times as there are unallocated tokens left.
+
+            //procedura enablowania tranzycji
+            //jesli mamy 1 token, to nie moze byc enabled transition
+            //jesli mamy > 1 token, to niektore moga byc enabled
+            //jesli mamy 1 wyjscie, to nie ma problemu
+            //jesli mamy > 1 wyjscie, to trzeba to jakos podzielic
+            //najwazniejsze ze tranzycja nie rozroznia tokenow!!! (nie ma input condition) - sztuka to sztuka
+            //jak dojdzie nowy token, to na pewno nie odpala tranzycje inne niz te co juz sa
+            //tak, o ile mamy symetrie
+            //Na razie zrobmy tak, ze o ile transition jest enabled to nie mozna juz enablowac innych dopoki poprzednia
+            //nie odpali
+            //wersja pe³na
+            //wchodzi token. Dla kazdego wychodzacego tasku: 
+            //  nEn = ile task ma enabled tranzycji. 
+            //  sprawdz, czy task mozna enablowac, ale przy zalozeniu ze nie bierzemy tokenow z tranzycji dla tego tasku 
+            //  ktore juz sa enablowane
+            IList<ActiveTransition> newAts = new List<ActiveTransition>();
+
             foreach (Task tsk in pl.NodesOut)
             {
-                //ActiveTransition at = CreateActiveTransitionForTask(tsk);
-                //now let's select input tokens for the transition
+                //1. calculating set of tokens that were used for enabling tsk 
+                //   so we don't use them for enabling next instance of it
+                IDictionary<string, string> tokDict = new Dictionary<string, string>();
+                IList<ActiveTransition> taskTransitions = GetActiveInstancesOfTask(tsk.Id);
+                foreach (ActiveTransition at in taskTransitions)
+                {
+                    foreach (string tid in at.Tokens)
+                    {
+                        if (!tokDict.ContainsKey(tid)) tokDict[tid] = tid;
+                    }
+                }
+
+                IList<Token> enablingTokens = null;
+                //ok, now let's check if transition can be enabled without using tokens from the tokDict
+                bool b = CanEnableTransition(tsk, tokDict, out enablingTokens);
                 
-                bool b = CanInitiateTransition(tsk);
                 log.Info("Checking if transition {0} can be initiated: {1}", tsk.Id, b);
+                
                 if (b)
                 {
                     ActiveTransition at = CreateActiveTransitionForTask(tsk);
-                    at.ProcessInstanceId = this.InstanceId;
-                    at.Status = TransitionStatus.Initiated;
-                    
+                    foreach (Token t in enablingTokens)
+                    {
+                        at.Tokens.Add(t.TokenId);
+                    }
+
                     if (tsk.IsImmediate)
                     {
                         log.Info("Task {0} is immediate. Will start it now.", tsk.Id);
-                        ats.Clear();
-                        ats.Add(at);
+                        newAts.Clear();
+                        newAts.Add(at);
                         break; //leave the loop
                     }
                     else
                     {
-                        ats.Add(at);
+                        newAts.Add(at);
                     }
                 }
             }
-            if (ats.Count == 0)
+
+            if (newAts.Count == 0)
             {
-                log.Info("No transitions can be initiated. Marking token as WAITING");
+                log.Info("No new transitions can be initiated. Marking token {0} as WAITING", tok.ToString());
                 tok.Status = TokenStatus.WAITING;
                 return;
             }
 
-            foreach (ActiveTransition at in ats)
-            {
-                InitiateTransition(at);
-                log.Info("Initiated transition {0}->{1}", tok.PlaceId, at.TaskId);
-            }
-
-
-            foreach (ActiveTransition at in ats)
+            foreach (ActiveTransition at in newAts)
             {
                 foreach (string tokId in at.Tokens)
                 {
-                    Token tok1 = GetToken(tokId);
-                    tok1.ActiveTransitions.Add(at);
-                    tok1.Status = TokenStatus.WAITING_TASK;
-                    log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
+                    Token t = GetToken(tokId);
+                }
+
+                if (at.IsImmediate)
+                {
+                    AddActiveTransition(at);
+                    ExecuteTransition(at);
+                    throw new Exception("not implemented yet");
+                }
+                else
+                {
+                    InitiateTransition(at);
+                    log.Info("Initiated transition {0}: {1}->{2}", at.CorrelationId, tok.PlaceId, at.TaskId);
+                    AddActiveTransition(at);
+                    foreach (string tokId in at.Tokens)
+                    {
+                        Token tok1 = GetToken(tokId);
+                        tok1.Status = TokenStatus.WAITING_TASK;
+                        log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
+                    }
                 }
             }
         }
@@ -361,15 +475,70 @@ namespace NGinn.Engine
         /// </summary>
         /// <param name="tsk"></param>
         /// <returns></returns>
-        private bool CanInitiateTransition(Task tsk)
+        private bool CanEnableTransition(Task tsk, IDictionary<string, string> ignoreTokens, out IList<Token> enablingTokens)
         {
-            if (tsk.JoinType != JoinType.AND) throw new Exception("JOin type not suported");
-            foreach (Place pl in tsk.NodesIn)
+            enablingTokens = new List<Token>();
+            if (tsk.JoinType == JoinType.AND)
             {
-                if (GetActiveTokensInPlace(pl.Id).Count == 0)
-                    return false;
+                foreach (Place pl in tsk.NodesIn)
+                {
+                    bool foundTokInPlace = false;
+                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    foreach (Token t in toksInPlace)
+                    {
+                        if (!ignoreTokens.ContainsKey(t.TokenId))
+                        {
+                            foundTokInPlace = true;
+                            enablingTokens.Add(t);
+                            break;
+                        }
+                    }
+                    if (!foundTokInPlace)
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
-            return true;
+            else if (tsk.JoinType == JoinType.XOR)
+            {
+                foreach (Place pl in tsk.NodesIn)
+                {
+                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    foreach (Token t in toksInPlace)
+                    {
+                        if (!ignoreTokens.ContainsKey(t.TokenId))
+                        {
+                            enablingTokens.Add(t);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            else if (tsk.JoinType == JoinType.OR)
+            {
+                foreach (Place pl in tsk.NodesIn)
+                {
+                    bool foundTokInPlace = false;
+                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    foreach (Token t in toksInPlace)
+                    {
+                        if (!ignoreTokens.ContainsKey(t.TokenId))
+                        {
+                            foundTokInPlace = true;
+                            enablingTokens.Add(t);
+                            break;
+                        }
+                    }
+                    if (!foundTokInPlace)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else throw new Exception();
         }
 
         /// <summary>
@@ -403,31 +572,16 @@ namespace NGinn.Engine
         private void InitiateTransition(ActiveTransition at)
         {
             log.Info("Initiating transition {0}", at.TaskId);
-            Task tsk = Definition.GetTask(at.TaskId);
-            at.Tokens = new List<string>();
-            if (tsk.JoinType == JoinType.AND)
-            {
-                foreach (Place p in tsk.NodesIn)
-                {
-                    IList<Token> toks = GetActiveTokensInPlace(p.Id);
-                    if (toks.Count == 0) throw new Exception("Cannot initiate transition - no required token");
-                    at.Tokens.Add(toks[0].TokenId);
-                }
-            }
-            else if (tsk.JoinType == JoinType.XOR)
-            {
-                foreach (Place p in tsk.NodesIn)
-                {
-                    IList<Token> toks = GetActiveTokensInPlace(p.Id);
-                    if (toks.Count > 0)
-                    {
-                        at.Tokens.Add(toks[0].TokenId);
-                        break;
-                    }
-                }
-            }
-            else throw new Exception("Only AND and XOR join supported");
-            //ok, tokens found. So now - please, start the transition
+            at.InitiateTask();
+        }
+
+        /// <summary>
+        /// Execute immediate transition
+        /// </summary>
+        /// <param name="at"></param>
+        private void ExecuteTransition(ActiveTransition at)
+        {
+            Debug.Assert(at.IsImmediate);
             at.InitiateTask();
         }
 
@@ -440,7 +594,62 @@ namespace NGinn.Engine
 
         private ActiveTransition CreateActiveTransitionForTask(Task tsk)
         {
-            return _transitionFactory.CreateTransition(this, tsk);
+            ActiveTransition at = _transitionFactory.CreateTransition(this, tsk);
+            at.CorrelationId = GetNextTransitionId();
+            at.Activate();
+            return at;
+        }
+
+        /// <summary>
+        /// Add initialized active transition to the collection of active transitions
+        /// </summary>
+        /// <param name="at"></param>
+        private void AddActiveTransition(ActiveTransition at)
+        {
+            if (at.CorrelationId == null) throw new Exception("Correlation id required");
+            if (at.Tokens.Count == 0) throw new Exception("Cannot add a transition without tokens");
+            Debug.Assert(InstanceId == at.ProcessInstanceId);
+            Debug.Assert(Definition.GetTask(at.TaskId) != null);
+            Task t = Definition.GetTask(at.TaskId);
+            _activeTransitions[at.CorrelationId] = at;
+            IList<ActiveTransition> ats;
+            if (!_activeTaskTransitions.TryGetValue(at.TaskId, out ats))
+            {
+                ats = new List<ActiveTransition>();
+                _activeTaskTransitions[at.TaskId] = ats;
+            }
+            ats.Add(at);
+            foreach (string tokid in at.Tokens)
+            {
+                Token tok = GetToken(tokid);
+                tok.ActiveTransitions.Add(at.CorrelationId);
+            }
+        }
+
+        /// <summary>
+        /// Transition completed - consume input tokens, produce output tokens
+        /// and cancel all transitions that share the same tokens.
+        /// Also, if some tokens were waiting, put them in 'READY' state.
+        /// Wow, looks quite complex.
+        /// </summary>
+        /// <param name="at"></param>
+        private void TransitionCompleted(string correlationId)
+        {
+            ActiveTransition at = _activeTransitions[correlationId];
+            log.Info("Transition completed: {0}", at.CorrelationId);
+            Task tsk = Definition.GetTask(at.TaskId);
+            //1 find all 'shared' transitions
+            foreach (string tid in at.Tokens)
+            {
+                Token tok = GetToken(tid);
+                log.Info("Checking shared transitions for token {0}", tok.ToString());
+            }         
+
+        }
+
+       
+        private void CancelTransition(ActiveTransition at)
+        {
         }
     }
 }

@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="ActiveTransition.cs" />
     <Compile Include="ActiveTransitionFactory.cs" />
+    <Compile Include="EmptyTaskActive.cs" />
+    <Compile Include="INGEnvironmentContext.cs" />
     <Compile Include="ManualTaskActive.cs" />
     <Compile Include="NotificationTaskActive.cs" />
     <Compile Include="ProcessInstance.cs" />

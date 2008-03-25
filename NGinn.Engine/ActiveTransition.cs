@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
+using NLog;
 
 namespace NGinn.Engine
 {
@@ -23,13 +24,17 @@ namespace NGinn.Engine
         public string ProcessInstanceId;
         /// <summary>Correlation id. Warning: it should be unique in scope of a single process. 
         /// CorrelationId should be present after task has been initiated.</summary>
-        public string CorrelationId;
+        private string _correlationId;
         /// <summary>Id of task in a process</summary>
         public string TaskId;
-        public IList<string> Tokens;
+        public IList<string> Tokens = new List<string>();
         public TransitionStatus Status;
         [NonSerialized]
         protected ProcessInstance _processInstance;
+        [NonSerialized]
+        protected Logger log = LogManager.GetCurrentClassLogger();
+        [NonSerialized]
+        private bool _activated = false;
 
         public ActiveTransition(Task tsk, ProcessInstance pi)
         {
@@ -45,12 +50,19 @@ namespace NGinn.Engine
             this._processInstance = pi;
         }
 
+        public string CorrelationId
+        {
+            get { return _correlationId; }
+            set { if (_activated) throw new Exception("Cannot modify after activation"); _correlationId = value; }
+        }
+
         /// <summary>
         /// Called after deserialization
         /// </summary>
         public virtual void Activate()
         {
             if (_processInstance == null) throw new Exception("Process instance not set (call SetProcessInstance before activating)");
+            _activated = true;
         }
 
         /// <summary>
@@ -59,6 +71,7 @@ namespace NGinn.Engine
         public virtual void Passivate()
         {
             _processInstance = null;
+            _activated = false;
         }
 
         protected Task ProcessTask
@@ -102,6 +115,13 @@ namespace NGinn.Engine
             if (this.Tokens.Count == 0) throw new Exception("No input tokens");
 
         }
-        
+
+        public virtual bool IsImmediate
+        {
+            get
+            {
+                return this.ProcessTask.IsImmediate;
+            }
+        }
     }
 }

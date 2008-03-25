@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -53,6 +53,7 @@
     <EmbeddedResource Include="_DBSchema.bin" />
     <Compile Include="_Stubs.cs" />
     <Compile Include="ProcessStatus.cs" />
+    <Compile Include="ActiveTransition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">

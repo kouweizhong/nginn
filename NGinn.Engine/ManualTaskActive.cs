@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
+using NGinn.Engine.Services;
+using NLog;
 
 namespace NGinn.Engine
 {
@@ -29,7 +31,15 @@ namespace NGinn.Engine
         /// </summary>
         public override void InitiateTask()
         {
+            
             this.CorrelationId = this.ProcessInstanceId;
+            WorkItem wi = new WorkItem();
+            wi.ProcessInstanceId = this.ProcessInstanceId;
+            wi.TaskId = this.TaskId;
+            wi.CorrelationId = this.CorrelationId;
+            wi.Title = this.ProcessTask.Id;
+            string wid = this._processInstance.Environment.WorklistService.CreateWorkItem(wi);
+            log.Info("Created work item: {0}", wid);
         }
     }
 }

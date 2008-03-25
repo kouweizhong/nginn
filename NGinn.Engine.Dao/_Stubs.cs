@@ -234,6 +234,60 @@ namespace NGinn.Engine.Dao {
       return new TokenDbList(base.GetSnapshot2());
     }
   }
+  public class ActiveTransitionList : Sooda.ObjectMapper.SoodaObjectCollectionWrapperGeneric<NGinn.Engine.Dao.ActiveTransition> {
+    public ActiveTransitionList() {
+    }
+    public ActiveTransitionList(ISoodaObjectList list) : 
+        base(list) {
+    }
+    public new ActiveTransition this[int pos] {
+      get {
+        return ((ActiveTransition)(base.GetItem(pos)));
+      }
+    }
+    public int Add(ActiveTransition obj) {
+      return base.Add2(obj);
+    }
+    public void Remove(ActiveTransition obj) {
+      base.Remove2(obj);
+    }
+    public bool Contains(ActiveTransition obj) {
+      return base.Contains2(obj);
+    }
+    public ActiveTransitionList Sort(IComparer comparer) {
+      return new ActiveTransitionList(base.Sort2(comparer));
+    }
+    public ActiveTransitionList Sort(string sortOrder) {
+      return new ActiveTransitionList(base.Sort2(sortOrder));
+    }
+    public ActiveTransitionList Sort(Sooda.QL.SoqlExpression sortExpression) {
+      return new ActiveTransitionList(base.Sort2(sortExpression));
+    }
+    public ActiveTransitionList Sort(Sooda.QL.SoqlExpression sortExpression, Sooda.SortOrder sortOrder) {
+      return new ActiveTransitionList(base.Sort2(sortExpression, sortOrder));
+    }
+    public ActiveTransitionList SelectFirst(int count) {
+      return new ActiveTransitionList(base.SelectFirst2(count));
+    }
+    public ActiveTransitionList SelectLast(int count) {
+      return new ActiveTransitionList(base.SelectLast2(count));
+    }
+    public ActiveTransitionList SelectRange(int _from, int _to) {
+      return new ActiveTransitionList(base.SelectRange2(_from, _to));
+    }
+    public ActiveTransitionList Filter(SoodaObjectFilter f) {
+      return new ActiveTransitionList(base.Filter2(f));
+    }
+    public ActiveTransitionList Filter(Sooda.QL.SoqlBooleanExpression sortExpression) {
+      return new ActiveTransitionList(base.Filter2(sortExpression));
+    }
+    public ActiveTransitionList Filter(SoodaWhereClause whereClause) {
+      return new ActiveTransitionList(base.Filter2(whereClause));
+    }
+    public ActiveTransitionList GetSnapshot() {
+      return new ActiveTransitionList(base.GetSnapshot2());
+    }
+  }
 }
 namespace NGinn.Engine.Dao.Stubs {
   using System;
@@ -1250,6 +1304,318 @@ namespace NGinn.Engine.Dao.Stubs {
       this.AfterFieldUpdate("RecordVersion", oldValue, newValue);
     }
   }
+  public class ActiveTransition_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
+    public string Id;
+    public string ProcessInstance;
+    public string TaskId;
+    public int Status;
+    public System.Data.SqlTypes.SqlString DeferredChoiceId;
+    public System.Data.SqlTypes.SqlDateTime EnabledDate;
+    public System.Data.SqlTypes.SqlDateTime CompletedDate;
+    public int RecordVersion;
+    public byte[] TransitionData;
+    public ActiveTransition_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
+        base(other) {
+    }
+    public ActiveTransition_Values(string[] fieldNames) : 
+        base(fieldNames) {
+    }
+    public override Sooda.SoodaObjectFieldValues Clone() {
+      return new ActiveTransition_Values(this);
+    }
+  }
+  public class ActiveTransition_Stub : SoodaObject {
+    public ActiveTransition_Stub(SoodaTransaction tran) : 
+        base(tran) {
+      this.InitNewObject();
+    }
+    public ActiveTransition_Stub(SoodaConstructor c) : 
+        base(c) {
+    }
+    [Sooda.SoodaFieldSizeAttribute(100)]
+    public string Id {
+      get {
+        return ((string)(this.GetPrimaryKeyValue()));
+      }
+      set {
+        this.SetPrimaryKeyValue(value);
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public string ProcessInstance {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).ProcessInstance;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ProcessInstance", 1, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ProcessInstance), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ProcessInstance));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public string TaskId {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).TaskId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskId", 2, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskId));
+      }
+    }
+    public int Status {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).Status;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "Status", 3, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_Status), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_Status));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(100)]
+    public System.Data.SqlTypes.SqlString DeferredChoiceId {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).DeferredChoiceId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "DeferredChoiceId", 4, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_DeferredChoiceId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_DeferredChoiceId));
+      }
+    }
+    public System.Data.SqlTypes.SqlDateTime EnabledDate {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).EnabledDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "EnabledDate", 5, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_EnabledDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_EnabledDate));
+      }
+    }
+    public System.Data.SqlTypes.SqlDateTime CompletedDate {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).CompletedDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CompletedDate", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CompletedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CompletedDate));
+      }
+    }
+    public int RecordVersion {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).RecordVersion;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "RecordVersion", 7, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_RecordVersion), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_RecordVersion));
+      }
+    }
+    public byte[] TransitionData {
+      get {
+        return this.GetActiveTransitionFieldValuesForRead(0).TransitionData;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TransitionData", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TransitionData), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TransitionData));
+      }
+    }
+    private ActiveTransition_Values GetActiveTransitionFieldValuesForRead(int requiredTable) {
+      return ((ActiveTransition_Values)(Sooda.ObjectMapper.SoodaObjectImpl.GetFieldValuesForRead(this, requiredTable)));
+    }
+    protected override SoodaObjectFieldValues InitFieldValues(int fieldCount, string[] fieldNames) {
+      return new ActiveTransition_Values(fieldNames);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public override Sooda.Schema.ClassInfo GetClassInfo() {
+      return ActiveTransition_Factory.TheClassInfo;
+    }
+    protected override Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return ActiveTransition_Factory.InternalGetFieldHandler(ordinal);
+    }
+    public static ActiveTransition LoadSingleObject(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((ActiveTransition)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(SoodaTransaction.ActiveTransaction, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ActiveTransition LoadSingleObject(Sooda.SoodaWhereClause @where) {
+      return ((ActiveTransition)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ActiveTransition LoadSingleObject(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((ActiveTransition)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(tran, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ActiveTransition LoadSingleObject(SoodaTransaction tran, Sooda.SoodaWhereClause @where) {
+      return ((ActiveTransition)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(tran, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ActiveTransitionList GetAllObjects() {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause("1=1"), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetAllObjects(SoodaTransaction transaction) {
+      return DoGetList(transaction, null, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(tran, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, topCount, options);
+    }
+    private static ActiveTransitionList DoGetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderByClause, int topCount, SoodaSnapshotOptions options) {
+      return new ActiveTransitionList(new Sooda.ObjectMapper.SoodaObjectListSnapshot(tran, whereClause, orderByClause, topCount, options, ActiveTransition_Factory.TheClassInfo));
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ActiveTransitionList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static ActiveTransition Load(string id) {
+      return Load(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static ActiveTransition Load(SoodaTransaction tran, string id) {
+      ActiveTransition retVal = ActiveTransition_Stub.GetRef(tran, id);
+      Sooda.ObjectMapper.SoodaObjectImpl.LoadAllData(retVal);
+      return retVal;
+    }
+    public static ActiveTransition GetRef(string id) {
+      return GetRef(SoodaTransaction.ActiveTransaction, id);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ActiveTransition TryGet(string id) {
+      return TryGet(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static ActiveTransition GetRef(SoodaTransaction tran, string id) {
+      return ((ActiveTransition)(Sooda.SoodaObject.GetRefHelper(tran, ActiveTransition_Factory.TheFactory, id)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ActiveTransition TryGet(SoodaTransaction tran, string id) {
+      return ((ActiveTransition)(tran.FindObjectWithKey("ActiveTransition", id, typeof(ActiveTransition))));
+    }
+    public static ActiveTransition GetRef(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((ActiveTransition)(Sooda.SoodaObject.GetRefHelper(tran, ActiveTransition_Factory.TheFactory, tuple)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ActiveTransition TryGet(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((ActiveTransition)(tran.FindObjectWithKey("ActiveTransition", tuple, typeof(ActiveTransition))));
+    }
+    protected virtual void BeforeFieldUpdate_ProcessInstance(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("ProcessInstance", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_ProcessInstance(object oldValue, object newValue) {
+      this.AfterFieldUpdate("ProcessInstance", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_TaskId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("TaskId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_TaskId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("TaskId", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_Status(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("Status", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_Status(object oldValue, object newValue) {
+      this.AfterFieldUpdate("Status", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_DeferredChoiceId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("DeferredChoiceId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_DeferredChoiceId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("DeferredChoiceId", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_EnabledDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("EnabledDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_EnabledDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("EnabledDate", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_CompletedDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("CompletedDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_CompletedDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("CompletedDate", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_RecordVersion(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("RecordVersion", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_RecordVersion(object oldValue, object newValue) {
+      this.AfterFieldUpdate("RecordVersion", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_TransitionData(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("TransitionData", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_TransitionData(object oldValue, object newValue) {
+      this.AfterFieldUpdate("TransitionData", oldValue, newValue);
+    }
+  }
   [SoodaObjectFactoryAttribute("ProcessDefinitionDb", typeof(ProcessDefinitionDb))]
   public class ProcessDefinitionDb_Factory : object, ISoodaObjectFactory {
     private static SoodaFieldHandler[] _fieldHandlers;
@@ -1492,6 +1858,72 @@ namespace NGinn.Engine.Dao.Stubs {
     }
     public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
       TokenDb retVal = new TokenDb(SoodaConstructor.Constructor);
+      retVal.InitRawObject(tran);
+      return retVal;
+    }
+  }
+  [SoodaObjectFactoryAttribute("ActiveTransition", typeof(ActiveTransition))]
+  public class ActiveTransition_Factory : object, ISoodaObjectFactory {
+    private static SoodaFieldHandler[] _fieldHandlers;
+    private static SoodaFieldHandler _primaryKeyFieldHandler = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+    private static ActiveTransition_Factory _theFactory = new ActiveTransition_Factory();
+    private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Engine.Dao._DatabaseSchema.GetSchema().FindClassByName("ActiveTransition");
+    private static Type _theType = typeof(ActiveTransition);
+    static ActiveTransition_Factory() {
+      _fieldHandlers = new SoodaFieldHandler[9];
+      _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[3] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[4] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[7] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[8] = new Sooda.ObjectMapper.FieldHandlers.BlobFieldHandler(false);
+    }
+    public ActiveTransition_Factory() {
+    }
+    public static ActiveTransition_Factory TheFactory {
+      get {
+        return _theFactory;
+      }
+    }
+    public virtual Type TheType {
+      get {
+        return _theType;
+      }
+    }
+    public static Sooda.Schema.ClassInfo TheClassInfo {
+      get {
+        return _theClassInfo;
+      }
+    }
+    public virtual SoodaObject GetRef(SoodaTransaction tran, object keyValue) {
+      return ActiveTransition_Stub.GetRef(tran, ((string)(keyValue)));
+    }
+    public virtual SoodaObject TryGet(SoodaTransaction tran, object keyValue) {
+      return ActiveTransition_Stub.TryGet(tran, ((string)(keyValue)));
+    }
+    public virtual System.Collections.IList GetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return ActiveTransition_Stub.GetList(tran, whereClause, orderBy, options);
+    }
+    public virtual Sooda.Schema.ClassInfo GetClassInfo() {
+      return TheClassInfo;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetPrimaryKeyFieldHandler() {
+      return _primaryKeyFieldHandler;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return InternalGetFieldHandler(ordinal);
+    }
+    internal static Sooda.ObjectMapper.SoodaFieldHandler InternalGetFieldHandler(int ordinal) {
+      return _fieldHandlers[ordinal];
+    }
+    public virtual SoodaObject CreateNew(SoodaTransaction tran) {
+      return new ActiveTransition(tran);
+    }
+    public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
+      ActiveTransition retVal = new ActiveTransition(SoodaConstructor.Constructor);
       retVal.InitRawObject(tran);
       return retVal;
     }
@@ -2049,6 +2481,163 @@ namespace NGinn.Engine.Dao.Stubs {
       return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
     }
   }
+  public class ActiveTransitionCollectionExpression : Sooda.QL.TypedWrappers.SoqlCollectionWrapperExpression {
+    public ActiveTransitionCollectionExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(ActiveTransition item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(ActiveTransitionWrapperExpression item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(string item) {
+      return this.ContainsImpl(new Sooda.QL.SoqlLiteralExpression(item));
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression ContainsActiveTransitionWhere(Sooda.QL.SoqlBooleanExpression whereClause) {
+      return this.ContainsExprImpl("ActiveTransition", whereClause);
+    }
+  }
+  public class ActiveTransitionWrapperExpression : Sooda.QL.SoqlPathExpression {
+    public ActiveTransitionWrapperExpression() {
+    }
+    public ActiveTransitionWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(this));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "Id"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression ProcessInstance {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ProcessInstance"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression TaskId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "TaskId"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Status {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "Status"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression DeferredChoiceId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "DeferredChoiceId"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression EnabledDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "EnabledDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression CompletedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "CompletedDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "RecordVersion"));
+      }
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params ActiveTransitionWrapperExpression[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params ActiveTransition[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params string[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ActiveTransitionWrapperExpression left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ActiveTransitionWrapperExpression left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(string left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(string left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ActiveTransitionWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ActiveTransitionWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ActiveTransition left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ActiveTransition left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ActiveTransitionWrapperExpression left, ActiveTransition right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ActiveTransitionWrapperExpression left, ActiveTransition right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ActiveTransitionWrapperExpression left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ActiveTransitionWrapperExpression left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(string left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(string left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ActiveTransitionWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ActiveTransitionWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ActiveTransition left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ActiveTransition left, ActiveTransitionWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ActiveTransitionWrapperExpression left, ActiveTransition right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ActiveTransitionWrapperExpression left, ActiveTransition right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public override bool Equals(object o) {
+      return object.ReferenceEquals(this, o);
+    }
+    public override int GetHashCode() {
+      return base.GetHashCode();
+    }
+  }
+  public class ActiveTransitionNullableWrapperExpression : ActiveTransitionWrapperExpression {
+    public ActiveTransitionNullableWrapperExpression() {
+    }
+    public ActiveTransitionNullableWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, false);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNotNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
+    }
+  }
 }
 namespace NGinn.Engine.Dao.TypedQueries {
   using System;
@@ -2171,6 +2760,53 @@ namespace NGinn.Engine.Dao.TypedQueries {
       }
     }
   }
+  public class ActiveTransitionField : object {
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(null));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("Id"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression ProcessInstance {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ProcessInstance"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression TaskId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("TaskId"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Status {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("Status"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression DeferredChoiceId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("DeferredChoiceId"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression EnabledDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("EnabledDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression CompletedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("CompletedDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("RecordVersion"));
+      }
+    }
+  }
 }
 namespace NGinn.Engine.Dao {
   using System;
@@ -2191,7 +2827,8 @@ namespace NGinn.Engine.Dao {
           NGinn.Engine.Dao.Stubs.ProcessDefinitionDb_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.ProcessInstanceDb_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.ProcessStatus_Factory.TheFactory,
-          NGinn.Engine.Dao.Stubs.TokenDb_Factory.TheFactory};
+          NGinn.Engine.Dao.Stubs.TokenDb_Factory.TheFactory,
+          NGinn.Engine.Dao.Stubs.ActiveTransition_Factory.TheFactory};
     }
     public virtual Sooda.Schema.SchemaInfo Schema {
       get {
