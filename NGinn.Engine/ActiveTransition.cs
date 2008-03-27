@@ -10,6 +10,7 @@ namespace NGinn.Engine
     {
         Initiated, //task created & offered
         Completed, //task finished
+        Cancelled, //task cancelled (other transition sharing the same token fired)
         Error, //task did not complete due to error
     }
 
@@ -29,6 +30,10 @@ namespace NGinn.Engine
         public string TaskId;
         public IList<string> Tokens = new List<string>();
         public TransitionStatus Status;
+        /// <summary>If active transitions share some tokens, they will have the same SharedId. If one of 
+        /// shared transitions completes, it will cancell all other transitions with the same SharedId
+        /// </summary>
+        public string SharedId;
         [NonSerialized]
         protected ProcessInstance _processInstance;
         [NonSerialized]
@@ -122,6 +127,14 @@ namespace NGinn.Engine
             {
                 return this.ProcessTask.IsImmediate;
             }
+        }
+
+        public virtual void ExecuteTask()
+        {   
+        }
+
+        public virtual void CancelTask()
+        {
         }
     }
 }

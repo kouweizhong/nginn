@@ -6,6 +6,9 @@ using NLog;
 using Spring.Context;
 using NGinn.Engine.Services;
 using System.Diagnostics;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace NGinn.Engine
 {
@@ -441,24 +444,26 @@ namespace NGinn.Engine
                 return;
             }
 
+            //ok, now start the transitions
+            //but before starting, find all transitions that share tokens and 'link' them together
             foreach (ActiveTransition at in newAts)
             {
                 foreach (string tokId in at.Tokens)
                 {
                     Token t = GetToken(tokId);
+                    
                 }
 
                 if (at.IsImmediate)
                 {
                     AddActiveTransition(at);
                     ExecuteTransition(at);
-                    throw new Exception("not implemented yet");
                 }
                 else
                 {
+                    AddActiveTransition(at);
                     InitiateTransition(at);
                     log.Info("Initiated transition {0}: {1}->{2}", at.CorrelationId, tok.PlaceId, at.TaskId);
-                    AddActiveTransition(at);
                     foreach (string tokId in at.Tokens)
                     {
                         Token tok1 = GetToken(tokId);
@@ -582,14 +587,8 @@ namespace NGinn.Engine
         private void ExecuteTransition(ActiveTransition at)
         {
             Debug.Assert(at.IsImmediate);
-            at.InitiateTask();
-        }
-
-        private void TryInitiateTask(ActiveTransition at)
-        {
-            Task tsk = Definition.GetTask(at.TaskId);
-            //what now? every task should have its 'active' counterpart.
-
+            at.ExecuteTask();
+            TransitionCompleted(at.CorrelationId);
         }
 
         private ActiveTransition CreateActiveTransitionForTask(Task tsk)
@@ -610,7 +609,30 @@ namespace NGinn.Engine
             if (at.Tokens.Count == 0) throw new Exception("Cannot add a transition without tokens");
             Debug.Assert(InstanceId == at.ProcessInstanceId);
             Debug.Assert(Definition.GetTask(at.TaskId) != null);
-            Task t = Definition.GetTask(at.TaskId);
+            //find shared transitions...
+            IDictionary<string, ActiveTransition> sharedTrans = new Dictionary<string, ActiveTransition>();
+            foreach (string tid in at.Tokens)
+            {
+                Token t = GetToken(tid);
+                foreach (string atid in t.ActiveTransitions)
+                {
+                    if (!sharedTrans.ContainsKey(atid)) 
+                        sharedTrans[atid] = GetActiveTransition(atid);
+                }
+            }
+            List<ActiveTransition> strans = new List<ActiveTransition>(sharedTrans.Values);
+            if (strans.Count > 0)
+            {
+                log.Info("Transition shares the same tokens with {0} active transitions.");
+                if (strans.Count == 1)
+                {
+                    strans[0].SharedId = strans[0].CorrelationId;
+                }
+                at.SharedId = strans[0].SharedId;
+                foreach (ActiveTransition at2 in strans) Debug.Assert(at2.SharedId == at.SharedId);
+            }
+
+            Task tsk = Definition.GetTask(at.TaskId);
             _activeTransitions[at.CorrelationId] = at;
             IList<ActiveTransition> ats;
             if (!_activeTaskTransitions.TryGetValue(at.TaskId, out ats))
@@ -627,6 +649,31 @@ namespace NGinn.Engine
         }
 
         /// <summary>
+        /// Return a list of transitions sharing some tokens with specified transition
+        /// </summary>
+        /// <param name="at"></param>
+        /// <returns></returns>
+        private IList<ActiveTransition> GetSharedActiveTransitionsForTransition(ActiveTransition at)
+        {
+            IDictionary<string, ActiveTransition> dict = new Dictionary<string, ActiveTransition>();
+            foreach (string tokid in at.Tokens)
+            {
+                Token t = GetToken(tokid);
+                foreach (string atid in t.ActiveTransitions)
+                {
+                    if (dict.ContainsKey(atid)) continue;
+                    ActiveTransition at2 = GetActiveTransition(atid);
+                    if (at2 == at) continue;
+                    if (at2.Status == TransitionStatus.Initiated)
+                    {
+                        dict[atid] = at2;
+                    }
+                }
+            }
+            return new List<ActiveTransition>(dict.Values);
+        }
+
+        /// <summary>
         /// Transition completed - consume input tokens, produce output tokens
         /// and cancel all transitions that share the same tokens.
         /// Also, if some tokens were waiting, put them in 'READY' state.
@@ -639,17 +686,133 @@ namespace NGinn.Engine
             log.Info("Transition completed: {0}", at.CorrelationId);
             Task tsk = Definition.GetTask(at.TaskId);
             //1 find all 'shared' transitions
-            foreach (string tid in at.Tokens)
+            IList<ActiveTransition> sharedTrans = GetSharedActiveTransitionsForTransition(at);
+            if (sharedTrans.Count > 0)
             {
-                Token tok = GetToken(tid);
-                log.Info("Checking shared transitions for token {0}", tok.ToString());
-            }         
-
+                log.Info("Found {0} active transitions to cancel", sharedTrans.Count);
+                foreach (ActiveTransition at2 in sharedTrans)
+                {
+                    CancelActiveTransition(at);
+                }
+            }
+            Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
+            foreach (string tokid in at.Tokens)
+            {
+                Token tok = GetToken(tokid);
+                if (!at.IsImmediate && tok.Status != TokenStatus.WAITING_TASK) throw new Exception();
+            }
+            FireTransition(at);
+            at.Status = TransitionStatus.Completed;
         }
 
-       
+        private void FireTransition(ActiveTransition at)
+        {
+            Task tsk = Definition.GetTask(at.TaskId);
+            foreach (string tokid in at.Tokens)
+            {
+                Token tok = GetToken(tokid);
+                Debug.Assert(tok.ActiveTransitions.Count == 1);
+                Debug.Assert(tok.ActiveTransitions[0] == at.CorrelationId);
+                //if (tok.Status != TokenStatus.WAITING_TASK) throw new Exception();
+                tok.Status = TokenStatus.FINISHED;
+            }
+
+            IList<Token> newTokens = new List<Token>();
+            if (tsk.SplitType == JoinType.AND)
+            {
+                foreach (Flow fl in tsk.FlowsOut)
+                {
+                    if (fl.InputCondition != null && fl.InputCondition.Length > 0) throw new Exception();
+                    Token t = CreateNewTokenInPlace(fl.To.Id);
+                    newTokens.Add(t);
+                }
+            }
+            else if (tsk.SplitType == JoinType.XOR)
+            {
+                throw new NotImplementedException();
+            }
+            else if (tsk.SplitType == JoinType.OR)
+            {
+                throw new NotImplementedException();
+            }
+            else throw new Exception();
+
+            foreach (Token t in newTokens)
+            {
+                t.Status = TokenStatus.READY;
+                AddToken(t);
+            }
+        }
+
+        /// <summary>
+        /// Cancel active transition instance
+        /// </summary>
+        /// <param name="at"></param>
+        private void CancelActiveTransition(ActiveTransition at)
+        {
+            log.Info("Cancelling transition {0}", at.CorrelationId);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Return active transition with given correlation Id
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        private ActiveTransition GetActiveTransition(string correlationId)
+        {
+            ActiveTransition at = null;
+            _activeTransitions.TryGetValue(correlationId, out at);
+            return at;
+        }
+
         private void CancelTransition(ActiveTransition at)
         {
+        }
+
+        private string ToXmlString()
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriterSettings sett = new XmlWriterSettings();
+            sett.Indent = true;
+            sett.OmitXmlDeclaration = true;
+            XmlWriter xw = XmlWriter.Create(sb, sett);
+            xw.WriteStartElement("ProcessInstance");
+            xw.WriteAttributeString("id", InstanceId);
+            xw.WriteAttributeString("definitionId", ProcessDefinitionId);
+            xw.WriteAttributeString("definitionName", Definition.Name);
+            xw.WriteAttributeString("definitionVersion", Definition.Version.ToString());
+            xw.WriteStartElement("Tokens");
+            foreach (Token tok in _tokens.Values)
+            {
+                xw.WriteStartElement("Token");
+                xw.WriteAttributeString("id", tok.TokenId);
+                xw.WriteAttributeString("place", tok.PlaceId);
+                xw.WriteAttributeString("status", tok.Status.ToString());
+                xw.WriteAttributeString("mode", tok.Mode.ToString());
+                foreach (string at in tok.ActiveTransitions) xw.WriteElementString("Transition", at);
+                xw.WriteEndElement();
+            }
+            xw.WriteEndElement();
+            xw.WriteStartElement("Transitions");
+            foreach (ActiveTransition at in _activeTransitions.Values)
+            {
+                xw.WriteStartElement("Transition");
+                xw.WriteAttributeString("correlationId", at.CorrelationId);
+                xw.WriteAttributeString("type", at.GetType().Name);
+                xw.WriteAttributeString("taskId", at.TaskId);
+                xw.WriteAttributeString("status", at.Status.ToString());
+                foreach (string t in at.Tokens) xw.WriteElementString("Token", t);
+                xw.WriteEndElement();
+            }
+            xw.WriteEndElement();
+            xw.WriteEndElement();
+            xw.Flush();
+            return sb.ToString();
+        }
+        public override string ToString()
+        {
+            return ToXmlString();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace NGinnTest
 
         static void TestDefinitionRepository()
         {
-            string pdName = "TestProcess1.xml";
+            string pdName = "TestProcess2.xml";
             ProcessDefinition pd = new ProcessDefinition();
             log.Info("Loading process definition: {0}", pdName);
             pd.LoadXmlFile(pdName);
@@ -51,7 +51,7 @@ namespace NGinnTest
         {
             INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)_ctx.GetObject("ProcessDefinitionRepository");
-            string id = pdr.GetProcessDefinitionId("Test_Process_1", 2);
+            string id = pdr.GetProcessDefinitionId("Test_Process_2", 1);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
             string instId = env.StartProcessInstance(id, vars);

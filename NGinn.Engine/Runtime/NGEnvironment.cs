@@ -174,6 +174,7 @@ namespace NGinn.Engine.Runtime
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
                     pi.Environment = this;
                     pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
                     Token tok = pi.SelectReadyTokenForProcessing();
                     if (tok == null)
                     {
@@ -181,6 +182,7 @@ namespace NGinn.Engine.Runtime
                         return;
                     }
                     KickToken(tok, pi, ds);
+                    log.Info("Modified: {0}", pi.ToString());
                     pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
                     ds.Commit();

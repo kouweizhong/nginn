@@ -10,6 +10,8 @@ namespace NGinn.Engine
     [Serializable]
     class ManualTaskActive : ActiveTransition
     {
+        protected string _workItemId;
+
         public ManualTaskActive(ManualTask tsk, ProcessInstance pi)
             : base(tsk, pi)
         {
@@ -31,15 +33,13 @@ namespace NGinn.Engine
         /// </summary>
         public override void InitiateTask()
         {
-            
-            this.CorrelationId = this.ProcessInstanceId;
             WorkItem wi = new WorkItem();
             wi.ProcessInstanceId = this.ProcessInstanceId;
             wi.TaskId = this.TaskId;
             wi.CorrelationId = this.CorrelationId;
             wi.Title = this.ProcessTask.Id;
-            string wid = this._processInstance.Environment.WorklistService.CreateWorkItem(wi);
-            log.Info("Created work item: {0}", wid);
+            _workItemId = this._processInstance.Environment.WorklistService.CreateWorkItem(wi);
+            log.Info("Created work item: {0}", _workItemId);
         }
     }
 }
