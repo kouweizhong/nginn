@@ -14,16 +14,16 @@ namespace NGinn.Engine
     }
 
     /// <summary>
-    /// Status tokena
+    /// Possible statuses of a token
     /// </summary>
     public enum TokenStatus
     {
-        READY = 1, ///dopiero wpad³ w place, jeszcze nie zosta³ zainicjowany task (czyli tu bêdzie jeszcze coœ siê dzia³o - proces mo¿e siê ruszyc dalej)
-        WAITING = 2, ///token czeka na pojawienie sie innych bez ktorych nie mozna uruchomic przejscia
-        ERROR = 3, ///b³ad przy próbie zainicjowania tasku. ze stanu 'error' mo¿na wróciæ do stanu 'ready' - po interwencji
-        CANCELLED = 4, ///token anulowany, task wycofany
-        FINISHED = 5,    ///token w stanie koñcowym
-        WAITING_TASK = 6 ///task(albo kilka taskow dla danego miejsca) zosta³ zainicjowany, czekamy na jego zakonczenie
+        READY = 1, ///token in place, ready for further processing (it is possible that it will enable some transitions)
+        WAITING = 2, ///token is waiting because it cannot enable any transition (it has not been 'pre-selected' for any transition)
+        WAITING_ENABLED = 3, ///token has been pre-selected for an enabled transition, so the token belongs to at least one active transition and waits for the transition to be selected or completed
+        WAITING_ALLOCATED = 4, ///token has been assigned to a transition (in case of deferred choice, this is after the choice has been made)
+        CANCELLED = 5, ///token has been cancelled, all transitions with this token also have been cancelled
+        CONSUMED = 6,    ///token has been consumed by a transition, it no longer exists
     }
 
     /// <summary>
@@ -70,9 +70,9 @@ namespace NGinn.Engine
         /// List of transition (correlation ids) that have been initiated by the token. If one of these transitions completes
         /// it will consume the token and cancel all the other transitions
         /// </summary>
-        public IList<string> ActiveTransitions = new List<string>();
+        public List<string> ActiveTransitions = new List<string>();
 
-        private IDictionary<string, object> _tokenVariables = new Dictionary<string, object>();
+        private Dictionary<string, object> _tokenVariables = new Dictionary<string, object>();
 
         /// <summary>
         /// Token variables. Token holds all 'out' variables from the immediately preceding task.

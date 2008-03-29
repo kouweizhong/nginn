@@ -22,5 +22,15 @@ namespace NGinn.Engine.Services
         /// </summary>
         /// <param name="info"></param>
         void ProcessTaskCompleted(TaskCompletionInfo info);
+
+        /// <summary>
+        /// Inform the engine that task has been selected for processing.
+        /// This will cancel all deferred choice alternatives for this task.
+        /// Use of this method is optional - if it is not called, the alternatives will
+        /// be cancelled when the task is completed (ProcessTaskCompleted is called)
+        /// </summary>
+        /// <param name="correlationId"></param>
+        void ProcessTaskSelectedForProcessing(string processInstanceId, string correlationId);
+
     }
 }

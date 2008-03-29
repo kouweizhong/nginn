@@ -8,10 +8,11 @@ namespace NGinn.Engine
 {
     public enum TransitionStatus
     {
-        Initiated, //task created & offered
-        Completed, //task finished
-        Cancelled, //task cancelled (other transition sharing the same token fired)
-        Error, //task did not complete due to error
+        ENABLED,    //transition task created & offered (also for deferred choice to be selected)
+        STARTED,    //transition task started (deferred choice alternative has been selected)
+        COMPLETED,  //task finished
+        CANCELLED,  //task cancelled (other transition sharing the same token fired)
+        ERROR,      //task did not complete due to error
     }
 
     /// <summary>
@@ -43,7 +44,7 @@ namespace NGinn.Engine
 
         public ActiveTransition(Task tsk, ProcessInstance pi)
         {
-            this.Status = TransitionStatus.Initiated;
+            this.Status = TransitionStatus.ENABLED;
             this.TaskId = tsk.Id;
             this._processInstance = pi;
             this.ProcessInstanceId = pi.InstanceId;

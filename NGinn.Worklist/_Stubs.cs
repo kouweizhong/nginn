@@ -261,7 +261,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
   }
   public class User_Stub : SoodaObject {
-    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("User", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("default"));
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("User", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
     public User_Stub(SoodaTransaction tran) : 
         base(tran) {
       this.InitNewObject();
@@ -520,7 +520,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
   }
   public class Group_Stub : SoodaObject {
-    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("Group", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("default"));
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("Group", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
     private SoodaObject[] _refcache = new Sooda.SoodaObject[3];
     public Group_Stub(SoodaTransaction tran) : 
         base(tran) {
@@ -804,7 +804,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
   }
   public class GroupHierarchy_Stub : SoodaObject {
-    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("GroupHierarchy", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("default"));
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("GroupHierarchy", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
     public GroupHierarchy_Stub(SoodaTransaction tran) : 
         base(tran) {
       this.InitNewObject();
@@ -1010,6 +1010,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     public System.Data.SqlTypes.SqlString ResultCode;
     public System.Data.SqlTypes.SqlString SolutionComment;
     public System.Data.SqlTypes.SqlString ProcessInstance;
+    public System.Data.SqlTypes.SqlString CorrelationId;
     public System.Data.SqlTypes.SqlString TaskId;
     public System.DateTime CreatedDate;
     public System.Data.SqlTypes.SqlDateTime ExecutionStart;
@@ -1025,7 +1026,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
   }
   public class Task_Stub : SoodaObject {
-    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("Task", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("default"));
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("Task", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
     private SoodaObject[] _refcache = new Sooda.SoodaObject[2];
     public Task_Stub(SoodaTransaction tran) : 
         base(tran) {
@@ -1114,12 +1115,21 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
       }
     }
     [Sooda.SoodaFieldSizeAttribute(50)]
+    public System.Data.SqlTypes.SqlString CorrelationId {
+      get {
+        return this.GetTaskFieldValuesForRead(0).CorrelationId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CorrelationId", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CorrelationId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CorrelationId));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
     public System.Data.SqlTypes.SqlString TaskId {
       get {
         return this.GetTaskFieldValuesForRead(0).TaskId;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskId", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskId));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskId", 9, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskId));
       }
     }
     public System.DateTime CreatedDate {
@@ -1127,7 +1137,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).CreatedDate;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 9, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 10, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
       }
     }
     public System.Data.SqlTypes.SqlDateTime ExecutionStart {
@@ -1135,7 +1145,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).ExecutionStart;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionStart", 10, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionStart), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionStart));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionStart", 11, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionStart), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionStart));
       }
     }
     public System.Data.SqlTypes.SqlDateTime ExecutionEnd {
@@ -1143,7 +1153,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).ExecutionEnd;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionEnd", 11, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionEnd), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionEnd));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionEnd", 12, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionEnd), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionEnd));
       }
     }
     private Task_Values GetTaskFieldValuesForRead(int requiredTable) {
@@ -1352,6 +1362,12 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
     protected virtual void AfterFieldUpdate_ProcessInstance(object oldValue, object newValue) {
       this.AfterFieldUpdate("ProcessInstance", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_CorrelationId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("CorrelationId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_CorrelationId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("CorrelationId", oldValue, newValue);
     }
     protected virtual void BeforeFieldUpdate_TaskId(object oldValue, object newValue) {
       this.BeforeFieldUpdate("TaskId", oldValue, newValue);
@@ -1570,7 +1586,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Worklist.BusinessObjects._DatabaseSchema.GetSchema().FindClassByName("Task");
     private static Type _theType = typeof(Task);
     static Task_Factory() {
-      _fieldHandlers = new SoodaFieldHandler[12];
+      _fieldHandlers = new SoodaFieldHandler[13];
       _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
@@ -1580,9 +1596,10 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
       _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[7] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[8] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
-      _fieldHandlers[9] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
-      _fieldHandlers[10] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[9] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[10] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
       _fieldHandlers[11] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[12] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
     }
     public Task_Factory() {
     }
@@ -2115,6 +2132,11 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ProcessInstance"));
       }
     }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression CorrelationId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "CorrelationId"));
+      }
+    }
     public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression TaskId {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "TaskId"));
@@ -2363,6 +2385,11 @@ namespace NGinn.Worklist.BusinessObjects.TypedQueries {
     public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ProcessInstance {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ProcessInstance"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression CorrelationId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("CorrelationId"));
       }
     }
     public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression TaskId {

@@ -19,8 +19,8 @@ namespace NGinn.Engine.Dao
             if (dbl.Count == 0) return null;
             ProcessInstance pi = (ProcessInstance)SerializationUtil.Deserialize(dbl[0].InstanceData);
             pi.PersistedVersion = dbl[0].RecordVersion;
-            IList<Token> tokens = GetProcessActiveTokens(instanceId, ds);
-            pi.InitTokenInformation(tokens);
+            //IList<Token> tokens = GetProcessActiveTokens(instanceId, ds);
+            //pi.InitTokenInformation(tokens);
             return pi;
         }
 
@@ -112,14 +112,14 @@ namespace NGinn.Engine.Dao
             tdb.ProcessInstance = tok.ProcessInstanceId;
             tdb.PlaceId = tok.PlaceId;
             tdb.Status = (int)tok.Status;
-            if (tok.PersistedVersion != tdb.RecordVersion) throw new Exception(string.Format("Record version mismatch when persisting token {0}", tok.TokenId));
+            //if (tok.PersistedVersion != tdb.RecordVersion) throw new Exception(string.Format("Record version mismatch when persisting token {0}", tok.TokenId));
             tdb.RecordVersion = tdb.RecordVersion + 1;
         }
 
         public IList<Token> GetProcessActiveTokens(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
             SoodaSession ss = (SoodaSession)ds;
-            TokenDbList dbl = TokenDb.GetList(ss.Transaction, TokenDbField.ProcessInstance == instanceId && TokenDbField.Status.In((int)TokenStatus.READY, (int)TokenStatus.WAITING, (int)TokenStatus.WAITING_TASK, (int)TokenStatus.ERROR));
+            TokenDbList dbl = TokenDb.GetList(ss.Transaction, TokenDbField.ProcessInstance == instanceId && TokenDbField.Status.In((int)TokenStatus.READY, (int)TokenStatus.WAITING, (int)TokenStatus.WAITING_ENABLED, (int)TokenStatus.WAITING_ALLOCATED, (int) TokenStatus.CONSUMED, (int) TokenStatus.CANCELLED));
             List<Token> lt = new List<Token>();
             foreach(TokenDb tdb in dbl)
             {

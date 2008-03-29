@@ -13,6 +13,18 @@ using System.Xml.Serialization;
 namespace NGinn.Engine
 {
     /// <summary>
+    /// Enumeration of possible process instance statuses
+    /// </summary>
+    public enum ProcessStatus
+    {
+        New = 0,
+        Active,
+        Error,
+        Finished,
+        Cancelled
+    }
+
+    /// <summary>
     /// Represents an instance of business process. 
     /// Warning: ProcessInstance objects are not thread safe. That is, it is safe to update multiple instances of ProcessInstance
     /// in parallel, but two threads shouldn't update the same ProcessInstance object. 
@@ -43,7 +55,7 @@ namespace NGinn.Engine
         /// <summary>map: task id -> list of active instances of the task</summary>
         [NonSerialized]
         private IDictionary<string, IList<ActiveTransition>> _activeTaskTransitions = new Dictionary<string, IList<ActiveTransition>>();
-        
+        private ProcessStatus _status = ProcessStatus.New;
         private int _tokenNumber = 0;
         private int _transitionNumber = 0;
 
@@ -68,6 +80,11 @@ namespace NGinn.Engine
             }
         }
 
+        public ProcessStatus Status
+        {
+            get { return _status; }
+        }
+
         public int PersistedVersion
         {
             get { return _persistedVersion; }
@@ -78,14 +95,6 @@ namespace NGinn.Engine
         {
             get { return _processVariables; }
             set { _processVariables = value; }
-        }
-
-        /// <summary>
-        /// true if process has not finished yet (has tokens that did not reach end place)
-        /// </summary>
-        public bool IsAlive
-        {
-            get { return false; }
         }
 
         /// <summary>
@@ -245,6 +254,10 @@ namespace NGinn.Engine
                 if (tok.ProcessInstanceId != this.InstanceId) throw new Exception("Invalid process instance id");
                 if (_tokens.ContainsKey(tok.TokenId)) throw new Exception("Token already exists");
                 if (_definition.GetPlace(tok.PlaceId) == null) throw new Exception("Invalid token place id");
+                if (_status == ProcessStatus.New && _tokens.Count == 0)
+                {
+                    _status = ProcessStatus.Active;
+                }
                 _tokens[tok.TokenId] = tok;
                 IList<Token> lst;
                 if (!_tokensInPlaces.TryGetValue(tok.PlaceId, out lst))
@@ -308,6 +321,11 @@ namespace NGinn.Engine
             _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
             BuildTokensInPlaces();
             BuildActiveTransitionsInTasks();
+            foreach (ActiveTransition at in _activeTransitions.Values)
+            {
+                at.SetProcessInstance(this);
+                at.Activate();
+            }
             _activated = true;
         }
 
@@ -357,13 +375,13 @@ namespace NGinn.Engine
             if (tok.Status != TokenStatus.READY) throw new Exception("invalid status");
             
             Place pl = Definition.GetPlace(tok.PlaceId);
-            IList<Token> toks = GetActiveTokensInPlace(tok.PlaceId);
+            IList<Token> toks = GetConsumableTokensInPlace(tok.PlaceId);
             //Strategy 1: if there are enabled transition (that is, tokens in WAITING_TASK state), 
             //do nothing and put the token in WAITING state. So actually we will be waiting for the transition
             //to fire before enabling other transitions
             foreach (Token tok1 in toks)
             {
-                if (tok1.Status == TokenStatus.WAITING_TASK)
+                if (tok1.Status == TokenStatus.WAITING_ENABLED)
                 {
                     log.Info("There are active transitions in this place. Putting token in WAITING state");
                     tok.Status = TokenStatus.WAITING;
@@ -467,7 +485,7 @@ namespace NGinn.Engine
                     foreach (string tokId in at.Tokens)
                     {
                         Token tok1 = GetToken(tokId);
-                        tok1.Status = TokenStatus.WAITING_TASK;
+                        tok1.Status = TokenStatus.WAITING_ENABLED;
                         log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
                     }
                 }
@@ -488,7 +506,7 @@ namespace NGinn.Engine
                 foreach (Place pl in tsk.NodesIn)
                 {
                     bool foundTokInPlace = false;
-                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    IList<Token> toksInPlace = GetConsumableTokensInPlace(pl.Id);
                     foreach (Token t in toksInPlace)
                     {
                         if (!ignoreTokens.ContainsKey(t.TokenId))
@@ -509,7 +527,7 @@ namespace NGinn.Engine
             {
                 foreach (Place pl in tsk.NodesIn)
                 {
-                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    IList<Token> toksInPlace = GetConsumableTokensInPlace(pl.Id);
                     foreach (Token t in toksInPlace)
                     {
                         if (!ignoreTokens.ContainsKey(t.TokenId))
@@ -526,7 +544,7 @@ namespace NGinn.Engine
                 foreach (Place pl in tsk.NodesIn)
                 {
                     bool foundTokInPlace = false;
-                    IList<Token> toksInPlace = GetActiveTokensInPlace(pl.Id);
+                    IList<Token> toksInPlace = GetConsumableTokensInPlace(pl.Id);
                     foreach (Token t in toksInPlace)
                     {
                         if (!ignoreTokens.ContainsKey(t.TokenId))
@@ -547,14 +565,14 @@ namespace NGinn.Engine
         }
 
         /// <summary>
-        /// List of 'active' tokens, that is tokens suitable for being consumed by a transition,
+        /// List of 'consumable' tokens, that is tokens suitable for being consumed by a transition,
         /// or for initiating a transition. It consists of READY, WAITING and WAITING_TASK tokens.
         /// After initiating a transition, they become WAITING_TASK.
         /// If the transition is immediate, it will execute and consume the tokens.
         /// </summary>
         /// <param name="placeId"></param>
         /// <returns></returns>
-        private IList<Token> GetActiveTokensInPlace(string placeId)
+        private IList<Token> GetConsumableTokensInPlace(string placeId)
         {
             List<Token> lst = new List<Token>();
             List<Token> l2 = new List<Token>();
@@ -563,7 +581,7 @@ namespace NGinn.Engine
             {
                 if (t.Status == TokenStatus.READY || t.Status == TokenStatus.WAITING)
                     lst.Add(t);
-                else if (t.Status == TokenStatus.WAITING_TASK)
+                else if (t.Status == TokenStatus.WAITING_ENABLED)
                     l2.Add(t);
             }
             lst.AddRange(l2);
@@ -588,6 +606,11 @@ namespace NGinn.Engine
         {
             Debug.Assert(at.IsImmediate);
             at.ExecuteTask();
+            foreach (string tokId in at.Tokens)
+            {
+                Token tok1 = GetToken(tokId);
+                tok1.Status = TokenStatus.WAITING_ENABLED;
+            }
             TransitionCompleted(at.CorrelationId);
         }
 
@@ -664,13 +687,60 @@ namespace NGinn.Engine
                     if (dict.ContainsKey(atid)) continue;
                     ActiveTransition at2 = GetActiveTransition(atid);
                     if (at2 == at) continue;
-                    if (at2.Status == TransitionStatus.Initiated)
+                    if (at2.Status == TransitionStatus.ENABLED)
                     {
                         dict[atid] = at2;
                     }
                 }
             }
             return new List<ActiveTransition>(dict.Values);
+        }
+
+        /// <summary>
+        /// Report that a process task has completed
+        /// </summary>
+        /// <param name="tci"></param>
+        public void TransitionCompleted(TaskCompletionInfo tci)
+        {
+            if (tci.ProcessInstance != this.InstanceId) throw new Exception("Invalid instance id");
+            ActiveTransition at = GetActiveTransition(tci.CorrelationId);
+            if (at == null) throw new Exception("Invalid correlation id");
+            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            TransitionCompleted(tci.CorrelationId);
+        }
+
+        /// <summary>
+        /// Select a transition for executing (used for deciding which deferred choice alternative has been selected)
+        /// </summary>
+        /// <param name="correlationId"></param>
+        public void TransitionSelected(string correlationId)
+        {
+            ActiveTransition at = GetActiveTransition(correlationId);
+            if (at == null) throw new Exception("Invalid correlation id");
+            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            log.Info("Transition selected: {0}", at.CorrelationId);
+            Task tsk = Definition.GetTask(at.TaskId);
+            //1 find all 'shared' transitions and cancel them
+            IList<ActiveTransition> sharedTrans = GetSharedActiveTransitionsForTransition(at);
+            if (sharedTrans.Count > 0)
+            {
+                log.Info("Found {0} active transitions to cancel", sharedTrans.Count);
+                foreach (ActiveTransition at2 in sharedTrans)
+                {
+                    CancelActiveTransition(at2);
+                }
+            }
+            Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
+            foreach (string tokid in at.Tokens)
+            {
+                Token tok = GetToken(tokid);
+                Debug.Assert(tok.Status == TokenStatus.WAITING_ENABLED);
+                Debug.Assert(tok.ActiveTransitions.Count == 1 && tok.ActiveTransitions[0] == at.CorrelationId);
+                //if (!at.IsImmediate && tok.Status != TokenStatus.WAITING_ENABLED) throw new Exception();
+                tok.Status = TokenStatus.WAITING_ALLOCATED;
+
+            }
+            at.Status = TransitionStatus.STARTED;
         }
 
         /// <summary>
@@ -685,24 +755,17 @@ namespace NGinn.Engine
             ActiveTransition at = _activeTransitions[correlationId];
             log.Info("Transition completed: {0}", at.CorrelationId);
             Task tsk = Definition.GetTask(at.TaskId);
-            //1 find all 'shared' transitions
-            IList<ActiveTransition> sharedTrans = GetSharedActiveTransitionsForTransition(at);
-            if (sharedTrans.Count > 0)
-            {
-                log.Info("Found {0} active transitions to cancel", sharedTrans.Count);
-                foreach (ActiveTransition at2 in sharedTrans)
-                {
-                    CancelActiveTransition(at);
-                }
-            }
+            //1 select the transition for processing
+            TransitionSelected(at.CorrelationId);
             Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
-                if (!at.IsImmediate && tok.Status != TokenStatus.WAITING_TASK) throw new Exception();
+                Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
             }
+            //2 fire the transition
             FireTransition(at);
-            at.Status = TransitionStatus.Completed;
+            at.Status = TransitionStatus.COMPLETED;
         }
 
         private void FireTransition(ActiveTransition at)
@@ -711,10 +774,10 @@ namespace NGinn.Engine
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
+                Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
                 Debug.Assert(tok.ActiveTransitions.Count == 1);
                 Debug.Assert(tok.ActiveTransitions[0] == at.CorrelationId);
-                //if (tok.Status != TokenStatus.WAITING_TASK) throw new Exception();
-                tok.Status = TokenStatus.FINISHED;
+                tok.Status = TokenStatus.CONSUMED;
             }
 
             IList<Token> newTokens = new List<Token>();
@@ -746,12 +809,30 @@ namespace NGinn.Engine
 
         /// <summary>
         /// Cancel active transition instance
+        /// How do we do that?
+        /// 1. Do activity-specific cancellation
+        /// 2. Update status of each input token: if it has no more enabled transitions, put it into READY state. Otherwise, leave it in WAITING_TASK
         /// </summary>
         /// <param name="at"></param>
         private void CancelActiveTransition(ActiveTransition at)
         {
             log.Info("Cancelling transition {0}", at.CorrelationId);
-            throw new NotImplementedException();
+            if (at.IsImmediate) throw new Exception("Cannot cancel an immediate transition");
+            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            at.CancelTask();
+            at.Status = TransitionStatus.CANCELLED;
+            foreach (string t in at.Tokens)
+            {
+                Token tok = GetToken(t);
+                Debug.Assert(tok.Status == TokenStatus.WAITING_ENABLED || tok.Status == TokenStatus.WAITING_ALLOCATED);
+                Debug.Assert(tok.ActiveTransitions.Contains(at.CorrelationId));
+                if (!tok.ActiveTransitions.Remove(at.CorrelationId)) throw new Exception("Error removing transition id from token"); //should never happen
+                if (tok.ActiveTransitions.Count == 0)
+                {
+                    tok.Status = TokenStatus.READY;
+                }
+            }
+
         }
 
         /// <summary>

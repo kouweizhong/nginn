@@ -40,7 +40,7 @@ namespace NGinn.Engine
             string id = env.StartProcessInstance(_task.SubprocessDefinitionId, inputVars);
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
-            this.Status = TransitionStatus.Initiated;
+            this.Status = TransitionStatus.ENABLED;
         }
 
     }

@@ -230,6 +230,12 @@ namespace NGinn.Engine.Runtime
                 using (INGDataSession ds = DataStore.OpenSession())
                 {
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(info.ProcessInstance, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    pi.TransitionCompleted(info);
+                    log.Info("Modified: {0}", pi.ToString());
+                    pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
                     ds.Commit();
                 }
@@ -240,5 +246,38 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+
+        
+
+        public void ProcessTaskSelectedForProcessing(string instanceId, string correlationId)
+        {
+            log.Info("Task selected in process {0}. Id: {1}", instanceId, correlationId);
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    pi.TransitionSelected(correlationId);
+                    log.Info("Modified: {0}", pi.ToString());
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
+        
     }
 }

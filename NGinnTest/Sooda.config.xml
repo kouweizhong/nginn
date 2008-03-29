@@ -11,6 +11,6 @@
   </default>
   <nginn.worklist>
     <connectionType>System.Data.SqlClient.SqlConnection, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</connectionType>
-    <connectionString>Data Source=(local);Initial Catalog=NGinn_Worklist;User Id=nginn;Password=PASS;Pooling=false</connectionString>
+    <connectionString>Data Source=(local);Initial Catalog=NGinn;User Id=nginn;Password=PASS;Pooling=false</connectionString>
   </nginn.worklist>
 </config>

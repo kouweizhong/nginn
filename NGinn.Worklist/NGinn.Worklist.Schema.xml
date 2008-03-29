@@ -2,10 +2,11 @@
 <schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.sooda.org/schemas/SoodaSchema.xsd">
 
-    <datasource name="nginn.worklist" type="Sooda.Sql.SqlDataSource" />
-  <datasource name="default" type="Sooda.Sql.SqlDataSourceTx" />
+  <datasource name="nginn.worklist" type="Sooda.Sql.SqlDataSourceDT" />
+  <datasource name="default" type="Sooda.Sql.SqlDataSourceDT" />
+  
 	<class name="User" datasource="nginn.worklist">
-		<table name="User">
+		<table name="UserDb">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="UserId" dbcolumn="user_id" type="String" size="30" nullable="false" />
 			<field name="Active" dbcolumn="active" type="BooleanAsInteger" nullable="false" />
@@ -15,7 +16,7 @@
 	</class>
 	
 	<class name="Group" datasource="nginn.worklist">
-		<table name="Group">
+		<table name="GroupDb">
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
 			<field name="Name" dbcolumn="name" type="String" size="50" nullable="false" />
 			<field name="Hierarchy" dbcolumn="hierarchy" type="Integer" references="GroupHierarchy" nullable="false" />
@@ -42,7 +43,8 @@
 			<field name="ResultCode" dbcolumn="result_code" type="String" size="100" nullable="true" />
 			<field name="SolutionComment" dbcolumn="solution_comment" type="String" size="1000" nullable="true" />
 			<field name="ProcessInstance" dbcolumn="process_instance" type="String" size="50" nullable="true" />
-			<field name="TaskId" dbcolumn="task_id" type="String" size="50" nullable="true" />
+      <field name="CorrelationId" dbcolumn="correlation_id" type="String" size="50" nullable="true" />
+      <field name="TaskId" dbcolumn="task_id" type="String" size="50" nullable="true" />
 			<field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
 			<field name="ExecutionStart" dbcolumn="execution_start" type="DateTime" nullable="true" />
 			<field name="ExecutionEnd" dbcolumn="execution_end" type="DateTime" nullable="true" />

@@ -15,21 +15,33 @@ namespace NGinn.Worklist
         {
             return new SoodaTransaction(typeof(Task).Assembly);
         }
+        
+#region IWorkListService Members
 
-        public string CreateWorkItem(WorkItem wi)
+        public void CreateWorkItem(WorkItem wi)
         {
             using (SoodaTransaction st = StartTransaction())
             {
                 Task tsk = new Task(st);
                 if (wi.AssigneeGroupId != null) tsk.AssigneeGroup = Group.GetRef(st, Convert.ToInt32(wi.AssigneeGroupId));
                 if (wi.AssigneeId != null) tsk.Assignee = User.GetRef(st, Convert.ToInt32(wi.AssigneeId));
+                tsk.CorrelationId = wi.CorrelationId;
                 tsk.ProcessInstance = wi.ProcessInstanceId;
                 tsk.Title = wi.Title;
                 tsk.TaskId = wi.TaskId;
                 tsk.CreatedDate = DateTime.Now;
-                st.Rollback();
-                return tsk.Id.ToString();
+                st.Commit();
             }
         }
+
+        
+
+
+        public void CancelWorkItem(string correlationId)
+        {
+            
+        }
+
+        #endregion
     }
 }

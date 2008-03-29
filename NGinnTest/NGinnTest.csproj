@@ -61,6 +61,10 @@
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NGinn.MessageBus\NGinn.MessageBus.csproj">
+      <Project>{A1D9E611-F0C1-498F-9F3D-B91A3E87CA8B}</Project>
+      <Name>NGinn.MessageBus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
       <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
       <Name>NGinn.Worklist</Name>
@@ -77,6 +81,7 @@
     <Content Include="TestProcess1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
