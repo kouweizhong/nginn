@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="PackageDefinition" targetNamespace="http://www.nginn.org/PackageDefinition.1_0" elementFormDefault="qualified" xmlns="http://www.nginn.org/PackageDefinition.1_0" xmlns:mstns="http://www.nginn.org/PackageDefinition.1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="PackageDef">
+    <xs:sequence>
+      <xs:element name="dataSchemas" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="schema" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="processDefinitions" minOccurs="1" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="process" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" use="required" type="xs:string" />
+  </xs:complexType>
+  <xs:element name="package" type="PackageDef" />
+</xs:schema>

@@ -6,5 +6,7 @@ namespace NGinn.Lib.Schema
 {
     public class MultiManualTask : ManualTask
     {
+        public string SplitterQuery;
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Engine.Services;
 using NGinn.Engine.Services.Dao;
+using NGinn.MessageBus;
 
 namespace NGinn.Engine
 {
@@ -30,6 +31,11 @@ namespace NGinn.Engine
         }
          
         IWorkListService WorklistService
+        {
+            get;
+        }
+
+        IMessageBus MessageBus
         {
             get;
         }

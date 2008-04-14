@@ -5,7 +5,11 @@ using NGinn.Lib.Schema;
 using NGinn.Lib;
 using NGinn.Engine.Services;
 using NGinn.Engine.Services.Dao;
+using NGinn.MessageBus;
 using NLog;
+using System.Xml;
+using System.IO;
+using System.Xml.Schema;
 
 namespace NGinn.Engine.Runtime
 {
@@ -19,6 +23,7 @@ namespace NGinn.Engine.Runtime
         private INGDataStore _dataStore;
         private IProcessInstanceLockManager _lockManager;
         private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
+        private IMessageBus _mbus;
         
         public NGEnvironment()
         {
@@ -55,6 +60,12 @@ namespace NGinn.Engine.Runtime
         {
             get { return _worklistService; }
             set { _worklistService = value; }
+        }
+
+        public IMessageBus MessageBus
+        {
+            get { return _mbus; }
+            set { _mbus = value; }
         }
 
         public IDictionary<string, object> EnvironmentVariables
@@ -97,12 +108,11 @@ namespace NGinn.Engine.Runtime
 
         #region INGEnvironment Members
 
-        public string StartProcessInstance(string definitionId, IDictionary<string, object> inputVariables)
+        public string StartProcessInstance(string definitionId, string inputXml)
         {
-            IDictionary<string, object> tmp = new Dictionary<string, object>(inputVariables);
-
             ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
             if (pd == null) throw new Exception("Process definition not found");
+            ValidateProcessInputData(pd, inputXml);
             
             using (INGDataSession ds = DataStore.OpenSession())
             {
@@ -110,9 +120,9 @@ namespace NGinn.Engine.Runtime
                 pi.Environment = this;
                 pi.Activate();
 
-                foreach (VariableDef vd in pd.InputVariables)
-                {
-                    object val = null;
+                //foreach (VariableDef vd in pd.InputVariables)
+                //{
+                    /* object val = null;
                     if (tmp.ContainsKey(vd.Name))
                     {
                         val = Convert.ChangeType(inputVariables[vd.Name], vd.VariableType);
@@ -129,7 +139,8 @@ namespace NGinn.Engine.Runtime
                         }
                     }
                     pi.ProcessVariables[vd.Name] = val;
-                }
+                    */
+                //}
 
                 log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                 pi.ProcessDefinitionId = definitionId;
@@ -145,6 +156,48 @@ namespace NGinn.Engine.Runtime
         }
 
         #endregion
+
+        private void ValidateProcessInputData(ProcessDefinition pd, string inputXml)
+        {
+            string schemaXml = pd.GenerateInputSchema();
+            StringReader sr = new StringReader(inputXml);
+            XmlSchema xs = XmlSchema.Read(new StringReader(schemaXml), new ValidationEventHandler(schema_ValidationEventHandler));
+            XmlReaderSettings rs = new XmlReaderSettings();
+            rs.ValidationType = ValidationType.Schema;
+            rs.Schemas = new XmlSchemaSet();
+            rs.Schemas.Add(xs);
+            rs.ValidationEventHandler += new ValidationEventHandler(rs_ValidationEventHandler);
+            XmlReader xr = XmlReader.Create(sr, rs);
+            while (xr.Read())
+            {
+            }
+        }
+
+        void schema_ValidationEventHandler(object sender, ValidationEventArgs e)
+        {
+            if (e.Severity == XmlSeverityType.Error)
+            {
+                throw new Exception("Input schema validation error: " + e.Message);
+            }
+            else
+            {
+                log.Info("Schema validation warning: {0}", e.Message);
+            }
+        }
+
+        void rs_ValidationEventHandler(object sender, ValidationEventArgs e)
+        {
+            if (e.Severity == XmlSeverityType.Error)
+            {
+                throw new Exception("Input xml validation error: " + e.Message);
+            }
+            else
+            {
+                log.Info("Input xml validation warning: {0}", e.Message);
+            }
+        }
+
+        
 
         /// <summary>
         /// This function returns list of 'kickable' process instances.

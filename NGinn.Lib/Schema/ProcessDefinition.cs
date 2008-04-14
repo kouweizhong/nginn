@@ -4,36 +4,46 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using NLog;
+using NGinn.Lib.Util;
+using Spring.Core;
+using Spring.Core.IO;
+using Spring.Context;
 
 namespace NGinn.Lib.Schema
 {
     
 
     /// <summary>
-    /// Variable definition
+    /// Variable definition - used for defining process data schemas
     /// </summary>
     [Serializable]
     public class VariableDef
     {
-        public enum Direction
-        {
-            In,
-            Out,
-            InOut
-        }
-
         public enum Usage
         {
             Optional,
             Required
         }
-        public Direction VariableDir;
         public Usage VariableUsage;
+        public enum Dir
+        {
+            Local,
+            In,
+            Out,
+            InOut,
+        }
+        public Dir VariableDir;
         public string Name;
         /// <summary>Variable type - supported types are: string, int, double, DateTime, TimeSpan</summary>
-        public Type VariableType;
+        public string VariableType;
+        public bool IsArray = false;
         /// <summary>Expression that will be used to calculate default value</summary>
         public string DefaultValueExpr;
+
+        public bool IsSimpleType
+        {
+            get { return true; }
+        }
     }
 
 
@@ -55,11 +65,11 @@ namespace NGinn.Lib.Schema
     public class ProcessDefinition
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
-        public static string WORKFLOW_NAMESPACE = "http://www.nginn.org/WorkflowDefinition.1_0.xsd";
+        public static readonly string WORKFLOW_NAMESPACE = "http://www.nginn.org/WorkflowDefinition.1_0.xsd";
         private IDictionary<string, Place> _places = new Dictionary<string, Place>();
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
-        private IList<VariableDef> _inputProcessVariables = new List<VariableDef>();
-        private IList<VariableDef> _outputProcessVariables = new List<VariableDef>();
+        private List<VariableDef> _processVariables = new List<VariableDef>();
+        
 
         private StartPlace _start = null;
         private EndPlace _finish = null;
@@ -193,14 +203,39 @@ namespace NGinn.Lib.Schema
             }
         }
 
-        public IList<VariableDef> InputVariables
+        public IList<VariableDef> ProcessVariables
         {
-            get { return _inputProcessVariables; }
+            get { return _processVariables; }
         }
 
-        public IList<VariableDef> OutputVariables
+        public String GenerateInputSchema()
         {
-            get { return _outputProcessVariables; }
+            StringWriter sw = new StringWriter();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter xw = XmlWriter.Create(sw, settings);
+            xw.WriteStartDocument();
+            xw.WriteStartElement("xs", "schema", SchemaUtil.SCHEMA_NS);
+            xw.WriteAttributeString("xmlns", "http://www.nginn.org/Process/" + Name);
+            xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
+            xw.WriteAttributeString("name", this.Name);
+            xw.WriteStartElement("complexType", SchemaUtil.SCHEMA_NS);
+            xw.WriteStartElement("sequence", SchemaUtil.SCHEMA_NS);
+            foreach (VariableDef vd in _processVariables)
+            {
+                xw.WriteStartElement("element", XmlConst.XmlSchemaNS);
+                xw.WriteAttributeString("name", vd.Name);
+                xw.WriteAttributeString("type", vd.VariableType);
+                xw.WriteAttributeString("minOccurs", vd.VariableUsage == VariableDef.Usage.Optional ? "0" : "1");
+                xw.WriteAttributeString("maxOccurs", vd.IsArray ? "unbounded" : "1");
+                xw.WriteEndElement();
+            }
+            xw.WriteEndElement();
+            xw.WriteEndElement();
+            xw.WriteEndElement();
+            xw.WriteEndElement();
+            xw.Flush();
+            return sw.ToString();
         }
 
         public Place Start
@@ -225,7 +260,6 @@ namespace NGinn.Lib.Schema
         public void LoadXml(string xmlStr)
         {
             XmlDocument doc = new XmlDocument();
-            string schemaLocation = Path.Combine(Path.GetDirectoryName(typeof(ProcessDefinition).Assembly.Location), "WorkflowDefinition.xsd");
             XmlReaderSettings rs = new XmlReaderSettings();
             rs.ValidationType = ValidationType.Schema;
 
@@ -249,6 +283,9 @@ namespace NGinn.Lib.Schema
             LoadFlows(el, nsmgr);
             if (_start == null) throw new Exception("Missing start place in process definition");
             if (_finish == null) throw new Exception("Missing end place in process definition");
+            el = doc.DocumentElement.SelectSingleNode("wf:variable-definitions", nsmgr) as XmlElement;
+            if (el == null) throw new Exception("Missing process variable definitions");
+            LoadProcessVariables(el, nsmgr);
         }
 
         private void LoadPlaces(XmlElement el, XmlNamespaceManager nsmgr)
@@ -302,6 +339,34 @@ namespace NGinn.Lib.Schema
             t = SchemaUtil.GetXmlElementText(el, "wf:inputCondition", nsmgr);
             fl.InputCondition = t;
             return fl;
+        }
+
+        private void LoadProcessVariables(XmlElement el, XmlNamespaceManager nsmgr)
+        {
+            foreach (XmlElement vel in el.SelectNodes("wf:variable", nsmgr))
+            {
+                VariableDef vd = LoadVariable(vel, nsmgr);
+                this._processVariables.Add(vd);
+            }
+        }
+
+        /// <summary>
+        /// Load a variable definition from xml 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <param name="nsmgr"></param>
+        /// <returns></returns>
+        private VariableDef LoadVariable(XmlElement el, XmlNamespaceManager nsmgr)
+        {
+            VariableDef vd = new VariableDef();
+            vd.Name = SchemaUtil.GetXmlElementText(el, "wf:name", nsmgr);
+            vd.VariableType = SchemaUtil.GetXmlElementText(el, "wf:variableType", nsmgr);
+            vd.IsArray = "true".Equals(SchemaUtil.GetXmlElementText(el, "wf:isArray", nsmgr));
+            vd.VariableDir = (VariableDef.Dir) Enum.Parse(typeof(VariableDef.Dir), SchemaUtil.GetXmlElementText(el, "wf:dir", nsmgr));
+            vd.VariableUsage = VariableDef.Usage.Optional;
+            if ("true".Equals(SchemaUtil.GetXmlElementText(el, "wf:isRequired", nsmgr))) vd.VariableUsage = VariableDef.Usage.Required;
+            vd.DefaultValueExpr = SchemaUtil.GetXmlElementText(el, "wf:defaultValue", nsmgr);
+            return vd;
         }
 
         public string ToXml()

@@ -58,6 +58,7 @@ namespace NGinn.Engine
         private ProcessStatus _status = ProcessStatus.New;
         private int _tokenNumber = 0;
         private int _transitionNumber = 0;
+        private XmlDocument _processData = new XmlDocument();
 
         public string ProcessDefinitionId
         {
@@ -184,6 +185,24 @@ namespace NGinn.Engine
         }
 
         /// <summary>
+        /// Returns all active tokens in process
+        /// </summary>
+        /// <returns></returns>
+        public IList<Token> GetActiveProcessTokens()
+        {
+            List<Token> l = new List<Token>();
+            foreach (Token t in _tokens.Values)
+            {
+                if (t.Status == TokenStatus.READY ||
+                    t.Status == TokenStatus.WAITING ||
+                    t.Status == TokenStatus.WAITING_ALLOCATED ||
+                    t.Status == TokenStatus.WAITING_ENABLED)
+                    l.Add(t);
+            }
+            return l;
+        }
+
+        /// <summary>
         /// Allocate next token identifier
         /// </summary>
         /// <returns></returns>
@@ -243,6 +262,22 @@ namespace NGinn.Engine
         }
 
         /// <summary>
+        /// Invoked when process starts (first token is added)
+        /// </summary>
+        private void OnProcessStarted()
+        {
+            ProcessStarted ps = new ProcessStarted();
+            ps.InstanceId = InstanceId;
+            ps.DefinitionId = ProcessDefinitionId;
+            NotifyProcessEvent(ps);
+        }
+
+        private void NotifyProcessEvent(ProcessEvent pe)
+        {
+            Environment.MessageBus.Notify("ProcessInstance", "ProcessInstance.Event." + pe.GetType().Name, pe, true);
+        }
+
+        /// <summary>
         /// Add new token to process instance
         /// </summary>
         /// <param name="tok"></param>
@@ -254,10 +289,8 @@ namespace NGinn.Engine
                 if (tok.ProcessInstanceId != this.InstanceId) throw new Exception("Invalid process instance id");
                 if (_tokens.ContainsKey(tok.TokenId)) throw new Exception("Token already exists");
                 if (_definition.GetPlace(tok.PlaceId) == null) throw new Exception("Invalid token place id");
-                if (_status == ProcessStatus.New && _tokens.Count == 0)
-                {
-                    _status = ProcessStatus.Active;
-                }
+                Place pl = Definition.GetPlace(tok.PlaceId);
+                if (pl == null) throw new Exception("Invalid token place id");
                 _tokens[tok.TokenId] = tok;
                 IList<Token> lst;
                 if (!_tokensInPlaces.TryGetValue(tok.PlaceId, out lst))
@@ -266,6 +299,11 @@ namespace NGinn.Engine
                     _tokensInPlaces[tok.PlaceId] = lst;
                 }
                 lst.Add(tok);
+                if (pl == Definition.Start && _status == ProcessStatus.New && _tokens.Count == 0)
+                {
+                    _status = ProcessStatus.Active;
+                    OnProcessStarted();
+                }
             }
         }
 
@@ -361,7 +399,41 @@ namespace NGinn.Engine
                 return lst;
             return new List<ActiveTransition>();
         }
-        
+
+        /// <summary>
+        /// Invoked when a token has reached process end place
+        /// </summary>
+        /// <param name="tok"></param>
+        private void OnEndPlaceReached(Token tok)
+        {
+            Place pl = Definition.GetPlace(tok.PlaceId);
+            Debug.Assert(pl == Definition.Finish);
+            log.Info("Token {0} has reached process end", tok.ToString());
+            tok.Status = TokenStatus.CONSUMED;
+            bool finished = true;
+            IList<Token> toks = GetActiveProcessTokens();
+            if (toks.Count > 0)
+            {
+                log.Info("Process cannot finish: {0} tokens still alive", toks.Count);
+                return;
+            }
+            log.Info("No more tokens alive - process has finished");
+            OnProcessFinished();
+        }
+
+
+        /// <summary>
+        /// Invoked when process has finished
+        /// </summary>
+        private void OnProcessFinished()
+        {
+            Debug.Assert(GetActiveProcessTokens().Count == 0);
+            _status = ProcessStatus.Finished;
+            ProcessFinished pf = new ProcessFinished();
+            pf.InstanceId = InstanceId;
+            pf.DefinitionId = ProcessDefinitionId;
+            NotifyProcessEvent(pf);
+        }
 
         /// <summary>
         /// Kick a 'READY' token. It means-> initiate all tasks following current place - only if the tasks can be initiated.
@@ -375,6 +447,12 @@ namespace NGinn.Engine
             if (tok.Status != TokenStatus.READY) throw new Exception("invalid status");
             
             Place pl = Definition.GetPlace(tok.PlaceId);
+            if (pl is EndPlace)
+            {
+                Debug.Assert(pl == Definition.Finish);
+                OnEndPlaceReached(tok);
+                return;
+            }
             IList<Token> toks = GetConsumableTokensInPlace(tok.PlaceId);
             //Strategy 1: if there are enabled transition (that is, tokens in WAITING_TASK state), 
             //do nothing and put the token in WAITING state. So actually we will be waiting for the transition
@@ -705,7 +783,7 @@ namespace NGinn.Engine
             if (tci.ProcessInstance != this.InstanceId) throw new Exception("Invalid instance id");
             ActiveTransition at = GetActiveTransition(tci.CorrelationId);
             if (at == null) throw new Exception("Invalid correlation id");
-            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
             TransitionCompleted(tci.CorrelationId);
         }
 
@@ -756,7 +834,10 @@ namespace NGinn.Engine
             log.Info("Transition completed: {0}", at.CorrelationId);
             Task tsk = Definition.GetTask(at.TaskId);
             //1 select the transition for processing
-            TransitionSelected(at.CorrelationId);
+            if (at.Status == TransitionStatus.ENABLED)
+            {
+                TransitionSelected(at.CorrelationId);
+            }
             Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
             foreach (string tokid in at.Tokens)
             {
@@ -818,7 +899,7 @@ namespace NGinn.Engine
         {
             log.Info("Cancelling transition {0}", at.CorrelationId);
             if (at.IsImmediate) throw new Exception("Cannot cancel an immediate transition");
-            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
             at.CancelTask();
             at.Status = TransitionStatus.CANCELLED;
             foreach (string t in at.Tokens)
@@ -832,7 +913,13 @@ namespace NGinn.Engine
                     tok.Status = TokenStatus.READY;
                 }
             }
-
+            ActiveTransitionCancelled ac = new ActiveTransitionCancelled();
+            ac.CorrelationId = at.CorrelationId;
+            ac.DefinitionId = ProcessDefinitionId;
+            ac.InstanceId = InstanceId;
+            ac.TaskId = at.TaskId;
+            ac.TaskType = Definition.GetTask(at.TaskId).GetType().Name;
+            NotifyProcessEvent(ac);
         }
 
         /// <summary>
@@ -847,10 +934,7 @@ namespace NGinn.Engine
             return at;
         }
 
-        private void CancelTransition(ActiveTransition at)
-        {
-        }
-
+ 
         private string ToXmlString()
         {
             StringBuilder sb = new StringBuilder();

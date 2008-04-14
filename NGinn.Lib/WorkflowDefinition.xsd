@@ -2,6 +2,8 @@
 <xs:schema id="WorkflowDefinition" targetNamespace="http://www.nginn.org/WorkflowDefinition.1_0.xsd" elementFormDefault="qualified" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:mstns="http://tempuri.org/WorkflowDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:complexType name="Process">
     <xs:sequence>
+      <xs:element name="inputDataNamespace" minOccurs="0" maxOccurs="1" />
+      <xs:element name="additionalSchema" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="places">
         <!-- miejsca w procesie -->
         <xs:complexType>
@@ -26,13 +28,17 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="data-binding" minOccurs="1" maxOccurs="1" type="DataBinding">
+      <xs:element name="variable-definitions" minOccurs="1" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="variable" type="VariableDef" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
       </xs:element>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" />
     <xs:attribute name="version" type="xs:int" />
   </xs:complexType>
-
   <xs:complexType name="Task">
     <xs:sequence>
       <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
@@ -42,7 +48,6 @@
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
   </xs:complexType>
-  
   <xs:complexType name="Flow">
     <xs:sequence>
       <xs:element name="from" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -50,7 +55,6 @@
       <xs:element name="inputCondition" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
   <xs:simpleType name="JoinType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="AND" />
@@ -58,15 +62,16 @@
       <xs:enumeration value="OR" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="PlaceType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="StartPlace" /><!-- stan poczatkowy -->
-      <xs:enumeration value="EndPlace" /> <!-- stan koncowy -->
-      <xs:enumeration value="Place" /> <!-- stan (bez dodatkowych akcji) -->
+      <xs:enumeration value="StartPlace" />
+      <!-- stan poczatkowy -->
+      <xs:enumeration value="EndPlace" />
+      <!-- stan koncowy -->
+      <xs:enumeration value="Place" />
+      <!-- stan (bez dodatkowych akcji) -->
     </xs:restriction>
   </xs:simpleType>
-
   <xs:simpleType name="TaskType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="ManualTask" />
@@ -81,55 +86,73 @@
       <xs:enumeration value="EmptyTask" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:complexType name="Place">
     <xs:sequence>
-      <xs:any minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="id" type="xs:string" use="required" />
     <xs:attribute name="type" type="PlaceType" use="required" />
   </xs:complexType>
-  
   <xs:complexType name="DataBinding">
   </xs:complexType>
-  
   <xs:complexType name="ManualTask">
     <xs:sequence>
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
   <xs:complexType name="ScriptTask">
     <xs:sequence>
       <xs:element name="scriptBody" type="xs:string" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
   <xs:complexType name="Subprocess">
     <xs:sequence>
       <xs:element name="subprocessName" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="subprocessVersion" type="xs:int" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
   <xs:complexType name="CallWSTask">
     <xs:attribute name="id" use="required" type="xs:string" />
   </xs:complexType>
-  
   <xs:complexType name="TimerTask">
     <xs:sequence>
       <xs:element name="delayTime" type="xs:duration" minOccurs="1" maxOccurs="1" />
-      <xs:element name="scheme" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="scheme" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
   <xs:complexType name="ExternalTask">
   </xs:complexType>
-  
   <xs:complexType name="NotificationTask">
     <xs:sequence>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
   </xs:complexType>
-  <xs:element name="process" type="Process" />
+  <xs:complexType name="XmlSchema">
+    <xs:sequence>
+      <xs:any namespace="http://www.w3.org/2001/XMLSchema" processContents="skip">
+      </xs:any>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="VariableDir">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Local" />
+      <xs:enumeration value="In" />
+      <xs:enumeration value="Out" />
+      <xs:enumeration value="InOut" />
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- process/task variable definition. Used for building xml schemas. -->
+  <xs:complexType name="VariableDef">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="variableType" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="isArray" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="isRequired" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="defaultValue" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="dir" type="VariableDir" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  
+    <xs:element name="process" type="Process" />
 </xs:schema>

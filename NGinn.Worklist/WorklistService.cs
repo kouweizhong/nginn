@@ -5,6 +5,7 @@ using Sooda;
 using NGinn.Engine.Services;
 using NLog;
 using NGinn.Worklist.BusinessObjects;
+using NGinn.Worklist.BusinessObjects.TypedQueries;
 
 namespace NGinn.Worklist
 {
@@ -29,17 +30,29 @@ namespace NGinn.Worklist
                 tsk.ProcessInstance = wi.ProcessInstanceId;
                 tsk.Title = wi.Title;
                 tsk.TaskId = wi.TaskId;
+                tsk.Status = TaskStatus.AssignedGroup;
                 tsk.CreatedDate = DateTime.Now;
                 st.Commit();
             }
         }
 
-        
 
+        private Task FindByCorrelationId(string instanceId, string correlationId, SoodaTransaction st)
+        {
+            TaskList tl = Task.GetList(st, TaskField.CorrelationId == correlationId);
+            if (tl.Count > 0) return tl[0];
+            return null;
+        }
 
         public void CancelWorkItem(string correlationId)
         {
-            
+            using (SoodaTransaction st = StartTransaction())
+            {
+                Task tsk = FindByCorrelationId(null, correlationId, st);
+                if (tsk == null) throw new Exception("Task not found");
+                tsk.Status = TaskStatus.Cancelled;
+                st.Commit();
+            }
         }
 
         #endregion

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package name="TestPackage2" xmlns="http://www.nginn.org/PackageDefinition.1_0">
+	<dataSchemas>
+		<schema>Types.xsd</schema>
+	</dataSchemas>
+	<processDefinitions>
+		<process>TestProcess2.xml</process>
+	</processDefinitions>
+</package>

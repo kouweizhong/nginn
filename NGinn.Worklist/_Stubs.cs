@@ -234,6 +234,60 @@ namespace NGinn.Worklist.BusinessObjects {
       return new TaskList(base.GetSnapshot2());
     }
   }
+  public class TaskStatusList : Sooda.ObjectMapper.SoodaObjectCollectionWrapperGeneric<NGinn.Worklist.BusinessObjects.TaskStatus> {
+    public TaskStatusList() {
+    }
+    public TaskStatusList(ISoodaObjectList list) : 
+        base(list) {
+    }
+    public new TaskStatus this[int pos] {
+      get {
+        return ((TaskStatus)(base.GetItem(pos)));
+      }
+    }
+    public int Add(TaskStatus obj) {
+      return base.Add2(obj);
+    }
+    public void Remove(TaskStatus obj) {
+      base.Remove2(obj);
+    }
+    public bool Contains(TaskStatus obj) {
+      return base.Contains2(obj);
+    }
+    public TaskStatusList Sort(IComparer comparer) {
+      return new TaskStatusList(base.Sort2(comparer));
+    }
+    public TaskStatusList Sort(string sortOrder) {
+      return new TaskStatusList(base.Sort2(sortOrder));
+    }
+    public TaskStatusList Sort(Sooda.QL.SoqlExpression sortExpression) {
+      return new TaskStatusList(base.Sort2(sortExpression));
+    }
+    public TaskStatusList Sort(Sooda.QL.SoqlExpression sortExpression, Sooda.SortOrder sortOrder) {
+      return new TaskStatusList(base.Sort2(sortExpression, sortOrder));
+    }
+    public TaskStatusList SelectFirst(int count) {
+      return new TaskStatusList(base.SelectFirst2(count));
+    }
+    public TaskStatusList SelectLast(int count) {
+      return new TaskStatusList(base.SelectLast2(count));
+    }
+    public TaskStatusList SelectRange(int _from, int _to) {
+      return new TaskStatusList(base.SelectRange2(_from, _to));
+    }
+    public TaskStatusList Filter(SoodaObjectFilter f) {
+      return new TaskStatusList(base.Filter2(f));
+    }
+    public TaskStatusList Filter(Sooda.QL.SoqlBooleanExpression sortExpression) {
+      return new TaskStatusList(base.Filter2(sortExpression));
+    }
+    public TaskStatusList Filter(SoodaWhereClause whereClause) {
+      return new TaskStatusList(base.Filter2(whereClause));
+    }
+    public TaskStatusList GetSnapshot() {
+      return new TaskStatusList(base.GetSnapshot2());
+    }
+  }
 }
 namespace NGinn.Worklist.BusinessObjects.Stubs {
   using System;
@@ -1007,6 +1061,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     public System.Data.SqlTypes.SqlString Description;
     public System.Data.SqlTypes.SqlInt32 AssigneeGroup;
     public System.Data.SqlTypes.SqlInt32 Assignee;
+    public System.Data.SqlTypes.SqlInt32 Status;
     public System.Data.SqlTypes.SqlString ResultCode;
     public System.Data.SqlTypes.SqlString SolutionComment;
     public System.Data.SqlTypes.SqlString ProcessInstance;
@@ -1027,7 +1082,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
   }
   public class Task_Stub : SoodaObject {
     private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("Task", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
-    private SoodaObject[] _refcache = new Sooda.SoodaObject[2];
+    private SoodaObject[] _refcache = new Sooda.SoodaObject[3];
     public Task_Stub(SoodaTransaction tran) : 
         base(tran) {
       this.InitNewObject();
@@ -1087,13 +1142,26 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         Sooda.ObjectMapper.SoodaObjectImpl.SetRefFieldValue(this, 0, "Assignee", 4, value, this._refcache, 1, User_Factory.TheFactory);
       }
     }
+    public TaskStatus Status {
+      get {
+        if ((this._refcache[2] == null)) {
+          if ((this.GetTaskFieldValuesForRead(0).Status.IsNull == false)) {
+            this._refcache[2] = TaskStatus_Stub.GetRef(this.GetTransaction(), this.GetTaskFieldValuesForRead(0).Status.Value);
+          }
+        }
+        return ((TaskStatus)(this._refcache[2]));
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetRefFieldValue(this, 0, "Status", 5, value, this._refcache, 2, TaskStatus_Factory.TheFactory);
+      }
+    }
     [Sooda.SoodaFieldSizeAttribute(100)]
     public System.Data.SqlTypes.SqlString ResultCode {
       get {
         return this.GetTaskFieldValuesForRead(0).ResultCode;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ResultCode", 5, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ResultCode), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ResultCode));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ResultCode", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ResultCode), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ResultCode));
       }
     }
     [Sooda.SoodaFieldSizeAttribute(1000)]
@@ -1102,7 +1170,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).SolutionComment;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "SolutionComment", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_SolutionComment), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_SolutionComment));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "SolutionComment", 7, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_SolutionComment), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_SolutionComment));
       }
     }
     [Sooda.SoodaFieldSizeAttribute(50)]
@@ -1111,7 +1179,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).ProcessInstance;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ProcessInstance", 7, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ProcessInstance), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ProcessInstance));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ProcessInstance", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ProcessInstance), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ProcessInstance));
       }
     }
     [Sooda.SoodaFieldSizeAttribute(50)]
@@ -1120,7 +1188,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).CorrelationId;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CorrelationId", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CorrelationId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CorrelationId));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CorrelationId", 9, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CorrelationId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CorrelationId));
       }
     }
     [Sooda.SoodaFieldSizeAttribute(50)]
@@ -1129,7 +1197,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).TaskId;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskId", 9, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskId));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskId", 10, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskId));
       }
     }
     public System.DateTime CreatedDate {
@@ -1137,7 +1205,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).CreatedDate;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 10, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 11, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
       }
     }
     public System.Data.SqlTypes.SqlDateTime ExecutionStart {
@@ -1145,7 +1213,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).ExecutionStart;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionStart", 11, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionStart), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionStart));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionStart", 12, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionStart), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionStart));
       }
     }
     public System.Data.SqlTypes.SqlDateTime ExecutionEnd {
@@ -1153,7 +1221,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return this.GetTaskFieldValuesForRead(0).ExecutionEnd;
       }
       set {
-        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionEnd", 12, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionEnd), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionEnd));
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionEnd", 13, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionEnd), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionEnd));
       }
     }
     private Task_Values GetTaskFieldValuesForRead(int requiredTable) {
@@ -1345,6 +1413,12 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     protected virtual void AfterFieldUpdate_Assignee(User oldValue, User newValue) {
       this.AfterFieldUpdate("Assignee", oldValue, newValue);
     }
+    protected virtual void BeforeFieldUpdate_Status(TaskStatus oldValue, TaskStatus newValue) {
+      this.BeforeFieldUpdate("Status", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_Status(TaskStatus oldValue, TaskStatus newValue) {
+      this.AfterFieldUpdate("Status", oldValue, newValue);
+    }
     protected virtual void BeforeFieldUpdate_ResultCode(object oldValue, object newValue) {
       this.BeforeFieldUpdate("ResultCode", oldValue, newValue);
     }
@@ -1392,6 +1466,242 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
     protected virtual void AfterFieldUpdate_ExecutionEnd(object oldValue, object newValue) {
       this.AfterFieldUpdate("ExecutionEnd", oldValue, newValue);
+    }
+  }
+  public class TaskStatus_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
+    public int Id;
+    public string Name;
+    public TaskStatus_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
+        base(other) {
+    }
+    public TaskStatus_Values(string[] fieldNames) : 
+        base(fieldNames) {
+    }
+    public override Sooda.SoodaObjectFieldValues Clone() {
+      return new TaskStatus_Values(this);
+    }
+  }
+  public class TaskStatus_Stub : SoodaObject {
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("TaskStatus", NGinnWorklistBusinessObjects._DatabaseSchema.GetSchema().GetDataSourceInfo("nginn.worklist"));
+    public TaskStatus_Stub(SoodaTransaction tran) : 
+        base(tran) {
+      this.InitNewObject();
+    }
+    public TaskStatus_Stub(SoodaConstructor c) : 
+        base(c) {
+    }
+    public int Id {
+      get {
+        return ((int)(this.GetPrimaryKeyValue()));
+      }
+      set {
+        this.SetPrimaryKeyValue(value);
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public string Name {
+      get {
+        return this.GetTaskStatusFieldValuesForRead(0).Name;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "Name", 1, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_Name), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_Name));
+      }
+    }
+    public static TaskStatus AssignedGroup {
+      get {
+        return TaskStatus_Stub.GetRef(1);
+      }
+    }
+    public static TaskStatus Assigned {
+      get {
+        return TaskStatus_Stub.GetRef(2);
+      }
+    }
+    public static TaskStatus Processing {
+      get {
+        return TaskStatus_Stub.GetRef(3);
+      }
+    }
+    public static TaskStatus Completed {
+      get {
+        return TaskStatus_Stub.GetRef(4);
+      }
+    }
+    public static TaskStatus Cancelled {
+      get {
+        return TaskStatus_Stub.GetRef(5);
+      }
+    }
+    private TaskStatus_Values GetTaskStatusFieldValuesForRead(int requiredTable) {
+      return ((TaskStatus_Values)(Sooda.ObjectMapper.SoodaObjectImpl.GetFieldValuesForRead(this, requiredTable)));
+    }
+    protected override SoodaObjectFieldValues InitFieldValues(int fieldCount, string[] fieldNames) {
+      return new TaskStatus_Values(fieldNames);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public override Sooda.Schema.ClassInfo GetClassInfo() {
+      return TaskStatus_Factory.TheClassInfo;
+    }
+    protected override Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return TaskStatus_Factory.InternalGetFieldHandler(ordinal);
+    }
+    public static IPrimaryKeyGenerator GetKeyGenerator() {
+      return keyGenerator;
+    }
+    protected override void InitNewObject() {
+      this.SetPrimaryKeyValue(GetKeyGenerator().GetNextKeyValue());
+    }
+    public static TaskStatus LoadSingleObject(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((TaskStatus)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(SoodaTransaction.ActiveTransaction, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static TaskStatus LoadSingleObject(Sooda.SoodaWhereClause @where) {
+      return ((TaskStatus)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static TaskStatus LoadSingleObject(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((TaskStatus)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(tran, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static TaskStatus LoadSingleObject(SoodaTransaction tran, Sooda.SoodaWhereClause @where) {
+      return ((TaskStatus)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(tran, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static TaskStatusList GetAllObjects() {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause("1=1"), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetAllObjects(SoodaTransaction transaction) {
+      return DoGetList(transaction, null, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(tran, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, topCount, options);
+    }
+    private static TaskStatusList DoGetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderByClause, int topCount, SoodaSnapshotOptions options) {
+      return new TaskStatusList(new Sooda.ObjectMapper.SoodaObjectListSnapshot(tran, whereClause, orderByClause, topCount, options, TaskStatus_Factory.TheClassInfo));
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static TaskStatusList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static TaskStatus Load(int id) {
+      return Load(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static TaskStatus Load(SoodaTransaction tran, int id) {
+      TaskStatus retVal = TaskStatus_Stub.GetRef(tran, id);
+      Sooda.ObjectMapper.SoodaObjectImpl.LoadAllData(retVal);
+      return retVal;
+    }
+    public static TaskStatus GetRef(int id) {
+      return GetRef(SoodaTransaction.ActiveTransaction, id);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static TaskStatus TryGet(int id) {
+      return TryGet(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static TaskStatus GetRef(SoodaTransaction tran, int id) {
+      return ((TaskStatus)(Sooda.SoodaObject.GetRefHelper(tran, TaskStatus_Factory.TheFactory, id)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static TaskStatus TryGet(SoodaTransaction tran, int id) {
+      return ((TaskStatus)(tran.FindObjectWithKey("TaskStatus", id, typeof(TaskStatus))));
+    }
+    public static TaskStatus GetRef(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((TaskStatus)(Sooda.SoodaObject.GetRefHelper(tran, TaskStatus_Factory.TheFactory, tuple)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static TaskStatus TryGet(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((TaskStatus)(tran.FindObjectWithKey("TaskStatus", tuple, typeof(TaskStatus))));
+    }
+    protected virtual void BeforeFieldUpdate_Name(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("Name", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_Name(object oldValue, object newValue) {
+      this.AfterFieldUpdate("Name", oldValue, newValue);
     }
   }
   [SoodaObjectFactoryAttribute("User", typeof(User))]
@@ -1586,20 +1896,21 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Worklist.BusinessObjects._DatabaseSchema.GetSchema().FindClassByName("Task");
     private static Type _theType = typeof(Task);
     static Task_Factory() {
-      _fieldHandlers = new SoodaFieldHandler[13];
+      _fieldHandlers = new SoodaFieldHandler[14];
       _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[3] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(true);
       _fieldHandlers[4] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(true);
-      _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[7] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[8] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
       _fieldHandlers[9] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
-      _fieldHandlers[10] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
-      _fieldHandlers[11] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[10] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[11] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
       _fieldHandlers[12] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[13] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
     }
     public Task_Factory() {
     }
@@ -1644,6 +1955,65 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
     public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
       Task retVal = new Task(SoodaConstructor.Constructor);
+      retVal.InitRawObject(tran);
+      return retVal;
+    }
+  }
+  [SoodaObjectFactoryAttribute("TaskStatus", typeof(TaskStatus))]
+  public class TaskStatus_Factory : object, ISoodaObjectFactory {
+    private static SoodaFieldHandler[] _fieldHandlers;
+    private static SoodaFieldHandler _primaryKeyFieldHandler = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+    private static TaskStatus_Factory _theFactory = new TaskStatus_Factory();
+    private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Worklist.BusinessObjects._DatabaseSchema.GetSchema().FindClassByName("TaskStatus");
+    private static Type _theType = typeof(TaskStatus);
+    static TaskStatus_Factory() {
+      _fieldHandlers = new SoodaFieldHandler[2];
+      _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+    }
+    public TaskStatus_Factory() {
+    }
+    public static TaskStatus_Factory TheFactory {
+      get {
+        return _theFactory;
+      }
+    }
+    public virtual Type TheType {
+      get {
+        return _theType;
+      }
+    }
+    public static Sooda.Schema.ClassInfo TheClassInfo {
+      get {
+        return _theClassInfo;
+      }
+    }
+    public virtual SoodaObject GetRef(SoodaTransaction tran, object keyValue) {
+      return TaskStatus_Stub.GetRef(tran, ((int)(keyValue)));
+    }
+    public virtual SoodaObject TryGet(SoodaTransaction tran, object keyValue) {
+      return TaskStatus_Stub.TryGet(tran, ((int)(keyValue)));
+    }
+    public virtual System.Collections.IList GetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return TaskStatus_Stub.GetList(tran, whereClause, orderBy, options);
+    }
+    public virtual Sooda.Schema.ClassInfo GetClassInfo() {
+      return TheClassInfo;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetPrimaryKeyFieldHandler() {
+      return _primaryKeyFieldHandler;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return InternalGetFieldHandler(ordinal);
+    }
+    internal static Sooda.ObjectMapper.SoodaFieldHandler InternalGetFieldHandler(int ordinal) {
+      return _fieldHandlers[ordinal];
+    }
+    public virtual SoodaObject CreateNew(SoodaTransaction tran) {
+      return new TaskStatus(tran);
+    }
+    public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
+      TaskStatus retVal = new TaskStatus(SoodaConstructor.Constructor);
       retVal.InitRawObject(tran);
       return retVal;
     }
@@ -2117,6 +2487,11 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return new UserNullableWrapperExpression(this, "Assignee");
       }
     }
+    public virtual TaskStatusWrapperExpression Status {
+      get {
+        return new TaskStatusWrapperExpression(this, "Status");
+      }
+    }
     public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ResultCode {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ResultCode"));
@@ -2237,6 +2612,133 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     public TaskNullableWrapperExpression() {
     }
     public TaskNullableWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, false);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNotNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
+    }
+  }
+  public class TaskStatusCollectionExpression : Sooda.QL.TypedWrappers.SoqlCollectionWrapperExpression {
+    public TaskStatusCollectionExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(TaskStatus item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(TaskStatusWrapperExpression item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(int item) {
+      return this.ContainsImpl(new Sooda.QL.SoqlLiteralExpression(item));
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression ContainsTaskStatusWhere(Sooda.QL.SoqlBooleanExpression whereClause) {
+      return this.ContainsExprImpl("TaskStatus", whereClause);
+    }
+  }
+  public class TaskStatusWrapperExpression : Sooda.QL.SoqlPathExpression {
+    public TaskStatusWrapperExpression() {
+    }
+    public TaskStatusWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(this));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "Id"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression Name {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "Name"));
+      }
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params TaskStatusWrapperExpression[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params TaskStatus[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params int[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(TaskStatusWrapperExpression left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(TaskStatusWrapperExpression left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(int left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(int left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(TaskStatusWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(TaskStatusWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(TaskStatus left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(TaskStatus left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(TaskStatusWrapperExpression left, TaskStatus right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(TaskStatusWrapperExpression left, TaskStatus right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(TaskStatusWrapperExpression left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(TaskStatusWrapperExpression left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(int left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(int left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(TaskStatusWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(TaskStatusWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(TaskStatus left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(TaskStatus left, TaskStatusWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(TaskStatusWrapperExpression left, TaskStatus right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(TaskStatusWrapperExpression left, TaskStatus right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public override bool Equals(object o) {
+      return object.ReferenceEquals(this, o);
+    }
+    public override int GetHashCode() {
+      return base.GetHashCode();
+    }
+  }
+  public class TaskStatusNullableWrapperExpression : TaskStatusWrapperExpression {
+    public TaskStatusNullableWrapperExpression() {
+    }
+    public TaskStatusNullableWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
         base(left, name) {
     }
     public virtual Sooda.QL.SoqlBooleanExpression IsNull() {
@@ -2372,6 +2874,11 @@ namespace NGinn.Worklist.BusinessObjects.TypedQueries {
         return new UserNullableWrapperExpression(null, "Assignee");
       }
     }
+    public static TaskStatusWrapperExpression Status {
+      get {
+        return new TaskStatusWrapperExpression(null, "Status");
+      }
+    }
     public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ResultCode {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ResultCode"));
@@ -2413,6 +2920,23 @@ namespace NGinn.Worklist.BusinessObjects.TypedQueries {
       }
     }
   }
+  public class TaskStatusField : object {
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(null));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("Id"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression Name {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("Name"));
+      }
+    }
+  }
 }
 namespace NGinn.Worklist.BusinessObjects {
   using System;
@@ -2433,7 +2957,8 @@ namespace NGinn.Worklist.BusinessObjects {
           NGinn.Worklist.BusinessObjects.Stubs.User_Factory.TheFactory,
           NGinn.Worklist.BusinessObjects.Stubs.Group_Factory.TheFactory,
           NGinn.Worklist.BusinessObjects.Stubs.GroupHierarchy_Factory.TheFactory,
-          NGinn.Worklist.BusinessObjects.Stubs.Task_Factory.TheFactory};
+          NGinn.Worklist.BusinessObjects.Stubs.Task_Factory.TheFactory,
+          NGinn.Worklist.BusinessObjects.Stubs.TaskStatus_Factory.TheFactory};
     }
     public virtual Sooda.Schema.SchemaInfo Schema {
       get {

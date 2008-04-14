@@ -37,7 +37,8 @@ namespace NGinn.Engine
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
             inputVars["_NGinn_ParentProcess"] = this.ProcessInstanceId;
             log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
-            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, inputVars);
+            string xml = string.Format("<data><var1>ala</var1><var2>{0}</var2></data>", DateTime.Now);
+            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml);
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
             this.Status = TransitionStatus.ENABLED;

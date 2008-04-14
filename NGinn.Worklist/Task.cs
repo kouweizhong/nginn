@@ -16,9 +16,7 @@ namespace NGinn.Worklist.BusinessObjects {
     
     public Task(SoodaTransaction transaction) : 
         base(transaction) {
-      // 
-      // TODO: Add construction logic here.
-      // 
+            CreatedDate = DateTime.Now;
     }
     
     public Task() : 

@@ -49,16 +49,24 @@
     <Compile Include="Schema\ManualTask.cs" />
     <Compile Include="Schema\MultiManualTask.cs" />
     <Compile Include="Schema\NotificationTask.cs" />
+    <Compile Include="Schema\Package.cs" />
     <Compile Include="Schema\Place.cs" />
     <Compile Include="Schema\ProcessDefinition.cs" />
     <Compile Include="Schema\SchemaUtil.cs" />
     <Compile Include="Schema\SubprocessTask.cs" />
     <Compile Include="Schema\Task.cs" />
+    <Compile Include="Util\XmlConst.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WorkflowDefinition.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PackageDefinition.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="PackageDefinition.xsx">
+      <DependentUpon>PackageDefinition.xsd</DependentUpon>
+    </None>
     <None Include="WorkflowDefinition.xsx">
       <DependentUpon>WorkflowDefinition.xsd</DependentUpon>
     </None>

@@ -15,8 +15,7 @@ namespace NGinn.Engine.Services
         /// <param name="definitionId">Process definition ID (check IProcessDefinitionRepository)</param>
         /// <param name="inputVariables">Process input variables</param>
         /// <returns>new process instance ID</returns>
-        string StartProcessInstance(string definitionId, IDictionary<string, object> inputVariables);
-
+        string StartProcessInstance(string definitionId, string inputXml);
         /// <summary>
         /// Get lists of processes that can be 'kicked', that is, have some work to do
         /// </summary>

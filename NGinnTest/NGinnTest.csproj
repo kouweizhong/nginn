@@ -72,13 +72,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="TestSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="TestSchema.xsx">
+      <DependentUpon>TestSchema.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ProcessData.xml" />
     <Content Include="ProcessExample.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Sooda.config.xml" />
     <Content Include="TestProcess1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestProcess2.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TODO.txt" />

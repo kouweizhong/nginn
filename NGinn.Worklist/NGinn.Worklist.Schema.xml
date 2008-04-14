@@ -40,6 +40,7 @@
 			<field name="Description" dbcolumn="description_txt" type="String" size="1000" nullable="true" />
 			<field name="AssigneeGroup" dbcolumn="assignee_group" type="Integer" references="Group" nullable="true" />
 			<field name="Assignee" dbcolumn="assignee" type="Integer" references="User" nullable="true" />
+      <field name="Status" dbcolumn="status" type="Integer" references="TaskStatus" nullable="false" />
 			<field name="ResultCode" dbcolumn="result_code" type="String" size="100" nullable="true" />
 			<field name="SolutionComment" dbcolumn="solution_comment" type="String" size="1000" nullable="true" />
 			<field name="ProcessInstance" dbcolumn="process_instance" type="String" size="50" nullable="true" />
@@ -50,4 +51,16 @@
 			<field name="ExecutionEnd" dbcolumn="execution_end" type="DateTime" nullable="true" />
 		</table>
 	</class>
+
+  <class name="TaskStatus" datasource="nginn.worklist">
+    <table name="TaskStatus">
+      <field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
+      <field name="Name" dbcolumn="name" type="String" size="50" nullable="false" />
+    </table>
+    <const key="1" name="AssignedGroup" />
+    <const key="2" name="Assigned" />
+    <const key="3" name="Processing" />
+    <const key="4" name="Completed" />
+    <const key="5" name="Cancelled" />
+  </class>
 </schema>

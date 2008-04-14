@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="windows-1250" ?>
+<project name="NGinn" default="build" basedir="." >
+    <tstamp />
+
+    <property name="nant.settings.currentframework" value="net-2.0" />
+	<property name="file" value="" overwrite="false"/>
+	<property name="out" value="Graph.gif" overwrite="false" />
+	
+    <property name="nxsl" value="${nant.project.basedir}\extlib\tools\nxslt-2.3-bin\nxslt2.exe" />
+    <property name="dot" value="C:\Program Files\Graphviz2.18\bin\dot.exe" />
+	
+    <target name="clean">
+    </target>
+
+	<target name="build" depends="">
+		
+    </target>
+	
+    <target name="processgraph" depends="">
+		<mkdir dir="temp" />
+		<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />
+		<exec program="${dot}" commandline="temp/processgraph.dot -Tgif -o ${out}" />
+    </target>
+
+	
+    <target name="Atmo.MSProject">
+        <csc target="library" output="${appserver.dir}/Atmo.MSProject.dll" debug="true">
+            <references>
+                <include name="${appserver.dir}/Atmo.Core.dll" />
+                <include name="${appserver.dir}/NLog.dll" />
+            </references>
+            <sources basedir="src/Atmo.MSProject">
+                <include name="**/*.cs" />
+            </sources>
+        </csc>
+    </target>
+   
+</project>

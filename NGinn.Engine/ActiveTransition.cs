@@ -119,7 +119,6 @@ namespace NGinn.Engine
         public virtual void InitiateTask()
         {
             if (this.Tokens.Count == 0) throw new Exception("No input tokens");
-
         }
 
         public virtual bool IsImmediate

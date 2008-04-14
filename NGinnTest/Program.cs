@@ -21,16 +21,29 @@ namespace NGinnTest
             try
             {
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
+                //TestProcessLoad();
                 //TestDefinitionRepository();
                 //TestKickProcess();
                 //TestStartProcess();
-                //TestTaskCompleted("30ee9bdd864c47b0a7674c9dd8aca6cd", "30ee9bdd864c47b0a7674c9dd8aca6cd.1");
-                TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
+                //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
+                //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
+                TestPackageRepository();
             }
             catch (Exception ex)
             {
                 log.Error("Error: {0}", ex);
             }
+        }
+
+        static void TestProcessLoad()
+        {
+            string pdName = "TestProcess2.xml";
+            ProcessDefinition pd = new ProcessDefinition();
+            log.Info("Loading process definition: {0}", pdName);
+            pd.LoadXmlFile(pdName);
+            log.Info("Process definition loaded: {0}.{1}", pd.Name, pd.Version);
+            string schema = pd.GenerateInputSchema();
+            log.Info("Process input data schema: {0}", schema);
         }
 
         static void TestDefinitionRepository()
@@ -53,10 +66,11 @@ namespace NGinnTest
         {
             INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)_ctx.GetObject("ProcessDefinitionRepository");
-            string id = pdr.GetProcessDefinitionId("Test_Process_2", 1);
+            string id = pdr.GetProcessDefinitionId("Test_Process_3", 1);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
-            string instId = env.StartProcessInstance(id, vars);
+            string xml = string.Format("<data><parent>1234</parent></data>");
+            string instId = env.StartProcessInstance(id, xml);
         }
 
         static void TestKickProcess()
@@ -84,6 +98,14 @@ namespace NGinnTest
         {
             INGEnvironmentProcessCommunication env = (INGEnvironmentProcessCommunication)_ctx.GetObject("NGEnvironment");
             env.ProcessTaskSelectedForProcessing(processId, taskCorrelationId);
+        }
+
+        static void TestPackageRepository()
+        {
+            IProcessPackageRepository ppr = (IProcessPackageRepository) _ctx.GetObject("PackageRepository");
+            foreach (string pkg in ppr.PackageNames)
+            {
+            };
         }
     }
 }
