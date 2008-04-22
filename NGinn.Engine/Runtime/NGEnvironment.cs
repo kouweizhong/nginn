@@ -144,7 +144,7 @@ namespace NGinn.Engine.Runtime
 
                 log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                 pi.ProcessDefinitionId = definitionId;
-                
+                pi.SetProcessInputData(inputXml);
                 Token tok = pi.CreateNewStartToken();
                 pi.AddToken(tok);
                 pi.Passivate();
@@ -160,6 +160,7 @@ namespace NGinn.Engine.Runtime
         private void ValidateProcessInputData(ProcessDefinition pd, string inputXml)
         {
             string schemaXml = pd.GenerateInputSchema();
+            log.Info("Validation schema: {0}", schemaXml);
             StringReader sr = new StringReader(inputXml);
             XmlSchema xs = XmlSchema.Read(new StringReader(schemaXml), new ValidationEventHandler(schema_ValidationEventHandler));
             XmlReaderSettings rs = new XmlReaderSettings();

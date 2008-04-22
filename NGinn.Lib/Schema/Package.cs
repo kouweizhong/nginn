@@ -47,12 +47,12 @@ namespace NGinn.Lib.Schema
             nsmgr.AddNamespace("wf", PACKAGE_NAMESPACE);
             _name = doc.DocumentElement.GetAttribute("name");
             _schemaFiles = new List<string>();
-            foreach (XmlElement el in doc.SelectNodes("package/dataSchemas/schema"))
+            foreach (XmlElement el in doc.SelectNodes("wf:package/wf:dataSchemas/wf:schema", nsmgr))
             {
                 _schemaFiles.Add(el.InnerText);
             }
             _processFiles = new List<string>();
-            foreach (XmlElement el in doc.SelectNodes("package/processDefinitions/process"))
+            foreach (XmlElement el in doc.SelectNodes("wf:package/wf:processDefinitions/wf:process", nsmgr))
             {
                 _processFiles.Add(el.InnerText);
             }

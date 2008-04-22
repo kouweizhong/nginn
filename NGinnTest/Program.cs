@@ -24,10 +24,10 @@ namespace NGinnTest
                 //TestProcessLoad();
                 //TestDefinitionRepository();
                 //TestKickProcess();
-                //TestStartProcess();
+                TestStartProcess();
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
-                TestPackageRepository();
+                //TestPackageRepository();
             }
             catch (Exception ex)
             {
@@ -48,6 +48,7 @@ namespace NGinnTest
 
         static void TestDefinitionRepository()
         {
+            /*
             string pdName = "TestProcess2.xml";
             ProcessDefinition pd = new ProcessDefinition();
             log.Info("Loading process definition: {0}", pdName);
@@ -60,17 +61,19 @@ namespace NGinnTest
                 string ret = rep.InsertProcessDefinition(fs.ReadToEnd());
                 log.Info("Process definition stored with id={0}", ret);
             }
+            */
         }
 
         static void TestStartProcess()
         {
             INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)_ctx.GetObject("ProcessDefinitionRepository");
-            string id = pdr.GetProcessDefinitionId("Test_Process_3", 1);
+            string id = pdr.GetProcessDefinitionId("TestPackage3", "Test_Process_3", 1);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
-            string xml = string.Format("<data><parent>1234</parent></data>");
+            string xml = string.Format("<Test_Process_3><alac>1234</alac></Test_Process_3>");
             string instId = env.StartProcessInstance(id, xml);
+            
         }
 
         static void TestKickProcess()

@@ -11,6 +11,7 @@ namespace NGinn.Lib.Schema
         private string _id;
         private Dictionary<string, Flow> _flowsIn = new Dictionary<string, Flow>();
         private Dictionary<string, Flow> _flowsOut = new Dictionary<string, Flow>();
+        private ProcessDefinition _process = null;
 
         public string Id
         {
@@ -24,6 +25,15 @@ namespace NGinn.Lib.Schema
         public ICollection<Flow> FlowsOut
         {
             get { return _flowsOut.Values; }
+        }
+
+        /// <summary>
+        /// Process the node belongs to
+        /// </summary>
+        public ProcessDefinition ParentProcess
+        {
+            get { return _process; }
+            set { _process = value; }
         }
 
         /// <summary>

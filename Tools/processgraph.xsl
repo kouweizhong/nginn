@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- this is a stylesheet for converting 
+	 process definition into dot.exe graph description file.
+	 It is used for generating process graphical representation.
+-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:ng="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
 	<xsl:output method="text" indent="yes" />
 	<xsl:template match="/">
@@ -52,13 +56,13 @@
 		<xsl:variable name="tonode" select="//ng:*[@id=$toid]" />
 		<xsl:value-of select="ng:from" /> -&gt; <xsl:value-of select="ng:to" /> [
 			<xsl:choose>
-				<xsl:when test="$fromnode/ng:splitType = 'XOR'">arrowtail=invodot</xsl:when>
-				<xsl:when test="$fromnode/ng:splitType = 'OR'">arrowtail=invdot</xsl:when>
+				<xsl:when test="$fromnode/ng:splitType = 'XOR'">arrowtail=diamond</xsl:when>
+				<xsl:when test="$fromnode/ng:splitType = 'OR'">arrowtail=odiamond</xsl:when>
 				<xsl:otherwise>arrowtail=none</xsl:otherwise>
 			</xsl:choose>,
 			<xsl:choose>
-				<xsl:when test="$tonode/ng:joinType = 'XOR'">arrowhead=odot</xsl:when>
-				<xsl:when test="$tonode/ng:joinType = 'OR'">arrowhead=dot</xsl:when>
+				<xsl:when test="$tonode/ng:joinType = 'XOR'">arrowhead=open</xsl:when>
+				<xsl:when test="$tonode/ng:joinType = 'OR'">arrowhead=empty</xsl:when>
 				<xsl:otherwise>arrowhead=normal</xsl:otherwise>
 			</xsl:choose>
 			];

@@ -137,6 +137,7 @@ namespace NGinn.Lib.Schema
             if (p is EndPlace && _finish != null) throw new Exception("Finish place already defined");
             NetNode nn = GetNode(p.Id);
             if (nn != null) throw new Exception("Node already defined: " + p.Id);
+            p.ParentProcess = this;
             _places.Add(p.Id, p);
             if (p is StartPlace) _start = p as StartPlace;
             if (p is EndPlace) _finish = p as EndPlace;
@@ -151,6 +152,7 @@ namespace NGinn.Lib.Schema
             if (t.FlowsIn.Count > 0) throw new Exception("Task cannot contain flows when adding to process definition");
             NetNode nn = GetNode(t.Id);
             if (nn != null) throw new Exception("Node already defined: " + t.Id);
+            t.ParentProcess = this;
             _tasks.Add(t.Id, t);
         }
         /// <summary>
@@ -184,12 +186,13 @@ namespace NGinn.Lib.Schema
                 Task tp = p as Task;
                 Place ptran = new Place();
                 ptran.IsImplicit = true;
-                ptran.Id = "_*_" + tp.Id;
+                ptran.Id = tp.Id + "_*_" + tq.Id;
                 AddPlace(ptran);
                 Flow f1 = new Flow();
                 f1.From = tp;
                 f1.To = ptran;
-                f1.InputCondition = f1.InputCondition;
+                f1.InputCondition = t.InputCondition;
+                f1.EvalOrder = t.EvalOrder;
                 Flow f2 = new Flow();
                 f2.From = ptran;
                 f2.To = tq;
@@ -216,7 +219,7 @@ namespace NGinn.Lib.Schema
             XmlWriter xw = XmlWriter.Create(sw, settings);
             xw.WriteStartDocument();
             xw.WriteStartElement("xs", "schema", SchemaUtil.SCHEMA_NS);
-            xw.WriteAttributeString("xmlns", "http://www.nginn.org/Process/" + Name);
+            //xw.WriteAttributeString("xmlns", "http://www.nginn.org/Process/" + Name);
             xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
             xw.WriteAttributeString("name", this.Name);
             xw.WriteStartElement("complexType", SchemaUtil.SCHEMA_NS);
@@ -283,7 +286,7 @@ namespace NGinn.Lib.Schema
             LoadFlows(el, nsmgr);
             if (_start == null) throw new Exception("Missing start place in process definition");
             if (_finish == null) throw new Exception("Missing end place in process definition");
-            el = doc.DocumentElement.SelectSingleNode("wf:variable-definitions", nsmgr) as XmlElement;
+            el = doc.DocumentElement.SelectSingleNode("wf:variables", nsmgr) as XmlElement;
             if (el == null) throw new Exception("Missing process variable definitions");
             LoadProcessVariables(el, nsmgr);
         }
@@ -343,32 +346,14 @@ namespace NGinn.Lib.Schema
 
         private void LoadProcessVariables(XmlElement el, XmlNamespaceManager nsmgr)
         {
-            foreach (XmlElement vel in el.SelectNodes("wf:variable", nsmgr))
-            {
-                VariableDef vd = LoadVariable(vel, nsmgr);
-                this._processVariables.Add(vd);
-            }
+            List<VariableDef> vars = new List<VariableDef>();
+            List<VariableBinding> inputBind = new List<VariableBinding>();
+            List<VariableBinding> outputBind = new List<VariableBinding>();
+            SchemaUtil.LoadDataSection(el, nsmgr, vars, inputBind, outputBind);
+            this._processVariables = vars;
         }
 
-        /// <summary>
-        /// Load a variable definition from xml 
-        /// </summary>
-        /// <param name="el"></param>
-        /// <param name="nsmgr"></param>
-        /// <returns></returns>
-        private VariableDef LoadVariable(XmlElement el, XmlNamespaceManager nsmgr)
-        {
-            VariableDef vd = new VariableDef();
-            vd.Name = SchemaUtil.GetXmlElementText(el, "wf:name", nsmgr);
-            vd.VariableType = SchemaUtil.GetXmlElementText(el, "wf:variableType", nsmgr);
-            vd.IsArray = "true".Equals(SchemaUtil.GetXmlElementText(el, "wf:isArray", nsmgr));
-            vd.VariableDir = (VariableDef.Dir) Enum.Parse(typeof(VariableDef.Dir), SchemaUtil.GetXmlElementText(el, "wf:dir", nsmgr));
-            vd.VariableUsage = VariableDef.Usage.Optional;
-            if ("true".Equals(SchemaUtil.GetXmlElementText(el, "wf:isRequired", nsmgr))) vd.VariableUsage = VariableDef.Usage.Required;
-            vd.DefaultValueExpr = SchemaUtil.GetXmlElementText(el, "wf:defaultValue", nsmgr);
-            return vd;
-        }
-
+        
         public string ToXml()
         {
             return null;

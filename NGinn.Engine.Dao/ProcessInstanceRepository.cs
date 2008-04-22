@@ -148,5 +148,15 @@ namespace NGinn.Engine.Dao
         }
 
         #endregion
+
+        #region IProcessInstanceRepository Members
+
+
+        public string GetProcessOutputXml(string instanceId)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
     }
 }

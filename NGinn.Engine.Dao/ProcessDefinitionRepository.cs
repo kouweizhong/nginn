@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace NGinn.Engine.Dao
 {
-    
+    /*
     public class ProcessDefinitionRepository : IProcessDefinitionRepository
     {
         private Dictionary<string, ProcessDefinition> _pdCache = new Dictionary<string, ProcessDefinition>();
@@ -130,4 +130,5 @@ namespace NGinn.Engine.Dao
 
         #endregion
     }
+    */
 }

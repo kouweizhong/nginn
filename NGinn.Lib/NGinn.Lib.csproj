@@ -55,6 +55,7 @@
     <Compile Include="Schema\SchemaUtil.cs" />
     <Compile Include="Schema\SubprocessTask.cs" />
     <Compile Include="Schema\Task.cs" />
+    <Compile Include="Schema\VariableBinding.cs" />
     <Compile Include="Util\XmlConst.cs" />
   </ItemGroup>
   <ItemGroup>

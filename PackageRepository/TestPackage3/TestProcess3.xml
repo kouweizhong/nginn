@@ -13,10 +13,24 @@
     <task id="t1" type="EmptyTask">
       <joinType>AND</joinType>
       <splitType>AND</splitType>
+	  <data-definition>
+		  <variables>
+			<variable><name>var1</name><variableType>xs:string</variableType><isArray>false</isArray><isRequired>true</isRequired><dir>InOut</dir></variable>
+		  </variables>
+		  <input-bindings>
+			<binding>
+				<variable>var1</variable>
+				<bindingType>CopyVar</bindingType>
+				<sourceVariable>v3</sourceVariable>
+			</binding>
+		  </input-bindings>
+		  <output-bindings>
+		  </output-bindings>
+	  </data-definition>
     </task>
     <task id="t2" type="ManualTask">
       <joinType>AND</joinType>
-      <splitType>AND</splitType>
+      <splitType>XOR</splitType>
     </task>
     <task id="t3" type="ManualTask">
       <joinType>AND</joinType>
@@ -38,6 +52,16 @@
       <joinType>OR</joinType>
       <splitType>AND</splitType>
     </task>
+	
+	<task id="t7" type="ManualTask">
+      <joinType>XOR</joinType>
+      <splitType>AND</splitType>
+    </task>
+	
+	<task id="t8" type="ManualTask">
+      <joinType>XOR</joinType>
+      <splitType>AND</splitType>
+    </task>
   
   </tasks>
   <flows>
@@ -52,16 +76,20 @@
 	<flow><from>t4</from><to>t6</to></flow>
 	<flow><from>t5</from><to>t6</to></flow>
     <flow><from>t6</from><to>end</to></flow>
-	<flow><from>t2</from><to>end</to></flow>
+	<flow><from>t2</from><to>t7</to></flow>
+	<flow><from>t2</from><to>t8</to></flow>
+	<flow><from>t7</from><to>end</to></flow>
+	<flow><from>t8</from><to>end</to></flow>
   </flows>
-  <variable-definitions>
-    <variable>
-      <name>ala</name>
-      <variableType>xs:string</variableType>
-      <isArray>false</isArray>
-      <isRequired>true</isRequired>
-      <dir>In</dir>
-    </variable>
-  </variable-definitions>
+  
+  	<variables>
+		<variable>
+		  <name>ala</name>
+		  <variableType>xs:string</variableType>
+		  <isArray>false</isArray>
+		  <isRequired>true</isRequired>
+		  <dir>In</dir>
+		</variable>
+	  </variables>
   
 </process>

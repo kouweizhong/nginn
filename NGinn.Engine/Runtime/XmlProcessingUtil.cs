@@ -17,5 +17,16 @@ namespace NGinn.Engine.Runtime
             XmlSchemaCollection coll = new XmlSchemaCollection();
             
         }
+
+        public void ReplaceNode(XmlNode insertNode, string xpath, XmlNode root)
+        {
+           
+        }
+
+        public void InsertSibling(XmlNode parentNode, XmlNode insertNode, string afterNodeName)
+        {
+            
+        }
+
     }
 }

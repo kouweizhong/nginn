@@ -15,9 +15,6 @@ namespace NGinn.Engine.Services
         }
 
         IProcessPackageStore GetPackage(string name);
-        void AddPackage(Stream packageInputStream);
-        void UpdatePackage(Stream packageInputStream);
-        ProcessDefinition GetProcessDefinition(string fullName);
     }
 
     public interface IProcessPackageStore
@@ -29,10 +26,6 @@ namespace NGinn.Engine.Services
 
         Stream OpenPackageStream(string fileName);
         ProcessDefinition GetProcessDefinition(string name);
-        XmlSchema GetDataSchema(string name);
-
-        void AddProcessDefinition(string definitionXml);
-        void AddSchema(string schemaXml);
     }
 
     

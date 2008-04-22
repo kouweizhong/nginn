@@ -28,7 +28,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="variable-definitions" minOccurs="1" maxOccurs="1">
+      <xs:element name="variables" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
             <xs:element name="variable" type="VariableDef" minOccurs="0" maxOccurs="unbounded" />
@@ -44,6 +44,7 @@
       <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="splitType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="data-definition" type="DataDefinition" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
@@ -152,7 +153,52 @@
       <xs:element name="dir" type="VariableDir" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
-  
-    <xs:element name="process" type="Process" />
+  <xs:simpleType name="BindingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CopyVar" />
+      <xs:enumeration value="Xslt" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="VariableBinding">
+    <xs:sequence>
+      <xs:element name="variable" minOccurs="1" maxOccurs="1" type="xs:string" />
+      <xs:element name="bindingType" minOccurs="1" maxOccurs="1" type="BindingType" />
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="sourceVariable" minOccurs="1" maxOccurs="1" type="xs:string" />
+        <xs:element name="bindingExpr" minOccurs="1" maxOccurs="1">
+          <xs:complexType mixed="true">
+            <xs:sequence>
+              <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DataDefinition">
+    <xs:sequence>
+      <xs:element name="variables" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="variable" type="VariableDef" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="input-bindings" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="binding" type="VariableBinding" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="output-bindings" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="binding" type="VariableBinding" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="process" type="Process" />
 </xs:schema>

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using NGinn.Engine.Runtime;
 
 namespace NGinn.Engine
 {
@@ -272,6 +273,10 @@ namespace NGinn.Engine
             NotifyProcessEvent(ps);
         }
 
+        /// <summary>
+        /// Send a notification about process event
+        /// </summary>
+        /// <param name="pe"></param>
         private void NotifyProcessEvent(ProcessEvent pe)
         {
             Environment.MessageBus.Notify("ProcessInstance", "ProcessInstance.Event." + pe.GetType().Name, pe, true);
@@ -305,6 +310,89 @@ namespace NGinn.Engine
                     OnProcessStarted();
                 }
             }
+        }
+
+        /// <summary>
+        /// Initialize process input data
+        /// Should be called on new process instance, before any tokens are processed.
+        /// This function validates input data and inserts it into process data xml
+        /// </summary>
+        /// <param name="inputXml"></param>
+        public void SetProcessInputData(string inputXml)
+        {
+            if (!_activated) throw new Exception("Not activated");
+            XmlDocument doc = new XmlDocument();
+            XmlDocument d2 = new XmlDocument();
+            d2.LoadXml(inputXml);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(d2.NameTable);
+            
+            XmlElement root = doc.CreateElement("process");
+            doc.AppendChild(root);
+            
+            XmlElement instid = doc.CreateElement("processInstance");
+            instid.InnerText = this.InstanceId;
+            root.AppendChild(instid);
+            instid = doc.CreateElement("processDefinition");
+            instid.InnerText = this.ProcessDefinitionId;
+            root.AppendChild(instid);
+            XmlElement vroot = doc.CreateElement("inputData");
+            root.AppendChild(vroot);
+            XmlNode curChild = null;
+            foreach(VariableDef vd in Definition.ProcessVariables)
+            {
+                log.Debug("Inserting variable {0}", vd.Name);
+                XmlNodeList nodes = d2.DocumentElement.SelectNodes(vd.Name, nsmgr);
+                List<XmlNode> newNodes = new List<XmlNode>();
+                if (nodes != null && nodes.Count > 0)
+                {
+                    foreach (XmlNode xn in nodes)
+                    {
+                        newNodes.Add(doc.ImportNode(xn, true));
+                    }
+                }
+                else
+                {
+                    if (vd.VariableUsage == VariableDef.Usage.Required) throw new ApplicationException("Required variable is missing: " + vd.Name);
+                    XmlNode xn = doc.CreateElement(vd.Name);
+                    if (vd.DefaultValueExpr != null) xn.InnerText = vd.DefaultValueExpr;
+                    newNodes.Add(xn);
+                }
+                foreach(XmlNode xn in newNodes)
+                {
+                    curChild = vroot.InsertAfter(xn, curChild);
+                }
+            }
+            this._processData = doc;
+            log.Info("Process data: {0}", doc.OuterXml);
+        }
+
+        /// <summary>
+        /// Return process instance data xml
+        /// </summary>
+        /// <returns></returns>
+        public XmlDocument GetProcessData()
+        {
+            return this._processData;
+        }
+
+        /// <summary>
+        /// Set process instance data xml
+        /// Warning: this function does not validate the xml structure, so incorrect xml will corrupt the process logic.
+        /// </summary>
+        /// <param name="data"></param>
+        public void SetProcessData(XmlDocument data)
+        {
+            this._processData = data;
+        }
+
+        /// <summary>
+        /// Returns process output xml. Can be used only after process is completed.
+        /// </summary>
+        /// <returns></returns>
+        public XmlDocument GetProcessOutputXml()
+        {
+            if (this.Status != ProcessStatus.Finished) throw new ApplicationException("Cannot return output xml - process did not finish");
+            return null;
         }
 
         /// <summary>

@@ -10,11 +10,8 @@ namespace NGinn.Engine.Services
     /// </summary>
     public interface IProcessDefinitionRepository
     {
-        string InsertProcessDefinition(string definitionXml);
-        void UpdateProcessDefinition(string definitionXml);
-        void DeleteProcessDefinition(string definitionId);
-        string GetProcessDefinitionId(string name, int version);
         ProcessDefinition GetProcessDefinition(string definitionId);
+        string GetProcessDefinitionId(string packageName, string processName, int version);
     }
 
     

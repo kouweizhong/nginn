@@ -76,7 +76,12 @@ namespace NGinn.Engine.Runtime
 
         public IProcessPackageStore GetPackage(string name)
         {
-            return _packageCache[name];
+            lock (this)
+            {
+                if (_packageCache == null) ScanForPackages();
+                if (!_packageCache.ContainsKey(name)) throw new ApplicationException("Unknown package: " + name);
+                return _packageCache[name];
+            }
         }
 
         public void AddPackage(Stream packageInputStream)
@@ -95,8 +100,9 @@ namespace NGinn.Engine.Runtime
     class FSProcessPackageStore : IProcessPackageStore
     {
         private Package _pkg;
-        private Dictionary<string, ProcessDefinition> _processes = new Dictionary<string,ProcessDefinition>();
+        private Dictionary<string, ProcessDefinition> _processes = null;
         private string _packageFile;
+        private static Logger log = LogManager.GetCurrentClassLogger();
 
         public FSProcessPackageStore(string packageFileName)
         {
@@ -106,6 +112,24 @@ namespace NGinn.Engine.Runtime
                 _pkg.LoadXml(fs);
             }
             _packageFile = packageFileName;
+        }
+
+        protected void InitializeProcessInformation()
+        {
+            Dictionary<string, ProcessDefinition> procs = new Dictionary<string, ProcessDefinition>();
+            string baseDir = Path.GetDirectoryName(_packageFile);
+            log.Debug("Loading package {0} files from directory: {1}", _pkg.PackageName, baseDir);
+            foreach (string fn in _pkg.ProcessFiles)
+            {
+                string tfn = fn;
+                if (!Path.IsPathRooted(fn)) tfn = Path.Combine(baseDir, fn);
+                log.Debug("Trying to load process definition: {0}", tfn);
+                ProcessDefinition pd = new ProcessDefinition();
+                pd.LoadXmlFile(tfn);
+                string nv = string.Format("{0}.{1}", pd.Name, pd.Version);
+                procs[nv] = pd;
+            }
+            _processes = procs;
         }
 
         #region IProcessPackageStore Members
@@ -134,6 +158,24 @@ namespace NGinn.Engine.Runtime
         public void AddSchema(string schemaXml)
         {
             throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
+
+        #region IProcessPackageStore Members
+
+
+        public ProcessDefinition GetProcessDefinition(string name)
+        {
+            Dictionary<string, ProcessDefinition> proc = _processes;
+            lock (this)
+            {
+                if (proc == null) InitializeProcessInformation();
+                proc = _processes;
+            }
+            string nv = name;
+            if (!proc.ContainsKey(nv)) throw new ApplicationException("Process not found: " + nv);
+            return proc[nv];
         }
 
         #endregion

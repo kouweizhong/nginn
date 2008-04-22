@@ -13,5 +13,6 @@ namespace NGinn.Engine.Services
         ProcessInstance InitializeNewProcessInstance(string definitionId, INGDataSession ds);
         IList<Token> GetProcessActiveTokens(string instanceId, INGDataSession ds);
         IList<string> SelectProcessesWithReadyTokens();
+        string GetProcessOutputXml(string instanceId);
     }
 }

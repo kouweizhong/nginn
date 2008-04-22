@@ -51,6 +51,7 @@
     <Compile Include="ProcessInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
+    <Compile Include="Runtime\ProcessDefinitionRepository.cs" />
     <Compile Include="Runtime\ProcessPackageRepository.cs" />
     <Compile Include="Runtime\XmlProcessingUtil.cs" />
     <Compile Include="Services\Dao\INGDataSession.cs" />
