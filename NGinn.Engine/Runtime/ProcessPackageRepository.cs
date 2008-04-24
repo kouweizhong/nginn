@@ -99,14 +99,14 @@ namespace NGinn.Engine.Runtime
 
     class FSProcessPackageStore : IProcessPackageStore
     {
-        private Package _pkg;
+        private PackageDefinition _pkg;
         private Dictionary<string, ProcessDefinition> _processes = null;
         private string _packageFile;
         private static Logger log = LogManager.GetCurrentClassLogger();
 
         public FSProcessPackageStore(string packageFileName)
         {
-            _pkg = new Package();
+            _pkg = new PackageDefinition();
             using (FileStream fs = new FileStream(packageFileName, FileMode.Open))
             {
                 _pkg.LoadXml(fs);
@@ -134,7 +134,7 @@ namespace NGinn.Engine.Runtime
 
         #region IProcessPackageStore Members
 
-        public Package PackageDef
+        public PackageDefinition PackageDef
         {
             get { return _pkg; }
         }

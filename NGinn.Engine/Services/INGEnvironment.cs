@@ -41,5 +41,13 @@ namespace NGinn.Engine.Services
         /// <param name="name"></param>
         /// <returns></returns>
         object GetEnvVariable(string name);
+
+
+        /// <summary>
+        /// Return xml document containing current process instance data
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        string GetProcessInstanceData(string instanceId);
     }
 }

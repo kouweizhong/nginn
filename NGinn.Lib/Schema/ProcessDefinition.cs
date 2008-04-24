@@ -46,7 +46,9 @@ namespace NGinn.Lib.Schema
         }
     }
 
-
+    /// <summary>
+    /// Process definition validation message
+    /// </summary>
     public class ValidationMessage
     {
         public bool IsError = false;
@@ -58,6 +60,11 @@ namespace NGinn.Lib.Schema
             IsError = isError;
             Message = msg;
             NodeId = nodeId;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}: In node {1}: {2}", IsError ? "ERROR" : "WARNING", NodeId, Message);
         }
     }
 
@@ -334,22 +341,21 @@ namespace NGinn.Lib.Schema
 
         private Flow LoadFlow(XmlElement el, XmlNamespaceManager nsmgr)
         {
-            Flow fl = new Flow();
-            string t = SchemaUtil.GetXmlElementText(el, "wf:from", nsmgr);
-            fl.From = GetNode(t);
-            t = SchemaUtil.GetXmlElementText(el, "wf:to", nsmgr);
-            fl.To = GetNode(t);
-            t = SchemaUtil.GetXmlElementText(el, "wf:inputCondition", nsmgr);
-            fl.InputCondition = t;
+            Flow fl = SchemaUtil.LoadFlow(el, nsmgr, this);
             return fl;
         }
 
         private void LoadProcessVariables(XmlElement el, XmlNamespaceManager nsmgr)
         {
+            if (el == null) return;
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
             List<VariableDef> vars = new List<VariableDef>();
-            List<VariableBinding> inputBind = new List<VariableBinding>();
-            List<VariableBinding> outputBind = new List<VariableBinding>();
-            SchemaUtil.LoadDataSection(el, nsmgr, vars, inputBind, outputBind);
+            foreach (XmlElement e2 in el.SelectNodes(string.Format("{0}variable", pr), nsmgr))
+            {
+                VariableDef vd = SchemaUtil.LoadVariable(e2, nsmgr);
+                vars.Add(vd);
+            }
             this._processVariables = vars;
         }
 
@@ -430,6 +436,7 @@ namespace NGinn.Lib.Schema
                 msgs.Add(new ValidationMessage(true, null, "Process finish place is not reachable from start"));
             return msgs.Count == 0;
         }
+
     }
 
     

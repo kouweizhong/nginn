@@ -16,9 +16,7 @@ namespace NGinn.Engine.Dao {
     
     public ProcessInstanceDb(SoodaTransaction transaction) : 
         base(transaction) {
-      // 
-      // TODO: Add construction logic here.
-      // 
+            this.CreatedDate = DateTime.Now;
     }
     
     public ProcessInstanceDb() : 

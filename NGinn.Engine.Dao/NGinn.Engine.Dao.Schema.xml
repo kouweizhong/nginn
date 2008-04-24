@@ -21,6 +21,8 @@
 			<field name="Status" dbcolumn="status" type="Integer" nullable="false" references="ProcessStatus"/>
 			<field name="InstanceData" dbcolumn="instance_data" type="Blob" nullable="false" />
 			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
+      <field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
+      <field name="FinishedDate" dbcolumn="finished_date" type="DateTime" nullable="true" />
 		</table>
 	</class>
 	

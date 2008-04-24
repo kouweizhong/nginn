@@ -28,6 +28,31 @@ namespace NGinn.Lib.Schema
         }
 
         /// <summary>
+        /// List of flows ordered by evaluation order
+        /// </summary>
+        public IList<Flow> FlowsOutOrdered
+        {
+            get
+            {
+                List<Flow> nl = new List<Flow>(FlowsOut);
+                nl.Sort(new Comparison<Flow>(CompareFlowOrder));
+                return nl;
+            }
+        }
+
+        private static int CompareFlowOrder(Flow f1, Flow f2)
+        {
+            if (f1.EvalOrder < 0) return 1;
+            if (f2.EvalOrder < 0) return -1;
+            if (f1.EvalOrder < f2.EvalOrder)
+                return -1;
+            else if (f1.EvalOrder > f2.EvalOrder)
+                return 1;
+            else
+                return 0;
+        }
+
+        /// <summary>
         /// Process the node belongs to
         /// </summary>
         public ProcessDefinition ParentProcess

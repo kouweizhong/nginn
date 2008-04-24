@@ -45,6 +45,9 @@
       <xs:element name="splitType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="data-definition" type="DataDefinition" minOccurs="0" maxOccurs="1" />
+      <xs:choice>
+        
+      </xs:choice>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
@@ -54,6 +57,8 @@
       <xs:element name="from" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="to" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="inputCondition" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="evalOrder" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element name="label" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="JoinType">
@@ -98,7 +103,7 @@
   </xs:complexType>
   <xs:complexType name="ManualTask">
     <xs:sequence>
-      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ScriptTask">
@@ -165,7 +170,7 @@
       <xs:element name="bindingType" minOccurs="1" maxOccurs="1" type="BindingType" />
       <xs:choice minOccurs="1" maxOccurs="1">
         <xs:element name="sourceVariable" minOccurs="1" maxOccurs="1" type="xs:string" />
-        <xs:element name="bindingExpr" minOccurs="1" maxOccurs="1">
+        <xs:element name="bindingXslt" minOccurs="1" maxOccurs="1">
           <xs:complexType mixed="true">
             <xs:sequence>
               <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />

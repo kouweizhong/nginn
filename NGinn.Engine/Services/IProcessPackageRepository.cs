@@ -19,7 +19,7 @@ namespace NGinn.Engine.Services
 
     public interface IProcessPackageStore
     {
-        Package PackageDef
+        PackageDefinition PackageDef
         {
             get;
         }

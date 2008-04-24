@@ -5,7 +5,8 @@ using System.Text;
 namespace NGinn.Lib.Schema
 {
     /// <summary>
-    /// Empty task performs no action, is can be used for synchronization without any side-effects.
+    /// Empty task performs no action, is can be used for synchronization or routing
+    ///	without any side-effects.
     /// </summary>
     [Serializable]
     public class EmptyTask : Task

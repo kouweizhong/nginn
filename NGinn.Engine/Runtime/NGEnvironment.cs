@@ -332,6 +332,31 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+
+        public string GetProcessInstanceData(string instanceId)
+        {
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new ApplicationException("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    XmlDocument doc = pi.GetProcessData();
+                    return doc.OuterXml;
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
         
     }
 }

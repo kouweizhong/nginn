@@ -38,6 +38,27 @@ namespace NGinn.Lib.Schema
 
         public static readonly string SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";
 
+        public static Flow LoadFlow(XmlElement el, XmlNamespaceManager nsmgr, ProcessDefinition pd)
+        {
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
+            Flow fl = new Flow();
+            string t = SchemaUtil.GetXmlElementText(el, pr + "from", nsmgr);
+            fl.From = pd.GetNode(t);
+            t = SchemaUtil.GetXmlElementText(el, pr + "to", nsmgr);
+            fl.To = pd.GetNode(t);
+            t = SchemaUtil.GetXmlElementText(el, pr + "inputCondition", nsmgr);
+            fl.InputCondition = t;
+            t = SchemaUtil.GetXmlElementText(el, pr + "evalOrder", nsmgr);
+            if (t != null && t.Length > 0)
+            {
+                fl.EvalOrder = Int32.Parse(t);
+            }
+            t = SchemaUtil.GetXmlElementText(el, pr + "label", nsmgr);
+            fl.Label = t;
+            return fl;
+        }
+
         /// <summary>
         /// Load a variable definition from xml 
         /// </summary>
@@ -80,7 +101,7 @@ namespace NGinn.Lib.Schema
             }
             else if (vb.BindingType == VariableBinding.VarBindingType.Xslt)
             {
-                XmlElement e2 = (XmlElement)el.SelectSingleNode(pr + "bindingExpr", nsmgr);
+                XmlElement e2 = (XmlElement)el.SelectSingleNode(pr + "bindingXslt", nsmgr);
                 vb.BindingExpression = e2.InnerXml;
             }
             log.Debug("Loaded binding: {0}", vb.ToString());

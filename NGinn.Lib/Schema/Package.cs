@@ -6,8 +6,12 @@ using System.Xml;
 
 namespace NGinn.Lib.Schema
 {
+    /// <summary>
+    /// Workflow package definition.
+    /// Package contains processes, additional data schemas and all other objects necessary
+    /// </summary>
     [Serializable]
-    public class Package
+    public class PackageDefinition
     {
         public static readonly string PACKAGE_NAMESPACE = "http://www.nginn.org/PackageDefinition.1_0";
         private string _name;
@@ -56,6 +60,36 @@ namespace NGinn.Lib.Schema
             {
                 _processFiles.Add(el.InnerText);
             }
+        }
+
+        /// <summary>
+        /// Return list of base process names (without version information)
+        /// </summary>
+        /// <returns></returns>
+        public string GetProcessNames()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Return list of process versions available for given process base name
+        /// </summary>
+        /// <param name="processName"></param>
+        /// <returns></returns>
+        public IList<int> GetProcessVersions(string processName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Return process definition for given name.version
+        /// If version is not specified, default version is returned
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ProcessDefinition GetProcessDefinition(string name)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -24,10 +24,11 @@ namespace NGinnTest
                 //TestProcessLoad();
                 //TestDefinitionRepository();
                 //TestKickProcess();
-                TestStartProcess();
+                //TestStartProcess();
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
+                TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
             }
             catch (Exception ex)
             {
@@ -71,7 +72,7 @@ namespace NGinnTest
             string id = pdr.GetProcessDefinitionId("TestPackage3", "Test_Process_3", 1);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
-            string xml = string.Format("<Test_Process_3><alac>1234</alac></Test_Process_3>");
+            string xml = string.Format("<Test_Process_3><ala>ma kota</ala><parent>123</parent></Test_Process_3>");
             string instId = env.StartProcessInstance(id, xml);
             
         }
@@ -109,6 +110,17 @@ namespace NGinnTest
             foreach (string pkg in ppr.PackageNames)
             {
             };
+        }
+
+        static void TestGetInstanceData(string instanceId)
+        {
+            INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
+            string xml = env.GetProcessInstanceData(instanceId);
+            log.Info(xml);
+            using (StreamWriter sw = new StreamWriter("instancedata.xml"))
+            {
+                sw.Write(xml);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace NGinn.Lib.Schema
         private NetNode _to;
         private string _inputCondition;
         private int _evalOrder = -1;
+        private string _label;
 
         public NetNode From
         {
@@ -22,6 +23,15 @@ namespace NGinn.Lib.Schema
         {
             get { return _to; }
             set { _to = value; }
+        }
+
+        /// <summary>
+        /// Flow label - for informational purposes only
+        /// </summary>
+        public string Label
+        {
+            get { return _label; }
+            set { _label = value; }
         }
 
         /// <summary>

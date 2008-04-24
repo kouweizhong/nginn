@@ -132,7 +132,34 @@ namespace NGinn.Lib.Schema
             get;
         }
 
+        /// <summary>
+        /// Get XSLT for creating task input data
+        /// </summary>
+        /// <returns></returns>
+        public void GetInputBindingXslt()
+        {
+            throw new NotImplementedException();
+        }
 
+        
+
+        /// <summary>
+        /// Get XSLT for creating task output data
+        /// </summary>
+        /// <returns></returns>
+        public string GetOutputBindingXslt()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get XSD for task input xml
+        /// </summary>
+        /// <returns></returns>
+        public string GetInputDataSchema()
+        {
+            throw new NotImplementedException();
+        }
         
     }
 }

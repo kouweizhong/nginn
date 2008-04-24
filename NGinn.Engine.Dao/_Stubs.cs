@@ -562,6 +562,8 @@ namespace NGinn.Engine.Dao.Stubs {
     public System.Data.SqlTypes.SqlInt32 Status;
     public byte[] InstanceData;
     public int RecordVersion;
+    public System.DateTime CreatedDate;
+    public System.Data.SqlTypes.SqlDateTime FinishedDate;
     public ProcessInstanceDb_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
         base(other) {
     }
@@ -626,6 +628,22 @@ namespace NGinn.Engine.Dao.Stubs {
       }
       set {
         Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "RecordVersion", 4, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_RecordVersion), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_RecordVersion));
+      }
+    }
+    public System.DateTime CreatedDate {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).CreatedDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 5, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
+      }
+    }
+    public System.Data.SqlTypes.SqlDateTime FinishedDate {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).FinishedDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "FinishedDate", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_FinishedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_FinishedDate));
       }
     }
     private ProcessInstanceDb_Values GetProcessInstanceDbFieldValuesForRead(int requiredTable) {
@@ -810,6 +828,18 @@ namespace NGinn.Engine.Dao.Stubs {
     }
     protected virtual void AfterFieldUpdate_RecordVersion(object oldValue, object newValue) {
       this.AfterFieldUpdate("RecordVersion", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_CreatedDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("CreatedDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_CreatedDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("CreatedDate", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_FinishedDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("FinishedDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_FinishedDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("FinishedDate", oldValue, newValue);
     }
   }
   public class ProcessStatus_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
@@ -1686,12 +1716,14 @@ namespace NGinn.Engine.Dao.Stubs {
     private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Engine.Dao._DatabaseSchema.GetSchema().FindClassByName("ProcessInstanceDb");
     private static Type _theType = typeof(ProcessInstanceDb);
     static ProcessInstanceDb_Factory() {
-      _fieldHandlers = new SoodaFieldHandler[5];
+      _fieldHandlers = new SoodaFieldHandler[7];
       _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[3] = new Sooda.ObjectMapper.FieldHandlers.BlobFieldHandler(false);
       _fieldHandlers[4] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
+      _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
     }
     public ProcessInstanceDb_Factory() {
     }
@@ -2116,6 +2148,16 @@ namespace NGinn.Engine.Dao.Stubs {
     public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
       get {
         return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "RecordVersion"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression CreatedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "CreatedDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "FinishedDate"));
       }
     }
     public virtual Sooda.QL.SoqlBooleanExpression In(params ProcessInstanceDbWrapperExpression[] items) {
@@ -2703,6 +2745,16 @@ namespace NGinn.Engine.Dao.TypedQueries {
     public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
       get {
         return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("RecordVersion"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression CreatedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("CreatedDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("FinishedDate"));
       }
     }
   }

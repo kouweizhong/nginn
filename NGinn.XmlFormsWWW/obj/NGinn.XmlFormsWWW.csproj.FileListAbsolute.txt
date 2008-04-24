@@ -1,0 +1,7 @@
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.XmlFormsWWW.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.XmlFormsWWW.pdb
+c:\dev\nginn\NGinn.XmlFormsWWW\obj\Debug\ResolveAssemblyReference.cache
+c:\dev\nginn\NGinn.XmlFormsWWW\obj\Debug\NGinn.XmlFormsWWW.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\obj\Debug\NGinn.XmlFormsWWW.pdb
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\NLog.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\NLog.xml

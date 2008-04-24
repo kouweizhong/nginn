@@ -59,7 +59,10 @@ namespace NGinn.Engine
         private ProcessStatus _status = ProcessStatus.New;
         private int _tokenNumber = 0;
         private int _transitionNumber = 0;
+        [NonSerialized]
         private XmlDocument _processData = new XmlDocument();
+        /// <summary>process xml data in string form - for serialization purposes</summary>
+        private string _processDataXmlString = null;
 
         public string ProcessDefinitionId
         {
@@ -67,11 +70,18 @@ namespace NGinn.Engine
             set { _definitionId = value; }
         }
 
+        /// <summary>
+        /// Access the process definition of current process.
+        /// Can be called only for activated process instances.
+        /// </summary>
         public ProcessDefinition Definition
         {
             get { return _definition; }
         }
 
+        /// <summary>
+        /// Process instance id
+        /// </summary>
         public string InstanceId
         {
             get { return _instId; }
@@ -91,12 +101,6 @@ namespace NGinn.Engine
         {
             get { return _persistedVersion; }
             set { _persistedVersion = value; }
-        }
-
-        public IDictionary<string, object> ProcessVariables
-        {
-            get { return _processVariables; }
-            set { _processVariables = value; }
         }
 
         /// <summary>
@@ -428,6 +432,10 @@ namespace NGinn.Engine
         public void Passivate()
         {
             log.Info("Passivating");
+            if (_processData != null)
+            {
+                _processDataXmlString = _processData.OuterXml;
+            }
             _tokensInPlaces = null;
             _definition = null;
             _environment = null;
@@ -445,6 +453,11 @@ namespace NGinn.Engine
             log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
             _transitionFactory = new ActiveTransitionFactory();
             _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
+            if (_processDataXmlString != null)
+            {
+                _processData = new XmlDocument();
+                _processData.LoadXml(_processDataXmlString);
+            }
             BuildTokensInPlaces();
             BuildActiveTransitionsInTasks();
             foreach (ActiveTransition at in _activeTransitions.Values)
@@ -761,6 +774,7 @@ namespace NGinn.Engine
         private void InitiateTransition(ActiveTransition at)
         {
             log.Info("Initiating transition {0}", at.TaskId);
+            TransferDataToTransition(at);
             at.InitiateTask();
         }
 
@@ -771,6 +785,7 @@ namespace NGinn.Engine
         private void ExecuteTransition(ActiveTransition at)
         {
             Debug.Assert(at.IsImmediate);
+            TransferDataToTransition(at);
             at.ExecuteTask();
             foreach (string tokId in at.Tokens)
             {
@@ -778,6 +793,27 @@ namespace NGinn.Engine
                 tok1.Status = TokenStatus.WAITING_ENABLED;
             }
             TransitionCompleted(at.CorrelationId);
+        }
+
+        /// <summary>
+        /// Create input data for transition by executing task input data bindings.
+        /// TODO: Implement
+        /// </summary>
+        /// <param name="at"></param>
+        private void TransferDataToTransition(ActiveTransition at)
+        {
+            log.Debug("Transferring data to transition {0}", at.CorrelationId);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Extract output data from finished transition by executing task output data bindings
+        /// </summary>
+        /// <param name="at"></param>
+        private void TransferDataFromTransition(ActiveTransition at)
+        {
+            log.Debug("Transferring data from transition {0}", at.CorrelationId);
+            throw new NotImplementedException();
         }
 
         private ActiveTransition CreateActiveTransitionForTask(Task tsk)
@@ -932,12 +968,20 @@ namespace NGinn.Engine
                 Token tok = GetToken(tokid);
                 Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
             }
-            //2 fire the transition
-            FireTransition(at);
             at.Status = TransitionStatus.COMPLETED;
+            //2 retrieve data from transition
+            TransferDataFromTransition(at);
+            //3 move the tokens
+            UpdateNetStatusAfterTransition(at);
         }
 
-        private void FireTransition(ActiveTransition at)
+        /// <summary>
+        /// This function is responsible for updating net status after transition has fired.
+        /// It consumes transition input tokens and produces tokens in transition output places.
+        /// Also, transition input conditions are evaluated before creating output tokens.
+        /// </summary>
+        /// <param name="at"></param>
+        private void UpdateNetStatusAfterTransition(ActiveTransition at)
         {
             Task tsk = Definition.GetTask(at.TaskId);
             foreach (string tokid in at.Tokens)
@@ -961,7 +1005,26 @@ namespace NGinn.Engine
             }
             else if (tsk.SplitType == JoinType.XOR)
             {
-                throw new NotImplementedException();
+                IList<Flow> flows = tsk.FlowsOutOrdered;
+                for (int i = 0; i < flows.Count; i++)
+                {
+                    if (i == flows.Count - 1) //last flow - the default one
+                    {
+                        Token t = CreateNewTokenInPlace(flows[i].To.Id);
+                        log.Debug("Produced token in default flow: {0}, token: {1}", flows[i].ToString(), t.TokenId);
+                        newTokens.Add(t);
+                    }
+                    else
+                    {
+                        if (EvaluateFlowInputCondition(flows[i]))
+                        {
+                            Token t = CreateNewTokenInPlace(flows[i].To.Id);
+                            log.Debug("Produced token in flow: {0}, token: {1}", flows[i].ToString(), t.TokenId);
+                            newTokens.Add(t);
+                            break;
+                        }
+                    }
+                }
             }
             else if (tsk.SplitType == JoinType.OR)
             {
@@ -974,6 +1037,17 @@ namespace NGinn.Engine
                 t.Status = TokenStatus.READY;
                 AddToken(t);
             }
+        }
+
+        /// <summary>
+        /// Check flow input condition
+        /// </summary>
+        /// <param name="fl"></param>
+        /// <returns></returns>
+        private bool EvaluateFlowInputCondition(Flow fl)
+        {
+            if (fl.InputCondition == null || fl.InputCondition.Length == 0) return true; //empty condition is true
+            throw new NotImplementedException();
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
 using NLog;
+using System.Xml;
 
 namespace NGinn.Engine
 {
@@ -52,14 +53,14 @@ namespace NGinn.Engine
 
         public virtual void SetProcessInstance(ProcessInstance pi)
         {
-            if (this.ProcessInstanceId != pi.InstanceId) throw new Exception("Invalid process instance ID");
+            if (this.ProcessInstanceId != pi.InstanceId) throw new ApplicationException("Invalid process instance ID");
             this._processInstance = pi;
         }
 
         public string CorrelationId
         {
             get { return _correlationId; }
-            set { if (_activated) throw new Exception("Cannot modify after activation"); _correlationId = value; }
+            set { if (_activated) throw new ApplicationException("Cannot modify after activation"); _correlationId = value; }
         }
 
         /// <summary>
@@ -67,7 +68,7 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void Activate()
         {
-            if (_processInstance == null) throw new Exception("Process instance not set (call SetProcessInstance before activating)");
+            if (_processInstance == null) throw new ApplicationException("Process instance not set (call SetProcessInstance before activating)");
             _activated = true;
         }
 
@@ -80,10 +81,29 @@ namespace NGinn.Engine
             _activated = false;
         }
 
+        /// <summary>
+        /// Current transition's task definition
+        /// </summary>
         protected Task ProcessTask
         {
             get { return _processInstance.Definition.GetTask(TaskId); }
         }
+
+        /// <summary>
+        /// Set task input xml
+        /// </summary>
+        /// <param name="xml"></param>
+        public virtual void SetTaskInputXml(string xml)
+        {
+            
+        }
+
+        public virtual string GetTaskOutputXml()
+        {
+            if (this.Status != TransitionStatus.COMPLETED) throw new ApplicationException("Transition is not completed");
+            return null;
+        }
+        
 
         public bool CanInitiateTask()
         {
