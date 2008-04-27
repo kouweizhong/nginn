@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mvp.Xml, Version=2.0.2158.1055, Culture=neutral, PublicKeyToken=dd92544dc05f5671, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Mvp.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>

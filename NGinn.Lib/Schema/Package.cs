@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
+using NGinn.Lib.Services;
+using NLog;
 
 namespace NGinn.Lib.Schema
 {
@@ -17,6 +19,9 @@ namespace NGinn.Lib.Schema
         private string _name;
         private List<string> _schemaFiles = new List<string>();
         private List<string> _processFiles = new List<string>();
+        private IPackageDataStore _ds;
+        private Dictionary<string, List<ProcessDefInformation>> _processCache = null;
+        private static Logger log = LogManager.GetCurrentClassLogger();
 
         public string PackageName
         {
@@ -34,7 +39,12 @@ namespace NGinn.Lib.Schema
             get { return _processFiles; }
         }
 
-        public void LoadXml(Stream xmlStm)
+        protected IPackageDataStore DataStore
+        {
+            get { return _ds; }
+        }
+
+        protected void LoadXml(Stream xmlStm)
         {
             XmlDocument doc = new XmlDocument();
             XmlReaderSettings rs = new XmlReaderSettings();
@@ -66,9 +76,11 @@ namespace NGinn.Lib.Schema
         /// Return list of base process names (without version information)
         /// </summary>
         /// <returns></returns>
-        public string GetProcessNames()
+        public IList<string> GetProcessNames()
         {
-            throw new NotImplementedException();
+            List<string> lst = new List<string>(ProcessCache.Keys);
+            lst.Sort();
+            return lst;
         }
 
         /// <summary>
@@ -78,7 +90,15 @@ namespace NGinn.Lib.Schema
         /// <returns></returns>
         public IList<int> GetProcessVersions(string processName)
         {
-            throw new NotImplementedException();
+            List<ProcessDefInformation> lst;
+            if (!ProcessCache.TryGetValue(processName, out lst)) throw new ApplicationException("Invalid process name");
+            List<int> versions = new List<int>();
+            foreach (ProcessDefInformation pdi in lst)
+            {
+                versions.Add(pdi.Version);
+            }
+            versions.Sort();
+            return versions;
         }
 
         /// <summary>
@@ -89,7 +109,123 @@ namespace NGinn.Lib.Schema
         /// <returns></returns>
         public ProcessDefinition GetProcessDefinition(string name)
         {
-            throw new NotImplementedException();
+            int ver = -1;
+            string nameBase = name;
+            int idx = name.IndexOf('.');
+            if (idx >= 0)
+            {
+                ver = Int32.Parse(name.Substring(idx + 1));
+                nameBase = name.Substring(0, idx);
+            }
+            else
+            {
+                ver = -1;
+            }
+            List<ProcessDefInformation> lpdi;
+            if (!ProcessCache.TryGetValue(nameBase, out lpdi))
+            {
+                throw new ApplicationException("Process not found: " + nameBase);
+            }
+            ProcessDefInformation pdi = null;
+            if (ver < 0)
+                pdi = lpdi[lpdi.Count - 1];
+            else
+            {
+                foreach (ProcessDefInformation p in lpdi)
+                {
+                    if (p.Version == ver)
+                    {
+                        pdi = p;
+                        break;
+                    }
+                }
+            }
+            if (pdi == null) throw new ApplicationException(string.Format("Process version not found: {0}", name));
+            return pdi.Process;
+        }
+
+        /// <summary>
+        /// Load package definition from given data store
+        /// </summary>
+        /// <param name="ds"></param>
+        /// <returns></returns>
+        public static PackageDefinition Load(IPackageDataStore ds)
+        {
+            PackageDefinition pd = new PackageDefinition();
+            pd._ds = ds;
+            using (Stream stm = ds.GetPackageDefinitionStream())
+            {
+                pd.LoadXml(stm);
+            }
+            return pd;
+        }
+
+        protected Dictionary<String, List<ProcessDefInformation>> ProcessCache
+        {
+            get
+            {
+                Dictionary<String, List<ProcessDefInformation>> pc = LoadProcessInformationIfNecessary();
+                return pc;
+            }
+        }
+
+
+        protected Dictionary<String, List<ProcessDefInformation>> LoadProcessInformationIfNecessary()
+        {
+            lock (this)
+            {
+                if (_processCache != null) return _processCache;
+                Dictionary<string, List<ProcessDefInformation>> cache = new Dictionary<string, List<ProcessDefInformation>>();
+                foreach (string file in _processFiles)
+                {
+                    log.Info("Loading process file : {0}", file);
+                    ProcessDefInformation pdi = new ProcessDefInformation();
+                    pdi.FileName = file;
+                    using (Stream stm = DataStore.GetPackageContentStream(file))
+                    {
+                        pdi.Process = new ProcessDefinition();
+                        pdi.Process.Package = this;
+                        pdi.Process.Load(stm);
+                    }
+                    pdi.Name = pdi.Process.Name;
+                    pdi.Version = pdi.Process.Version;
+                    List<ProcessDefInformation> lst;
+                    if (!cache.TryGetValue(pdi.Name, out lst))
+                    {
+                        lst = new List<ProcessDefInformation>(); cache.Add(pdi.Name, lst);
+                    }
+                    lst.Add(pdi);
+                }
+
+                foreach (List<ProcessDefInformation> lst in cache.Values)
+                {
+                    lst.Sort(new Comparison<ProcessDefInformation>(ProcessDefInformation.Compare));
+                }
+                _processCache = cache;
+                return _processCache;
+            }
+        }
+        
+        protected class ProcessDefInformation
+        {
+            public string Name;
+            public int Version;
+            public string FileName;
+            public ProcessDefinition Process;
+
+
+            public static int Compare(ProcessDefInformation left, ProcessDefInformation right)
+            {
+                int ret = String.Compare(left.Name, right.Name);
+                if (ret != 0) return ret;
+                if (left.Version < right.Version)
+                {
+                    return -1;
+                }
+                else return left.Version == right.Version ? 0 : 1;
+            }
         }
     }
+
+    
 }

@@ -43,6 +43,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGinn.XmlFormsWWW", "NGinn.
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGinn.Engine.Host", "NGinn.Engine.Host\NGinn.Engine.Host.csproj", "{D29E5870-C851-4882-9754-99D06A3F0EB2}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +83,10 @@ Global
 		{1E68FB92-6B63-492E-BC7D-B2B4715212E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E68FB92-6B63-492E-BC7D-B2B4715212E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E68FB92-6B63-492E-BC7D-B2B4715212E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D29E5870-C851-4882-9754-99D06A3F0EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D29E5870-C851-4882-9754-99D06A3F0EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D29E5870-C851-4882-9754-99D06A3F0EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D29E5870-C851-4882-9754-99D06A3F0EB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

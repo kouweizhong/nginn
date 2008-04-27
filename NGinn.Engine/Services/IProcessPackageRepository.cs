@@ -14,19 +14,6 @@ namespace NGinn.Engine.Services
             get;
         }
 
-        IProcessPackageStore GetPackage(string name);
+        PackageDefinition GetPackage(string name);
     }
-
-    public interface IProcessPackageStore
-    {
-        PackageDefinition PackageDef
-        {
-            get;
-        }
-
-        Stream OpenPackageStream(string fileName);
-        ProcessDefinition GetProcessDefinition(string name);
-    }
-
-    
 }

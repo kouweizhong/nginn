@@ -7,6 +7,7 @@ using NGinn.Engine.Services;
 using NGinn.Lib.Schema;
 using Sooda;
 using System.IO;
+using System.Xml;
 
 namespace NGinnTest
 {
@@ -20,6 +21,7 @@ namespace NGinnTest
             NLog.Config.SimpleConfigurator.ConfigureForConsoleLogging(LogLevel.Debug);
             try
             {
+                System.Runtime.Remoting.RemotingConfiguration.Configure("NGinnTest.exe.config");
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
@@ -28,12 +30,15 @@ namespace NGinnTest
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
-                TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
+                //TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
+                TransferDataTest();
             }
             catch (Exception ex)
             {
                 log.Error("Error: {0}", ex);
             }
+            Console.WriteLine("Enter...");
+            Console.ReadLine();
         }
 
         static void TestProcessLoad()
@@ -41,7 +46,7 @@ namespace NGinnTest
             string pdName = "TestProcess2.xml";
             ProcessDefinition pd = new ProcessDefinition();
             log.Info("Loading process definition: {0}", pdName);
-            pd.LoadXmlFile(pdName);
+            pd.LoadFile(pdName);
             log.Info("Process definition loaded: {0}.{1}", pd.Name, pd.Version);
             string schema = pd.GenerateInputSchema();
             log.Info("Process input data schema: {0}", schema);
@@ -121,6 +126,32 @@ namespace NGinnTest
             {
                 sw.Write(xml);
             }
+        }
+
+
+        static void TransferDataTest()
+        {
+            string inputFile = "inputdata.xml";
+            string targetFile = "targetdata.xml";
+            List<VariableDef> vars = new List<VariableDef>();
+            List<VariableBinding> bindings = new List<VariableBinding>();
+            vars.Add(new VariableDef("Parent", "xs:int", VariableDef.Dir.InOut, VariableDef.Usage.Required, false));
+            vars.Add(new VariableDef("OperatorName", "xs:string", VariableDef.Dir.In, VariableDef.Usage.Required, false));
+            vars.Add(new VariableDef("Result", "xs:string", VariableDef.Dir.Out, VariableDef.Usage.Required, false));
+            vars.Add(new VariableDef("Option", "xs:string", VariableDef.Dir.Local, VariableDef.Usage.Optional, true));
+
+            bindings.Add(new VariableBinding("Parent", VariableBinding.VarBindingType.CopyVar, "TaskParent"));
+            bindings.Add(new VariableBinding("Result", VariableBinding.VarBindingType.Xslt, "<xsl:for-each select='TaskResult'><Result><xsl:value-of select='.' /></Result></xsl:for-each>"));
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(inputFile);
+
+            XmlDocument targetDoc = new XmlDocument();
+            targetDoc.Load(targetFile);
+
+            XmlElement el2 = XmlTest.TransferData(doc.DocumentElement, vars, bindings, targetDoc.DocumentElement);
+            targetDoc.ReplaceChild(el2, targetDoc.DocumentElement);
+            log.Info("Transfer results: {0}", targetDoc.OuterXml);
         }
     }
 }

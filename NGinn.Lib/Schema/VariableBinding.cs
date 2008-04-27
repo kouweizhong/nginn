@@ -25,6 +25,17 @@ namespace NGinn.Lib.Schema
         private string _bindingExpression;
         private VarBindingType _bindingType;
 
+        public VariableBinding()
+        {
+        }
+
+        public VariableBinding(string targetVar, VarBindingType bindingType, string bindingExpr)
+        {
+            VariableName = targetVar;
+            BindingType = bindingType;
+            BindingExpression = bindingExpr;
+        }
+
         /// <summary>
         /// Name of the variable that will receive the data
         /// </summary>

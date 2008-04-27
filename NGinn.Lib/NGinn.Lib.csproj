@@ -56,6 +56,8 @@
     <Compile Include="Schema\SubprocessTask.cs" />
     <Compile Include="Schema\Task.cs" />
     <Compile Include="Schema\VariableBinding.cs" />
+    <Compile Include="Services\FSPackageDataStore.cs" />
+    <Compile Include="Services\IPackageDataStore.cs" />
     <Compile Include="Util\XmlConst.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,7 +75,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

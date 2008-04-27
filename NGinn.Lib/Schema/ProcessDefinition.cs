@@ -44,6 +44,19 @@ namespace NGinn.Lib.Schema
         {
             get { return true; }
         }
+
+        public VariableDef()
+        {
+        }
+
+        public VariableDef(string name, string varType, Dir dir, Usage usage, bool isArray)
+        {
+            Name = name;
+            VariableType = varType;
+            VariableDir = dir;
+            VariableUsage = usage;
+            IsArray = isArray;
+        }
     }
 
     /// <summary>
@@ -76,7 +89,7 @@ namespace NGinn.Lib.Schema
         private IDictionary<string, Place> _places = new Dictionary<string, Place>();
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
         private List<VariableDef> _processVariables = new List<VariableDef>();
-        
+        private PackageDefinition _package = null;
 
         private StartPlace _start = null;
         private EndPlace _finish = null;
@@ -84,6 +97,16 @@ namespace NGinn.Lib.Schema
         private string _name;
         private int _version;
         
+        public ProcessDefinition()
+        {
+        }
+
+        public PackageDefinition Package
+        {
+            get { return _package; }
+            set { _package = value; }
+        }
+
         public string Name
         {
             get { return _name; }
@@ -223,6 +246,7 @@ namespace NGinn.Lib.Schema
             StringWriter sw = new StringWriter();
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
             XmlWriter xw = XmlWriter.Create(sw, settings);
             xw.WriteStartDocument();
             xw.WriteStartElement("xs", "schema", SchemaUtil.SCHEMA_NS);
@@ -258,16 +282,27 @@ namespace NGinn.Lib.Schema
             get { return _finish; }
         }
 
-        public void LoadXmlFile(string fileName)
+        
+
+        public void LoadFile(string fileName)
         {
-            using (StreamReader s = new StreamReader(fileName))
+            using (FileStream fs = new FileStream(fileName, FileMode.Open))
             {
-                LoadXml(s.ReadToEnd());
+                Load(fs);
             }
         }
 
+        public void Load(Stream stm)
+        {
+            LoadXml(XmlReader.Create(stm));
+        }
+
+        public void LoadXml(string xml)
+        {
+            LoadXml(XmlReader.Create(new StringReader(xml)));
+        }
         
-        public void LoadXml(string xmlStr)
+        public void LoadXml(XmlReader input)
         {
             XmlDocument doc = new XmlDocument();
             XmlReaderSettings rs = new XmlReaderSettings();
@@ -275,7 +310,7 @@ namespace NGinn.Lib.Schema
 
             XmlReader schemaRdr = SchemaUtil.GetWorkflowSchemaReader();
             rs.Schemas.Add(WORKFLOW_NAMESPACE, schemaRdr);
-            using (XmlReader xr = XmlReader.Create(new StringReader(xmlStr), rs))
+            using (XmlReader xr = XmlReader.Create(input, rs))
             {
                 doc.Load(xr);
             }
