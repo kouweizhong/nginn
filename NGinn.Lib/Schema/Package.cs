@@ -42,6 +42,7 @@ namespace NGinn.Lib.Schema
         protected IPackageDataStore DataStore
         {
             get { return _ds; }
+            set { _ds = value; }
         }
 
         protected void LoadXml(Stream xmlStm)
@@ -142,6 +143,16 @@ namespace NGinn.Lib.Schema
             }
             if (pdi == null) throw new ApplicationException(string.Format("Process version not found: {0}", name));
             return pdi.Process;
+        }
+
+        public string GetSchema(string schemaFile)
+        {
+            if (!_schemaFiles.Contains(schemaFile)) throw new ArgumentException("Invalid schema file name", "schemaFile");
+            using (Stream stm = DataStore.GetPackageContentStream(schemaFile))
+            {
+                StreamReader sr = new StreamReader(stm, Encoding.UTF8);
+                return sr.ReadToEnd();
+            }
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using NGinn.Lib.Util;
 using Spring.Core;
 using Spring.Core.IO;
 using Spring.Context;
+using System.Xml.Schema;
 
 namespace NGinn.Lib.Schema
 {
@@ -90,7 +91,8 @@ namespace NGinn.Lib.Schema
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
         private List<VariableDef> _processVariables = new List<VariableDef>();
         private PackageDefinition _package = null;
-
+        private List<string> _additionalSchemas = new List<string>();
+        private string _inputDataNamespace = null;
         private StartPlace _start = null;
         private EndPlace _finish = null;
         
@@ -117,6 +119,22 @@ namespace NGinn.Lib.Schema
         {
             get { return _version; }
             set { _version = value; }
+        }
+
+        /// <summary>
+        /// List of additional schemas
+        /// </summary>
+        public ICollection<string> AdditionalDataSchemas
+        {
+            get { return _additionalSchemas; }
+        }
+
+        /// <summary>
+        /// Input data xml namespace
+        /// </summary>
+        public string InputDataNamespace
+        {
+            get { return _inputDataNamespace; }
         }
 
         public ICollection<Place> Places
@@ -241,21 +259,26 @@ namespace NGinn.Lib.Schema
             get { return _processVariables; }
         }
 
-        public String GenerateInputSchema()
+        protected void WriteDataSchema(IList<VariableDef> variables, string rootElementName, XmlWriter xw)
         {
-            StringWriter sw = new StringWriter();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            XmlWriter xw = XmlWriter.Create(sw, settings);
-            xw.WriteStartDocument();
             xw.WriteStartElement("xs", "schema", SchemaUtil.SCHEMA_NS);
-            //xw.WriteAttributeString("xmlns", "http://www.nginn.org/Process/" + Name);
+            if (InputDataNamespace != null && InputDataNamespace.Length > 0)
+            {
+                xw.WriteAttributeString("xmlns", InputDataNamespace);
+            }
+
+            foreach (string schema in AdditionalDataSchemas)
+            {
+                xw.WriteStartElement("include", XmlConst.XmlSchemaNS);
+                xw.WriteAttributeString("schemaLocation", schema);
+                xw.WriteEndElement();
+            }
+
             xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
-            xw.WriteAttributeString("name", this.Name);
+            xw.WriteAttributeString("name", rootElementName);
             xw.WriteStartElement("complexType", SchemaUtil.SCHEMA_NS);
             xw.WriteStartElement("sequence", SchemaUtil.SCHEMA_NS);
-            foreach (VariableDef vd in _processVariables)
+            foreach (VariableDef vd in variables)
             {
                 xw.WriteStartElement("element", XmlConst.XmlSchemaNS);
                 xw.WriteAttributeString("name", vd.Name);
@@ -268,6 +291,52 @@ namespace NGinn.Lib.Schema
             xw.WriteEndElement();
             xw.WriteEndElement();
             xw.WriteEndElement();
+        }
+
+
+        
+        /// <summary>
+        /// Get XML schema for task input xml
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        public string GenerateTaskInputSchema(string taskId)
+        {
+            Task tsk = GetTask(taskId);
+            if (tsk == null) throw new ApplicationException("Invalid task id");
+            IList<VariableDef> vars = new List<VariableDef>();
+            foreach (VariableDef vd in tsk.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In ||
+                    vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    vars.Add(vd);
+                }
+            }
+
+            StringWriter sw = new StringWriter();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
+            XmlWriter xw = XmlWriter.Create(sw, settings);
+            xw.WriteStartDocument();
+
+            WriteDataSchema(vars, "input", xw);
+            xw.WriteEndDocument();
+            xw.Flush();
+            return sw.ToString();
+        }
+
+        public String GenerateInputSchema()
+        {
+            StringWriter sw = new StringWriter();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
+            XmlWriter xw = XmlWriter.Create(sw, settings);
+            xw.WriteStartDocument();
+            WriteDataSchema(_processVariables, this.Name, xw);
+            xw.WriteEndDocument();
             xw.Flush();
             return sw.ToString();
         }
@@ -320,6 +389,12 @@ namespace NGinn.Lib.Schema
             
             _version = Int32.Parse(doc.DocumentElement.GetAttribute("version"));
             _name = doc.DocumentElement.GetAttribute("name");
+            _inputDataNamespace = SchemaUtil.GetXmlElementText(doc.DocumentElement, "wf:inputDataNamespace", nsmgr);
+            foreach (XmlElement tmp in doc.DocumentElement.SelectNodes("wf:additionalSchema", nsmgr))
+            {
+                _additionalSchemas.Add(tmp.InnerText);
+            }
+
             XmlElement el = doc.DocumentElement.SelectSingleNode("wf:places", nsmgr) as XmlElement;
             LoadPlaces(el, nsmgr);
             el = doc.DocumentElement.SelectSingleNode("wf:tasks", nsmgr) as XmlElement;

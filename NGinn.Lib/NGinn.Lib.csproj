@@ -56,6 +56,7 @@
     <Compile Include="Schema\SubprocessTask.cs" />
     <Compile Include="Schema\Task.cs" />
     <Compile Include="Schema\VariableBinding.cs" />
+    <Compile Include="Schema\XmlHttpTask.cs" />
     <Compile Include="Services\FSPackageDataStore.cs" />
     <Compile Include="Services\IPackageDataStore.cs" />
     <Compile Include="Util\XmlConst.cs" />

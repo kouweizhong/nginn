@@ -110,53 +110,43 @@ namespace NGinn.Engine.Runtime
 
         public string StartProcessInstance(string definitionId, string inputXml)
         {
-            ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
-            if (pd == null) throw new Exception("Process definition not found");
-            ValidateProcessInputData(pd, inputXml);
-            
-            using (INGDataSession ds = DataStore.OpenSession())
+            try
             {
-                ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
-                pi.Environment = this;
-                pi.Activate();
+                ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
+                if (pd == null) throw new Exception("Process definition not found");
+                ValidateProcessInputData(pd, inputXml);
 
-                //foreach (VariableDef vd in pd.InputVariables)
-                //{
-                    /* object val = null;
-                    if (tmp.ContainsKey(vd.Name))
-                    {
-                        val = Convert.ChangeType(inputVariables[vd.Name], vd.VariableType);
-                        tmp.Remove(vd.Name);
-                    }
-                    else
-                    {
-                        if (vd.VariableDir == VariableDef.Direction.In || vd.VariableDir == VariableDef.Direction.InOut)
-                        {
-                            if (vd.VariableUsage == VariableDef.Usage.Required)
-                            {
-                                throw new Exception("Missing required input variable: " + vd.Name);
-                            }
-                        }
-                    }
-                    pi.ProcessVariables[vd.Name] = val;
-                    */
-                //}
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
 
-                log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
-                pi.ProcessDefinitionId = definitionId;
-                pi.SetProcessInputData(inputXml);
-                Token tok = pi.CreateNewStartToken();
-                pi.AddToken(tok);
-                pi.Passivate();
-                InstanceRepository.UpdateProcessInstance(pi, ds);
-                ds.Commit();
-                return pi.InstanceId;
+                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                    pi.ProcessDefinitionId = definitionId;
+                    pi.SetProcessInputData(inputXml);
+                    Token tok = pi.CreateNewStartToken();
+                    pi.AddToken(tok);
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                    return pi.InstanceId;
+                }
             }
-            
+            catch (Exception ex)
+            {
+                log.Error(string.Format("Error starting process: {0}", ex));
+                throw;
+            }
         }
 
         #endregion
 
+        /// <summary>
+        /// TODO: poprawic sposob konstruowania schema setu i dostepu do schemy (moze za pomoca package repository)
+        /// </summary>
+        /// <param name="pd"></param>
+        /// <param name="inputXml"></param>
         private void ValidateProcessInputData(ProcessDefinition pd, string inputXml)
         {
             string schemaXml = pd.GenerateInputSchema();
@@ -167,6 +157,12 @@ namespace NGinn.Engine.Runtime
             rs.ValidationType = ValidationType.Schema;
             rs.Schemas = new XmlSchemaSet();
             rs.Schemas.Add(xs);
+            foreach (string sch in pd.AdditionalDataSchemas)
+            {
+                string sxml = pd.Package.GetSchema(sch);
+                xs = XmlSchema.Read(new StringReader(sxml), new ValidationEventHandler(schema_ValidationEventHandler));
+                rs.Schemas.Add(xs);
+            }
             rs.ValidationEventHandler += new ValidationEventHandler(rs_ValidationEventHandler);
             XmlReader xr = XmlReader.Create(sr, rs);
             while (xr.Read())

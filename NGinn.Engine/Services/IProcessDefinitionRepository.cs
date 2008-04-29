@@ -18,6 +18,15 @@ namespace NGinn.Engine.Services
         /// <param name="definitionId"></param>
         /// <returns></returns>
         string GetProcessInputSchema(string definitionId);
+        /// <summary>
+        /// Returns specified schema
+        /// </summary>
+        /// <param name="definitionId">process definition id or package name</param>
+        /// <param name="schemaName">name of package schema file to return or
+        /// - 'input' for process input schema
+        /// </param>
+        /// <returns></returns>
+        string GetPackageSchema(string definitionId, string schemaName);
     }
 
     

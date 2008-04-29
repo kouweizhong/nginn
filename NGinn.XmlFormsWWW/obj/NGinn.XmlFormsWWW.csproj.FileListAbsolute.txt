@@ -24,3 +24,4 @@ c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.MessageBus.pdb
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.Worklist.dll
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.Worklist.pdb
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\Spring.Services.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\Mvp.Xml.dll

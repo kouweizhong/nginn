@@ -16,6 +16,7 @@
 		
     </target>
 	
+	<!-- nant processgraph -D:file=filename.xml -->
     <target name="processgraph" depends="">
 		<mkdir dir="temp" />
 		<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />

@@ -56,5 +56,23 @@ namespace NGinn.Worklist
         }
 
         #endregion
+
+        #region IWorkListService Members
+
+
+        public void WorkItemCompleted(string correlationId)
+        {
+            using (SoodaTransaction st = StartTransaction())
+            {
+                Task tsk = FindByCorrelationId(null, correlationId, st);
+                if (tsk == null) throw new ApplicationException("Task not found");
+                tsk.Status = TaskStatus.Completed;
+                tsk.ExecutionEnd = DateTime.Now;
+                st.Commit();
+            }
+
+        }
+
+        #endregion
     }
 }

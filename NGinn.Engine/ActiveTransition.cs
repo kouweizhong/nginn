@@ -4,6 +4,8 @@ using System.Text;
 using NGinn.Lib.Schema;
 using NLog;
 using System.Xml;
+using System.Xml.Schema;
+using NGinn.Engine.Runtime;
 
 namespace NGinn.Engine
 {
@@ -42,7 +44,10 @@ namespace NGinn.Engine
         protected Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
         private bool _activated = false;
-
+        [NonSerialized]
+        private XmlDocument _taskDataDoc;
+        private string _taskDataXml;
+        
         public ActiveTransition(Task tsk, ProcessInstance pi)
         {
             this.Status = TransitionStatus.ENABLED;
@@ -69,6 +74,11 @@ namespace NGinn.Engine
         public virtual void Activate()
         {
             if (_processInstance == null) throw new ApplicationException("Process instance not set (call SetProcessInstance before activating)");
+            if (_taskDataXml != null)
+            {
+                _taskDataDoc = new XmlDocument();
+                _taskDataDoc.LoadXml(_taskDataXml);
+            }
             _activated = true;
         }
 
@@ -77,6 +87,8 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void Passivate()
         {
+            if (_taskDataDoc != null)
+                _taskDataXml = _taskDataDoc.OuterXml;
             _processInstance = null;
             _activated = false;
         }
@@ -95,7 +107,38 @@ namespace NGinn.Engine
         /// <param name="xml"></param>
         public virtual void SetTaskInputXml(string xml)
         {
+            XmlSchemaSet validationSchemas = XmlProcessingUtil.GetTaskInputSchemas(this.ProcessTask);
+            List<XmlValidationMessage> msgs = new List<XmlValidationMessage>();
+            bool b = XmlProcessingUtil.ValidateXml(xml, validationSchemas, msgs);
+            if (!b) throw new ApplicationException("Input data validation failed");
+            XmlDocument d1 = new XmlDocument();
+            d1.LoadXml(xml);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(d1.NameTable);
+            IDictionary<string, IList<XmlElement>> values = XmlProcessingUtil.RetrieveVariablesFromXml(d1.DocumentElement, ProcessTask.TaskVariables, nsmgr);
+            //now build the task xml
             
+            XmlDocument taskData = new XmlDocument();
+            taskData.AppendChild(taskData.CreateElement("taskData"));
+            foreach (VariableDef vd in this.ProcessTask.TaskVariables)
+            {
+                IList<XmlElement> variableData;
+                if (!values.TryGetValue(vd.Name, out variableData) || variableData.Count == 0)
+                {
+                    if (vd.VariableUsage == VariableDef.Usage.Required)
+                    {
+                        if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                            throw new ApplicationException("Missing required input variable: " + vd.Name);
+                    }
+                    if (vd.DefaultValueExpr != null && vd.DefaultValueExpr.Length > 0)
+                    {
+                        XmlElement vel = taskData.CreateElement(vd.Name);
+                        vel.InnerXml = vd.DefaultValueExpr;
+                    }
+                }
+            }
+            XmlProcessingUtil.InsertVariablesIntoXml(taskData.DocumentElement, values, ProcessTask.TaskVariables);
+            log.Info("Task data xml: {0}", taskData.OuterXml);
+            _taskDataDoc = taskData;
         }
 
         public virtual string GetTaskOutputXml()
@@ -105,30 +148,7 @@ namespace NGinn.Engine
         }
         
 
-        public bool CanInitiateTask()
-        {
-            Dictionary<string, Token> toks = new Dictionary<string, Token>();
-            foreach (string tid in Tokens)
-            {
-                
-            }
-            Task t = ProcessTask;
-            if (t.JoinType == JoinType.AND)
-            {
-                foreach (Place pl in t.NodesIn)
-                {
-                    
-                }
-            }
-            else if (t.JoinType == JoinType.XOR)
-            {
-            }
-            else if (t.JoinType == JoinType.OR)
-            {
-            }
-            return false;
-            
-        }
+        
 
         /// <summary>
         /// Initiate task (start the transition).
@@ -141,6 +161,9 @@ namespace NGinn.Engine
             if (this.Tokens.Count == 0) throw new Exception("No input tokens");
         }
 
+        /// <summary>
+        /// Check if task is immediate
+        /// </summary>
         public virtual bool IsImmediate
         {
             get
@@ -149,12 +172,32 @@ namespace NGinn.Engine
             }
         }
 
+        /// <summary>
+        /// Execute an immediate task
+        /// </summary>
         public virtual void ExecuteTask()
-        {   
+        {
+            if (!IsImmediate) throw new ApplicationException("Execute is allowed only for immediate task");
         }
 
+        /// <summary>
+        /// Invoked by runtime to cancel an active transition
+        /// </summary>
         public virtual void CancelTask()
         {
+            if (this.Status != TransitionStatus.ENABLED && Status != TransitionStatus.STARTED)
+                throw new ApplicationException("Cannot cancel task - status invalid");
+            this.Status = TransitionStatus.CANCELLED;
+        }
+
+        /// <summary>
+        /// Invoked by runtime after transition has completed.
+        /// </summary>
+        public virtual void TaskCompleted()
+        {
+            if (this.Status != TransitionStatus.ENABLED && this.Status != TransitionStatus.STARTED)
+                throw new ApplicationException("Cannot complete task - status invalid");
+            this.Status = TransitionStatus.COMPLETED;
         }
     }
 }

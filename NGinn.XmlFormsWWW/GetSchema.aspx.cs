@@ -21,9 +21,15 @@ namespace NGinn.XmlFormsWWW
         {
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)ctx.GetObject("ProcessDefinitionRepository");
-            string definitionId = Request["definitionId"];
-            if (definitionId == null) throw new ApplicationException("missing definitionId parameter");
-            Response.Output.Write(pdr.GetProcessInputSchema(definitionId));
+            
+            string pth = Request.PathInfo;
+            if (pth.StartsWith("/")) pth = pth.Substring(1);
+            string[] dt = pth.Split('/');
+            if (dt.Length < 2) throw new Exception("Expected /<process definition id or package name>/<schema name>");
+            string pkgid = dt[0];
+            string schema = dt[1];
+            string schemaXml = pdr.GetPackageSchema(pkgid, schema);
+            Response.Output.Write(schemaXml);
             Response.End();
         }
     }

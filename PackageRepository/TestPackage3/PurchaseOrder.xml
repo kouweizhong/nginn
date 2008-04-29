@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="PurchaseOrder" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <additionalSchema>Types.xsd</additionalSchema>
+  <places>
+    <place id="start" type="StartPlace">
+    </place>
+    <place id="end" type="EndPlace">
+    </place>
+    
+  </places>
+  <tasks>
+    <task id="managerApproval" type="ManualTask">
+		<joinType>XOR</joinType>
+		<splitType>XOR</splitType>
+		<data-definition>
+			<variables>
+				<variable>
+				  <name>requestedById</name>
+				  <variableType>xs:string</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>true</isRequired>
+				  <dir>In</dir>
+				</variable>
+				<variable>
+				  <name>requestedByName</name>
+				  <variableType>xs:string</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>false</isRequired>
+				  <dir>In</dir>
+				</variable>
+				<variable>
+				  <name>requestDate</name>
+				  <variableType>xs:date</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>false</isRequired>
+				  <dir>In</dir>
+				</variable>
+				<variable>
+				  <name>orderItem</name>
+				  <variableType>OrderItem</variableType>
+				  <isArray>true</isArray>
+				  <isRequired>true</isRequired>
+				  <dir>In</dir>
+				</variable>
+				<variable>
+				  <name>decision</name>
+				  <variableType>xs:string</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>true</isRequired>
+				  <dir>Out</dir>
+				</variable>
+				<variable>
+				  <name>managerId</name>
+				  <variableType>xs:string</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>true</isRequired>
+				  <dir>Out</dir>
+				</variable>
+			  </variables>
+			  <input-bindings>
+			  	<binding>
+					<variable>requestedById</variable>
+					<bindingType>CopyVar</bindingType>
+					<sourceVariable>requestedById</sourceVariable>
+				</binding>
+				<binding>
+					<variable>requestedByName</variable>
+					<bindingType>CopyVar</bindingType>
+					<sourceVariable>requestedByName</sourceVariable>
+				</binding>
+				<binding>
+					<variable>requestDate</variable>
+					<bindingType>CopyVar</bindingType>
+					<sourceVariable>requestDate</sourceVariable>
+				</binding>
+				<binding>
+					<variable>orderItem</variable>
+					<bindingType>CopyVar</bindingType>
+					<sourceVariable>orderItem</sourceVariable>
+				</binding>
+			  </input-bindings>
+			  <output-bindings>
+			  </output-bindings>
+		</data-definition>
+	</task>
+	<task id="sendRequestCorrection" type="ManualTask">
+		<joinType>XOR</joinType>
+		<splitType>XOR</splitType>
+	</task>
+	<task id="completeOrderItems" type="EmptyTask">
+		<joinType>XOR</joinType>
+		<splitType>XOR</splitType>
+	</task>
+	
+	<task id="deliverOrderItems" type="ManualTask">
+		<joinType>XOR</joinType>
+		<splitType>AND</splitType>
+	</task>
+	
+	<task id="confirmOrderComplete" type="ManualTask">
+		<joinType>AND</joinType>
+		<splitType>XOR</splitType>
+	</task>
+  </tasks>
+  <flows>
+  	<flow><from>start</from><to>managerApproval</to></flow>
+	  <flow><from>managerApproval</from><to>sendRequestCorrection</to></flow>
+	  <flow><from>managerApproval</from><to>completeOrderItems</to></flow>
+	  <flow><from>sendRequestCorrection</from><to>managerApproval</to></flow>
+	  <flow><from>completeOrderItems</from><to>deliverOrderItems</to></flow>
+	  <flow><from>deliverOrderItems</from><to>confirmOrderComplete</to></flow>
+	  <flow><from>confirmOrderComplete</from><to>end</to></flow>
+	  <flow><from>confirmOrderComplete</from><to>completeOrderItems</to></flow>
+  </flows>
+  
+  	<variables>
+		<variable>
+		  <name>requestedById</name>
+		  <variableType>xs:string</variableType>
+		  <isArray>false</isArray>
+		  <isRequired>true</isRequired>
+		  <dir>In</dir>
+		</variable>
+		<variable>
+		  <name>requestedByName</name>
+		  <variableType>xs:string</variableType>
+		  <isArray>false</isArray>
+		  <isRequired>false</isRequired>
+		  <dir>In</dir>
+		</variable>
+		<variable>
+		  <name>requestDate</name>
+		  <variableType>xs:date</variableType>
+		  <isArray>false</isArray>
+		  <isRequired>false</isRequired>
+		  <dir>In</dir>
+		</variable>
+		<variable>
+		  <name>orderItem</name>
+		  <variableType>OrderItem</variableType>
+		  <isArray>true</isArray>
+		  <isRequired>true</isRequired>
+		  <dir>In</dir>
+		</variable>
+	  </variables>
+  
+</process>

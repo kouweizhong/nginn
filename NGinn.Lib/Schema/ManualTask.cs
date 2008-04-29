@@ -10,12 +10,15 @@ namespace NGinn.Lib.Schema
         GROUP
     }
 
+
+
     [Serializable]
     public class ManualTask : Task
     {
         private string _name;
         private string _descrTemplate;
         private TaskAssignmentStrategy _assignmentStrategy = TaskAssignmentStrategy.PERSON;
+        private string _assigneeQuery;
 
         public string Name
         {
@@ -39,6 +42,33 @@ namespace NGinn.Lib.Schema
         {
             get { return false; }
         }
-        
+
+        public enum InitialTaskStatus
+        {
+            Offered,
+            Assigned
+        }
+
+        /// <summary>
+        /// Query syntax: TBD
+        /// </summary>
+        public string TaskAssigneeQuery
+        {
+            get { return _assigneeQuery; }
+            set { _assigneeQuery = value; }
+        }
+
+        public string ExcludeAssignees
+        {
+            get { return null; }
+            set { }
+        }
+
+        public string AssigneeSelectionFunction
+        {
+            get { return null; }
+        }
+
+
     }
 }

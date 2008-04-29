@@ -30,7 +30,7 @@ namespace NGinn.Engine.Runtime
             ProcessDefinition proc = pd.GetProcessDefinition(procName);
             return proc;
         }
-
+        
         public string GetProcessDefinitionId(string packageName, string processName, int version)
         {
             return string.Format("{0}.{1}.{2}", packageName, processName, version);
@@ -45,6 +45,34 @@ namespace NGinn.Engine.Runtime
         {
             ProcessDefinition pd = GetProcessDefinition(definitionId);
             return pd.GenerateInputSchema();
+        }
+
+        #endregion
+
+        #region IProcessDefinitionRepository Members
+
+
+        public string GetPackageSchema(string definitionId, string schemaName)
+        {
+            string pkgName = definitionId;
+            string procName = null;
+            int idx = definitionId.IndexOf('.');
+            if (idx >= 0)
+            {
+                pkgName = definitionId.Substring(0, idx);
+                procName = definitionId.Substring(idx + 1);
+            }
+            PackageDefinition pkg = PackageRepository.GetPackage(pkgName);
+            if (schemaName == "input")
+            {
+                if (procName == null) throw new ApplicationException("Process name missing");
+                ProcessDefinition pd = pkg.GetProcessDefinition(procName);
+                return pd.GenerateInputSchema();
+            }
+            else
+            {
+                return pkg.GetSchema(schemaName);
+            }
         }
 
         #endregion

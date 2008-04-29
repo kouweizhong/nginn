@@ -177,7 +177,7 @@ namespace NGinn.Engine
         {
             if (_tokensInPlaces.ContainsKey(placeId))
                 return _tokensInPlaces[placeId];
-            return null;
+            return new List<Token>();
         }
 
         /// <summary>
@@ -377,6 +377,11 @@ namespace NGinn.Engine
         public XmlDocument GetProcessData()
         {
             return this._processData;
+        }
+
+        public XmlNode GetProcessVariablesRoot()
+        {
+            return GetProcessData().SelectSingleNode("/process/inputData");
         }
 
         /// <summary>
@@ -795,16 +800,47 @@ namespace NGinn.Engine
             TransitionCompleted(at.CorrelationId);
         }
 
+        
         /// <summary>
         /// Create input data for transition by executing task input data bindings.
         /// TODO: Implement
+        /// All task input variables have to be bound...
+        /// 1. execute data bindings - get input variables in xml
+        /// 2. validate the xml document
+        /// 3. add local variables initial values
         /// </summary>
         /// <param name="at"></param>
         private void TransferDataToTransition(ActiveTransition at)
         {
             log.Debug("Transferring data to transition {0}", at.CorrelationId);
-            throw new NotImplementedException();
+            XmlElement nd = (XmlElement) GetProcessVariablesRoot();
+            Task tsk = Definition.GetTask(at.TaskId);
+
+            XmlDocument newDoc = new XmlDocument();
+            XmlElement taskData = newDoc.CreateElement("input");
+            taskData = (XmlElement) newDoc.AppendChild(taskData);
+            IDictionary<string, IList<XmlElement>> bindingResults = XmlProcessingUtil.EvaluateVariableBindings(nd, tsk.InputBindings);
+            foreach (VariableDef vd in tsk.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    IList<XmlElement> value;
+                    if (bindingResults.TryGetValue(vd.Name, out value))
+                    {
+                        foreach (XmlElement el in value)
+                        {
+                            taskData.AppendChild(taskData.OwnerDocument.ImportNode(el, true));
+                        }
+                    }
+                }
+            }
+            log.Info("Task input data: {0}", taskData.OuterXml);
+            at.SetTaskInputXml(newDoc.OuterXml);
         }
+
+        
+
+        
 
         /// <summary>
         /// Extract output data from finished transition by executing task output data bindings
@@ -968,6 +1004,7 @@ namespace NGinn.Engine
                 Token tok = GetToken(tokid);
                 Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
             }
+            at.TaskCompleted();
             at.Status = TransitionStatus.COMPLETED;
             //2 retrieve data from transition
             TransferDataFromTransition(at);
@@ -1028,10 +1065,20 @@ namespace NGinn.Engine
             }
             else if (tsk.SplitType == JoinType.OR)
             {
-                throw new NotImplementedException();
+                IList<Flow> flows = tsk.FlowsOutOrdered;
+                for (int i = 0; i < flows.Count; i++)
+                {
+                    if (EvaluateFlowInputCondition(flows[i]))
+                    {
+                        Token t = CreateNewTokenInPlace(flows[i].To.Id);
+                        log.Debug("Produced token in flow: {0}, token: {1}", flows[i].ToString(), t.TokenId);
+                        newTokens.Add(t);
+                    }
+                }
             }
             else throw new Exception();
-
+            if (newTokens.Count == 0) 
+                throw new ApplicationException("No tokens were produced after transition " + at.CorrelationId);
             foreach (Token t in newTokens)
             {
                 t.Status = TokenStatus.READY;
@@ -1142,4 +1189,6 @@ namespace NGinn.Engine
             return ToXmlString();
         }
     }
+
+    
 }

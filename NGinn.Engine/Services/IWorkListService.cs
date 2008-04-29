@@ -45,5 +45,6 @@ namespace NGinn.Engine.Services
     {
         void CreateWorkItem(WorkItem wi);
         void CancelWorkItem(string correlationId);
+        void WorkItemCompleted(string correlationId);
     }
 }

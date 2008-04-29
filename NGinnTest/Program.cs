@@ -25,13 +25,13 @@ namespace NGinnTest
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
-                //TestKickProcess();
+                TestKickProcess("f342cc4e9daf46a38a3d3d6663c94ee5");
                 //TestStartProcess();
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
                 //TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
-                TransferDataTest();
+                //TransferDataTest();
             }
             catch (Exception ex)
             {
@@ -90,6 +90,13 @@ namespace NGinnTest
             {
                 env.KickProcess(lst[0]);
             }
+        }
+
+
+        static void TestKickProcess(string instId)
+        {
+            INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
+            env.KickProcess(instId);
         }
 
         static void TestTaskCompleted(string processId, string taskCorrelationId)
