@@ -56,6 +56,13 @@
 				  <isRequired>true</isRequired>
 				  <dir>Out</dir>
 				</variable>
+				<variable>
+				  <name>managerComment</name>
+				  <variableType>xs:string</variableType>
+				  <isArray>false</isArray>
+				  <isRequired>false</isRequired>
+				  <dir>Out</dir>
+				</variable>
 			  </variables>
 			  <input-bindings>
 			  	<binding>

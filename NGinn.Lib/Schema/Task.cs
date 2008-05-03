@@ -24,7 +24,26 @@ namespace NGinn.Lib.Schema
         private List<VariableDef> _taskVariables = new List<VariableDef>();
         private List<VariableBinding> _inputBindings = new List<VariableBinding>();
         private List<VariableBinding> _outputBindings = new List<VariableBinding>();
-        
+        private bool _isMultiInstance = false;
+
+        /// <summary>
+        /// Test if this is a multi-instance task
+        /// </summary>
+        public bool IsMultiInstance
+        {
+            get { return _isMultiInstance; }
+        }
+
+        public string MultiInstanceSplitQuery
+        {
+            get { return null; }
+        }
+
+        public string MultiInstanceResultVariable
+        {
+            get { return null; }
+        }
+
         public JoinType JoinType
         {
             get { return _joinType; }

@@ -49,6 +49,8 @@
 			<field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
 			<field name="ExecutionStart" dbcolumn="execution_start" type="DateTime" nullable="true" />
 			<field name="ExecutionEnd" dbcolumn="execution_end" type="DateTime" nullable="true" />
+      <field name="ParentClass" dbcolumn="parent_class" type="String" size="50" nullable="true" />
+      <field name="ParentKey" dbcolumn="parent_key" type="String" size="20" nullable="true" />
 		</table>
 	</class>
 

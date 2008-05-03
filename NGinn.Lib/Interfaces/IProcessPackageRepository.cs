@@ -5,7 +5,7 @@ using NGinn.Lib.Schema;
 using System.IO;
 using System.Xml.Schema;
 
-namespace NGinn.Engine.Services
+namespace NGinn.Lib.Interfaces
 {
     public interface IProcessPackageRepository
     {

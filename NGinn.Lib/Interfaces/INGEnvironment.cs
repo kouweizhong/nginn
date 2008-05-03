@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NGinn.Engine.Services
+namespace NGinn.Lib.Interfaces
 {
     /// <summary>
     /// Process hosting environment interface

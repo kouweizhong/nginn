@@ -44,10 +44,16 @@
       <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="splitType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="data-definition" type="DataDefinition" minOccurs="0" maxOccurs="1" />
-      <xs:choice>
-        
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element name="manualTask" type="ManualTask" />
+        <xs:element name="scriptTask" type="ScriptTask" />
+        <xs:element name="subprocessTask" type="SubprocessTask" />
+        <xs:element name="callWSTask" type="CallWSTask" />
+        <xs:element name="timerTask" type="TimerTask" />
+        <xs:element name="externalTask" type="ExternalTask" />
+        <xs:element name="notificationTask" type="NotificationTask" />
       </xs:choice>
+      <xs:element name="data-definition" type="DataDefinition" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
@@ -111,10 +117,9 @@
       <xs:element name="scriptBody" type="xs:string" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="Subprocess">
+  <xs:complexType name="SubprocessTask">
     <xs:sequence>
       <xs:element name="subprocessName" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="subprocessVersion" type="xs:int" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="CallWSTask">
@@ -131,7 +136,6 @@
   <xs:complexType name="NotificationTask">
     <xs:sequence>
     </xs:sequence>
-    <xs:attribute name="id" use="required" type="xs:string" />
   </xs:complexType>
   <xs:complexType name="XmlSchema">
     <xs:sequence>

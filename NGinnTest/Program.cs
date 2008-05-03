@@ -8,6 +8,7 @@ using NGinn.Lib.Schema;
 using Sooda;
 using System.IO;
 using System.Xml;
+using NGinn.Lib.Interfaces;
 
 namespace NGinnTest
 {
@@ -105,7 +106,7 @@ namespace NGinnTest
             TaskCompletionInfo tci = new TaskCompletionInfo();
             tci.ProcessInstance = processId;
             tci.CorrelationId = taskCorrelationId;
-            tci.ResultCode = "OK";
+            tci.ResultXml = "<results><decision>Accept</decision><comment>I don't know why</comment></results>";
             tci.CompletedBy = "me";
             env.ProcessTaskCompleted(tci);
         }

@@ -46,6 +46,7 @@ namespace NGinn.Engine
         private bool _activated = false;
         [NonSerialized]
         private XmlDocument _taskDataDoc;
+        /// <summary>Serialized task xml data</summary>
         private string _taskDataXml;
         
         public ActiveTransition(Task tsk, ProcessInstance pi)
@@ -62,10 +63,38 @@ namespace NGinn.Engine
             this._processInstance = pi;
         }
 
+        /// <summary>
+        /// Task correlation id. Uniquely identifies the task instance.
+        /// </summary>
         public string CorrelationId
         {
             get { return _correlationId; }
-            set { if (_activated) throw new ApplicationException("Cannot modify after activation"); _correlationId = value; }
+            set { ActivationRequired(false); _correlationId = value; }
+        }
+
+        /// <summary>
+        /// Serialized form of task data xml.
+        /// </summary>
+        public string TaskDataXml
+        {
+            get { return _taskDataXml; }
+            set { _taskDataXml = value; }
+        }
+
+        /// <summary>
+        /// Task xml data - available when activated
+        /// </summary>
+        public XmlDocument TaskData
+        {
+            get { ActivationRequired(true); return _taskDataDoc; }
+        }
+
+        /// <summary>
+        /// Return xml node containing task variables - available when activated
+        /// </summary>
+        public XmlNode TaskVariablesRoot
+        {
+            get { ActivationRequired(true); return _taskDataDoc.DocumentElement; }
         }
 
         /// <summary>
@@ -98,8 +127,10 @@ namespace NGinn.Engine
         /// </summary>
         protected Task ProcessTask
         {
-            get { return _processInstance.Definition.GetTask(TaskId); }
+            get { ActivationRequired(true); return _processInstance.Definition.GetTask(TaskId); }
         }
+
+        
 
         /// <summary>
         /// Set task input xml
@@ -107,6 +138,7 @@ namespace NGinn.Engine
         /// <param name="xml"></param>
         public virtual void SetTaskInputXml(string xml)
         {
+            ActivationRequired(true);
             XmlSchemaSet validationSchemas = XmlProcessingUtil.GetTaskInputSchemas(this.ProcessTask);
             List<XmlValidationMessage> msgs = new List<XmlValidationMessage>();
             bool b = XmlProcessingUtil.ValidateXml(xml, validationSchemas, msgs);
@@ -158,6 +190,7 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void InitiateTask()
         {
+            ActivationRequired(true);
             if (this.Tokens.Count == 0) throw new Exception("No input tokens");
         }
 
@@ -177,6 +210,7 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void ExecuteTask()
         {
+            ActivationRequired(true);
             if (!IsImmediate) throw new ApplicationException("Execute is allowed only for immediate task");
         }
 
@@ -185,6 +219,7 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void CancelTask()
         {
+            ActivationRequired(true);
             if (this.Status != TransitionStatus.ENABLED && Status != TransitionStatus.STARTED)
                 throw new ApplicationException("Cannot cancel task - status invalid");
             this.Status = TransitionStatus.CANCELLED;
@@ -195,9 +230,18 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void TaskCompleted()
         {
+            ActivationRequired(true);
             if (this.Status != TransitionStatus.ENABLED && this.Status != TransitionStatus.STARTED)
                 throw new ApplicationException("Cannot complete task - status invalid");
             this.Status = TransitionStatus.COMPLETED;
+        }
+
+        protected void ActivationRequired(bool activated)
+        {
+            if (_activated != activated)
+            {
+                throw new ApplicationException(activated ? "Task must be activated" : "Task must be passivated");
+            }
         }
     }
 }

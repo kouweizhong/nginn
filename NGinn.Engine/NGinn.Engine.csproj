@@ -62,15 +62,9 @@
     <Compile Include="Services\Dao\INGDataSession.cs" />
     <Compile Include="Services\Dao\INGDataStore.cs" />
     <Compile Include="Runtime\NGEnvironment.cs" />
-    <Compile Include="Services\INGEnvironment.cs" />
-    <Compile Include="Services\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Services\IProcessDefinitionRepository.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
-    <Compile Include="Services\IProcessPackageRepository.cs" />
-    <Compile Include="Services\IResourceManager.cs" />
-    <Compile Include="Services\ITokenManager.cs" />
-    <Compile Include="Services\IWorkListService.cs" />
     <Compile Include="SubprocessTaskActive.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>

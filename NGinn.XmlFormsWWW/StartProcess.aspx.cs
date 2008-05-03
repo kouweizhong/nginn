@@ -13,6 +13,7 @@ using System.IO;
 using Spring.Context;
 using NGinn.Engine.Services;
 using NGinn.Lib.Schema;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.XmlFormsWWW
 {

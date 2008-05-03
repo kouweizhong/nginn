@@ -7,6 +7,7 @@ using System.IO;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Services;
 using System.Xml;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine.Runtime
 {

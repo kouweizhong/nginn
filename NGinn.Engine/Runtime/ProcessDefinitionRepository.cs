@@ -4,6 +4,7 @@ using System.Text;
 using NLog;
 using NGinn.Engine.Services;
 using NGinn.Lib.Schema;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine.Runtime
 {

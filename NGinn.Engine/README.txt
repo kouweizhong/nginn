@@ -1,18 +1,52 @@
-DANE
+MUlti instance tasks - how to do data binding
 
-kazdy task ma jakies dane we i wy. binding tych danych powinien byc standardem.
-namespace... zalozmy ze dane w procesie maja jakis namespace
-np zawsze z aliasem data/psvar/var1 
-skad bierzemy dane we: wedlug deklaracji w procesie (process variables)
-czy sa jakies inne zmienne?
-lepiej dac tylko tyle ile w deklaracji.
-czyli wg deklaracji mozemy importowac zmienne package/environment
+Let's assume we want to create instance of task for each xml record (that is, for each element of an array variable) 
+in the process data.
 
-czy to dla procesu, czy dla tasku, zawsze powinno dac sie wyznaczyc schemat danych (xml schema) 
-no dobra
-1. deklaracje zmiennych procesu/tasku...
-2. namespace procesu/tasku hm po co nam to potrzebne? tylko do przetwarzania input xml
-3. budujemy xml ze zmiennymi procesu = input + process + output + env + package variables
-4. co z danymi ktore sa wewnetrzne dla procesu? Nie powinny nas chyba obchodzic, niech sobie w xml wstawia
-   co mu sie zywnie podoba. wazne zeby na poczatku i na koncu byl poprawny xml, zgodny z definicja zmiennych procesu
-h   
+<xsl:for-each select="variableName">
+	curNode = '.'
+	calculateBindings for curNode -> this is task input data
+	
+now binding back
+	we have a list of task output variable sets
+
+<xsl:for-each select="task-result-xml">
+	<outputVariableName>
+		<task-out-binding-result />
+	</outputVariableName>	
+</xsl:for-each>
+
+where can we bind it? to a single variable??? 
+Well, it could be done. However, by default binding replaces the variable with new value.
+In case of incomplete task output data, we would lose some information in the variable. It would be better to merge the variable
+with task output data.
+
+??? KA¯DE zadanie mo¿e staæ siê multi-instance, no bo co stoi na przeszkodzie ???
+
+XML kontra .net variables
+
+XML
++ przenoœny format
++ ³atwe definiowanie schematu
++ nie wymaga definiowania serializacji
++ ³atwa walidacja
+
+- trudno przetwarzaæ
+- data binding jest skomplikowany
+- utrudniony dostêp ze skryptu
+- trudniejsze zarz¹dzanie danymi w procesie
+
+.net variables
++ ³atwo pisaæ wyra¿enia
++ ³atwo bindowaæ
++ ³atwiejsze operacje na danych
++ ³adniejszy zapis
+
+- brak walidacji
+- brak definicji schematu
+
+
+
+
+
+

@@ -10,6 +10,8 @@ using NLog;
 using System.Xml;
 using System.IO;
 using System.Xml.Schema;
+using NGinn.Lib.Interfaces;
+using NGinn.Lib.Interfaces.Worklist;
 
 namespace NGinn.Engine.Runtime
 {

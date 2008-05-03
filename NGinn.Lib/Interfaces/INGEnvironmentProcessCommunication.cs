@@ -2,17 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NGinn.Engine.Services
+namespace NGinn.Lib.Interfaces
 {
+    /// <summary>
+    /// Task completion data. Contains task execution results.
+    /// </summary>
     [Serializable]
     public class TaskCompletionInfo
     {
+        /// <summary>Process instance ID</summary>
         public string ProcessInstance;
+        /// <summary>Task correlation ID</summary>
         public string CorrelationId;
-        public string ResultCode;
+        /// <summary>ID of person that completed the task</summary>
         public string CompletedBy;
+        /// <summary>Task completion date</summary>
         public DateTime CompletedDate = DateTime.Now;
-        public IDictionary<string, object> OutputVariables = new Dictionary<string, object>();
+        /// <summary>Task results xml</summary>
+        public string ResultXml;
     }
 
     public interface INGEnvironmentProcessCommunication

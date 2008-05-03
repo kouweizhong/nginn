@@ -1070,6 +1070,8 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     public System.DateTime CreatedDate;
     public System.Data.SqlTypes.SqlDateTime ExecutionStart;
     public System.Data.SqlTypes.SqlDateTime ExecutionEnd;
+    public System.Data.SqlTypes.SqlString ParentClass;
+    public System.Data.SqlTypes.SqlString ParentKey;
     public Task_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
         base(other) {
     }
@@ -1222,6 +1224,24 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
       }
       set {
         Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ExecutionEnd", 13, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ExecutionEnd), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ExecutionEnd));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public System.Data.SqlTypes.SqlString ParentClass {
+      get {
+        return this.GetTaskFieldValuesForRead(0).ParentClass;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ParentClass", 14, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ParentClass), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ParentClass));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(20)]
+    public System.Data.SqlTypes.SqlString ParentKey {
+      get {
+        return this.GetTaskFieldValuesForRead(0).ParentKey;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ParentKey", 15, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ParentKey), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ParentKey));
       }
     }
     private Task_Values GetTaskFieldValuesForRead(int requiredTable) {
@@ -1466,6 +1486,18 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     }
     protected virtual void AfterFieldUpdate_ExecutionEnd(object oldValue, object newValue) {
       this.AfterFieldUpdate("ExecutionEnd", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_ParentClass(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("ParentClass", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_ParentClass(object oldValue, object newValue) {
+      this.AfterFieldUpdate("ParentClass", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_ParentKey(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("ParentKey", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_ParentKey(object oldValue, object newValue) {
+      this.AfterFieldUpdate("ParentKey", oldValue, newValue);
     }
   }
   public class TaskStatus_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
@@ -1896,7 +1928,7 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
     private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Worklist.BusinessObjects._DatabaseSchema.GetSchema().FindClassByName("Task");
     private static Type _theType = typeof(Task);
     static Task_Factory() {
-      _fieldHandlers = new SoodaFieldHandler[14];
+      _fieldHandlers = new SoodaFieldHandler[16];
       _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
@@ -1911,6 +1943,8 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
       _fieldHandlers[11] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
       _fieldHandlers[12] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
       _fieldHandlers[13] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[14] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[15] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
     }
     public Task_Factory() {
     }
@@ -2532,6 +2566,16 @@ namespace NGinn.Worklist.BusinessObjects.Stubs {
         return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ExecutionEnd"));
       }
     }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ParentClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ParentClass"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ParentKey {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ParentKey"));
+      }
+    }
     public virtual Sooda.QL.SoqlBooleanExpression In(params TaskWrapperExpression[] items) {
       return new Sooda.QL.SoqlBooleanInExpression(this, items);
     }
@@ -2917,6 +2961,16 @@ namespace NGinn.Worklist.BusinessObjects.TypedQueries {
     public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression ExecutionEnd {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("ExecutionEnd"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ParentClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ParentClass"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ParentKey {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ParentKey"));
       }
     }
   }

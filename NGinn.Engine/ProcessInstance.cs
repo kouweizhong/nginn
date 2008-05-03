@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using NGinn.Engine.Runtime;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine
 {
@@ -39,9 +40,10 @@ namespace NGinn.Engine
         private string _definitionId;
         [NonSerialized]
         private ProcessDefinition _definition;
-        private IDictionary<string, object> _processVariables = new Dictionary<string, object>();
+        /// <summary>helper dictionary for quick lookup of tokens in place</summary>
         [NonSerialized]
         private IDictionary<string, IList<Token>> _tokensInPlaces = new Dictionary<string, IList<Token>>();
+        /// <summary>tokens in process: token id->token </summary>
         private IDictionary<string, Token> _tokens = new Dictionary<string, Token>();
         [NonSerialized]
         private int _persistedVersion;
@@ -53,16 +55,21 @@ namespace NGinn.Engine
         private ActiveTransitionFactory _transitionFactory;
         /// <summary>map: correlation id->transition</summary>
         private IDictionary<string, ActiveTransition> _activeTransitions = new Dictionary<string, ActiveTransition>();
-        /// <summary>map: task id -> list of active instances of the task</summary>
+        /// <summary>helper map: task id -> list of active instances of the task</summary>
         [NonSerialized]
         private IDictionary<string, IList<ActiveTransition>> _activeTaskTransitions = new Dictionary<string, IList<ActiveTransition>>();
-        private ProcessStatus _status = ProcessStatus.New;
+        private ProcessStatus _status;
         private int _tokenNumber = 0;
         private int _transitionNumber = 0;
         [NonSerialized]
         private XmlDocument _processData = new XmlDocument();
         /// <summary>process xml data in string form - for serialization purposes</summary>
         private string _processDataXmlString = null;
+
+        public ProcessInstance()
+        {
+            _status = ProcessStatus.New;
+        }
 
         public string ProcessDefinitionId
         {
@@ -379,9 +386,13 @@ namespace NGinn.Engine
             return this._processData;
         }
 
+        /// <summary>
+        /// Return node where process variables are kept
+        /// </summary>
+        /// <returns></returns>
         public XmlNode GetProcessVariablesRoot()
         {
-            return GetProcessData().SelectSingleNode("/process/inputData");
+            return GetProcessData().DocumentElement.SelectSingleNode("inputData");
         }
 
         /// <summary>
@@ -401,7 +412,7 @@ namespace NGinn.Engine
         public XmlDocument GetProcessOutputXml()
         {
             if (this.Status != ProcessStatus.Finished) throw new ApplicationException("Cannot return output xml - process did not finish");
-            return null;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -838,8 +849,15 @@ namespace NGinn.Engine
             at.SetTaskInputXml(newDoc.OuterXml);
         }
 
-        
 
+        /// <summary>
+        /// Return xml namespace manager of process data xml
+        /// </summary>
+        /// <returns></returns>
+        protected XmlNamespaceManager GetProcessDataNamespaceManager()
+        {
+            return new XmlNamespaceManager(_processData.NameTable);
+        }
         
 
         /// <summary>
@@ -849,6 +867,11 @@ namespace NGinn.Engine
         private void TransferDataFromTransition(ActiveTransition at)
         {
             log.Debug("Transferring data from transition {0}", at.CorrelationId);
+            Task tsk = Definition.GetTask(at.TaskId);
+            XmlNode nd = at.TaskVariablesRoot;
+            IDictionary<string, IList<XmlElement>> bindingResults = XmlProcessingUtil.EvaluateVariableBindings(nd, tsk.OutputBindings);
+            XmlNamespaceManager nsmgr = GetProcessDataNamespaceManager();
+            IDictionary<string, IList<XmlElement>> processVars = XmlProcessingUtil.RetrieveVariablesFromXml(this.GetProcessVariablesRoot(), Definition.ProcessVariables, nsmgr);
             throw new NotImplementedException();
         }
 

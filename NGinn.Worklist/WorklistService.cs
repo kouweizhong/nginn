@@ -6,6 +6,8 @@ using NGinn.Engine.Services;
 using NLog;
 using NGinn.Worklist.BusinessObjects;
 using NGinn.Worklist.BusinessObjects.TypedQueries;
+using NGinn.Lib.Interfaces;
+using NGinn.Lib.Interfaces.Worklist;
 
 namespace NGinn.Worklist
 {
