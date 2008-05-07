@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ListData.aspx.cs" Inherits="NGinn.XmlFormsWWW.ListData" %>
