@@ -39,7 +39,7 @@ namespace NGinn.Lib.Data
 
         public object Get(string Name, object[] index)
         {
-            log.Debug("Get: {0}[{1}]", Name, index[0]);
+            log.Debug("Get: {0}", Name);
             object v = _dob.Get(Name, index);
             if (v is IDataObject)
             {
@@ -78,7 +78,7 @@ namespace NGinn.Lib.Data
 
         public void Set(string Name, object value, object[] index)
         {
-            log.Debug("SET: {0}[{1}]={2}", Name, index, value);
+            log.Debug("SET: {0}={1}", Name, value);
             object v = value;
             if (value is Mutant)
             {

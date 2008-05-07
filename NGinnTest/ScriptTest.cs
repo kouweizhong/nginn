@@ -15,6 +15,7 @@ namespace NGinnTest
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
 
+        /*
         public static void EvalTest2()
         {
             Evaluator.Evaluator ev = new Evaluator.Evaluator();
@@ -28,6 +29,7 @@ namespace NGinnTest
             }
             log.Debug("Eval time: {0}", DateTime.Now - st);
         }
+         */
 
         public static void EvalTest3()
         {
@@ -108,7 +110,7 @@ namespace NGinnTest
             dob["ala"] = "kot";
             DataObject dob2 = new DataObject();
             dob2["dob"] = dob;
-            Mutant mut = DataMutantConverter.ToMutant(dob2);
+            Mutant mut = new DOBMutant(dob2); // DataMutantConverter.ToMutant(dob2);
             //Script scr = Script.Compile("dob2.dob.ala;");
             //IScriptContext sc = scr.Context;
             IScriptContext sc = new ScriptContext();

@@ -143,10 +143,12 @@ namespace NGinnTest
 
         static void TransferDataTest()
         {
+            /*
             string inputFile = "inputdata.xml";
             string targetFile = "targetdata.xml";
             List<VariableDef> vars = new List<VariableDef>();
             List<VariableBinding> bindings = new List<VariableBinding>();
+
             vars.Add(new VariableDef("Parent", "xs:int", VariableDef.Dir.InOut, VariableDef.Usage.Required, false));
             vars.Add(new VariableDef("OperatorName", "xs:string", VariableDef.Dir.In, VariableDef.Usage.Required, false));
             vars.Add(new VariableDef("Result", "xs:string", VariableDef.Dir.Out, VariableDef.Usage.Required, false));
@@ -164,6 +166,7 @@ namespace NGinnTest
             XmlElement el2 = XmlTest.TransferData(doc.DocumentElement, vars, bindings, targetDoc.DocumentElement);
             targetDoc.ReplaceChild(el2, targetDoc.DocumentElement);
             log.Info("Transfer results: {0}", targetDoc.OuterXml);
+            */
         }
 
         static void DataTest()

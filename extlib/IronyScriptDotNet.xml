@@ -4,6 +4,12 @@
         <name>IronyScriptDotNet</name>
     </assembly>
     <members>
+        <member name="T:ScriptNET.ScriptScope">
+            <summary>
+            Script Scope represents a tree of local scopes
+            handling variables and types.
+            </summary>
+        </member>
         <member name="T:ScriptNET.IScriptScope">
             <summary>
             Represents Scope. Scopes are used to store variables, types and functions
@@ -59,86 +65,6 @@
         <member name="P:ScriptNET.IScriptScope.Parent">
             <summary>
             Parent scope
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptUsingStatement">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptExpr">
-            <summary>
-            Base Node for Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptAst">
-            <summary>
-            Base class for Script.NET Ast's nodes
-            </summary>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.#ctor(Irony.Compiler.CompilerContext,Irony.Compiler.NonTerminal,Irony.Compiler.SourceLocation,Irony.Compiler.AstNodeList)">
-            <summary>
-            Base constructor
-            </summary>
-            <param name="context">CompilerContext</param>
-            <param name="nonTerminal">NonTerminal</param>
-            <param name="location">SourceLocation</param>
-            <param name="childNodes">AstNodeList</param>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.Code">
-            <summary>
-            Returns Source code for given AST
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.ConcreteSyntaxTree">
-            <summary>
-            Returns string representing concrete syntax tree
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.Execute(ScriptNET.IScriptContext)">
-            <summary>
-            Evaluates all child nodes
-            </summary>
-            <param name="context">ScriptContext object</param>
-            <returns>result of the last node evaluation</returns>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.Evaluate(Irony.Runtime.IEvaluationContext)">
-            <summary>
-            Evaluates script
-            </summary>
-            <param name="Context">EvaluationContext</param>
-        </member>
-        <member name="M:ScriptNET.ScriptAst.Evaluate(ScriptNET.IScriptContext)">
-            <summary>
-            Evaluates script
-            </summary>
-            <param name="Context">ScriptContext</param>
-        </member>
-        <member name="M:ScriptNET.ScriptExpr.#ctor(Irony.Compiler.CompilerContext,Irony.Compiler.NonTerminal,Irony.Compiler.SourceLocation,Irony.Compiler.AstNodeList)">
-            <summary>
-            
-            </summary>
-            <param name="context"></param>
-            <param name="nonTerminal"></param>
-            <param name="location"></param>
-            <param name="childNodes"></param>
-        </member>
-        <member name="T:ScriptNET.ScriptNewStmt">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptAstTemplate">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptScope">
-            <summary>
-            Script Scope represents a tree of local scopes
-            handling variables and types.
             </summary>
         </member>
         <member name="M:ScriptNET.ScriptScope.#ctor">
@@ -233,12 +159,223 @@
             Null if this scope is a global (root).
             </summary>
         </member>
+        <member name="T:ScriptNET.ScriptAssignExpr">
+            <summary>
+            Assignment Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptExpr">
+            <summary>
+            Base Node for Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptAst">
+            <summary>
+            Base class for Script.NET Ast's nodes
+            </summary>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.#ctor(Irony.Compiler.CompilerContext,Irony.Compiler.NonTerminal,Irony.Compiler.SourceLocation,Irony.Compiler.AstNodeList)">
+            <summary>
+            Base constructor
+            </summary>
+            <param name="context">CompilerContext</param>
+            <param name="nonTerminal">NonTerminal</param>
+            <param name="location">SourceLocation</param>
+            <param name="childNodes">AstNodeList</param>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.Code">
+            <summary>
+            Returns Source code for given AST
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.ConcreteSyntaxTree">
+            <summary>
+            Returns string representing concrete syntax tree
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.Execute(ScriptNET.IScriptContext)">
+            <summary>
+            Evaluates all child nodes
+            </summary>
+            <param name="context">ScriptContext object</param>
+            <returns>result of the last node evaluation</returns>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.Evaluate(Irony.Runtime.IEvaluationContext)">
+            <summary>
+            Evaluates script
+            </summary>
+            <param name="Context">EvaluationContext</param>
+        </member>
+        <member name="M:ScriptNET.ScriptAst.Evaluate(ScriptNET.IScriptContext)">
+            <summary>
+            Evaluates script
+            </summary>
+            <param name="Context">ScriptContext</param>
+        </member>
+        <member name="M:ScriptNET.ScriptExpr.#ctor(Irony.Compiler.CompilerContext,Irony.Compiler.NonTerminal,Irony.Compiler.SourceLocation,Irony.Compiler.AstNodeList)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <param name="nonTerminal"></param>
+            <param name="location"></param>
+            <param name="childNodes"></param>
+        </member>
+        <member name="T:ScriptNET.ScriptValueObject">
+            <summary>
+            Represents results of script evaluation
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptValueObject.Value">
+            <summary>
+            Value
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptSwitchCaseStatement">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptStatement">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptIfStatement">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptGenericsPostfix">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptUnaryExpr">
+            <summary>
+            Unary Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptFuncParameters">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptForStatement">
+            <summary>
+            For statement
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptTryCatchFinallyStatement">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptSwitchDefaultStatement">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="M:ScriptNET.IScriptDebugger.Start(System.String)">
+            <summary>
+            Occurs before exectuion of the programm
+            </summary>
+            <param name="code"></param>
+        </member>
+        <member name="M:ScriptNET.IScriptDebugger.Step(System.String,Irony.Compiler.AstNode,ScriptNET.IScriptContext)">
+            <summary>
+            Occurs before exection of CurrentNode
+            </summary>
+            <param name="code"></param>
+            <param name="CurrentNode"></param>
+            <param name="Context"></param>
+        </member>
+        <member name="M:ScriptNET.IScriptDebugger.Update(System.String,Irony.Compiler.AstNode,ScriptNET.IScriptContext)">
+            <summary>
+            Occurs after execution of CurrentNode
+            </summary>
+            <param name="code"></param>
+            <param name="CurrentNode"></param>
+            <param name="Context"></param>
+        </member>
+        <member name="M:ScriptNET.IScriptDebugger.Stop(ScriptNET.ScriptContext)">
+            <summary>
+            Stops debugging
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptElements">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:ScriptNET.ScriptWhileStatement">
             <summary>
             Script Array Constructor Expression
             </summary>
         </member>
+        <member name="T:ScriptNET.ScriptUsingStatement">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptTypeConstructor">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptBinExpr">
+            <summary>
+            Binary Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptArrayConstructor">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptTypeExpr">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptMObjectPart">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptFunctionCall">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptNewStmt">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptCondition">
+            <summary>
+            Script Array Constructor Expression
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptCondition.Expression">
+            <summary>
+            Returns condition
+            </summary>
+        </member>
         <member name="T:ScriptNET.ScriptTypeConvertExpr">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptMObject">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptFunctionDefinition">
             <summary>
             
             </summary>
@@ -248,41 +385,22 @@
             
             </summary>
         </member>
-        <member name="F:ScriptNET.Debugger.frmDebugger.components">
+        <member name="T:ScriptNET.InvokableMethod">
             <summary>
-            Required designer variable.
+            Wraps class Method into Invokable object. 
+            So, it may be added to Script Scope as FunctionDefinition and
+            Invoked in script
+            It is used for implementing Using Construct
             </summary>
         </member>
-        <member name="M:ScriptNET.Debugger.frmDebugger.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:ScriptNET.Debugger.frmDebugger.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptMObject">
+        <member name="T:ScriptNET.ScriptMetaExpr">
             <summary>
             
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptFuncContractPost">
+        <member name="T:ScriptNET.ScriptProg">
             <summary>
             
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptForEachStatement">
-            <summary>
-            ForEachStatement
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptStatement">
-            <summary>
-            Script Array Constructor Expression
             </summary>
         </member>
         <member name="T:ScriptNET.ScriptNewArrStmt">
@@ -310,39 +428,41 @@
             <param name="value">value</param>
             <returns>result of applying unary opeartor</returns>
         </member>
-        <member name="T:ScriptNET.ScriptSwitchDefaultStatement">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptQualifiedName">
-            <summary>
-            Qualified Name
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptIfStatement">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptCompoundStatement">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptIsExpr">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptBinExpr">
-            <summary>
-            Binary Expression
-            </summary>
-        </member>
         <member name="T:ScriptNET.ScriptFuncContractPre">
             <summary>
             
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptFuncContract">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptConstExpr">
+            <summary>
+            Constant Expression
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptConstExpr.Value">
+            <summary>
+            Value of the constant
+            </summary>
+        </member>
+        <member name="F:ScriptNET.Debugger.frmDebugger.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:ScriptNET.Debugger.frmDebugger.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:ScriptNET.Debugger.frmDebugger.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
             </summary>
         </member>
         <member name="M:ScriptNET.Script.#ctor">
@@ -412,9 +532,9 @@
             Execution context
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptUnaryExpr">
+        <member name="T:ScriptNET.ScriptFlowControlStatement">
             <summary>
-            Unary Expression
+            Script Array Constructor Expression
             </summary>
         </member>
         <member name="T:ScriptNET.ScriptSwitchStatement">
@@ -422,81 +542,14 @@
             
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptElements">
+        <member name="T:ScriptNET.ScriptCompoundStatement">
             <summary>
             
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptValueObject">
-            <summary>
-            Represents results of script evaluation
-            </summary>
-        </member>
-        <member name="P:ScriptNET.ScriptValueObject.Value">
-            <summary>
-            Value
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptTypeExpr">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptMObjectPart">
+        <member name="T:ScriptNET.ScriptAstTemplate">
             <summary>
             
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFuncContractInv">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ScriptNET.IScriptDebugger.Start(System.String)">
-            <summary>
-            Occurs before exectuion of the programm
-            </summary>
-            <param name="code"></param>
-        </member>
-        <member name="M:ScriptNET.IScriptDebugger.Step(System.String,Irony.Compiler.AstNode,ScriptNET.IScriptContext)">
-            <summary>
-            Occurs before exection of CurrentNode
-            </summary>
-            <param name="code"></param>
-            <param name="CurrentNode"></param>
-            <param name="Context"></param>
-        </member>
-        <member name="M:ScriptNET.IScriptDebugger.Update(System.String,Irony.Compiler.AstNode,ScriptNET.IScriptContext)">
-            <summary>
-            Occurs after execution of CurrentNode
-            </summary>
-            <param name="code"></param>
-            <param name="CurrentNode"></param>
-            <param name="Context"></param>
-        </member>
-        <member name="M:ScriptNET.IScriptDebugger.Stop(ScriptNET.ScriptContext)">
-            <summary>
-            Stops debugging
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFunctionDefExpression">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptForStatement">
-            <summary>
-            For statement
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptCondition">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="P:ScriptNET.ScriptCondition.Expression">
-            <summary>
-            Returns condition
             </summary>
         </member>
         <member name="T:ScriptNET.ScriptdotnetGrammar">
@@ -504,14 +557,29 @@
             This class represents Irony Grammar for Script.NET
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptFlowControlStatement">
+        <member name="T:ScriptNET.ScriptIsExpr">
             <summary>
             Script Array Constructor Expression
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptArrayConstructor">
+        <member name="T:ScriptNET.ScriptFuncContractInv">
             <summary>
-            Script Array Constructor Expression
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptExprList">
+            <summary>
+            Script Array Expression List Expression
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptFunctionDefExpression">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ScriptForEachStatement">
+            <summary>
+            ForEachStatement
             </summary>
         </member>
         <member name="T:ScriptNET.ScriptContext">
@@ -544,82 +612,14 @@
             Return statement executed
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptTryCatchFinallyStatement">
+        <member name="T:ScriptNET.ScriptFuncContractPost">
             <summary>
             
             </summary>
         </member>
-        <member name="T:ScriptNET.ScriptMetaExpr">
+        <member name="T:ScriptNET.ScriptQualifiedName">
             <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptSwitchCaseStatement">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFunctionCall">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptAssignExpr">
-            <summary>
-            Assignment Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.InvokableMethod">
-            <summary>
-            Wraps class Method into Invokable object. 
-            So, it may be added to Script Scope as FunctionDefinition and
-            Invoked in script
-            It is used for implementing Using Construct
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptConstExpr">
-            <summary>
-            Constant Expression
-            </summary>
-        </member>
-        <member name="P:ScriptNET.ScriptConstExpr.Value">
-            <summary>
-            Value of the constant
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptGenericsPostfix">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptTypeConstructor">
-            <summary>
-            Script Array Constructor Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFuncContract">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptExprList">
-            <summary>
-            Script Array Expression List Expression
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptProg">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFunctionDefinition">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:ScriptNET.ScriptFuncParameters">
-            <summary>
-            
+            Qualified Name
             </summary>
         </member>
     </members>

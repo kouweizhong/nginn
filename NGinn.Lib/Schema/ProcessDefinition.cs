@@ -9,6 +9,7 @@ using Spring.Core;
 using Spring.Core.IO;
 using Spring.Context;
 using System.Xml.Schema;
+using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Schema
 {
@@ -18,14 +19,8 @@ namespace NGinn.Lib.Schema
     /// Variable definition - used for defining process data schemas
     /// </summary>
     [Serializable]
-    public class VariableDef
+    public class VariableDef : MemberDef
     {
-        public enum Usage
-        {
-            Optional,
-            Required
-        }
-        public Usage VariableUsage;
         public enum Dir
         {
             Local,
@@ -33,30 +28,28 @@ namespace NGinn.Lib.Schema
             Out,
             InOut,
         }
-        public Dir VariableDir;
-        public string Name;
-        /// <summary>Variable type - supported types are: string, int, double, DateTime, TimeSpan</summary>
-        public string VariableType;
-        public bool IsArray = false;
-        /// <summary>Expression that will be used to calculate default value</summary>
-        public string DefaultValueExpr;
+        private Dir _dir;
+        private string _defaultValueExpr;
 
-        public bool IsSimpleType
+        public Dir VariableDir
         {
-            get { return true; }
+            get { return _dir; }
+            set { _dir = value; }
         }
 
-        public VariableDef()
+        public string DefaultValueExpr
         {
+            get { return _defaultValueExpr; }
+            set { _defaultValueExpr = value; }
         }
 
-        public VariableDef(string name, string varType, Dir dir, Usage usage, bool isArray)
+        public override void LoadFromXml(XmlElement el, XmlNamespaceManager nsmgr)
         {
-            Name = name;
-            VariableType = varType;
-            VariableDir = dir;
-            VariableUsage = usage;
-            IsArray = isArray;
+            base.LoadFromXml(el, nsmgr);
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
+            VariableDir = (VariableDef.Dir)Enum.Parse(typeof(VariableDef.Dir), SchemaUtil.GetXmlElementText(el, pr + "dir", nsmgr));
+            DefaultValueExpr = SchemaUtil.GetXmlElementText(el, pr + "defaultValue", nsmgr);
         }
     }
 
@@ -91,11 +84,11 @@ namespace NGinn.Lib.Schema
         private IDictionary<string, Task> _tasks = new Dictionary<string, Task>();
         private List<VariableDef> _processVariables = new List<VariableDef>();
         private PackageDefinition _package = null;
-        private List<string> _additionalSchemas = new List<string>();
+        private TypeSet _types = new TypeSet();
         private string _inputDataNamespace = null;
         private StartPlace _start = null;
         private EndPlace _finish = null;
-        
+        private List<string> _additionalSchemas = new List<string>();
         private string _name;
         private int _version;
         
@@ -267,12 +260,7 @@ namespace NGinn.Lib.Schema
                 xw.WriteAttributeString("xmlns", InputDataNamespace);
             }
 
-            foreach (string schema in AdditionalDataSchemas)
-            {
-                xw.WriteStartElement("include", XmlConst.XmlSchemaNS);
-                xw.WriteAttributeString("schemaLocation", schema);
-                xw.WriteEndElement();
-            }
+            _types.WriteXmlSchema(xw);
 
             xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
             xw.WriteAttributeString("name", rootElementName);
@@ -282,8 +270,8 @@ namespace NGinn.Lib.Schema
             {
                 xw.WriteStartElement("element", XmlConst.XmlSchemaNS);
                 xw.WriteAttributeString("name", vd.Name);
-                xw.WriteAttributeString("type", vd.VariableType);
-                xw.WriteAttributeString("minOccurs", vd.VariableUsage == VariableDef.Usage.Optional ? "0" : "1");
+                xw.WriteAttributeString("type", vd.TypeName);
+                xw.WriteAttributeString("minOccurs", vd.IsRequired ? "1" : "0");
                 xw.WriteAttributeString("maxOccurs", vd.IsArray ? "unbounded" : "1");
                 xw.WriteEndElement();
             }

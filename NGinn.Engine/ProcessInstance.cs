@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using NGinn.Engine.Runtime;
 using NGinn.Lib.Interfaces;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine
 {
@@ -61,6 +62,7 @@ namespace NGinn.Engine
         private ProcessStatus _status;
         private int _tokenNumber = 0;
         private int _transitionNumber = 0;
+        private DataObject _processInstanceData = new DataObject();
         [NonSerialized]
         private XmlDocument _processData = new XmlDocument();
         /// <summary>process xml data in string form - for serialization purposes</summary>
@@ -207,8 +209,8 @@ namespace NGinn.Engine
             {
                 if (t.Status == TokenStatus.READY ||
                     t.Status == TokenStatus.WAITING ||
-                    t.Status == TokenStatus.WAITING_ALLOCATED ||
-                    t.Status == TokenStatus.WAITING_ENABLED)
+                    t.Status == TokenStatus.LOCKED_ALLOCATED ||
+                    t.Status == TokenStatus.LOCKED_ENABLED)
                     l.Add(t);
             }
             return l;
@@ -363,7 +365,7 @@ namespace NGinn.Engine
                 }
                 else
                 {
-                    if (vd.VariableUsage == VariableDef.Usage.Required) throw new ApplicationException("Required variable is missing: " + vd.Name);
+                    if (vd.IsRequired) throw new ApplicationException("Required variable is missing: " + vd.Name);
                     XmlNode xn = doc.CreateElement(vd.Name);
                     if (vd.DefaultValueExpr != null) xn.InnerText = vd.DefaultValueExpr;
                     newNodes.Add(xn);
@@ -576,7 +578,7 @@ namespace NGinn.Engine
             //to fire before enabling other transitions
             foreach (Token tok1 in toks)
             {
-                if (tok1.Status == TokenStatus.WAITING_ENABLED)
+                if (tok1.Status == TokenStatus.LOCKED_ENABLED)
                 {
                     log.Info("There are active transitions in this place. Putting token in WAITING state");
                     tok.Status = TokenStatus.WAITING;
@@ -680,7 +682,7 @@ namespace NGinn.Engine
                     foreach (string tokId in at.Tokens)
                     {
                         Token tok1 = GetToken(tokId);
-                        tok1.Status = TokenStatus.WAITING_ENABLED;
+                        tok1.Status = TokenStatus.LOCKED_ENABLED;
                         log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
                     }
                 }
@@ -776,7 +778,7 @@ namespace NGinn.Engine
             {
                 if (t.Status == TokenStatus.READY || t.Status == TokenStatus.WAITING)
                     lst.Add(t);
-                else if (t.Status == TokenStatus.WAITING_ENABLED)
+                else if (t.Status == TokenStatus.LOCKED_ENABLED)
                     l2.Add(t);
             }
             lst.AddRange(l2);
@@ -806,7 +808,7 @@ namespace NGinn.Engine
             foreach (string tokId in at.Tokens)
             {
                 Token tok1 = GetToken(tokId);
-                tok1.Status = TokenStatus.WAITING_ENABLED;
+                tok1.Status = TokenStatus.LOCKED_ENABLED;
             }
             TransitionCompleted(at.CorrelationId);
         }
@@ -824,29 +826,7 @@ namespace NGinn.Engine
         private void TransferDataToTransition(ActiveTransition at)
         {
             log.Debug("Transferring data to transition {0}", at.CorrelationId);
-            XmlElement nd = (XmlElement) GetProcessVariablesRoot();
-            Task tsk = Definition.GetTask(at.TaskId);
-
-            XmlDocument newDoc = new XmlDocument();
-            XmlElement taskData = newDoc.CreateElement("input");
-            taskData = (XmlElement) newDoc.AppendChild(taskData);
-            IDictionary<string, IList<XmlElement>> bindingResults = XmlProcessingUtil.EvaluateVariableBindings(nd, tsk.InputBindings);
-            foreach (VariableDef vd in tsk.TaskVariables)
-            {
-                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
-                {
-                    IList<XmlElement> value;
-                    if (bindingResults.TryGetValue(vd.Name, out value))
-                    {
-                        foreach (XmlElement el in value)
-                        {
-                            taskData.AppendChild(taskData.OwnerDocument.ImportNode(el, true));
-                        }
-                    }
-                }
-            }
-            log.Info("Task input data: {0}", taskData.OuterXml);
-            at.SetTaskInputXml(newDoc.OuterXml);
+            
         }
 
 
@@ -866,13 +846,7 @@ namespace NGinn.Engine
         /// <param name="at"></param>
         private void TransferDataFromTransition(ActiveTransition at)
         {
-            log.Debug("Transferring data from transition {0}", at.CorrelationId);
-            Task tsk = Definition.GetTask(at.TaskId);
-            XmlNode nd = at.TaskVariablesRoot;
-            IDictionary<string, IList<XmlElement>> bindingResults = XmlProcessingUtil.EvaluateVariableBindings(nd, tsk.OutputBindings);
-            XmlNamespaceManager nsmgr = GetProcessDataNamespaceManager();
-            IDictionary<string, IList<XmlElement>> processVars = XmlProcessingUtil.RetrieveVariablesFromXml(this.GetProcessVariablesRoot(), Definition.ProcessVariables, nsmgr);
-            throw new NotImplementedException();
+           
         }
 
         private ActiveTransition CreateActiveTransitionForTask(Task tsk)
@@ -995,10 +969,10 @@ namespace NGinn.Engine
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
-                Debug.Assert(tok.Status == TokenStatus.WAITING_ENABLED);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ENABLED);
                 Debug.Assert(tok.ActiveTransitions.Count == 1 && tok.ActiveTransitions[0] == at.CorrelationId);
                 //if (!at.IsImmediate && tok.Status != TokenStatus.WAITING_ENABLED) throw new Exception();
-                tok.Status = TokenStatus.WAITING_ALLOCATED;
+                tok.Status = TokenStatus.LOCKED_ALLOCATED;
 
             }
             at.Status = TransitionStatus.STARTED;
@@ -1025,7 +999,7 @@ namespace NGinn.Engine
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
-                Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ALLOCATED);
             }
             at.TaskCompleted();
             at.Status = TransitionStatus.COMPLETED;
@@ -1047,7 +1021,7 @@ namespace NGinn.Engine
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
-                Debug.Assert(tok.Status == TokenStatus.WAITING_ALLOCATED);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ALLOCATED);
                 Debug.Assert(tok.ActiveTransitions.Count == 1);
                 Debug.Assert(tok.ActiveTransitions[0] == at.CorrelationId);
                 tok.Status = TokenStatus.CONSUMED;
@@ -1137,7 +1111,7 @@ namespace NGinn.Engine
             foreach (string t in at.Tokens)
             {
                 Token tok = GetToken(t);
-                Debug.Assert(tok.Status == TokenStatus.WAITING_ENABLED || tok.Status == TokenStatus.WAITING_ALLOCATED);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ENABLED || tok.Status == TokenStatus.LOCKED_ALLOCATED);
                 Debug.Assert(tok.ActiveTransitions.Contains(at.CorrelationId));
                 if (!tok.ActiveTransitions.Remove(at.CorrelationId)) throw new Exception("Error removing transition id from token"); //should never happen
                 if (tok.ActiveTransitions.Count == 0)

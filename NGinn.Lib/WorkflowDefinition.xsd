@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="WorkflowDefinition" targetNamespace="http://www.nginn.org/WorkflowDefinition.1_0.xsd" elementFormDefault="qualified" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:mstns="http://tempuri.org/WorkflowDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- 
+  Process element definition 
+  -->
   <xs:complexType name="Process">
     <xs:sequence>
-      <xs:element name="inputDataNamespace" minOccurs="0" maxOccurs="1" type="xs:string" />
-      <xs:element name="additionalSchema" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
       <xs:element name="places">
         <!-- miejsca w procesie -->
         <xs:complexType>
@@ -28,6 +29,10 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="inputDataNamespace" minOccurs="0" maxOccurs="1" type="xs:string" />
+      <xs:element name="additionalSchema" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+      <!-- local data type definitions -->
+      <xs:element name="processDataTypes" type="TypeSetDef" minOccurs="0" maxOccurs="1" />
       <xs:element name="variables" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
@@ -39,6 +44,10 @@
     <xs:attribute name="name" type="xs:string" />
     <xs:attribute name="version" type="xs:int" />
   </xs:complexType>
+  
+  <!--
+  Task definition
+  -->
   <xs:complexType name="Task">
     <xs:sequence>
       <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
@@ -151,21 +160,12 @@
       <xs:enumeration value="InOut" />
     </xs:restriction>
   </xs:simpleType>
-  <!-- process/task variable definition. Used for building xml schemas. -->
-  <xs:complexType name="VariableDef">
-    <xs:sequence>
-      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="variableType" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="isArray" type="xs:boolean" minOccurs="1" maxOccurs="1" />
-      <xs:element name="isRequired" type="xs:boolean" minOccurs="1" maxOccurs="1" />
-      <xs:element name="defaultValue" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="dir" type="VariableDir" minOccurs="1" maxOccurs="1" />
-    </xs:sequence>
-  </xs:complexType>
+  
   <xs:simpleType name="BindingType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="CopyVar" />
       <xs:enumeration value="Xslt" />
+      <xs:enumeration value="Expr" />
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="VariableBinding">
@@ -174,6 +174,7 @@
       <xs:element name="bindingType" minOccurs="1" maxOccurs="1" type="BindingType" />
       <xs:choice minOccurs="1" maxOccurs="1">
         <xs:element name="sourceVariable" minOccurs="1" maxOccurs="1" type="xs:string" />
+        <xs:element name="expression" minOccurs="1" maxOccurs="1" type="xs:string" />
         <xs:element name="bindingXslt" minOccurs="1" maxOccurs="1">
           <xs:complexType mixed="true">
             <xs:sequence>
@@ -184,6 +185,7 @@
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
+  
   <xs:complexType name="DataDefinition">
     <xs:sequence>
       <xs:element name="variables" minOccurs="0" maxOccurs="1">
@@ -209,5 +211,39 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+  <!-- definition of type set -->
+  <xs:complexType name="TypeSetDef">
+    <xs:sequence>
+      <xs:element name="struct" type="StructDef" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- data record definition -->
+  <xs:complexType name="StructDef">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="member" type="MemberDef" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- struct member definition -->
+  <xs:complexType name="MemberDef">
+    <xs:sequence>
+    <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+    <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+    <xs:element name="required" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    <xs:element name="isArray" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <!-- process/task variable definition. Used for building xml schemas. -->
+  <xs:complexType name="VariableDef">
+    <xs:complexContent>
+      <xs:extension base="MemberDef">
+        <xs:sequence>
+          <xs:element name="dir" type="VariableDir" minOccurs="1" maxOccurs="1" />
+          <xs:element name="defaultValue" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <xs:element name="process" type="Process" />
 </xs:schema>

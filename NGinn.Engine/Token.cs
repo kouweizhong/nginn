@@ -20,8 +20,8 @@ namespace NGinn.Engine
     {
         READY = 1, ///token in place, ready for further processing (it is possible that it will enable some transitions)
         WAITING = 2, ///token is waiting because it cannot enable any transition (it has not been 'pre-selected' for any transition)
-        WAITING_ENABLED = 3, ///token has been pre-selected for an enabled transition, so the token belongs to at least one active transition and waits for the transition to be selected or completed
-        WAITING_ALLOCATED = 4, ///token has been assigned to a transition (in case of deferred choice, this is after the choice has been made)
+        LOCKED_ENABLED = 3, ///token has been pre-selected for an enabled transition, so the token belongs to at least one active transition and waits for the transition to be selected or completed
+        LOCKED_ALLOCATED = 4, ///token has been assigned to a transition (in case of deferred choice, this is after the choice has been made)
         CANCELLED = 5, ///token has been cancelled, all transitions with this token also have been cancelled
         CONSUMED = 6,    ///token has been consumed by a transition, it no longer exists
     }

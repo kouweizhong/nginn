@@ -67,16 +67,8 @@ namespace NGinn.Lib.Schema
         /// <returns></returns>
         public static VariableDef LoadVariable(XmlElement el, XmlNamespaceManager nsmgr)
         {
-            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
-            if (pr != null && pr.Length > 0) pr += ":";
             VariableDef vd = new VariableDef();
-            vd.Name = SchemaUtil.GetXmlElementText(el, pr + "name", nsmgr);
-            vd.VariableType = SchemaUtil.GetXmlElementText(el, pr + "variableType", nsmgr);
-            vd.IsArray = "true".Equals(SchemaUtil.GetXmlElementText(el, pr + "isArray", nsmgr));
-            vd.VariableDir = (VariableDef.Dir)Enum.Parse(typeof(VariableDef.Dir), SchemaUtil.GetXmlElementText(el, pr + "dir", nsmgr));
-            vd.VariableUsage = VariableDef.Usage.Optional;
-            if ("true".Equals(SchemaUtil.GetXmlElementText(el, pr + "isRequired", nsmgr))) vd.VariableUsage = VariableDef.Usage.Required;
-            vd.DefaultValueExpr = SchemaUtil.GetXmlElementText(el, pr + "defaultValue", nsmgr);
+            vd.LoadFromXml(el, nsmgr);
             return vd;
         }
 
@@ -102,6 +94,11 @@ namespace NGinn.Lib.Schema
             else if (vb.BindingType == VariableBinding.VarBindingType.Xslt)
             {
                 XmlElement e2 = (XmlElement)el.SelectSingleNode(pr + "bindingXslt", nsmgr);
+                vb.BindingExpression = e2.InnerXml;
+            }
+            else if (vb.BindingType == VariableBinding.VarBindingType.Expr)
+            {
+                XmlElement e2 = (XmlElement)el.SelectSingleNode(pr + "expression", nsmgr);
                 vb.BindingExpression = e2.InnerXml;
             }
             log.Debug("Loaded binding: {0}", vb.ToString());

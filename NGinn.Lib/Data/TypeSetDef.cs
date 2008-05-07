@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using NGinn.Lib.Schema;
 
 namespace NGinn.Lib.Data
 {
@@ -9,54 +10,61 @@ namespace NGinn.Lib.Data
     [Serializable]
     public class TypeSet
     {
-        public static readonly string TYPE_STRING = "string";
-        public static readonly string TYPE_INT = "int";
-        public static readonly string TYPE_DOUBLE = "double";
-        public static readonly string TYPE_DATE = "date";
-        public static readonly string TYPE_DATETIME = "datetime";
-        private static IDictionary<string, Type> _basicTypes;
-        private Dictionary<string, StructDef> _structs;
+        public static readonly SimpleTypeDef TYPE_STRING = new SimpleTypeDef("string", typeof(string));
+        public static readonly SimpleTypeDef TYPE_INT = new SimpleTypeDef("int", typeof(Int32));
+        public static readonly SimpleTypeDef TYPE_DOUBLE = new SimpleTypeDef("double", typeof(double));
+        public static readonly SimpleTypeDef TYPE_DATE = new SimpleTypeDef("date", typeof(DateTime));
+        public static readonly SimpleTypeDef TYPE_DATETIME = new SimpleTypeDef("datetime", typeof(DateTime));
+        
+        private Dictionary<string, TypeDef> _types;
 
         static TypeSet()
         {
-            _basicTypes = new Dictionary<string, Type>();
-            _basicTypes[TYPE_STRING] = typeof(string);
-            _basicTypes[TYPE_INT] = typeof(int);
-            _basicTypes[TYPE_DOUBLE] = typeof(double);
-            _basicTypes[TYPE_DATE] = typeof(DateTime);
-            _basicTypes[TYPE_DATETIME] = typeof(DateTime);
+            
         }
 
         public TypeSet()
         {
-            _structs = new Dictionary<string, StructDef>();
+            _types = new Dictionary<string, TypeDef>();
+            _types.Add(TYPE_STRING.Name, TYPE_STRING);
+            _types.Add(TYPE_INT.Name, TYPE_INT);
+            _types.Add(TYPE_DOUBLE.Name, TYPE_DOUBLE);
+            _types.Add(TYPE_DATETIME.Name, TYPE_DATETIME);
+            _types.Add(TYPE_DATE.Name, TYPE_DATE);
         }
 
-        public static bool IsBasicType(string typeName)
+        public bool IsBasicType(string typeName)
         {
-            return _basicTypes.ContainsKey(typeName);
+            TypeDef td = GetTypeDef(typeName);
+            if (td is SimpleTypeDef) return true;
+            return false;
         }
 
         public bool IsTypeDefined(string typeName)
         {
-            return _structs.ContainsKey(typeName) || _basicTypes.ContainsKey(typeName);
+            return _types.ContainsKey(typeName);
+        }
+
+        public TypeDef GetTypeDef(string name)
+        {
+            TypeDef td;
+            if (!_types.TryGetValue(name, out td)) return null;
+            return td;
         }
 
         public StructDef GetStructType(string name)
         {
-            StructDef sd;
-            if (!_structs.TryGetValue(name, out sd)) return null;
-            return sd;
+            return GetTypeDef(name) as StructDef;
         }
 
-        public void AddStructType(StructDef sd)
+        public void AddType(TypeDef sd)
         {
-            List<StructDef> l = new List<StructDef>();
+            List<TypeDef> l = new List<TypeDef>();
             l.Add(sd);
-            AddStructTypes(l);
+            AddTypes(l);
         }
 
-        public void AddStructTypes(ICollection<StructDef> types)
+        public void AddTypes(ICollection<TypeDef> types)
         {
             ValidationCtx ctx = new ValidationCtx();
             foreach (StructDef sd in types)
@@ -64,39 +72,57 @@ namespace NGinn.Lib.Data
                 if (IsTypeDefined(sd.Name)) throw new ApplicationException("Type already defined: " + sd.Name);
                 ctx.NewTypes.Add(sd.Name, sd);
             }
-            foreach (StructDef sd in types)
+            foreach (TypeDef sd in types)
             {
                 ValidateTypeDef(sd, ctx);
             }
-            foreach (StructDef sd in types)
+            foreach (TypeDef sd in types)
             {
-                _structs.Add(sd.Name, sd);
+                sd.ParentTypeSet = this;
+                _types.Add(sd.Name, sd);
             }
         }
 
         
         private class ValidationCtx
         {
-            public Dictionary<string, StructDef> NewTypes = new Dictionary<string, StructDef>();
-            public Dictionary<string, StructDef> ValidatedTypes = new Dictionary<string, StructDef>();
+            public Dictionary<string, TypeDef> NewTypes = new Dictionary<string, TypeDef>();
+            public Dictionary<string, TypeDef> ValidatedTypes = new Dictionary<string, TypeDef>();
         }
 
-        private void ValidateTypeDef(StructDef sd, ValidationCtx ctx)
+        private void ValidateTypeDef(TypeDef td, ValidationCtx ctx)
         {
-            if (IsTypeDefined(sd.Name)) return;
-            if (ctx.ValidatedTypes.ContainsKey(sd.Name)) return;
-            ctx.ValidatedTypes.Add(sd.Name, sd);
-            foreach(MemberDef md in sd.Members)
+            if (IsTypeDefined(td.Name)) return;
+            if (ctx.ValidatedTypes.ContainsKey(td.Name)) return;
+            ctx.ValidatedTypes.Add(td.Name, td);
+            if (td is SimpleTypeDef)
             {
-                if (!IsTypeDefined(md.TypeName))
+                return;
+            }
+            else if (td is StructDef)
+            {
+                StructDef sd = (StructDef)td;
+                foreach (MemberDef md in sd.Members)
                 {
-                    if (!ctx.NewTypes.ContainsKey(md.TypeName))
+                    if (!IsTypeDefined(md.TypeName))
                     {
-                        throw new ApplicationException(string.Format("Member type ({0}) not defined for {1}.{2}", md.TypeName, sd.Name, md.Name));
+                        if (!ctx.NewTypes.ContainsKey(md.TypeName))
+                        {
+                            throw new ApplicationException(string.Format("Member type ({0}) not defined for {1}.{2}", md.TypeName, sd.Name, md.Name));
+                        }
+                        TypeDef td2 = ctx.NewTypes[md.TypeName];
+                        ValidateTypeDef(td2, ctx);
                     }
-                    StructDef sd2 = ctx.NewTypes[md.TypeName];
-                    ValidateTypeDef(sd2, ctx);
                 }
+            }
+            else throw new Exception();
+        }
+
+        public ICollection<string> TypeNames
+        {
+            get
+            {
+                return _types.Keys;
             }
         }
 
@@ -106,18 +132,12 @@ namespace NGinn.Lib.Data
         /// <param name="xw"></param>
         public void WriteXmlSchema(XmlWriter xw)
         {
-            throw new NotImplementedException();
+            foreach(string tdName in TypeNames)
+            {
+                TypeDef td = GetTypeDef(tdName);
+                td.WriteXmlSchemaType(xw);
+            }
         }
 
-        /// <summary>
-        /// Generate XML schema for given type
-        /// </summary>
-        /// <param name="sd"></param>
-        /// <param name="includeDependencies">Include schema for types used in sd struct</param>
-        /// <param name="xw"></param>
-        public void WriteXmlSchema(StructDef sd, bool includeDependencies, XmlWriter xw)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

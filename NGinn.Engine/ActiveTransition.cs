@@ -6,6 +6,8 @@ using NLog;
 using System.Xml;
 using System.Xml.Schema;
 using NGinn.Engine.Runtime;
+using NGinn.Lib.Data;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine
 {
@@ -44,8 +46,8 @@ namespace NGinn.Engine
         protected Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
         private bool _activated = false;
-        [NonSerialized]
-        private XmlDocument _taskDataDoc;
+        /// <summary>task data</summary>
+        private DataObject _taskData = new DataObject();
         /// <summary>Serialized task xml data</summary>
         private string _taskDataXml;
         
@@ -73,41 +75,11 @@ namespace NGinn.Engine
         }
 
         /// <summary>
-        /// Serialized form of task data xml.
-        /// </summary>
-        public string TaskDataXml
-        {
-            get { return _taskDataXml; }
-            set { _taskDataXml = value; }
-        }
-
-        /// <summary>
-        /// Task xml data - available when activated
-        /// </summary>
-        public XmlDocument TaskData
-        {
-            get { ActivationRequired(true); return _taskDataDoc; }
-        }
-
-        /// <summary>
-        /// Return xml node containing task variables - available when activated
-        /// </summary>
-        public XmlNode TaskVariablesRoot
-        {
-            get { ActivationRequired(true); return _taskDataDoc.DocumentElement; }
-        }
-
-        /// <summary>
         /// Called after deserialization
         /// </summary>
         public virtual void Activate()
         {
             if (_processInstance == null) throw new ApplicationException("Process instance not set (call SetProcessInstance before activating)");
-            if (_taskDataXml != null)
-            {
-                _taskDataDoc = new XmlDocument();
-                _taskDataDoc.LoadXml(_taskDataXml);
-            }
             _activated = true;
         }
 
@@ -116,8 +88,6 @@ namespace NGinn.Engine
         /// </summary>
         public virtual void Passivate()
         {
-            if (_taskDataDoc != null)
-                _taskDataXml = _taskDataDoc.OuterXml;
             _processInstance = null;
             _activated = false;
         }
@@ -130,8 +100,25 @@ namespace NGinn.Engine
             get { ActivationRequired(true); return _processInstance.Definition.GetTask(TaskId); }
         }
 
-        
+        public void SetTaskInputData(IDictionary<string, object> dic)
+        {
 
+        }
+
+        public IDataObject GetTaskOutputData()
+        {
+            DataObject dob = new DataObject();
+            foreach (VariableDef vd in this.ProcessTask.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.InOut || vd.VariableDir == VariableDef.Dir.Out)
+                {
+                    object obj = _taskData.Get(vd.Name, null);
+                    dob.Set(vd.Name, null, obj);
+                }
+            }
+            return dob;
+        }
+        /*
         /// <summary>
         /// Set task input xml
         /// </summary>
@@ -156,7 +143,7 @@ namespace NGinn.Engine
                 IList<XmlElement> variableData;
                 if (!values.TryGetValue(vd.Name, out variableData) || variableData.Count == 0)
                 {
-                    if (vd.VariableUsage == VariableDef.Usage.Required)
+                    if (vd.IsRequired)
                     {
                         if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
                             throw new ApplicationException("Missing required input variable: " + vd.Name);
@@ -172,14 +159,8 @@ namespace NGinn.Engine
             log.Info("Task data xml: {0}", taskData.OuterXml);
             _taskDataDoc = taskData;
         }
-
-        public virtual string GetTaskOutputXml()
-        {
-            if (this.Status != TransitionStatus.COMPLETED) throw new ApplicationException("Transition is not completed");
-            return null;
-        }
+        */
         
-
         
 
         /// <summary>

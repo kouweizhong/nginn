@@ -119,7 +119,7 @@ namespace NGinn.Engine.Dao
         public IList<Token> GetProcessActiveTokens(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
             SoodaSession ss = (SoodaSession)ds;
-            TokenDbList dbl = TokenDb.GetList(ss.Transaction, TokenDbField.ProcessInstance == instanceId && TokenDbField.Status.In((int)TokenStatus.READY, (int)TokenStatus.WAITING, (int)TokenStatus.WAITING_ENABLED, (int)TokenStatus.WAITING_ALLOCATED, (int) TokenStatus.CONSUMED, (int) TokenStatus.CANCELLED));
+            TokenDbList dbl = TokenDb.GetList(ss.Transaction, TokenDbField.ProcessInstance == instanceId && TokenDbField.Status.In((int)TokenStatus.READY, (int)TokenStatus.WAITING, (int)TokenStatus.LOCKED_ENABLED, (int)TokenStatus.LOCKED_ALLOCATED, (int) TokenStatus.CONSUMED, (int) TokenStatus.CANCELLED));
             List<Token> lt = new List<Token>();
             foreach(TokenDb tdb in dbl)
             {

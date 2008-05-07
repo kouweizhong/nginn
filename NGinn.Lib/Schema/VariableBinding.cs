@@ -18,7 +18,9 @@ namespace NGinn.Lib.Schema
             //Copy one variable to another. Binding expression contains the name of source variable.
             CopyVar,
             //Xslt binding - binding expression is an xslt template that generates xml data for bound variable
-            Xslt
+            Xslt,
+            //Expression that will evaluate to variable value
+            Expr
         }
 
         private string _variableName;
