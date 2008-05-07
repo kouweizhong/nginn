@@ -33,7 +33,12 @@ namespace NGinn.Worklist
                 tsk.Title = wi.Title;
                 tsk.TaskId = wi.TaskId;
                 tsk.Status = TaskStatus.AssignedGroup;
+                if (!wi.IsGroupResponsible)
+                    tsk.Status = TaskStatus.Assigned;
                 tsk.CreatedDate = DateTime.Now;
+                if (wi.AssigneeGroupId != null) tsk.AssigneeGroup = (Group) st.GetObject(typeof(Group), wi.AssigneeGroupId);
+                if (wi.AssigneeId != null) tsk.Assignee = (User)st.GetObject(typeof(User), wi.AssigneeId);
+                
                 st.Commit();
             }
         }

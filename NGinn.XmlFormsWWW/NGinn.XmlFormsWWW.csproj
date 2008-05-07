@@ -57,11 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
-    <Content Include="GetSchema.aspx" />
+    <Content Include="sys\GetSchema.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ListData.aspx" />
-    <Content Include="StartProcess.aspx" />
+    <Content Include="sys\StartProcess.aspx" />
     <Content Include="SubmitXml.aspx" />
+    <Content Include="TaskForm.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -72,11 +73,11 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="GetSchema.aspx.cs">
+    <Compile Include="sys\GetSchema.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>GetSchema.aspx</DependentUpon>
     </Compile>
-    <Compile Include="GetSchema.aspx.designer.cs">
+    <Compile Include="sys\GetSchema.aspx.designer.cs">
       <DependentUpon>GetSchema.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
@@ -87,11 +88,11 @@
       <DependentUpon>ListData.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StartProcess.aspx.cs">
+    <Compile Include="sys\StartProcess.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>StartProcess.aspx</DependentUpon>
     </Compile>
-    <Compile Include="StartProcess.aspx.designer.cs">
+    <Compile Include="sys\StartProcess.aspx.designer.cs">
       <DependentUpon>StartProcess.aspx</DependentUpon>
     </Compile>
     <Compile Include="SubmitXml.aspx.cs">
@@ -100,6 +101,13 @@
     </Compile>
     <Compile Include="SubmitXml.aspx.designer.cs">
       <DependentUpon>SubmitXml.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TaskForm.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>TaskForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TaskForm.aspx.designer.cs">
+      <DependentUpon>TaskForm.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

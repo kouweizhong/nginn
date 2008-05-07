@@ -25,3 +25,8 @@ c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.Worklist.dll
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\NGinn.Worklist.pdb
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\Spring.Services.dll
 c:\dev\nginn\NGinn.XmlFormsWWW\bin\Mvp.Xml.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\PowerCollections.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\PowerCollections.xml
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\MutanticFramework.dll
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\MutanticFramework.pdb
+c:\dev\nginn\NGinn.XmlFormsWWW\bin\MutanticFramework.xml

@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NGinn.UserWWW
+namespace NGinn.XmlFormsWWW
 {
 
-    public partial class _Default
+    public partial class TaskForm
     {
         protected System.Web.UI.HtmlControls.HtmlForm form1;
     }

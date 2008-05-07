@@ -28,9 +28,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MutanticFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\MutanticFramework.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerCollections, Version=1.0.2141.24679, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\PowerCollections.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -43,6 +51,12 @@
   <ItemGroup>
     <Compile Include="Config\IConfig.cs" />
     <Compile Include="Config\SimpleConfig.cs" />
+    <Compile Include="Data\DataMutantConverter.cs" />
+    <Compile Include="Data\DataObject.cs" />
+    <Compile Include="Data\DataRecord.cs" />
+    <Compile Include="Data\DOBMutant.cs" />
+    <Compile Include="Data\MemberDef.cs" />
+    <Compile Include="Data\TypeSetDef.cs" />
     <Compile Include="Interfaces\INGEnvironment.cs" />
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />

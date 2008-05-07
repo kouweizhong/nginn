@@ -9,9 +9,9 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
-namespace NGinn.UserWWW
+namespace NGinn.XmlFormsWWW
 {
-    public partial class _Default : System.Web.UI.Page
+    public partial class TaskForm : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

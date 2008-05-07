@@ -9,6 +9,7 @@ using Sooda;
 using System.IO;
 using System.Xml;
 using NGinn.Lib.Interfaces;
+using NGinn.Lib.Data;
 
 namespace NGinnTest
 {
@@ -26,13 +27,16 @@ namespace NGinnTest
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
-                TestKickProcess("f342cc4e9daf46a38a3d3d6663c94ee5");
+                //TestKickProcess("f342cc4e9daf46a38a3d3d6663c94ee5");
                 //TestStartProcess();
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
                 //TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
                 //TransferDataTest();
+                //DataTest();
+                //ScriptTest.Test1();
+                ScriptTest.EvalTest5();
             }
             catch (Exception ex)
             {
@@ -160,6 +164,36 @@ namespace NGinnTest
             XmlElement el2 = XmlTest.TransferData(doc.DocumentElement, vars, bindings, targetDoc.DocumentElement);
             targetDoc.ReplaceChild(el2, targetDoc.DocumentElement);
             log.Info("Transfer results: {0}", targetDoc.OuterXml);
+        }
+
+        static void DataTest()
+        {
+            DataObject dob = new DataObject();
+            dob["ala"] = "ma kota";
+            dob["jola"] = "nie ma zielonego pojêcia";
+            dob["zenek"] = 35;
+            dob["dziœ"] = DateTime.Now;
+            dob["ala"] = "ju¿ nie ma kota";
+            dob["kot"] = new List<string>(new string[] { "skarpeta", "tiger", "filemon", "kuba" });
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string k in dob.Keys)
+            {
+                log.Debug("{0}={1}", k, dob[k]);
+            }
+            DataObject dob2 = new DataObject((IDataObject) dob);
+
+            XmlWriter xw = XmlWriter.Create(sb);
+            dob2.ToXml("dob2", xw);
+            xw.Flush();
+            log.Debug("XML: {0}", sb.ToString());
+            string xml = "<?xml version=\"1.0\" ?><data id=\"11\">   <member1>aaa</member1> <member1>bbb</member1>  <and>\n<otherData>tutaj</otherData>\n<more>...</more></and>\n<member3>\nsome\ntext</member3>\n</data>";
+            log.Debug("Parsing XML: {0}", xml);
+            StringReader sr = new StringReader(xml);
+            XmlReader xr = XmlReader.Create(sr);
+            xr.MoveToContent();
+            DataObject dob3 = DataObject.ParseXmlElement(xr);
+            log.Debug("Result: {0}", dob3.ToXmlString("dob3"));
         }
     }
 }
