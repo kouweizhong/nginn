@@ -77,6 +77,7 @@
     <Compile Include="Data\DOBMutant.cs" />
     <Compile Include="Data\MemberDef.cs" />
     <Compile Include="Data\TypeSetDef.cs" />
+    <Compile Include="Data\VariableDef.cs" />
     <Compile Include="Interfaces\INGEnvironment.cs" />
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />

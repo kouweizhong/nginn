@@ -45,7 +45,7 @@ namespace NGinn.Engine.Runtime
         public string GetProcessInputSchema(string definitionId)
         {
             ProcessDefinition pd = GetProcessDefinition(definitionId);
-            return pd.GenerateInputSchema();
+            return pd.GetProcessInputXmlSchema();
         }
 
         #endregion
@@ -68,7 +68,7 @@ namespace NGinn.Engine.Runtime
             {
                 if (procName == null) throw new ApplicationException("Process name missing");
                 ProcessDefinition pd = pkg.GetProcessDefinition(procName);
-                return pd.GenerateInputSchema();
+                return pd.GetProcessInputXmlSchema();
             }
             else
             {

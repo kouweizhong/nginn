@@ -53,7 +53,7 @@ namespace NGinnTest
             log.Info("Loading process definition: {0}", pdName);
             pd.LoadFile(pdName);
             log.Info("Process definition loaded: {0}.{1}", pd.Name, pd.Version);
-            string schema = pd.GenerateInputSchema();
+            string schema = pd.GetProcessInputXmlSchema();
             log.Info("Process input data schema: {0}", schema);
         }
 

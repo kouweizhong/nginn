@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
+using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Schema
 {
@@ -179,6 +180,43 @@ namespace NGinn.Lib.Schema
         {
             throw new NotImplementedException();
         }
-        
+
+        /// <summary>
+        /// Return the definition of task input data structure
+        /// </summary>
+        /// <returns></returns>
+        public StructDef GetTaskInputDataSchema()
+        {
+            if (ParentProcess == null) throw new Exception();
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = ParentProcess.DataTypes;
+            foreach (VariableDef vd in TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+            }
+            return sd;
+        }
+
+        /// <summary>
+        /// Get the definition of task output data
+        /// </summary>
+        /// <returns></returns>
+        public StructDef GetTaskOutputDataSchema()
+        {
+            if (ParentProcess == null) throw new Exception();
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = ParentProcess.DataTypes;
+            foreach (VariableDef vd in TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.Out || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+            }
+            return sd;
+        }
     }
 }

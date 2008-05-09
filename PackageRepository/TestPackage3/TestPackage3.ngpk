@@ -4,7 +4,6 @@
 		<schema>Types.xsd</schema>
 	</dataSchemas>
 	<processDefinitions>
-		<process>TestProcess3.xml</process>
 		<process>PurchaseOrder.xml</process>
 	</processDefinitions>
 </package>

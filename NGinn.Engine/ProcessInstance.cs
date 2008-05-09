@@ -325,6 +325,13 @@ namespace NGinn.Engine
             }
         }
 
+        public void SetProcessInputData(IDataObject data)
+        {
+            DataObject inpData = new DataObject(data);
+            StructDef inpStruct = new StructDef();
+            
+        }
+
         /// <summary>
         /// Initialize process input data
         /// Should be called on new process instance, before any tokens are processed.

@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.XPath;
 using Mvp.Xml.Common.Xsl;
 using System.Xml.Xsl;
+using NGinn.Lib.Data;
 
 namespace NGinnTest
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using NGinn.Lib.Schema;
+using System.Xml.XPath;
 
 namespace NGinn.Lib.Data
 {
@@ -136,6 +137,18 @@ namespace NGinn.Lib.Data
             {
                 TypeDef td = GetTypeDef(tdName);
                 td.WriteXmlSchemaType(xw);
+            }
+        }
+
+        public void LoadXml(XmlElement rootNode, XmlNamespaceManager nsmgr)
+        {
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            pr = (pr != null && pr.Length > 0) ? pr + ":" : "";
+            foreach (XmlElement el in rootNode.SelectNodes(pr + "struct", nsmgr))
+            {
+                StructDef sd = new StructDef();
+                sd.LoadFromXml(el, nsmgr);
+                AddType(sd);
             }
         }
 

@@ -370,8 +370,9 @@ namespace NGinn.Lib.Data
         }
 
         
-        public void Validate(StructDef sd)
+        public void Validate(string typeName, bool orderAny, bool ignoreExtras, TypeSet types)
         {
+            
             throw new NotImplementedException();
             
         }

@@ -5,6 +5,7 @@ using System.Xml;
 using Spring.Core.IO;
 using Spring.Context;
 using NLog;
+using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Schema
 {

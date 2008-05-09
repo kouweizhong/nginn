@@ -14,67 +14,6 @@ using NGinn.Lib.Data;
 namespace NGinn.Lib.Schema
 {
     
-
-    /// <summary>
-    /// Variable definition - used for defining process data schemas
-    /// </summary>
-    [Serializable]
-    public class VariableDef : MemberDef
-    {
-        public enum Dir
-        {
-            Local,
-            In,
-            Out,
-            InOut,
-        }
-        private Dir _dir;
-        private string _defaultValueExpr;
-
-        public Dir VariableDir
-        {
-            get { return _dir; }
-            set { _dir = value; }
-        }
-
-        public string DefaultValueExpr
-        {
-            get { return _defaultValueExpr; }
-            set { _defaultValueExpr = value; }
-        }
-
-        public override void LoadFromXml(XmlElement el, XmlNamespaceManager nsmgr)
-        {
-            base.LoadFromXml(el, nsmgr);
-            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
-            if (pr != null && pr.Length > 0) pr += ":";
-            VariableDir = (VariableDef.Dir)Enum.Parse(typeof(VariableDef.Dir), SchemaUtil.GetXmlElementText(el, pr + "dir", nsmgr));
-            DefaultValueExpr = SchemaUtil.GetXmlElementText(el, pr + "defaultValue", nsmgr);
-        }
-    }
-
-    /// <summary>
-    /// Process definition validation message
-    /// </summary>
-    public class ValidationMessage
-    {
-        public bool IsError = false;
-        public string NodeId;
-        public string Message;
-
-        public ValidationMessage(bool isError, string nodeId, string msg)
-        {
-            IsError = isError;
-            Message = msg;
-            NodeId = nodeId;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0}: In node {1}: {2}", IsError ? "ERROR" : "WARNING", NodeId, Message);
-        }
-    }
-
     [Serializable]
     public class ProcessDefinition
     {
@@ -130,11 +69,25 @@ namespace NGinn.Lib.Schema
             get { return _inputDataNamespace; }
         }
 
+        /// <summary>
+        /// Data type definitions for the process
+        /// </summary>
+        public TypeSet DataTypes
+        {
+            get { return _types; }
+        }
+
+        /// <summary>
+        /// Places in process
+        /// </summary>
         public ICollection<Place> Places
         {
             get { return _places.Values; }
         }
 
+        /// <summary>
+        /// Process tasks
+        /// </summary>
         public ICollection<Task> Tasks
         {
             get { return _tasks.Values; }
@@ -252,7 +205,20 @@ namespace NGinn.Lib.Schema
             get { return _processVariables; }
         }
 
-        protected void WriteDataSchema(IList<VariableDef> variables, string rootElementName, XmlWriter xw)
+        protected string WriteDataSchema(StructDef rootElementDef)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriterSettings ws = new XmlWriterSettings();
+            ws.OmitXmlDeclaration = true; ws.Indent = true;
+            XmlWriter xw = XmlWriter.Create(sb, ws);
+            xw.WriteStartDocument();
+            WriteDataSchema(rootElementDef, xw);
+            xw.WriteEndDocument();
+            xw.Flush();
+            return sb.ToString();
+        }
+
+        protected void WriteDataSchema(StructDef rootElementDef, XmlWriter xw)
         {
             xw.WriteStartElement("xs", "schema", SchemaUtil.SCHEMA_NS);
             if (InputDataNamespace != null && InputDataNamespace.Length > 0)
@@ -263,71 +229,56 @@ namespace NGinn.Lib.Schema
             _types.WriteXmlSchema(xw);
 
             xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
-            xw.WriteAttributeString("name", rootElementName);
-            xw.WriteStartElement("complexType", SchemaUtil.SCHEMA_NS);
-            xw.WriteStartElement("sequence", SchemaUtil.SCHEMA_NS);
-            foreach (VariableDef vd in variables)
-            {
-                xw.WriteStartElement("element", XmlConst.XmlSchemaNS);
-                xw.WriteAttributeString("name", vd.Name);
-                xw.WriteAttributeString("type", vd.TypeName);
-                xw.WriteAttributeString("minOccurs", vd.IsRequired ? "1" : "0");
-                xw.WriteAttributeString("maxOccurs", vd.IsArray ? "unbounded" : "1");
-                xw.WriteEndElement();
-            }
-            xw.WriteEndElement();
-            xw.WriteEndElement();
+            
+            xw.WriteAttributeString("name", rootElementDef.Name);
+            rootElementDef.Name = null;
+            rootElementDef.WriteXmlSchemaType(xw);
+            
             xw.WriteEndElement();
             xw.WriteEndElement();
         }
 
-
-        
         /// <summary>
         /// Get XML schema for task input xml
         /// </summary>
         /// <param name="taskId"></param>
         /// <returns></returns>
-        public string GenerateTaskInputSchema(string taskId)
+        public string GetTaskInputXmlSchema(string taskId)
         {
             Task tsk = GetTask(taskId);
-            if (tsk == null) throw new ApplicationException("Invalid task id");
-            IList<VariableDef> vars = new List<VariableDef>();
-            foreach (VariableDef vd in tsk.TaskVariables)
-            {
-                if (vd.VariableDir == VariableDef.Dir.In ||
-                    vd.VariableDir == VariableDef.Dir.InOut)
-                {
-                    vars.Add(vd);
-                }
-            }
-
-            StringWriter sw = new StringWriter();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            XmlWriter xw = XmlWriter.Create(sw, settings);
-            xw.WriteStartDocument();
-
-            WriteDataSchema(vars, "input", xw);
-            xw.WriteEndDocument();
-            xw.Flush();
-            return sw.ToString();
+            StructDef sd = tsk.GetTaskInputDataSchema();
+            sd.Name = "input";
+            return WriteDataSchema(sd);
         }
 
-        public String GenerateInputSchema()
+        /// <summary>
+        /// Get XML schema for task input xml
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        public string GetTaskOutputXmlSchema(string taskId)
         {
-            StringWriter sw = new StringWriter();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.OmitXmlDeclaration = true;
-            XmlWriter xw = XmlWriter.Create(sw, settings);
-            xw.WriteStartDocument();
-            WriteDataSchema(_processVariables, this.Name, xw);
-            xw.WriteEndDocument();
-            xw.Flush();
-            return sw.ToString();
+            Task tsk = GetTask(taskId);
+            StructDef sd = tsk.GetTaskOutputDataSchema();
+            sd.Name = "output";
+            return WriteDataSchema(sd);
         }
+
+        public String GetProcessInputXmlSchema()
+        {
+            StructDef sd = GetProcessInputDataSchema();
+            sd.Name = this.Name;
+            return WriteDataSchema(sd);
+        }
+
+        public string GetProcessOutputXmlSchema()
+        {
+            StructDef sd = GetProcessOutputDataSchema();
+            sd.Name = this.Name;
+            return WriteDataSchema(sd);
+        }
+
+
 
         public Place Start
         {
@@ -382,7 +333,11 @@ namespace NGinn.Lib.Schema
             {
                 _additionalSchemas.Add(tmp.InnerText);
             }
-
+            foreach (XmlElement tmp in doc.DocumentElement.SelectNodes("wf:processDataTypes", nsmgr))
+            {
+                _types.LoadXml(tmp, nsmgr);
+            }
+            
             XmlElement el = doc.DocumentElement.SelectSingleNode("wf:places", nsmgr) as XmlElement;
             LoadPlaces(el, nsmgr);
             el = doc.DocumentElement.SelectSingleNode("wf:tasks", nsmgr) as XmlElement;
@@ -452,6 +407,7 @@ namespace NGinn.Lib.Schema
             foreach (XmlElement e2 in el.SelectNodes(string.Format("{0}variable", pr), nsmgr))
             {
                 VariableDef vd = SchemaUtil.LoadVariable(e2, nsmgr);
+                if (!_types.IsTypeDefined(vd.TypeName)) throw new ApplicationException(string.Format("Type of variable {0} is not defined: {1}", vd.Name, vd.TypeName));
                 vars.Add(vd);
             }
             this._processVariables = vars;
@@ -535,11 +491,105 @@ namespace NGinn.Lib.Schema
             return msgs.Count == 0;
         }
 
+        /// <summary>
+        /// Validate process input XML
+        /// </summary>
+        /// <param name="xml"></param>
+        public void ValidateProcessInputXml(string xml)
+        {
+            string schemaXml = GetProcessInputXmlSchema();
+            log.Info("Validation schema: {0}", schemaXml);
+            StringReader sr = new StringReader(xml);
+            XmlSchema xs = XmlSchema.Read(new StringReader(schemaXml), null);
+            XmlReaderSettings rs = new XmlReaderSettings();
+            rs.ValidationType = ValidationType.Schema;
+            rs.Schemas = new XmlSchemaSet();
+            rs.Schemas.Add(xs);
+            rs.ValidationEventHandler += new ValidationEventHandler(rs_ValidationEventHandler);
+            XmlReader xr = XmlReader.Create(sr, rs);
+            while (xr.Read())
+            {
+            }
+        }
+
+        void rs_ValidationEventHandler(object sender, ValidationEventArgs e)
+        {
+            if (e.Severity == XmlSeverityType.Error)
+            {
+                throw new Exception("Input xml validation error: " + e.Message);
+            }
+            else
+            {
+                log.Info("Input xml validation warning: {0}", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Return the definition of process input data
+        /// </summary>
+        /// <returns></returns>
+        public StructDef GetProcessInputDataSchema()
+        {
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = DataTypes;
+            foreach (VariableDef vd in ProcessVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+            }
+            return sd;
+        }
+
+        /// <summary>
+        /// Return the definition of process output data
+        /// </summary>
+        /// <returns></returns>
+        public StructDef GetProcessOutputDataSchema()
+        {
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = DataTypes;
+            foreach (VariableDef vd in ProcessVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+            }
+            return sd;
+        }
+
+        
     }
 
-    
 
-    
+
+
+
+
+    /// <summary>
+    /// Process definition validation message
+    /// </summary>
+    public class ValidationMessage
+    {
+        public bool IsError = false;
+        public string NodeId;
+        public string Message;
+
+        public ValidationMessage(bool isError, string nodeId, string msg)
+        {
+            IsError = isError;
+            Message = msg;
+            NodeId = nodeId;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}: In node {1}: {2}", IsError ? "ERROR" : "WARNING", NodeId, Message);
+        }
+    }
+
  
 
 }

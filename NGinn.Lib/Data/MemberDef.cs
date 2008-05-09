@@ -40,13 +40,11 @@ namespace NGinn.Lib.Data
 
         public virtual void LoadFromXml(XmlElement el, XmlNamespaceManager nsmgr)
         {
-            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
-            if (pr != null && pr.Length > 0) pr += ":";
-            Name = SchemaUtil.GetXmlElementText(el, pr + "name", nsmgr);
-            TypeName = SchemaUtil.GetXmlElementText(el, pr + "type", nsmgr);
-            string t = SchemaUtil.GetXmlElementText(el, pr + "isArray", nsmgr);
+            Name = el.GetAttribute("name");
+            TypeName = el.GetAttribute("type");
+            string t = el.GetAttribute("isArray");
             IsArray = "true".Equals(t) || "1".Equals(t);
-            t = SchemaUtil.GetXmlElementText(el, pr + "required", nsmgr);
+            t = el.GetAttribute("required");
             IsRequired = t == null || t.Length == 0 || "true".Equals(t) || "1".Equals(t);
         }
     }
@@ -98,10 +96,12 @@ namespace NGinn.Lib.Data
         public override void WriteXmlSchemaType(XmlWriter xw)
         {
             xw.WriteStartElement("complexType", SchemaUtil.SCHEMA_NS);
+            if (Name != null) xw.WriteAttributeString("name", Name);
             xw.WriteStartElement("sequence", SchemaUtil.SCHEMA_NS);
             foreach (MemberDef member in Members)
             {
                 xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
+                xw.WriteAttributeString("name", member.Name);
                 TypeDef td = ParentTypeSet.GetTypeDef(member.TypeName);
                 if (td.IsSimpleType) 
                     xw.WriteAttributeString("type", "xs:" + td.Name);
@@ -119,7 +119,7 @@ namespace NGinn.Lib.Data
         {
             string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
             if (pr != null && pr.Length > 0) pr += ":";
-            Name = SchemaUtil.GetXmlElementText(el, pr + "name", nsmgr);
+            Name = el.GetAttribute("name");
             foreach(XmlElement mel in el.SelectNodes(pr + "member", nsmgr))
             {
                 MemberDef md = new MemberDef();

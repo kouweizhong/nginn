@@ -115,9 +115,9 @@ namespace NGinn.Engine.Runtime
             try
             {
                 ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
-                if (pd == null) throw new Exception("Process definition not found");
-                ValidateProcessInputData(pd, inputXml);
-
+                if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
+                pd.ValidateProcessInputXml(inputXml);
+                
                 using (INGDataSession ds = DataStore.OpenSession())
                 {
                     ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
@@ -143,60 +143,6 @@ namespace NGinn.Engine.Runtime
         }
 
         #endregion
-
-        /// <summary>
-        /// TODO: poprawic sposob konstruowania schema setu i dostepu do schemy (moze za pomoca package repository)
-        /// </summary>
-        /// <param name="pd"></param>
-        /// <param name="inputXml"></param>
-        private void ValidateProcessInputData(ProcessDefinition pd, string inputXml)
-        {
-            string schemaXml = pd.GenerateInputSchema();
-            log.Info("Validation schema: {0}", schemaXml);
-            StringReader sr = new StringReader(inputXml);
-            XmlSchema xs = XmlSchema.Read(new StringReader(schemaXml), new ValidationEventHandler(schema_ValidationEventHandler));
-            XmlReaderSettings rs = new XmlReaderSettings();
-            rs.ValidationType = ValidationType.Schema;
-            rs.Schemas = new XmlSchemaSet();
-            rs.Schemas.Add(xs);
-            foreach (string sch in pd.AdditionalDataSchemas)
-            {
-                string sxml = pd.Package.GetSchema(sch);
-                xs = XmlSchema.Read(new StringReader(sxml), new ValidationEventHandler(schema_ValidationEventHandler));
-                rs.Schemas.Add(xs);
-            }
-            rs.ValidationEventHandler += new ValidationEventHandler(rs_ValidationEventHandler);
-            XmlReader xr = XmlReader.Create(sr, rs);
-            while (xr.Read())
-            {
-            }
-        }
-
-        void schema_ValidationEventHandler(object sender, ValidationEventArgs e)
-        {
-            if (e.Severity == XmlSeverityType.Error)
-            {
-                throw new Exception("Input schema validation error: " + e.Message);
-            }
-            else
-            {
-                log.Info("Schema validation warning: {0}", e.Message);
-            }
-        }
-
-        void rs_ValidationEventHandler(object sender, ValidationEventArgs e)
-        {
-            if (e.Severity == XmlSeverityType.Error)
-            {
-                throw new Exception("Input xml validation error: " + e.Message);
-            }
-            else
-            {
-                log.Info("Input xml validation warning: {0}", e.Message);
-            }
-        }
-
-        
 
         /// <summary>
         /// This function returns list of 'kickable' process instances.

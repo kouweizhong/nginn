@@ -10,6 +10,7 @@ using NLog;
 using NGinn.Lib.Schema;
 using Mvp.Xml.Common;
 using Mvp.Xml.Common.Xsl;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine.Runtime
 {
@@ -77,44 +78,6 @@ namespace NGinn.Engine.Runtime
         }
 
         
-        public static XmlSchemaSet GetProcessInputSchemas(ProcessDefinition pd)
-        {
-            string schema = pd.GenerateInputSchema();
-            ValidationCtx ctx = new ValidationCtx();
-            XmlSchema xs = XmlSchema.Read(new StringReader(schema), new ValidationEventHandler(ctx.ValidationEventHandler));
-            if (ctx.HasError) throw new ApplicationException("Task input schema is invalid");
-            XmlSchemaSet schemas = new XmlSchemaSet();
-            schemas.Add(xs);
-            foreach (string sch in pd.AdditionalDataSchemas)
-            {
-                ctx = new ValidationCtx();
-                string sxml = pd.Package.GetSchema(sch);
-                xs = XmlSchema.Read(new StringReader(sxml), new ValidationEventHandler(ctx.ValidationEventHandler));
-                if (ctx.HasError) throw new ApplicationException("Input schema is invalid: " + sch);
-                schemas.Add(xs);
-            }
-            return schemas;
-        }
-
-        public static XmlSchemaSet GetTaskInputSchemas(Task tsk)
-        {
-            string schema = tsk.ParentProcess.GenerateTaskInputSchema(tsk.Id);
-            ValidationCtx ctx = new ValidationCtx();
-            XmlSchema xs = XmlSchema.Read(new StringReader(schema), new ValidationEventHandler(ctx.ValidationEventHandler));
-            if (ctx.HasError) throw new ApplicationException("Task input schema is invalid");
-            XmlSchemaSet schemas = new XmlSchemaSet();
-            schemas.Add(xs);
-            foreach (string sch in tsk.ParentProcess.AdditionalDataSchemas)
-            {
-                ctx = new ValidationCtx();
-                string sxml = tsk.ParentProcess.Package.GetSchema(sch);
-                xs = XmlSchema.Read(new StringReader(sxml), new ValidationEventHandler(ctx.ValidationEventHandler));
-                if (ctx.HasError) throw new ApplicationException("Input schema is invalid: " + sch);
-                schemas.Add(xs);
-            }
-            return schemas;
-        }
-
 
         
 

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <process version="1" name="PurchaseOrder" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <additionalSchema>Types.xsd</additionalSchema>
   <places>
     <place id="start" type="StartPlace">
     </place>
@@ -14,55 +13,13 @@
 		<splitType>XOR</splitType>
 		<data-definition>
 			<variables>
-				<variable>
-				  <name>requestedById</name>
-				  <variableType>xs:string</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>true</isRequired>
-				  <dir>In</dir>
-				</variable>
-				<variable>
-				  <name>requestedByName</name>
-				  <variableType>xs:string</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>false</isRequired>
-				  <dir>In</dir>
-				</variable>
-				<variable>
-				  <name>requestDate</name>
-				  <variableType>xs:date</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>false</isRequired>
-				  <dir>In</dir>
-				</variable>
-				<variable>
-				  <name>orderItem</name>
-				  <variableType>OrderItem</variableType>
-				  <isArray>true</isArray>
-				  <isRequired>true</isRequired>
-				  <dir>In</dir>
-				</variable>
-				<variable>
-				  <name>decision</name>
-				  <variableType>xs:string</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>true</isRequired>
-				  <dir>Out</dir>
-				</variable>
-				<variable>
-				  <name>managerId</name>
-				  <variableType>xs:string</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>true</isRequired>
-				  <dir>Out</dir>
-				</variable>
-				<variable>
-				  <name>managerComment</name>
-				  <variableType>xs:string</variableType>
-				  <isArray>false</isArray>
-				  <isRequired>false</isRequired>
-				  <dir>Out</dir>
-				</variable>
+				<variable name="requestedById" type="string" required="true" dir="In" />
+				<variable name="requestedByName" type="string" required="false" dir="In" />
+                <variable name="requestDate" type="date" required="false" dir="In" />
+				<variable name="orderItem" type="OrderItem" required="true" isArray="true" dir="In" />
+				<variable name="decision" type="string" required="true" dir="Out" />
+				<variable name="managerId" type="string" required="true" dir="Out" />
+				<variable name="managerComment" type="string" required="false" dir="Out" />
 			  </variables>
 			  <input-bindings>
 			  	<binding>
@@ -119,36 +76,17 @@
 	  <flow><from>confirmOrderComplete</from><to>end</to></flow>
 	  <flow><from>confirmOrderComplete</from><to>completeOrderItems</to></flow>
   </flows>
-  
+    <processDataTypes>
+        <struct name="OrderItem">
+            <member name="code" type="string" required="true" />
+            <member name="name" type="string" required="true" />
+            <member name="quantity" type="int" required="true" />
+        </struct>
+    </processDataTypes>
   	<variables>
-		<variable>
-		  <name>requestedById</name>
-		  <variableType>xs:string</variableType>
-		  <isArray>false</isArray>
-		  <isRequired>true</isRequired>
-		  <dir>In</dir>
-		</variable>
-		<variable>
-		  <name>requestedByName</name>
-		  <variableType>xs:string</variableType>
-		  <isArray>false</isArray>
-		  <isRequired>false</isRequired>
-		  <dir>In</dir>
-		</variable>
-		<variable>
-		  <name>requestDate</name>
-		  <variableType>xs:date</variableType>
-		  <isArray>false</isArray>
-		  <isRequired>false</isRequired>
-		  <dir>In</dir>
-		</variable>
-		<variable>
-		  <name>orderItem</name>
-		  <variableType>OrderItem</variableType>
-		  <isArray>true</isArray>
-		  <isRequired>true</isRequired>
-		  <dir>In</dir>
-		</variable>
+		<variable name="requestedById" type="string" required="true" dir="In" />
+        <variable name="requestedByName" type="string" required="false" dir="In" />
+        <variable name="requestDate" type="date" required="false" dir="In" />
+        <variable name="orderItem" type="OrderItem" required="true" isArray="true" dir="In" />
 	  </variables>
-  
 </process>
