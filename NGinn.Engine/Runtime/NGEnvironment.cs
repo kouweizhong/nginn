@@ -291,7 +291,8 @@ namespace NGinn.Engine.Runtime
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
                     pi.Environment = this;
                     pi.Activate();
-                    XmlDocument doc = pi.GetProcessData();
+                    throw new NotImplementedException();
+                    XmlDocument doc = new XmlDocument();
                     return doc.OuterXml;
                 }
             }

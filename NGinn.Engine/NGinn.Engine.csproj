@@ -48,6 +48,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Irony.dll</HintPath>
+    </Reference>
+    <Reference Include="IronyScriptDotNet, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\IronyScriptDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="MutanticFramework, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\MutanticFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Mvp.Xml, Version=2.0.2158.1055, Culture=neutral, PublicKeyToken=dd92544dc05f5671, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Mvp.Xml.dll</HintPath>
@@ -71,6 +83,7 @@
   <ItemGroup>
     <Compile Include="ActiveTransition.cs" />
     <Compile Include="ActiveTransitionFactory.cs" />
+    <Compile Include="DataBinding.cs" />
     <Compile Include="EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
     <Compile Include="ManualTaskActive.cs" />

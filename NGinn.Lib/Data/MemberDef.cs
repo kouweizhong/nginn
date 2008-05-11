@@ -14,6 +14,19 @@ namespace NGinn.Lib.Data
         private bool _isArray;
         private bool _isRequired;
 
+        public MemberDef()
+        {
+        }
+
+        public MemberDef(MemberDef rhs) : this(rhs.Name, rhs.TypeName, rhs.IsArray, rhs.IsRequired)
+        {
+        }
+
+        public MemberDef(string name, string typeName, bool isArray, bool isRequired)
+        {
+            _name = name; _typeName = typeName; _isArray = isArray; _isRequired = isRequired;
+        }
+
         public string Name
         {
             get { return _name; }

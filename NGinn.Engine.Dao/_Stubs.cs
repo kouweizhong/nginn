@@ -881,19 +881,24 @@ namespace NGinn.Engine.Dao.Stubs {
         Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "Name", 1, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_Name), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_Name));
       }
     }
-    public static ProcessStatus Alive {
+    public static ProcessStatus Ready {
       get {
         return ProcessStatus_Stub.GetRef(1);
       }
     }
-    public static ProcessStatus Finished {
+    public static ProcessStatus Waiting {
       get {
         return ProcessStatus_Stub.GetRef(2);
       }
     }
-    public static ProcessStatus Error {
+    public static ProcessStatus Finished {
       get {
         return ProcessStatus_Stub.GetRef(3);
+      }
+    }
+    public static ProcessStatus Error {
+      get {
+        return ProcessStatus_Stub.GetRef(4);
       }
     }
     private ProcessStatus_Values GetProcessStatusFieldValuesForRead(int requiredTable) {

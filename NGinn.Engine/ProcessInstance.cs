@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using NGinn.Engine.Runtime;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Data;
+using ScriptNET;
 
 namespace NGinn.Engine
 {
@@ -20,11 +21,10 @@ namespace NGinn.Engine
     /// </summary>
     public enum ProcessStatus
     {
-        New = 0,
-        Active,
-        Error,
-        Finished,
-        Cancelled
+        Ready = 1,
+        Waiting = 2,
+        Finished = 3,
+        Cancelled = 4
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ namespace NGinn.Engine
 
         public ProcessInstance()
         {
-            _status = ProcessStatus.New;
+            _status = ProcessStatus.Ready;
         }
 
         public string ProcessDefinitionId
@@ -292,7 +292,10 @@ namespace NGinn.Engine
         /// <param name="pe"></param>
         private void NotifyProcessEvent(ProcessEvent pe)
         {
-            Environment.MessageBus.Notify("ProcessInstance", "ProcessInstance.Event." + pe.GetType().Name, pe, true);
+            if (Environment.MessageBus != null)
+            {
+                Environment.MessageBus.Notify("ProcessInstance", "ProcessInstance.Event." + pe.GetType().Name, pe, true);
+            }
         }
 
         /// <summary>
@@ -317,19 +320,95 @@ namespace NGinn.Engine
                     _tokensInPlaces[tok.PlaceId] = lst;
                 }
                 lst.Add(tok);
-                if (pl == Definition.Start && _status == ProcessStatus.New && _tokens.Count == 0)
+                _status = ProcessStatus.Ready;
+                if (pl == Definition.Start && _tokens.Count == 1)
                 {
-                    _status = ProcessStatus.Active;
                     OnProcessStarted();
                 }
             }
         }
 
+        /// <summary>
+        /// Initialize new script execution context for this process instance
+        /// </summary>
+        /// <returns></returns>
+        protected IScriptContext CreateProcessScriptContext()
+        {
+            IScriptContext ctx = new ScriptContext();
+            ctx.SetItem("_processDef", ContextItem.Variable, Definition);
+            ctx.SetItem("_instance", ContextItem.Variable, this);
+            IDataObject dob = GetProcessVariablesContainer();
+            if (dob != null)
+            {
+                foreach (string fn in dob.FieldNames)
+                {
+                    ctx.SetItem(fn, ContextItem.Variable, dob[fn]);
+                }
+            }
+            return ctx;
+        }
+
+        /// <summary>
+        /// Get definition of process instance data (in + local + out variables)
+        /// </summary>
+        /// <returns></returns>
+        protected StructDef GetProcessInternalDataSchema()
+        {
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = Definition.DataTypes;
+            foreach (VariableDef vd in Definition.ProcessVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+                else
+                {
+                    VariableDef vd2 = new VariableDef(vd); vd2.IsRequired = false;
+                    sd.Members.Add(vd2);
+                }
+            }
+            return sd;
+        }
+
+        /// <summary>
+        /// Set process input data
+        /// </summary>
+        /// <param name="data"></param>
         public void SetProcessInputData(IDataObject data)
         {
-            DataObject inpData = new DataObject(data);
-            StructDef inpStruct = new StructDef();
+            StructDef procInput = Definition.GetProcessInputDataSchema();
+            data.Validate(procInput);
+            DataObject dob = new DataObject();
             
+            IScriptContext ctx = CreateProcessScriptContext();
+            ctx.SetItem("data", ContextItem.Variable, new DOBMutant(dob));
+            
+            foreach (VariableDef vd in Definition.ProcessVariables)
+            {
+                if (data.ContainsKey(vd.Name))
+                {
+                    dob[vd.Name] = data[vd.Name];
+                }
+                else
+                {
+                    if (vd.DefaultValueExpr == null || vd.DefaultValueExpr.Length == 0)
+                    {
+                        if (vd.IsRequired && (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut))
+                            throw new ApplicationException("Missing required input variable: " + vd.Name);
+                    }
+                    else
+                    {
+                        object val = Script.RunCode(vd.DefaultValueExpr, ctx);
+                        dob[vd.Name] = val;
+                    }
+                }
+            }
+            StructDef internalSchema = GetProcessInternalDataSchema();
+            dob.Validate(internalSchema);
+            _processInstanceData = new DataObject();
+            _processInstanceData["variables"] = dob;
+            _processInstanceData["instanceInfo"] = new DataObject();
         }
 
         /// <summary>
@@ -341,88 +420,26 @@ namespace NGinn.Engine
         public void SetProcessInputData(string inputXml)
         {
             if (!_activated) throw new Exception("Not activated");
-            XmlDocument doc = new XmlDocument();
-            XmlDocument d2 = new XmlDocument();
-            d2.LoadXml(inputXml);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(d2.NameTable);
-            
-            XmlElement root = doc.CreateElement("process");
-            doc.AppendChild(root);
-            
-            XmlElement instid = doc.CreateElement("processInstance");
-            instid.InnerText = this.InstanceId;
-            root.AppendChild(instid);
-            instid = doc.CreateElement("processDefinition");
-            instid.InnerText = this.ProcessDefinitionId;
-            root.AppendChild(instid);
-            XmlElement vroot = doc.CreateElement("inputData");
-            root.AppendChild(vroot);
-            XmlNode curChild = null;
-            foreach(VariableDef vd in Definition.ProcessVariables)
-            {
-                log.Debug("Inserting variable {0}", vd.Name);
-                XmlNodeList nodes = d2.DocumentElement.SelectNodes(vd.Name, nsmgr);
-                List<XmlNode> newNodes = new List<XmlNode>();
-                if (nodes != null && nodes.Count > 0)
-                {
-                    foreach (XmlNode xn in nodes)
-                    {
-                        newNodes.Add(doc.ImportNode(xn, true));
-                    }
-                }
-                else
-                {
-                    if (vd.IsRequired) throw new ApplicationException("Required variable is missing: " + vd.Name);
-                    XmlNode xn = doc.CreateElement(vd.Name);
-                    if (vd.DefaultValueExpr != null) xn.InnerText = vd.DefaultValueExpr;
-                    newNodes.Add(xn);
-                }
-                foreach(XmlNode xn in newNodes)
-                {
-                    curChild = vroot.InsertAfter(xn, curChild);
-                }
-            }
-            this._processData = doc;
-            log.Info("Process data: {0}", doc.OuterXml);
+            XmlReader xr = XmlReader.Create(new StringReader(inputXml));
+            xr.MoveToContent();
+            DataObject dob = DataObject.ParseXmlElement(xr);
+            SetProcessInputData(dob);
         }
 
-        /// <summary>
-        /// Return process instance data xml
-        /// </summary>
-        /// <returns></returns>
-        public XmlDocument GetProcessData()
-        {
-            return this._processData;
-        }
+        
 
         /// <summary>
         /// Return node where process variables are kept
         /// </summary>
         /// <returns></returns>
-        public XmlNode GetProcessVariablesRoot()
+        public IDataObject GetProcessVariablesContainer()
         {
-            return GetProcessData().DocumentElement.SelectSingleNode("inputData");
+            return (IDataObject)_processInstanceData["variables"];
         }
 
-        /// <summary>
-        /// Set process instance data xml
-        /// Warning: this function does not validate the xml structure, so incorrect xml will corrupt the process logic.
-        /// </summary>
-        /// <param name="data"></param>
-        public void SetProcessData(XmlDocument data)
-        {
-            this._processData = data;
-        }
+        
 
-        /// <summary>
-        /// Returns process output xml. Can be used only after process is completed.
-        /// </summary>
-        /// <returns></returns>
-        public XmlDocument GetProcessOutputXml()
-        {
-            if (this.Status != ProcessStatus.Finished) throw new ApplicationException("Cannot return output xml - process did not finish");
-            throw new NotImplementedException();
-        }
+        
 
         /// <summary>
         /// Return token with given Id
@@ -480,8 +497,8 @@ namespace NGinn.Engine
             _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
             if (_processDataXmlString != null)
             {
-                _processData = new XmlDocument();
-                _processData.LoadXml(_processDataXmlString);
+                //_processData = new XmlDocument();
+                //_processData.LoadXml(_processDataXmlString);
             }
             BuildTokensInPlaces();
             BuildActiveTransitionsInTasks();
@@ -833,7 +850,10 @@ namespace NGinn.Engine
         private void TransferDataToTransition(ActiveTransition at)
         {
             log.Debug("Transferring data to transition {0}", at.CorrelationId);
-            
+            IScriptContext ctx = CreateProcessScriptContext();
+            DataObject taskInput = new DataObject();
+            DataBinding.ExecuteDataBinding(taskInput, Definition.GetTask(at.TaskId).InputBindings, ctx);
+            at.SetTaskInputData(taskInput);
         }
 
 

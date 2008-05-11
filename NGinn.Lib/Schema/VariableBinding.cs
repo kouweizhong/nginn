@@ -76,7 +76,7 @@ namespace NGinn.Lib.Schema
             }
             else
             {
-                xw.WriteStartElement("bindingExpr", ProcessDefinition.WORKFLOW_NAMESPACE);
+                xw.WriteStartElement("expression", ProcessDefinition.WORKFLOW_NAMESPACE);
                 xw.WriteRaw(this.BindingExpression);
                 xw.WriteEndElement();
             }

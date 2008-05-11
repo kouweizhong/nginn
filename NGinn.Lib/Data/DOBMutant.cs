@@ -80,11 +80,15 @@ namespace NGinn.Lib.Data
         {
             log.Debug("SET: {0}={1}", Name, value);
             object v = value;
-            if (value is Mutant)
+            if (v is DOBMutant)
+            {
+                v = ((DOBMutant)v)._dob;
+            }
+            else if (v is Mutant)
             {
                 v = DataMutantConverter.ToDataObject((Mutant)v);
             }
-            _dob.Set(Name, index, value);
+            _dob.Set(Name, index, v);
         }
 
         #endregion

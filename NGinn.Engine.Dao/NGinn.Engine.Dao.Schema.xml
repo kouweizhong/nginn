@@ -31,9 +31,10 @@
 			<field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
             <field name="Name" dbcolumn="name" type="String" size="202" nullable="false" />
 		</table>
-		<const key="1" name="Alive" />
-		<const key="2" name="Finished" />
-		<const key="3" name="Error" />
+		<const key="1" name="Ready" />
+    <const key="2" name="Waiting" />
+		<const key="3" name="Finished" />
+		<const key="4" name="Error" />
 	</class>
 	
 	<class name="TokenDb">

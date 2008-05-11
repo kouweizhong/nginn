@@ -8,6 +8,7 @@ using System.Xml.Schema;
 using NGinn.Engine.Runtime;
 using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
+using ScriptNET;
 
 namespace NGinn.Engine
 {
@@ -100,66 +101,90 @@ namespace NGinn.Engine
             get { ActivationRequired(true); return _processInstance.Definition.GetTask(TaskId); }
         }
 
-        public void SetTaskInputData(IDictionary<string, object> dic)
+        protected StructDef GetTaskInternalDataSchema()
         {
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = ProcessTask.ParentProcess.DataTypes;
+            foreach (VariableDef vd in ProcessTask.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+                else
+                {
+                    VariableDef vd2 = new VariableDef(vd); vd2.IsRequired = false;
+                    sd.Members.Add(vd2);
+                }
+            }
+            return sd;
+        }
 
+        /// <summary>
+        /// Return container for task variables
+        /// </summary>
+        /// <returns></returns>
+        protected IDataObject GetTaskVariablesContainer()
+        {
+            return _taskData;
+        }
+
+        protected IScriptContext CreateTaskScriptContext()
+        {
+            IScriptContext ctx = new ScriptContext();
+            ctx.SetItem("taskDef", ContextItem.Variable, ProcessTask);
+            ctx.SetItem("task", ContextItem.Variable, this);
+            IDataObject dob = GetTaskVariablesContainer();
+            foreach (string fn in dob.FieldNames)
+            {
+                ctx.SetItem(fn, ContextItem.Variable, dob[fn]);
+            }
+            return ctx;
+        }
+
+        public void SetTaskInputData(IDataObject inputData)
+        {
+            StructDef sd = ProcessTask.GetTaskInputDataSchema();
+            inputData.Validate(sd);
+            DataObject taskData = new DataObject();
+            IScriptContext ctx = CreateTaskScriptContext();
+            ctx.SetItem("data", ContextItem.Variable, new DOBMutant(taskData));
+
+            foreach (VariableDef vd in ProcessTask.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In ||
+                    vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    taskData[vd.Name] = inputData[vd.Name];
+                }
+                else
+                {
+                    if (vd.DefaultValueExpr != null && vd.DefaultValueExpr.Length > 0)
+                    {
+                        taskData[vd.Name] = Script.RunCode(vd.DefaultValueExpr, ctx); 
+                    }
+                }
+            }
+            StructDef internalSchema = GetTaskInternalDataSchema();
+            taskData.Validate(internalSchema);
+            _taskData = taskData;
         }
 
         public IDataObject GetTaskOutputData()
         {
             DataObject dob = new DataObject();
+            IDataObject src = GetTaskVariablesContainer();
             foreach (VariableDef vd in this.ProcessTask.TaskVariables)
             {
                 if (vd.VariableDir == VariableDef.Dir.InOut || vd.VariableDir == VariableDef.Dir.Out)
                 {
-                    object obj = _taskData.Get(vd.Name, null);
+                    object obj = src[vd.Name];
                     dob.Set(vd.Name, null, obj);
                 }
             }
             return dob;
         }
-        /*
-        /// <summary>
-        /// Set task input xml
-        /// </summary>
-        /// <param name="xml"></param>
-        public virtual void SetTaskInputXml(string xml)
-        {
-            ActivationRequired(true);
-            XmlSchemaSet validationSchemas = XmlProcessingUtil.GetTaskInputSchemas(this.ProcessTask);
-            List<XmlValidationMessage> msgs = new List<XmlValidationMessage>();
-            bool b = XmlProcessingUtil.ValidateXml(xml, validationSchemas, msgs);
-            if (!b) throw new ApplicationException("Input data validation failed");
-            XmlDocument d1 = new XmlDocument();
-            d1.LoadXml(xml);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(d1.NameTable);
-            IDictionary<string, IList<XmlElement>> values = XmlProcessingUtil.RetrieveVariablesFromXml(d1.DocumentElement, ProcessTask.TaskVariables, nsmgr);
-            //now build the task xml
-            
-            XmlDocument taskData = new XmlDocument();
-            taskData.AppendChild(taskData.CreateElement("taskData"));
-            foreach (VariableDef vd in this.ProcessTask.TaskVariables)
-            {
-                IList<XmlElement> variableData;
-                if (!values.TryGetValue(vd.Name, out variableData) || variableData.Count == 0)
-                {
-                    if (vd.IsRequired)
-                    {
-                        if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
-                            throw new ApplicationException("Missing required input variable: " + vd.Name);
-                    }
-                    if (vd.DefaultValueExpr != null && vd.DefaultValueExpr.Length > 0)
-                    {
-                        XmlElement vel = taskData.CreateElement(vd.Name);
-                        vel.InnerXml = vd.DefaultValueExpr;
-                    }
-                }
-            }
-            XmlProcessingUtil.InsertVariablesIntoXml(taskData.DocumentElement, values, ProcessTask.TaskVariables);
-            log.Info("Task data xml: {0}", taskData.OuterXml);
-            _taskDataDoc = taskData;
-        }
-        */
+        
         
         
 

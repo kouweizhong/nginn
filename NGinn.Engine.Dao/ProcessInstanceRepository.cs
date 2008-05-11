@@ -63,7 +63,7 @@ namespace NGinn.Engine.Dao
             ProcessInstanceDb pdb = new ProcessInstanceDb(ss.Transaction);
             pdb.DefinitionId = definitionId;
             pdb.RecordVersion = 0;
-            pdb.Status = ProcessStatus.Alive;
+            pdb.Status = ProcessStatus.Ready;
             pdb.InstanceId = Guid.NewGuid().ToString("N");
             ProcessInstance pi = new ProcessInstance();
             pi.InstanceId = pdb.InstanceId;

@@ -22,6 +22,20 @@ namespace NGinn.Lib.Data
         private Dir _dir;
         private string _defaultValueExpr;
 
+        public VariableDef()
+        {
+        }
+
+        public VariableDef(VariableDef rhs) : base(rhs)
+        {
+            _dir = rhs.VariableDir; _defaultValueExpr = rhs.DefaultValueExpr;
+        }
+
+        public VariableDef(string name, string typeName, bool isArray, bool isRequired, Dir variableDir, string defaultExpr) : base(name, typeName, isArray, isRequired)
+        {
+            _dir = variableDir; _defaultValueExpr = defaultExpr;
+        }
+
         public Dir VariableDir
         {
             get { return _dir; }

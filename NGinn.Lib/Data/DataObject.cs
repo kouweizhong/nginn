@@ -67,6 +67,17 @@ namespace NGinn.Lib.Data
         /// <param name="replace"></param>
         void Merge(IDictionary dic, bool replace);
 
+        /// <summary>
+        /// Validate record structure against given type definition
+        /// </summary>
+        /// <param name="recordType"></param>
+        void Validate(StructDef recordType);
+        
+        /// <summary>
+        /// Return dataobject's structure definition
+        /// </summary>
+        /// <returns></returns>
+        StructDef GetRecordType();
     }
 
     [Serializable]
@@ -139,6 +150,7 @@ namespace NGinn.Lib.Data
         {
             get
             {
+                if (!base.ContainsKey(key)) return null;
                 return base[key];
             }
             set
@@ -178,6 +190,8 @@ namespace NGinn.Lib.Data
 
         public void Set(string name, object[] index, object newValue)
         {
+            if (index != null && index.Length > 0) throw new Exception("Indexed setter not implemented");
+            this[name] = newValue;
         }
 
         /// <summary>
@@ -364,19 +378,96 @@ namespace NGinn.Lib.Data
             
         }
 
+        public StructDef GetRecordType()
+        {
+            return null;
+        }
+
         public static DataObject ParseXmlElement(IXPathNavigable node)
         {
             throw new NotImplementedException();
         }
 
         
-        public void Validate(string typeName, bool orderAny, bool ignoreExtras, TypeSet types)
+        public void Validate(StructDef recordType)
         {
-            
-            throw new NotImplementedException();
-            
+            Dictionary<string, MemberDef> d = new Dictionary<string, MemberDef>();
+            foreach (MemberDef md in recordType.Members)
+            {
+                d[md.Name] = md;
+                object v = this[md.Name];
+                TypeDef mType = recordType.ParentTypeSet.GetTypeDef(md.TypeName);
+                if (v == null && md.IsRequired) throw new Exception("Missing required value: " + md.Name);
+                if (md.IsArray)
+                {
+                    if (v is IList)
+                    {
+                        IList arr = (IList)v;
+                        if (arr.Count == 0 && md.IsRequired) throw new Exception("At least one value is required in field " + md.Name);
+                        foreach (object v2 in ((IList)v))
+                        {
+                            if (recordType.ParentTypeSet.IsBasicType(md.TypeName))
+                            {
+                                ValidateSingleObject(md.Name, v2, mType);
+                            }
+                            else
+                            {
+                                StructDef tdef = recordType.ParentTypeSet.GetStructType(md.TypeName);
+                                if (tdef == null) throw new Exception(); //should never happen
+                                if (!(v2 is IDataObject))
+                                    throw new Exception(string.Format("Field {0} content invalid. Expected record of type {1}", md.Name, md.TypeName));
+                                else
+                                {
+                                    IDataObject d2 = (IDataObject)v2;
+                                    d2.Validate(tdef);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (recordType.ParentTypeSet.IsBasicType(md.TypeName))
+                    {
+                        ValidateSingleObject(md.Name, v, mType);
+                    }
+                    else
+                    {
+                        StructDef tdef = recordType.ParentTypeSet.GetStructType(md.TypeName);
+                        if (tdef == null) throw new Exception(); //should never happen
+                        if (!(v is IDataObject))
+                            throw new Exception(string.Format("Field {0} content invalid. Expected record of type {1}", md.Name, md.TypeName));
+                        else
+                        {
+                            IDataObject d2 = (IDataObject)v;
+                            d2.Validate(tdef);
+                        }
+                    }
+                }
+            }
+            foreach (string s in this.FieldNames)
+            {
+                object v = Get(s, null);
+                if (!d.ContainsKey(s) && v != null) throw new Exception(string.Format("Field {0} is not declared", s));
+            }
+        }
+
+        protected void ValidateSingleObject(string name, object v, TypeDef td)
+        {
+            if (td is StructDef)
+            {
+                if (!(v is IDataObject)) throw new ApplicationException(string.Format("Field {0} should be a record of type {1}", name, td.Name));
+                IDataObject dob = (IDataObject)v;
+                dob.Validate((StructDef)td);
+            }
+            else if (td is SimpleTypeDef)
+            {
+                SimpleTypeDef std = (SimpleTypeDef)td;
+                
+            }
         }
 
 
+        
     }
 }

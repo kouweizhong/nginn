@@ -120,6 +120,21 @@ namespace NGinnTest
             log.Debug("Result: {0}", ret);
         }
 
+        public static void EvalTest6()
+        {
+            DataObject dob = new DataObject();
+            dob["ala"] = "Kot";
+            Mutant mut = new DOBMutant(dob);
+            IScriptContext ctx = new ScriptContext();
+            ctx.SetItem("dob", ContextItem.Variable, mut);
+            Script.RunCode("dob.kot = 'ma ale';", ctx);
+            log.Debug("Kot: {0}", dob["kot"]);
+            Script.RunCode("dob.ala = dob.kot;", ctx);
+            log.Debug("Ala: {0}", dob["ala"]);
+            object v = Script.RunCode("dob.kot;", ctx);
+            log.Debug("RET: {0}", v);
+        }
+
         public static void Test1()
         {
             DataObject dob = new DataObject();

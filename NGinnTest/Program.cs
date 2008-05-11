@@ -27,7 +27,7 @@ namespace NGinnTest
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
-                //TestKickProcess("f342cc4e9daf46a38a3d3d6663c94ee5");
+                TestKickProcess("4f479a9e93964baaa2ce89e3960e263b");
                 //TestStartProcess();
                 //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
@@ -36,7 +36,8 @@ namespace NGinnTest
                 //TransferDataTest();
                 //DataTest();
                 //ScriptTest.Test1();
-                ScriptTest.EvalTest5();
+                //ScriptTest.EvalTest6();
+                //ValidationTest();
             }
             catch (Exception ex)
             {
@@ -197,6 +198,24 @@ namespace NGinnTest
             xr.MoveToContent();
             DataObject dob3 = DataObject.ParseXmlElement(xr);
             log.Debug("Result: {0}", dob3.ToXmlString("dob3"));
+        }
+
+        public static void ValidationTest()
+        {
+            TypeSet ts = new TypeSet();
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = ts;
+            sd.Name = "T1";
+            sd.Members.Add(new MemberDef("F1", "string", false, false));
+            sd.Members.Add(new MemberDef("F2", "int", true, true));
+
+            DataObject dob = new DataObject();
+            dob["F1"] = 399;
+            List<int> lst = new List<int>();
+            lst.AddRange(new int[] {1, 2, 3, 4});
+            dob["F2"] = lst;
+            dob["F3"] = null;
+            dob.Validate(sd);
         }
     }
 }
