@@ -10,7 +10,7 @@ using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
 using ScriptNET;
 
-namespace NGinn.Engine
+namespace NGinn.Engine.Runtime.Tasks
 {
     public enum TransitionStatus
     {
@@ -132,8 +132,9 @@ namespace NGinn.Engine
         protected IScriptContext CreateTaskScriptContext()
         {
             IScriptContext ctx = new ScriptContext();
-            ctx.SetItem("taskDef", ContextItem.Variable, ProcessTask);
-            ctx.SetItem("task", ContextItem.Variable, this);
+            ctx.SetItem("_taskDef", ContextItem.Variable, ProcessTask);
+            ctx.SetItem("_task", ContextItem.Variable, this);
+            ctx.SetItem("_log", ContextItem.Variable, log);
             IDataObject dob = GetTaskVariablesContainer();
             foreach (string fn in dob.FieldNames)
             {

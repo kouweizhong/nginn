@@ -95,6 +95,7 @@
     <Compile Include="Schema\Place.cs" />
     <Compile Include="Schema\ProcessDefinition.cs" />
     <Compile Include="Schema\SchemaUtil.cs" />
+    <Compile Include="Schema\ScriptTask.cs" />
     <Compile Include="Schema\SubprocessTask.cs" />
     <Compile Include="Schema\Task.cs" />
     <Compile Include="Schema\TimerTask.cs" />

@@ -123,7 +123,7 @@
   </xs:complexType>
   <xs:complexType name="ScriptTask">
     <xs:sequence>
-      <xs:element name="scriptBody" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="script" type="xs:string" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="SubprocessTask">

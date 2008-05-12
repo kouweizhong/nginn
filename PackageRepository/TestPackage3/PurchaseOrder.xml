@@ -5,6 +5,24 @@
     <place id="end" type="EndPlace"></place>
   </places>
   <tasks>
+    <task id="initiate" type="ScriptTask" joinType="AND" splitType="AND">
+        <scriptTask>
+            <script><![CDATA[
+            _log.Info('Initiating the process for requestor {0} ({1})', requestedById, requestedByName);
+            ]]></script>
+        </scriptTask>
+        <data-definition>
+			<variables>
+				<variable name="requestedById" type="string" required="true" dir="In" />
+				<variable name="requestedByName" type="string" required="false" dir="In" />
+            </variables>
+            <input-bindings>
+                <binding variable="requestedById" bindingType="CopyVar" sourceVariable="requestedById" />
+                <binding variable="requestedByName" bindingType="CopyVar" sourceVariable="requestedByName" />
+            </input-bindings>
+        </data-definition>
+    </task>
+    
     <task id="managerApproval" type="ManualTask" joinType="XOR" splitType="XOR">
 		<data-definition>
 			<variables>
@@ -40,7 +58,8 @@
 	</task>
   </tasks>
   <flows>
-    <flow from="start" to="managerApproval" />
+    <flow from="start" to="initiate" />
+    <flow from="initiate" to="managerApproval" />
     <flow from="managerApproval" to="sendRequestCorrection" evalOrder="1">
   	    <inputCondition>managerApprovalDecision == 'Reject'</inputCondition>
     </flow>

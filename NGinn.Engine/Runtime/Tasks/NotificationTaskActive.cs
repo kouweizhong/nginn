@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
 
-namespace NGinn.Engine
+namespace NGinn.Engine.Runtime.Tasks
 {
     /// <summary>
     /// Email notification task

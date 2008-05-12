@@ -4,7 +4,7 @@ using System.Text;
 using NGinn.Lib.Schema;
 using NLog;
 
-namespace NGinn.Engine
+namespace NGinn.Engine.Runtime.Tasks
 {
     internal class ActiveTransitionFactory
     {
@@ -22,6 +22,10 @@ namespace NGinn.Engine
             else if (tsk is EmptyTask)
             {
                 at = new EmptyTaskActive((EmptyTask)tsk, pi);
+            }
+            else if (tsk is ScriptTask)
+            {
+                at = new ScriptTaskActive((ScriptTask)tsk, pi);
             }
             else throw new Exception();
             at.ProcessInstanceId = pi.InstanceId;

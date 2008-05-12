@@ -7,7 +7,7 @@ using NGinn.Engine.Services;
 using NLog;
 using NGinn.Lib.Interfaces;
 
-namespace NGinn.Engine
+namespace NGinn.Engine.Runtime.Tasks
 {
     [Serializable]
     class SubprocessTaskActive : ActiveTransition

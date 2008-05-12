@@ -7,7 +7,7 @@ using NLog;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
 
-namespace NGinn.Engine
+namespace NGinn.Engine.Runtime.Tasks
 {
     [Serializable]
     class ManualTaskActive : ActiveTransition

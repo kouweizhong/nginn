@@ -27,9 +27,9 @@ namespace NGinnTest
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
-                //TestKickProcess("4f479a9e93964baaa2ce89e3960e263b");
+                TestKickProcess();
                 //TestStartProcess();
-                TestTaskCompleted("4f479a9e93964baaa2ce89e3960e263b", "4f479a9e93964baaa2ce89e3960e263b.0");
+                //TestTaskCompleted("4f479a9e93964baaa2ce89e3960e263b", "4f479a9e93964baaa2ce89e3960e263b.0");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
                 //TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
