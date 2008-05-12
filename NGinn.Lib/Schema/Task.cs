@@ -121,9 +121,9 @@ namespace NGinn.Lib.Schema
             Type tp = Type.GetType("NGinn.Lib.Schema." + t);
             if (tp == null) throw new Exception("Unknown task type: " + t);
             Task tsk = (Task)Activator.CreateInstance(tp);
-            t = SchemaUtil.GetXmlElementText(el, pr + "joinType", nsmgr);
+            t = el.GetAttribute("joinType");
             tsk.JoinType = (JoinType) Enum.Parse(typeof(JoinType), t);
-            t = SchemaUtil.GetXmlElementText(el, pr + "splitType", nsmgr);
+            t = el.GetAttribute("splitType");
             tsk.SplitType = (JoinType)Enum.Parse(typeof(JoinType), t);
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();

@@ -592,9 +592,9 @@ namespace NGinn.Engine
             Token tok = GetToken(tokenId);
             KickReadyToken(tok);
             Token t2 = SelectReadyTokenForProcessing();
-            if (t2 != null)
+            if (_status == ProcessStatus.Ready || _status == ProcessStatus.Waiting)
             {
-                this._status = ProcessStatus.Ready;
+                _status = t2 != null ? ProcessStatus.Ready : ProcessStatus.Waiting;
             }
         }
         /// <summary>

@@ -44,18 +44,18 @@ namespace NGinn.Lib.Schema
             string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
             if (pr != null && pr.Length > 0) pr += ":";
             Flow fl = new Flow();
-            string t = SchemaUtil.GetXmlElementText(el, pr + "from", nsmgr);
+            string t = el.GetAttribute("from");
             fl.From = pd.GetNode(t);
-            t = SchemaUtil.GetXmlElementText(el, pr + "to", nsmgr);
+            t = el.GetAttribute("to");
             fl.To = pd.GetNode(t);
             t = SchemaUtil.GetXmlElementText(el, pr + "inputCondition", nsmgr);
             fl.InputCondition = t;
-            t = SchemaUtil.GetXmlElementText(el, pr + "evalOrder", nsmgr);
+            t = el.GetAttribute("evalOrder");
             if (t != null && t.Length > 0)
             {
                 fl.EvalOrder = Int32.Parse(t);
             }
-            t = SchemaUtil.GetXmlElementText(el, pr + "label", nsmgr);
+            t = el.GetAttribute("label");
             fl.Label = t;
             return fl;
         }
@@ -84,13 +84,14 @@ namespace NGinn.Lib.Schema
             string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
             if (pr != null && pr.Length > 0) pr += ":";
             VariableBinding vb = new VariableBinding();
-            string vname = SchemaUtil.GetXmlElementText(el, pr + "variable", nsmgr);
+            string vname = el.GetAttribute("variable");
             vb.VariableName = vname;
-            string vtype = SchemaUtil.GetXmlElementText(el, pr + "bindingType", nsmgr);
+            string vtype = el.GetAttribute("bindingType");
             vb.BindingType = (VariableBinding.VarBindingType)Enum.Parse(typeof(VariableBinding.VarBindingType), vtype);
             if (vb.BindingType == VariableBinding.VarBindingType.CopyVar)
             {
-                vb.BindingExpression = SchemaUtil.GetXmlElementText(el, pr + "sourceVariable", nsmgr);
+                vb.BindingExpression = el.GetAttribute("sourceVariable");
+                if (vb.BindingExpression == null || vb.BindingExpression.Length == 0) vb.BindingExpression = vb.VariableName;
             }
             else if (vb.BindingType == VariableBinding.VarBindingType.Xslt)
             {

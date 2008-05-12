@@ -50,8 +50,6 @@
   -->
   <xs:complexType name="Task">
     <xs:sequence>
-      <xs:element name="joinType" type="JoinType" minOccurs="1" maxOccurs="1" />
-      <xs:element name="splitType" type="JoinType" minOccurs="1" maxOccurs="1" />
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:choice minOccurs="0" maxOccurs="1">
         <xs:element name="manualTask" type="ManualTask" />
@@ -66,15 +64,17 @@
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
+    <xs:attribute name="joinType" type="JoinType" use="required" />
+    <xs:attribute name="splitType" type="JoinType" use="required" />
   </xs:complexType>
   <xs:complexType name="Flow">
     <xs:sequence>
-      <xs:element name="from" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="to" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="inputCondition" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="evalOrder" type="xs:int" minOccurs="0" maxOccurs="1" />
-      <xs:element name="label" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
+    <xs:attribute name="from" type="xs:string" use="required" />
+    <xs:attribute name="to" type="xs:string" use="required" />
+    <xs:attribute name="evalOrder" type="xs:int" use="optional" />
+    <xs:attribute name="label" type="xs:string" use="optional" />
   </xs:complexType>
   <xs:simpleType name="JoinType">
     <xs:restriction base="xs:string">
@@ -170,10 +170,7 @@
   </xs:simpleType>
   <xs:complexType name="VariableBinding">
     <xs:sequence>
-      <xs:element name="variable" minOccurs="1" maxOccurs="1" type="xs:string" />
-      <xs:element name="bindingType" minOccurs="1" maxOccurs="1" type="BindingType" />
-      <xs:choice minOccurs="1" maxOccurs="1">
-        <xs:element name="sourceVariable" minOccurs="1" maxOccurs="1" type="xs:string" />
+      <xs:choice minOccurs="0" maxOccurs="1">
         <xs:element name="expression" minOccurs="1" maxOccurs="1" type="xs:string" />
         <xs:element name="bindingXslt" minOccurs="1" maxOccurs="1">
           <xs:complexType mixed="true">
@@ -184,6 +181,9 @@
         </xs:element>
       </xs:choice>
     </xs:sequence>
+    <xs:attribute name="variable" type="xs:string" use="required" />
+    <xs:attribute name="bindingType" type="BindingType" use="required" />
+    <xs:attribute name="sourceVariable" type="xs:string" use="optional" />
   </xs:complexType>
   
   <xs:complexType name="DataDefinition">

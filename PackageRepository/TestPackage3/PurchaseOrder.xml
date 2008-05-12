@@ -5,9 +5,7 @@
     <place id="end" type="EndPlace"></place>
   </places>
   <tasks>
-    <task id="managerApproval" type="ManualTask">
-		<joinType>XOR</joinType>
-		<splitType>XOR</splitType>
+    <task id="managerApproval" type="ManualTask" joinType="XOR" splitType="XOR">
 		<data-definition>
 			<variables>
 				<variable name="requestedById" type="string" required="true" dir="In" />
@@ -17,66 +15,41 @@
 				<variable name="decision" type="string" required="true" dir="Out" />
 				<variable name="managerId" type="string" required="true" dir="Out" />
 				<variable name="managerComment" type="string" required="false" dir="Out" />
-			  </variables>
-			  <input-bindings>
-			  	<binding>
-					<variable>requestedById</variable>
-					<bindingType>CopyVar</bindingType>
-					<sourceVariable>requestedById</sourceVariable>
-				</binding>
-				<binding>
-					<variable>requestedByName</variable>
-					<bindingType>CopyVar</bindingType>
-					<sourceVariable>requestedByName</sourceVariable>
-				</binding>
-				<binding>
-					<variable>requestDate</variable>
-					<bindingType>CopyVar</bindingType>
-					<sourceVariable>requestDate</sourceVariable>
-				</binding>
-				<binding>
-					<variable>orderItem</variable>
-					<bindingType>CopyVar</bindingType>
-					<sourceVariable>orderItem</sourceVariable>
-				</binding>
-			  </input-bindings>
-			  <output-bindings>
-                <binding>
-                    <variable>managerApprovalDecision</variable>
-                    <bindingType>Expr</bindingType>
+            </variables>
+            <input-bindings>
+                <binding variable="requestedById" bindingType="CopyVar" sourceVariable="requestedById" />
+                <binding variable="requestedByName" bindingType="CopyVar" sourceVariable="requestedByName" />
+                <binding variable="requestDate" bindingType="CopyVar" sourceVariable="requestDate" />
+                <binding variable="orderItem" bindingType="CopyVar" sourceVariable="orderItem" />
+            </input-bindings>
+			<output-bindings>
+                <binding variable="managerApprovalDecision" bindingType="Expr">
                     <expression>decision</expression>
                 </binding>
-			  </output-bindings>
+            </output-bindings>
 		</data-definition>
 	</task>
-	<task id="sendRequestCorrection" type="ManualTask">
-		<joinType>XOR</joinType>
-		<splitType>XOR</splitType>
-	</task>
-	<task id="completeOrderItems" type="EmptyTask">
-		<joinType>XOR</joinType>
-		<splitType>XOR</splitType>
+	<task id="sendRequestCorrection" type="ManualTask" joinType="XOR" splitType="XOR"></task>
+	<task id="completeOrderItems" type="EmptyTask" joinType="XOR" splitType="XOR">
 	</task>
 	
-	<task id="deliverOrderItems" type="ManualTask">
-		<joinType>XOR</joinType>
-		<splitType>AND</splitType>
+	<task id="deliverOrderItems" type="ManualTask" joinType="XOR" splitType="AND">
 	</task>
 	
-	<task id="confirmOrderComplete" type="ManualTask">
-		<joinType>AND</joinType>
-		<splitType>XOR</splitType>
+	<task id="confirmOrderComplete" type="ManualTask" joinType="AND" splitType="XOR">
 	</task>
   </tasks>
   <flows>
-  	<flow><from>start</from><to>managerApproval</to></flow>
-	  <flow><from>managerApproval</from><to>sendRequestCorrection</to></flow>
-	  <flow><from>managerApproval</from><to>completeOrderItems</to></flow>
-	  <flow><from>sendRequestCorrection</from><to>managerApproval</to></flow>
-	  <flow><from>completeOrderItems</from><to>deliverOrderItems</to></flow>
-	  <flow><from>deliverOrderItems</from><to>confirmOrderComplete</to></flow>
-	  <flow><from>confirmOrderComplete</from><to>end</to></flow>
-	  <flow><from>confirmOrderComplete</from><to>completeOrderItems</to></flow>
+    <flow from="start" to="managerApproval" />
+    <flow from="managerApproval" to="sendRequestCorrection" evalOrder="1">
+  	    <inputCondition>managerApprovalDecision == 'Reject'</inputCondition>
+    </flow>
+	<flow from="managerApproval" to="completeOrderItems" evalOrder="-1" />
+    <flow from="sendRequestCorrection" to="managerApproval" />
+    <flow from="completeOrderItems" to="deliverOrderItems"/>
+    <flow from="deliverOrderItems" to="confirmOrderComplete" />
+    <flow from="confirmOrderComplete" to="end" />
+    <flow from="confirmOrderComplete" to="completeOrderItems" />
   </flows>
     <processDataTypes>
         <struct name="OrderItem">

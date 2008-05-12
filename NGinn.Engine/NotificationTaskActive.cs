@@ -5,6 +5,9 @@ using NGinn.Lib.Schema;
 
 namespace NGinn.Engine
 {
+    /// <summary>
+    /// Email notification task
+    /// </summary>
     [Serializable]
     public class NotificationTaskActive : ActiveTransition
     {
