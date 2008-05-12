@@ -172,7 +172,8 @@ namespace NGinn.Engine
 
         public IDataObject GetTaskOutputData()
         {
-            DataObject dob = new DataObject();
+            StructDef sd = ProcessTask.GetTaskOutputDataSchema();
+            DataObject dob = new DataObject(sd);
             IDataObject src = GetTaskVariablesContainer();
             foreach (VariableDef vd in this.ProcessTask.TaskVariables)
             {
@@ -182,11 +183,33 @@ namespace NGinn.Engine
                     dob.Set(vd.Name, null, obj);
                 }
             }
+            dob.Validate();
             return dob;
         }
-        
-        
-        
+
+        /// <summary>
+        /// Return current task data
+        /// </summary>
+        /// <returns></returns>
+        public IDataObject GetTaskData()
+        {
+            return GetTaskVariablesContainer();
+        }
+
+        /// <summary>
+        /// Modify task data (replace variable values)
+        /// </summary>
+        /// <param name="dob"></param>
+        public void UpdateTaskData(IDataObject dob)
+        {
+            IDataObject vars = GetTaskVariablesContainer();
+            foreach (string fld in dob.FieldNames)
+            {
+                vars[fld] = dob[fld];
+            }
+            StructDef sd = GetTaskInternalDataSchema();
+            vars.Validate(sd);
+        }
 
         /// <summary>
         /// Initiate task (start the transition).

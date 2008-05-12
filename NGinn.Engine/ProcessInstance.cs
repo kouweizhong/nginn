@@ -332,17 +332,16 @@ namespace NGinn.Engine
         /// Initialize new script execution context for this process instance
         /// </summary>
         /// <returns></returns>
-        protected IScriptContext CreateProcessScriptContext()
+        protected IScriptContext CreateProcessScriptContext(IDataObject variables)
         {
             IScriptContext ctx = new ScriptContext();
             ctx.SetItem("_processDef", ContextItem.Variable, Definition);
             ctx.SetItem("_instance", ContextItem.Variable, this);
-            IDataObject dob = GetProcessVariablesContainer();
-            if (dob != null)
+            if (variables != null)
             {
-                foreach (string fn in dob.FieldNames)
+                foreach (string fn in variables.FieldNames)
                 {
-                    ctx.SetItem(fn, ContextItem.Variable, dob[fn]);
+                    ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
                 }
             }
             return ctx;
@@ -381,7 +380,7 @@ namespace NGinn.Engine
             data.Validate(procInput);
             DataObject dob = new DataObject();
             
-            IScriptContext ctx = CreateProcessScriptContext();
+            IScriptContext ctx = CreateProcessScriptContext(null);
             ctx.SetItem("data", ContextItem.Variable, new DOBMutant(dob));
             
             foreach (VariableDef vd in Definition.ProcessVariables)
@@ -409,6 +408,16 @@ namespace NGinn.Engine
             _processInstanceData = new DataObject();
             _processInstanceData["variables"] = dob;
             _processInstanceData["instanceInfo"] = new DataObject();
+        }
+
+        /// <summary>
+        /// Validate structure of process variables
+        /// </summary>
+        private void ValidateProcessInternalData()
+        {
+            StructDef internalSchema = GetProcessInternalDataSchema();
+            IDataObject dob = GetProcessVariablesContainer();
+            dob.Validate(internalSchema);
         }
 
         /// <summary>
@@ -464,8 +473,8 @@ namespace NGinn.Engine
         {
             Token tok = SelectReadyTokenForProcessing();
             if (tok == null) return false;
-            KickReadyToken(tok);
-            return true;
+            KickToken(tok.TokenId);
+            return Status == ProcessStatus.Ready;
         }
 
         /// <summary>
@@ -578,11 +587,21 @@ namespace NGinn.Engine
             NotifyProcessEvent(pf);
         }
 
+        public void KickToken(string tokenId)
+        {
+            Token tok = GetToken(tokenId);
+            KickReadyToken(tok);
+            Token t2 = SelectReadyTokenForProcessing();
+            if (t2 != null)
+            {
+                this._status = ProcessStatus.Ready;
+            }
+        }
         /// <summary>
         /// Kick a 'READY' token. It means-> initiate all tasks following current place - only if the tasks can be initiated.
         /// </summary>
         /// <param name="tok"></param>
-        public void KickReadyToken(Token tok)
+        protected void KickReadyToken(Token tok)
         {
             if (!_activated) throw new Exception("Process instance not activated");
             log.Info("Kicking token {0}", tok.ToString());
@@ -711,6 +730,8 @@ namespace NGinn.Engine
                     }
                 }
             }
+
+            
         }
 
         /// <summary>
@@ -850,10 +871,24 @@ namespace NGinn.Engine
         private void TransferDataToTransition(ActiveTransition at)
         {
             log.Debug("Transferring data to transition {0}", at.CorrelationId);
-            IScriptContext ctx = CreateProcessScriptContext();
+            IScriptContext ctx = CreateProcessScriptContext(GetProcessVariablesContainer());
             DataObject taskInput = new DataObject();
             DataBinding.ExecuteDataBinding(taskInput, Definition.GetTask(at.TaskId).InputBindings, ctx);
             at.SetTaskInputData(taskInput);
+        }
+
+        /// <summary>
+        /// Extract output data from finished transition by executing task output data bindings
+        /// </summary>
+        /// <param name="at"></param>
+        private void TransferDataFromTransition(ActiveTransition at)
+        {
+            IDataObject dob = at.GetTaskOutputData();
+            IScriptContext ctx = CreateProcessScriptContext(dob);
+            IDataObject target = GetProcessVariablesContainer();
+            Task tsk = Definition.GetTask(at.TaskId);
+            DataBinding.ExecuteDataBinding(target, tsk.OutputBindings, ctx);
+            ValidateProcessInternalData();
         }
 
 
@@ -867,14 +902,7 @@ namespace NGinn.Engine
         }
         
 
-        /// <summary>
-        /// Extract output data from finished transition by executing task output data bindings
-        /// </summary>
-        /// <param name="at"></param>
-        private void TransferDataFromTransition(ActiveTransition at)
-        {
-           
-        }
+        
 
         private ActiveTransition CreateActiveTransitionForTask(Task tsk)
         {
@@ -968,6 +996,13 @@ namespace NGinn.Engine
             ActiveTransition at = GetActiveTransition(tci.CorrelationId);
             if (at == null) throw new Exception("Invalid correlation id");
             if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
+            //1 update task data
+            if (tci.ResultXml != null)
+            {
+                DataObject dob = DataObject.ParseXml(tci.ResultXml);
+                at.UpdateTaskData(dob);
+            }
+            //2 complete the transition
             TransitionCompleted(tci.CorrelationId);
         }
 
@@ -1005,6 +1040,7 @@ namespace NGinn.Engine
             at.Status = TransitionStatus.STARTED;
         }
 
+
         /// <summary>
         /// Transition completed - consume input tokens, produce output tokens
         /// and cancel all transitions that share the same tokens.
@@ -1028,6 +1064,7 @@ namespace NGinn.Engine
                 Token tok = GetToken(tokid);
                 Debug.Assert(tok.Status == TokenStatus.LOCKED_ALLOCATED);
             }
+            
             at.TaskCompleted();
             at.Status = TransitionStatus.COMPLETED;
             //2 retrieve data from transition
@@ -1118,7 +1155,13 @@ namespace NGinn.Engine
         private bool EvaluateFlowInputCondition(Flow fl)
         {
             if (fl.InputCondition == null || fl.InputCondition.Length == 0) return true; //empty condition is true
-            throw new NotImplementedException();
+            IScriptContext ctx = CreateProcessScriptContext(GetProcessVariablesContainer());
+            string expr = fl.InputCondition.Trim();
+            if (!expr.EndsWith(";")) expr += ";";
+            log.Debug("Evaluating flow {0} input condition: {1}", fl.ToString(), expr);
+            object res = Script.RunCode(expr, ctx);
+            log.Debug("Result: {0}", res);
+            return Convert.ToBoolean(res);
         }
 
         /// <summary>
@@ -1167,6 +1210,12 @@ namespace NGinn.Engine
             return at;
         }
 
+        public IDataObject GetTaskData(string correlationId)
+        {
+            ActiveTransition at = GetActiveTransition(correlationId);
+            return at.GetTaskData();
+        }
+
  
         private string ToXmlString()
         {
@@ -1208,6 +1257,8 @@ namespace NGinn.Engine
             xw.Flush();
             return sb.ToString();
         }
+        
+
         public override string ToString()
         {
             return ToXmlString();

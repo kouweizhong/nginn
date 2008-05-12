@@ -1,0 +1,10 @@
+<typeSet>
+    <struct name="SomeType">
+        <member name="name" type="string" required="true" array="false" />
+        <member name="employeeId" type="string" required="true" array="false" />
+        <member name="items" type="ItemType" required="true" array="true" />
+    </struct>
+    
+    <struct name="ItemType">
+    </struct>
+</typeSet>

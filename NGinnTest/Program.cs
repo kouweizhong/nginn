@@ -27,9 +27,9 @@ namespace NGinnTest
                 _ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 //TestProcessLoad();
                 //TestDefinitionRepository();
-                TestKickProcess("4f479a9e93964baaa2ce89e3960e263b");
+                //TestKickProcess("4f479a9e93964baaa2ce89e3960e263b");
                 //TestStartProcess();
-                //TestTaskCompleted("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
+                TestTaskCompleted("4f479a9e93964baaa2ce89e3960e263b", "4f479a9e93964baaa2ce89e3960e263b.0");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
                 //TestPackageRepository();
                 //TestGetInstanceData("dca6f3bf215241f093b4baddc79d7c3e");
@@ -111,7 +111,7 @@ namespace NGinnTest
             TaskCompletionInfo tci = new TaskCompletionInfo();
             tci.ProcessInstance = processId;
             tci.CorrelationId = taskCorrelationId;
-            tci.ResultXml = "<results><decision>Accept</decision><comment>I don't know why</comment></results>";
+            tci.ResultXml = "<results><decision>Accept</decision><managerComment>I don't know why</managerComment><managerId>132</managerId></results>";
             tci.CompletedBy = "me";
             env.ProcessTaskCompleted(tci);
         }

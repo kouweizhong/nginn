@@ -51,5 +51,11 @@ namespace NGinn.Engine
         {
             this._processInstance.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
         }
+
+        public override void TaskCompleted()
+        {
+            base.TaskCompleted();
+            this._processInstance.Environment.WorklistService.WorkItemCompleted(CorrelationId);
+        }
     }
 }

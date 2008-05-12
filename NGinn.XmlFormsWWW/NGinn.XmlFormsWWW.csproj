@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1E68FB92-6B63-492E-BC7D-B2B4715212E1}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -62,11 +62,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
+    <Content Include="sys\GetInstanceXml.aspx" />
     <Content Include="sys\GetSchema.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ListData.aspx" />
     <Content Include="sys\StartProcess.aspx" />
     <Content Include="SubmitXml.aspx" />
+    <Content Include="sys\UpdateTaskXml.aspx" />
     <Content Include="TaskForm.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -77,6 +79,10 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="sys\GetInstanceXml.aspx.cs">
+      <DependentUpon>GetInstanceXml.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\GetSchema.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -106,6 +112,10 @@
     </Compile>
     <Compile Include="SubmitXml.aspx.designer.cs">
       <DependentUpon>SubmitXml.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="sys\UpdateTaskXml.aspx.cs">
+      <DependentUpon>UpdateTaskXml.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="TaskForm.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -153,6 +163,7 @@
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

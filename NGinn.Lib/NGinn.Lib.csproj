@@ -75,6 +75,7 @@
     <Compile Include="Data\DataObject.cs" />
     <Compile Include="Data\DataRecord.cs" />
     <Compile Include="Data\DOBMutant.cs" />
+    <Compile Include="Data\EnumDef.cs" />
     <Compile Include="Data\MemberDef.cs" />
     <Compile Include="Data\TypeSetDef.cs" />
     <Compile Include="Data\VariableDef.cs" />

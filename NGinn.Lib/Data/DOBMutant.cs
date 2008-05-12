@@ -6,6 +6,9 @@ using NLog;
 
 namespace NGinn.Lib.Data
 {
+    /// <summary>
+    /// Mutantic wrapper of DataObject
+    /// </summary>
     public class DOBMutant : Mutant
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
@@ -29,12 +32,17 @@ namespace NGinn.Lib.Data
 
         public void CaptureFields(Mutant mt)
         {
-            throw new Exception("The method or operation is not implemented.");
+            string[] lst = mt.GetMutantFields();
+            foreach (string fld in lst)
+            {
+                object v = mt.Get(fld, null);
+                Set(fld, v, null);
+            }
         }
 
         public string FriendlyString()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return _dob.ToXmlString("root");
         }
 
         public object Get(string Name, object[] index)
@@ -73,7 +81,7 @@ namespace NGinn.Lib.Data
 
         public object Resolve()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return _dob;
         }
 
         public void Set(string Name, object value, object[] index)

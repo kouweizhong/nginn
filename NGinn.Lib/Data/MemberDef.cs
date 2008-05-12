@@ -96,6 +96,9 @@ namespace NGinn.Lib.Data
     public class StructDef : TypeDef
     {
         private List<MemberDef> _members = new List<MemberDef>();
+        [NonSerialized]
+        private IDictionary<string, MemberDef> _memberDict = null;
+        
         public IList<MemberDef> Members
         {
             get { return _members; }
@@ -104,6 +107,25 @@ namespace NGinn.Lib.Data
         public override bool IsSimpleType
         {
             get { return false; }
+        }
+
+        public MemberDef GetMember(string name)
+        {
+            lock (this)
+            {
+                if (_memberDict == null)
+                {
+                    _memberDict = new Dictionary<string, MemberDef>();
+                    foreach (MemberDef md in Members)
+                    {
+                        _memberDict[md.Name] = md;
+                    }
+                }
+                MemberDef md2 = null;
+                if (!_memberDict.TryGetValue(name, out md2))
+                    return null;
+                return md2;
+            }
         }
 
         public override void WriteXmlSchemaType(XmlWriter xw)

@@ -12,6 +12,7 @@ using System.IO;
 using System.Xml.Schema;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine.Runtime
 {
@@ -173,13 +174,7 @@ namespace NGinn.Engine.Runtime
                     pi.Environment = this;
                     pi.Activate();
                     log.Info("Original: {0}", pi.ToString());
-                    Token tok = pi.SelectReadyTokenForProcessing();
-                    if (tok == null)
-                    {
-                        log.Info("Process {0} has no ready tokens.", instanceId);
-                        return;
-                    }
-                    KickToken(tok, pi, ds);
+                    pi.Kick();
                     log.Info("Modified: {0}", pi.ToString());
                     pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
@@ -193,26 +188,7 @@ namespace NGinn.Engine.Runtime
             
         }
 
-        private void KickToken(Token tok, ProcessInstance inst, INGDataSession ds)
-        {
-            log.Info("Kicking token {0} for process {1}", tok.TokenId, tok.ProcessInstanceId);
-            ProcessDefinition pd = DefinitionRepository.GetProcessDefinition(inst.ProcessDefinitionId);
-            if (tok.Status != TokenStatus.READY) throw new Exception("Invalid token status");
-            if (tok.Mode == TokenMode.DEAD)
-            {
-                KickDeadToken(tok, inst, ds);
-                return;
-            }
-            else
-            {
-                inst.KickReadyToken(tok);
-            }
-        }
-
-        private void KickDeadToken(Token tok, ProcessInstance inst, INGDataSession ds)
-        {
-            throw new NotImplementedException();
-        }
+       
 
 
         public void ProcessTaskCompleted(TaskCompletionInfo info)
@@ -291,9 +267,8 @@ namespace NGinn.Engine.Runtime
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
                     pi.Environment = this;
                     pi.Activate();
-                    throw new NotImplementedException();
-                    XmlDocument doc = new XmlDocument();
-                    return doc.OuterXml;
+                    IDataObject dob = pi.GetProcessVariablesContainer();
+                    return dob.ToXmlString(pi.Definition.Name);
                 }
             }
             finally
@@ -302,6 +277,32 @@ namespace NGinn.Engine.Runtime
             }
         }
 
-        
+        public string GetTaskInstanceXml(string correlationId)
+        {
+            string instanceId = correlationId.Substring(0, correlationId.IndexOf('.'));
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new ApplicationException("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    IDataObject dob = pi.GetTaskData(correlationId);
+                    return dob.ToXmlString("data");
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+
+            throw new NotImplementedException();
+        }
+
     }
 }

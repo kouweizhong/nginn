@@ -49,5 +49,12 @@ namespace NGinn.Lib.Interfaces
         /// <param name="instanceId"></param>
         /// <returns></returns>
         string GetProcessInstanceData(string instanceId);
+
+        /// <summary>
+        /// Return task instance data as XML
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        string GetTaskInstanceXml(string correlationId);
     }
 }

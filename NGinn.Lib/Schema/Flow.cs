@@ -51,5 +51,10 @@ namespace NGinn.Lib.Schema
             get { return _evalOrder; }
             set { _evalOrder = value; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}->{1} {2}", From.Id, To.Id, Label != null ? "(" + Label + ")" : "");
+        }
     }
 }

@@ -72,7 +72,12 @@ namespace NGinn.Lib.Data
         /// </summary>
         /// <param name="recordType"></param>
         void Validate(StructDef recordType);
-        
+
+        /// <summary>
+        /// Validate record structure
+        /// </summary>
+        void Validate();
+
         /// <summary>
         /// Return dataobject's structure definition
         /// </summary>
@@ -86,7 +91,7 @@ namespace NGinn.Lib.Data
         private List<string> _membersAdded = new List<string>();
         private Dictionary<string, object> _data = new Dictionary<string, object>();
         private static Logger log = LogManager.GetCurrentClassLogger();
-        
+        private StructDef _recType = null;
 
         public DataObject()
         {
@@ -98,6 +103,11 @@ namespace NGinn.Lib.Data
             {
                 this.Add(key, dic[key]);
             }
+        }
+
+        public DataObject(StructDef recType)
+        {
+            _recType = recType;
         }
 
         public override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
@@ -191,6 +201,28 @@ namespace NGinn.Lib.Data
         public void Set(string name, object[] index, object newValue)
         {
             if (index != null && index.Length > 0) throw new Exception("Indexed setter not implemented");
+            if (_recType != null)
+            {
+                MemberDef md = _recType.GetMember(name);
+                if (md == null) throw new ApplicationException(string.Format("Field {0}.{1} not declared"));
+                TypeDef mType = _recType.ParentTypeSet.GetTypeDef(md.TypeName);
+                if (md.IsArray)
+                {
+                    
+                }
+
+                if (mType is StructDef)
+                {
+                    
+                }
+                else if (mType is SimpleTypeDef)
+                {
+                    SimpleTypeDef std = (SimpleTypeDef) mType;
+                    
+
+                }
+            }
+            
             this[name] = newValue;
         }
 
@@ -380,15 +412,16 @@ namespace NGinn.Lib.Data
 
         public StructDef GetRecordType()
         {
-            return null;
+            return _recType;
         }
 
-        public static DataObject ParseXmlElement(IXPathNavigable node)
+        public static DataObject ParseXml(string xml)
         {
-            throw new NotImplementedException();
+            XmlReader xr = XmlReader.Create(new System.IO.StringReader(xml));
+            xr.MoveToContent();
+            return ParseXmlElement(xr);
         }
 
-        
         public void Validate(StructDef recordType)
         {
             Dictionary<string, MemberDef> d = new Dictionary<string, MemberDef>();
@@ -467,7 +500,10 @@ namespace NGinn.Lib.Data
             }
         }
 
-
-        
+        public void Validate()
+        {
+            if (this.GetRecordType() == null) throw new ApplicationException("Cannot validate record - record type not defined");
+            Validate(GetRecordType());
+        }
     }
 }
