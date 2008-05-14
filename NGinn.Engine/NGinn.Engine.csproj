@@ -87,6 +87,7 @@
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
     <Compile Include="Runtime\Tasks\ManualTaskActive.cs" />
+    <Compile Include="Runtime\Tasks\MultiInstanceTask.cs" />
     <Compile Include="Runtime\Tasks\NotificationTaskActive.cs" />
     <Compile Include="ProcessEvents.cs" />
     <Compile Include="ProcessInstance.cs" />

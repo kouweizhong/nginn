@@ -15,6 +15,13 @@ using NGinn.Lib.Schema;
 
 namespace NGinn.XmlFormsWWW
 {
+    /// <summary>
+    /// virtual "directory" structure
+    /// GetSchema.aspx/Package.Process/input - process input schema
+    /// GetSchema.aspx/Package.Process/output - process output schema
+    /// GetSchema.aspx/Package.Process/task/Task_Id/input - task input schema
+    /// GetSchema.aspx/Package.Process/task/Task_Id/output - task output schema
+    /// </summary>
     public partial class GetSchema : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)

@@ -70,6 +70,30 @@
     <Content Include="SubmitXml.aspx" />
     <Content Include="sys\UpdateTaskXml.aspx" />
     <Content Include="TaskForm.aspx" />
+    <Content Include="tasks\classes.js" />
+    <Content Include="tasks\db\ext-air-db.js" />
+    <Content Include="tasks\db\ext-db.js" />
+    <Content Include="tasks\db\ext-gears-db.js" />
+    <Content Include="tasks\gears.js" />
+    <Content Include="tasks\images\check.gif" />
+    <Content Include="tasks\images\delete.gif" />
+    <Content Include="tasks\images\edit.gif" />
+    <Content Include="tasks\images\hd-check.gif" />
+    <Content Include="tasks\images\hrow.gif" />
+    <Content Include="tasks\images\icon-active.gif" />
+    <Content Include="tasks\images\icon-all.gif" />
+    <Content Include="tasks\images\icon-by-category.gif" />
+    <Content Include="tasks\images\icon-by-date.gif" />
+    <Content Include="tasks\images\icon-complete.gif" />
+    <Content Include="tasks\images\icon-no-group.gif" />
+    <Content Include="tasks\images\icon-show-active.gif" />
+    <Content Include="tasks\images\icon-show-all.gif" />
+    <Content Include="tasks\images\icon-show-complete.gif" />
+    <Content Include="tasks\images\s.gif" />
+    <Content Include="tasks\TaskDetails.aspx" />
+    <Content Include="tasks\tasks.css" />
+    <Content Include="tasks\tasks.html" />
+    <Content Include="tasks\tasks.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +147,13 @@
     </Compile>
     <Compile Include="TaskForm.aspx.designer.cs">
       <DependentUpon>TaskForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tasks\TaskDetails.aspx.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tasks\TaskDetails.aspx.designer.cs">
+      <DependentUpon>TaskDetails.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

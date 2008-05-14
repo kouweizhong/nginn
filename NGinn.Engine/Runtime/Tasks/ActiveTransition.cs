@@ -143,7 +143,7 @@ namespace NGinn.Engine.Runtime.Tasks
             return ctx;
         }
 
-        public void SetTaskInputData(IDataObject inputData)
+        public virtual void SetTaskInputData(IDataObject inputData)
         {
             StructDef sd = ProcessTask.GetTaskInputDataSchema();
             inputData.Validate(sd);
@@ -171,7 +171,7 @@ namespace NGinn.Engine.Runtime.Tasks
             _taskData = taskData;
         }
 
-        public IDataObject GetTaskOutputData()
+        public virtual IDataObject GetTaskOutputData()
         {
             StructDef sd = ProcessTask.GetTaskOutputDataSchema();
             DataObject dob = new DataObject(sd);
@@ -192,7 +192,7 @@ namespace NGinn.Engine.Runtime.Tasks
         /// Return current task data
         /// </summary>
         /// <returns></returns>
-        public IDataObject GetTaskData()
+        public virtual IDataObject GetTaskData()
         {
             return GetTaskVariablesContainer();
         }
@@ -201,7 +201,7 @@ namespace NGinn.Engine.Runtime.Tasks
         /// Modify task data (replace variable values)
         /// </summary>
         /// <param name="dob"></param>
-        public void UpdateTaskData(IDataObject dob)
+        public virtual void UpdateTaskData(IDataObject dob)
         {
             IDataObject vars = GetTaskVariablesContainer();
             foreach (string fld in dob.FieldNames)

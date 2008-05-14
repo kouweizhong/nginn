@@ -50,19 +50,19 @@
 	</xsl:template>
 	
 	<xsl:template match="ng:flow">
-		<xsl:variable name="fromid" select="ng:from/text()" />
-		<xsl:variable name="toid" select="ng:to/text()" />
+		<xsl:variable name="fromid" select="@from" />
+		<xsl:variable name="toid" select="@to" />
 		<xsl:variable name="fromnode" select="//ng:*[@id=$fromid]" />
 		<xsl:variable name="tonode" select="//ng:*[@id=$toid]" />
-		<xsl:value-of select="ng:from" /> -&gt; <xsl:value-of select="ng:to" /> [
+		<xsl:value-of select="@from" /> -&gt; <xsl:value-of select="@to" /> [
 			<xsl:choose>
-				<xsl:when test="$fromnode/ng:splitType = 'XOR'">arrowtail=diamond</xsl:when>
-				<xsl:when test="$fromnode/ng:splitType = 'OR'">arrowtail=odiamond</xsl:when>
+				<xsl:when test="$fromnode/@splitType = 'XOR'">arrowtail=diamond</xsl:when>
+				<xsl:when test="$fromnode/@splitType = 'OR'">arrowtail=odiamond</xsl:when>
 				<xsl:otherwise>arrowtail=none</xsl:otherwise>
 			</xsl:choose>,
 			<xsl:choose>
-				<xsl:when test="$tonode/ng:joinType = 'XOR'">arrowhead=open</xsl:when>
-				<xsl:when test="$tonode/ng:joinType = 'OR'">arrowhead=empty</xsl:when>
+				<xsl:when test="$tonode/@joinType = 'XOR'">arrowhead=open</xsl:when>
+				<xsl:when test="$tonode/@joinType = 'OR'">arrowhead=empty</xsl:when>
 				<xsl:otherwise>arrowhead=normal</xsl:otherwise>
 			</xsl:choose>
 			];
