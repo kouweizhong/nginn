@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using NGinn.Lib.Interfaces.MessageBus;
+using Spring.Context;
 
 namespace NGinn.Engine.Runtime.MessageBus
 {
@@ -24,11 +25,12 @@ namespace NGinn.Engine.Runtime.MessageBus
     /// Parametry z Atmo.Config.xml:
     /// Atmo.MessageBus.AtmoMessageBus.QueueName - nazwa kolejki wejsciowej (standardowo sql://MessageQueue/AtmoMessageBus)
     /// </summary>
-    public class ReliableMessageBus : SimplePublisher, IMessageHandler
+    public class ReliableMessageBus : SimplePublisher, IMessageHandler, IApplicationContextAware, IApplicationEventListener
     {
         private SQLQueueProcessor _queueProc = null;
         private bool _inited = false;
         private string _queueName;
+        private IApplicationContext _ctx;
 
         private Logger log = LogManager.GetCurrentClassLogger();
 
@@ -91,8 +93,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             }
             else if (msg == "STOP")
             {
-                log.Info("Stopping messagebus async queue processor");
-                _queueProc.Stop();
+                Stop();
             }
             else throw new Exception("Unknown command: " + msg);
             return null;
@@ -103,7 +104,13 @@ namespace NGinn.Engine.Runtime.MessageBus
             log.Info("Starting messagebus async queue processor");
             _queueProc.Start();
         }
-        
+
+        public void Stop()
+        {
+            log.Info("Stopping messagebus async queue processor");
+            _queueProc.Stop();
+        }
+
         private string GetMessageLabel(MessageWrapper mw)
         {
             string s = string.Format("{0}|{1}|{2}", mw.Topic, mw.Sender, mw.Body.ToString());
@@ -135,5 +142,41 @@ namespace NGinn.Engine.Runtime.MessageBus
             if (mw == null) throw new Exception("Message type not supported: " + msg);
             base.Notify(mw.Sender, mw.Topic, mw.Body, false);
         }
+
+        #region IApplicationContextAware Members
+
+        public IApplicationContext ApplicationContext
+        {
+            get
+            {
+                return _ctx;
+            }
+            set
+            {
+                _ctx = value;
+            }
+        }
+
+        #endregion
+
+        #region IApplicationEventListener Members
+
+        public void HandleApplicationEvent(object sender, ApplicationEventArgs e)
+        {
+            if (e is Spring.Context.Events.ContextEventArgs)
+            {
+                Spring.Context.Events.ContextEventArgs args = (Spring.Context.Events.ContextEventArgs)e;
+                if (args.Event == Spring.Context.Events.ContextEventArgs.ContextEvent.Closed)
+                {
+                    this.Stop();
+                }
+                else if (args.Event == Spring.Context.Events.ContextEventArgs.ContextEvent.Refreshed)
+                {
+                    this.Start();
+                }
+            }
+        }
+
+        #endregion
     }
 }

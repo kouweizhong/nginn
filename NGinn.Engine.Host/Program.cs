@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ServiceProcess;
 using System.Text;
+using System;
 
 namespace NGinn.Engine.Host
 {
@@ -9,8 +10,13 @@ namespace NGinn.Engine.Host
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                Debug();
+                return;
+            }
             ServiceBase[] ServicesToRun;
 
             // More than one user Service may run within the same process. To add
@@ -22,6 +28,20 @@ namespace NGinn.Engine.Host
             ServicesToRun = new ServiceBase[] { new NGinnHostService() };
 
             ServiceBase.Run(ServicesToRun);
+        }
+
+        static void Debug()
+        {
+            try
+            {
+                NGinnHostService srv = new NGinnHostService();
+                srv.Start();
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error("Error: {0}", ex);
+            }
+            System.Console.ReadLine();
         }
     }
 }

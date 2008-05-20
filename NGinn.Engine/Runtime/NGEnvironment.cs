@@ -5,7 +5,7 @@ using NGinn.Lib.Schema;
 using NGinn.Lib;
 using NGinn.Engine.Services;
 using NGinn.Engine.Services.Dao;
-using NGinn.MessageBus;
+using NGinn.Lib.Interfaces.MessageBus;
 using NLog;
 using System.Xml;
 using System.IO;

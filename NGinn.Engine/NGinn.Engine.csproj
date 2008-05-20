@@ -72,6 +72,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\PowerCollections.dll</HintPath>
     </Reference>
+    <Reference Include="SmartThreadPool, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\SmartThreadPool.dll</HintPath>
+    </Reference>
     <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Spring.Core.dll</HintPath>
@@ -85,6 +89,7 @@
     <Compile Include="Runtime\MessageBus\ReliableMessageBus.cs" />
     <Compile Include="Runtime\MessageBus\SimplePublisher.cs" />
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
+    <Compile Include="Runtime\NGEngine.cs" />
     <Compile Include="Runtime\Tasks\ActiveTransition.cs" />
     <Compile Include="Runtime\Tasks\ActiveTransitionFactory.cs" />
     <Compile Include="DataBinding.cs" />
@@ -113,10 +118,6 @@
     <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NGinn.MessageBus\NGinn.MessageBus.csproj">
-      <Project>{A1D9E611-F0C1-498F-9F3D-B91A3E87CA8B}</Project>
-      <Name>NGinn.MessageBus</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
