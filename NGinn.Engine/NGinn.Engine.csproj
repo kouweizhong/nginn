@@ -81,13 +81,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Runtime\MessageBus\Interfaces.cs" />
+    <Compile Include="Runtime\MessageBus\ReliableMessageBus.cs" />
+    <Compile Include="Runtime\MessageBus\SimplePublisher.cs" />
+    <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\Tasks\ActiveTransition.cs" />
     <Compile Include="Runtime\Tasks\ActiveTransitionFactory.cs" />
     <Compile Include="DataBinding.cs" />
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
     <Compile Include="Runtime\Tasks\ManualTaskActive.cs" />
-    <Compile Include="Runtime\Tasks\MultiInstanceTask.cs" />
     <Compile Include="Runtime\Tasks\NotificationTaskActive.cs" />
     <Compile Include="ProcessEvents.cs" />
     <Compile Include="ProcessInstance.cs" />

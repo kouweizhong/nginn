@@ -83,6 +83,8 @@
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />
     <Compile Include="Interfaces\IResourceManager.cs" />
+    <Compile Include="Interfaces\MessageBus\IMessageBus.cs" />
+    <Compile Include="Interfaces\MessageBus\MessageBusSubscriberAttribute.cs" />
     <Compile Include="Interfaces\Worklist\ITODOListDataProvider.cs" />
     <Compile Include="Interfaces\Worklist\IWorkListService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -137,9 +139,6 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\MessageBus\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
