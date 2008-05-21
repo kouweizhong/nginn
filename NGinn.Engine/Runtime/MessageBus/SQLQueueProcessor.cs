@@ -138,13 +138,17 @@ namespace NGinn.Engine.Runtime.MessageBus
             _queueName = queueName;
             _serializationType = contentType;
             //_connStr = Atmo.AtmoConfig.GetString(string.Format("Atmo.MessageBus.SQL.{0}.ConnectionString", _queueDb), "");
-            if (_connStr == null || _connStr.Length == 0) 
-                throw new Exception("Unable to find connection string for queue: " + queueName);
         }
 
 
 
         #region IMessageInputPort Members
+
+        public string ConnectionString
+        {
+            get { return _connStr; }
+            set { _connStr = value; }
+        }
 
         public string Endpoint
         {
@@ -737,7 +741,9 @@ namespace NGinn.Engine.Runtime.MessageBus
 
         public IMessageInputPort GetInputPort()
         {
-            return new SQLMessageInputPort(_queueName, _contentType);
+            SQLMessageInputPort p = new SQLMessageInputPort(_queueName, _contentType);
+            p.ConnectionString = ConnectionString;
+            return p;
         }
 
         #region IXmlConfigure Members

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{29E01A57-AD06-42A1-8889-57CEFA10DD58}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -96,10 +96,6 @@
     <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NGinn.MessageBus\NGinn.MessageBus.csproj">
-      <Project>{A1D9E611-F0C1-498F-9F3D-B91A3E87CA8B}</Project>
-      <Name>NGinn.MessageBus</Name>
     </ProjectReference>
     <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
       <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>

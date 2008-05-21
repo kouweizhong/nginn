@@ -896,7 +896,7 @@ namespace NGinn.Engine.Dao.Stubs {
         return ProcessStatus_Stub.GetRef(3);
       }
     }
-    public static ProcessStatus Error {
+    public static ProcessStatus Cancelled {
       get {
         return ProcessStatus_Stub.GetRef(4);
       }

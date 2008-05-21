@@ -79,10 +79,10 @@ namespace NGinnTest
         {
             INGEnvironment env = (INGEnvironment)_ctx.GetObject("NGEnvironment");
             IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)_ctx.GetObject("ProcessDefinitionRepository");
-            string id = pdr.GetProcessDefinitionId("TestPackage3", "Test_Process_3", 1);
+            string id = pdr.GetProcessDefinitionId("TestPackage3", "PurchaseOrder", 1);
             Dictionary<string, object> vars = new Dictionary<string, object>();
             vars["parent"] = 12343;
-            string xml = string.Format("<Test_Process_3><ala>ma kota</ala><parent>123</parent></Test_Process_3>");
+            string xml = string.Format("<PurchaseOrder><requestedById>1</requestedById><requestedByName>AAA</requestedByName><requestDate>2008-05-21</requestDate><orderItem><code>1</code><name>a</name><quantity>11</quantity></orderItem></PurchaseOrder>");
             string instId = env.StartProcessInstance(id, xml);
             
         }
