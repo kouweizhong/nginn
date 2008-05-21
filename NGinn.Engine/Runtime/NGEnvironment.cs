@@ -27,7 +27,8 @@ namespace NGinn.Engine.Runtime
         private IProcessInstanceLockManager _lockManager;
         private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
         private IMessageBus _mbus;
-        
+        private bool _markErrors = true;
+
         public NGEnvironment()
         {
             //_appCtx = Spring.Context.Support.ContextRegistry.GetContext();
@@ -74,6 +75,19 @@ namespace NGinn.Engine.Runtime
         public IDictionary<string, object> EnvironmentVariables
         {
             get { return _envVariables; }
+        }
+
+        /// <summary>
+        /// true - when KickProcess fails, mark the failing process
+        /// with 'Error' status, so it will not be selected for processing
+        /// next time.
+        /// false - do not mark failing process with 'Error' status, 
+        /// its persisted version will remain unchanged
+        /// </summary>
+        public bool MarkInstanceErrors
+        {
+            get { return _markErrors; }
+            set { _markErrors = value; }
         }
 
         /// <summary>
@@ -171,13 +185,35 @@ namespace NGinn.Engine.Runtime
                 using (INGDataSession ds = DataStore.OpenSession())
                 {
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    pi.Kick();
-                    log.Info("Modified: {0}", pi.ToString());
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    bool error = false;
+                    try
+                    {
+                        pi.Environment = this;
+                        pi.Activate();
+                        log.Info("Original: {0}", pi.ToString());
+                        pi.Kick();
+                        log.Info("Modified: {0}", pi.ToString());
+                        pi.Passivate();
+                    }
+                    catch(Exception ex)
+                    {
+                        //error moving process forward. Mark it for retry ....
+                        log.Error("Error updating process {0} : {1}", instanceId, ex);
+                        if (MarkInstanceErrors)
+                        {
+                            error = true;
+                            InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString(), ds);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+
+                    if (!error)
+                    {
+                        InstanceRepository.UpdateProcessInstance(pi, ds);
+                    }
                     ds.Commit();
                 }
             }
@@ -300,8 +336,6 @@ namespace NGinn.Engine.Runtime
             {
                 LockManager.ReleaseLock(instanceId);
             }
-
-            throw new NotImplementedException();
         }
 
     }

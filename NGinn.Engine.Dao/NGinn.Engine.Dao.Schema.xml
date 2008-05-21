@@ -15,15 +15,19 @@
 	</class>
     
 	<class name="ProcessInstanceDb">
-		<table name="ProcessInstance">
-			<field name="InstanceId" dbcolumn="id" type="String" size="50" primaryKey="true" nullable="false" />
-			<field name="DefinitionId" dbcolumn="definition_id" type="String" size="50" nullable="false" />
-			<field name="Status" dbcolumn="status" type="Integer" nullable="false" references="ProcessStatus"/>
-			<field name="InstanceData" dbcolumn="instance_data" type="Blob" nullable="false" />
-			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
-      <field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
-      <field name="FinishedDate" dbcolumn="finished_date" type="DateTime" nullable="true" />
-		</table>
+        <table name="ProcessInstance">
+            <field name="InstanceId" dbcolumn="id" type="String" size="50" primaryKey="true" nullable="false" />
+            <field name="DefinitionId" dbcolumn="definition_id" type="String" size="50" nullable="false" />
+            <field name="Status" dbcolumn="status" type="Integer" nullable="false" references="ProcessStatus"/>
+            <field name="InstanceData" dbcolumn="instance_data" type="Blob" nullable="false" />
+            <field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
+            <field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
+            <field name="FinishedDate" dbcolumn="finished_date" type="DateTime" nullable="true" />
+            <field name="LastModified" dbcolumn="last_modified" type="DateTime" nullable="false" />
+            <field name="RetryCount" dbcolumn="retry_count" type="Integer" nullable="false" />
+            <field name="ErrorInfo" dbcolumn="error_info" type="String" nullable="true" />
+            <field name="NextRetry" dbcolumn="next_retry" type="DateTime" nullable="true" />
+        </table>
 	</class>
 	
 	<class name="ProcessStatus">
@@ -35,6 +39,7 @@
         <const key="2" name="Waiting" />
 		<const key="3" name="Finished" />
 		<const key="4" name="Cancelled" />
+        <const key="5" name="Error" />
 	</class>
 	
 	<class name="TokenDb">

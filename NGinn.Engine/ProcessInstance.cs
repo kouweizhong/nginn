@@ -590,12 +590,20 @@ namespace NGinn.Engine
 
         public void KickToken(string tokenId)
         {
-            Token tok = GetToken(tokenId);
-            KickReadyToken(tok);
-            Token t2 = SelectReadyTokenForProcessing();
-            if (_status == ProcessStatus.Ready || _status == ProcessStatus.Waiting)
+            try
             {
-                _status = t2 != null ? ProcessStatus.Ready : ProcessStatus.Waiting;
+                Token tok = GetToken(tokenId);
+                KickReadyToken(tok);
+                Token t2 = SelectReadyTokenForProcessing();
+                if (_status == ProcessStatus.Ready || _status == ProcessStatus.Waiting)
+                {
+                    _status = t2 != null ? ProcessStatus.Ready : ProcessStatus.Waiting;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error: {0}", ex);
+                throw;
             }
         }
         /// <summary>

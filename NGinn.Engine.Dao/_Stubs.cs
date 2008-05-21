@@ -564,6 +564,10 @@ namespace NGinn.Engine.Dao.Stubs {
     public int RecordVersion;
     public System.DateTime CreatedDate;
     public System.Data.SqlTypes.SqlDateTime FinishedDate;
+    public System.DateTime LastModified;
+    public int RetryCount;
+    public System.Data.SqlTypes.SqlString ErrorInfo;
+    public System.Data.SqlTypes.SqlDateTime NextRetry;
     public ProcessInstanceDb_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
         base(other) {
     }
@@ -644,6 +648,38 @@ namespace NGinn.Engine.Dao.Stubs {
       }
       set {
         Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "FinishedDate", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_FinishedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_FinishedDate));
+      }
+    }
+    public System.DateTime LastModified {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).LastModified;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "LastModified", 7, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_LastModified), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_LastModified));
+      }
+    }
+    public int RetryCount {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).RetryCount;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "RetryCount", 8, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_RetryCount), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_RetryCount));
+      }
+    }
+    public System.Data.SqlTypes.SqlString ErrorInfo {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).ErrorInfo;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "ErrorInfo", 9, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_ErrorInfo), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_ErrorInfo));
+      }
+    }
+    public System.Data.SqlTypes.SqlDateTime NextRetry {
+      get {
+        return this.GetProcessInstanceDbFieldValuesForRead(0).NextRetry;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "NextRetry", 10, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_NextRetry), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_NextRetry));
       }
     }
     private ProcessInstanceDb_Values GetProcessInstanceDbFieldValuesForRead(int requiredTable) {
@@ -841,6 +877,30 @@ namespace NGinn.Engine.Dao.Stubs {
     protected virtual void AfterFieldUpdate_FinishedDate(object oldValue, object newValue) {
       this.AfterFieldUpdate("FinishedDate", oldValue, newValue);
     }
+    protected virtual void BeforeFieldUpdate_LastModified(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("LastModified", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_LastModified(object oldValue, object newValue) {
+      this.AfterFieldUpdate("LastModified", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_RetryCount(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("RetryCount", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_RetryCount(object oldValue, object newValue) {
+      this.AfterFieldUpdate("RetryCount", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_ErrorInfo(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("ErrorInfo", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_ErrorInfo(object oldValue, object newValue) {
+      this.AfterFieldUpdate("ErrorInfo", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_NextRetry(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("NextRetry", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_NextRetry(object oldValue, object newValue) {
+      this.AfterFieldUpdate("NextRetry", oldValue, newValue);
+    }
   }
   public class ProcessStatus_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
     public int Id;
@@ -899,6 +959,11 @@ namespace NGinn.Engine.Dao.Stubs {
     public static ProcessStatus Cancelled {
       get {
         return ProcessStatus_Stub.GetRef(4);
+      }
+    }
+    public static ProcessStatus Error {
+      get {
+        return ProcessStatus_Stub.GetRef(5);
       }
     }
     private ProcessStatus_Values GetProcessStatusFieldValuesForRead(int requiredTable) {
@@ -1721,7 +1786,7 @@ namespace NGinn.Engine.Dao.Stubs {
     private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Engine.Dao._DatabaseSchema.GetSchema().FindClassByName("ProcessInstanceDb");
     private static Type _theType = typeof(ProcessInstanceDb);
     static ProcessInstanceDb_Factory() {
-      _fieldHandlers = new SoodaFieldHandler[7];
+      _fieldHandlers = new SoodaFieldHandler[11];
       _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
       _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
@@ -1729,6 +1794,10 @@ namespace NGinn.Engine.Dao.Stubs {
       _fieldHandlers[4] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
       _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
       _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[7] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
+      _fieldHandlers[8] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[9] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(true);
+      _fieldHandlers[10] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
     }
     public ProcessInstanceDb_Factory() {
     }
@@ -2163,6 +2232,26 @@ namespace NGinn.Engine.Dao.Stubs {
     public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "FinishedDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression LastModified {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "LastModified"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RetryCount {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "RetryCount"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ErrorInfo {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "ErrorInfo"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression NextRetry {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "NextRetry"));
       }
     }
     public virtual Sooda.QL.SoqlBooleanExpression In(params ProcessInstanceDbWrapperExpression[] items) {
@@ -2760,6 +2849,26 @@ namespace NGinn.Engine.Dao.TypedQueries {
     public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
       get {
         return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("FinishedDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression LastModified {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("LastModified"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RetryCount {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("RetryCount"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression ErrorInfo {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableStringWrapperExpression(new Sooda.QL.SoqlPathExpression("ErrorInfo"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression NextRetry {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("NextRetry"));
       }
     }
   }

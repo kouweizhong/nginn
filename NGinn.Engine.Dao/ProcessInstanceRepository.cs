@@ -9,6 +9,18 @@ namespace NGinn.Engine.Dao
 { 
     class ProcessInstanceRepository : IProcessInstanceRepository
     {
+        public static readonly TimeSpan[] RetryTimes = new TimeSpan[] {
+        TimeSpan.FromHours(72),
+        TimeSpan.FromHours(48),
+        TimeSpan.FromHours(24),
+        TimeSpan.FromHours(12),
+        TimeSpan.FromHours(6),
+        TimeSpan.FromHours(3),
+        TimeSpan.FromHours(1),
+        TimeSpan.FromMinutes(30),
+        TimeSpan.FromMinutes(5),
+        TimeSpan.FromMinutes(1)
+      };
 
         #region IProcessInstanceRepository Members
 
@@ -55,6 +67,7 @@ namespace NGinn.Engine.Dao
             }
             pdb.InstanceData = SerializationUtil.Serialize(pi);
             pdb.RecordVersion = pdb.RecordVersion + 1;
+            pdb.LastModified = DateTime.Now;
         }
 
         public ProcessInstance InitializeNewProcessInstance(string definitionId, NGinn.Engine.Services.Dao.INGDataSession ds)
@@ -155,6 +168,29 @@ namespace NGinn.Engine.Dao
         public string GetProcessOutputXml(string instanceId)
         {
             throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
+
+        #region IProcessInstanceRepository Members
+
+
+        public void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, NGinn.Engine.Services.Dao.INGDataSession ds)
+        {
+            SoodaSession ss = (SoodaSession)ds;
+            ProcessInstanceDb inst = ProcessInstanceDb.Load(instanceId);
+            inst.Status = ProcessStatus.Error;
+            inst.ErrorInfo = errorInfo;
+            if (inst.RetryCount > 0)
+            {
+                inst.RetryCount--;
+                inst.NextRetry = DateTime.Now.Add(RetryTimes[inst.RetryCount]);
+            }
+            else
+            {
+                //retry limit reached
+            }
+            inst.LastModified = DateTime.Now;
         }
 
         #endregion

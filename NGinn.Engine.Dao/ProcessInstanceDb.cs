@@ -8,7 +8,9 @@ namespace NGinn.Engine.Dao {
   
   
   public class ProcessInstanceDb : NGinn.Engine.Dao.Stubs.ProcessInstanceDb_Stub {
-    
+
+      
+
     public ProcessInstanceDb(SoodaConstructor c) : 
         base(c) {
       // Do not modify this constructor.
@@ -16,7 +18,9 @@ namespace NGinn.Engine.Dao {
     
     public ProcessInstanceDb(SoodaTransaction transaction) : 
         base(transaction) {
-            this.CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.Now;
+            LastModified = DateTime.Now;
+            
     }
     
     public ProcessInstanceDb() : 

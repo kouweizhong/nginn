@@ -87,6 +87,8 @@ namespace NGinn.Engine.Runtime
                         {
                             log.Debug("Querying for ready processes");
                             IList<string> procs = Environment.GetKickableProcesses();
+                            
+
                             foreach (string procId in procs)
                             {
                                 log.Debug("Queue <- {0}", procId);
@@ -133,6 +135,7 @@ namespace NGinn.Engine.Runtime
             log.Info("Kicking process {0}", id);
             try
             {
+                //Thread.Sleep(2000);
                 Environment.KickProcess(pid);
             }
             catch (Exception ex)

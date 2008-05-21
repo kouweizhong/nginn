@@ -9,7 +9,11 @@ CREATE TABLE [dbo].[ProcessInstance](
 	[instance_data] [image] NULL,
 	[rec_version] [int] NOT NULL DEFAULT ((0)),
 	[created_date] [datetime] NOT NULL,
-	[finished_date] [datetime] NULL
+	[finished_date] [datetime] NULL,
+	[last_modified] [datetime] NOT NULL DEFAULT ('2008-05-11'),
+	[retry_count] [int] NOT NULL DEFAULT ((0)),
+	[error_info] [ntext] NULL,
+	[next_retry] [datetime] NOT NULL DEFAULT ('2008-05-11')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
