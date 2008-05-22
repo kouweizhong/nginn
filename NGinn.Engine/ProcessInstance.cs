@@ -68,6 +68,7 @@ namespace NGinn.Engine
         private XmlDocument _processData = new XmlDocument();
         /// <summary>process xml data in string form - for serialization purposes</summary>
         private string _processDataXmlString = null;
+        private string _correlationId;
 
         public ProcessInstance()
         {
@@ -100,6 +101,15 @@ namespace NGinn.Engine
                 _instId = value;
                 log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", value));
             }
+        }
+
+        /// <summary>
+        /// Process correlation id.
+        /// </summary>
+        public string CorrelationId
+        {
+            get { return _correlationId; }
+            set { _correlationId = value; }
         }
 
         public ProcessStatus Status
@@ -284,6 +294,7 @@ namespace NGinn.Engine
             ProcessStarted ps = new ProcessStarted();
             ps.InstanceId = InstanceId;
             ps.DefinitionId = ProcessDefinitionId;
+            ps.CorrelationId = CorrelationId;
             NotifyProcessEvent(ps);
         }
 
@@ -295,7 +306,8 @@ namespace NGinn.Engine
         {
             if (Environment.MessageBus != null)
             {
-                Environment.MessageBus.Notify("ProcessInstance", "ProcessInstance.Event." + pe.GetType().Name, pe, true);
+                string topic = string.Format("ProcessInstance.{0}.{1}", pe.GetType().Name, InstanceId);
+                Environment.MessageBus.Notify("ProcessInstance." + InstanceId, topic, pe, true);
             }
         }
 
@@ -585,6 +597,7 @@ namespace NGinn.Engine
             ProcessFinished pf = new ProcessFinished();
             pf.InstanceId = InstanceId;
             pf.DefinitionId = ProcessDefinitionId;
+            pf.CorrelationId = CorrelationId;
             NotifyProcessEvent(pf);
         }
 

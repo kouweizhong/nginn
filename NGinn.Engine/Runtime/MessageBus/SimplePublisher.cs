@@ -117,7 +117,10 @@ namespace NGinn.Engine.Runtime.MessageBus
                 if (si.MatchesTopic(topic))
                 {
                     match = true;
-                    retval = si.Handler.Invoke(topic, sender, msg);
+                    if (si.Handler != null)
+                    {
+                        retval = si.Handler.Invoke(topic, sender, msg);
+                    }
                 }
             }
             return match;
@@ -163,6 +166,35 @@ namespace NGinn.Engine.Runtime.MessageBus
             foreach (Type t in asm.GetTypes())
             {
                 SubscribeType(t);
+            }
+        }
+
+        public void SubscribeObject(object obj)
+        {
+            Type t = obj.GetType();
+            foreach (MethodInfo mi in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                object[] attrs = mi.GetCustomAttributes(typeof(MessageBusSubscriberAttribute), true);
+                if (attrs.Length > 0)
+                {
+                    MessageHandler mh = (MessageHandler)System.Delegate.CreateDelegate(typeof(MessageHandler), obj, mi, true);
+                    foreach (MessageBusSubscriberAttribute sa in attrs)
+                    {
+                        log.Info("Subscribing {0}.{1} for EventType {2} and Topic {3}", t.Name, mi.Name, sa.EventType.Name, sa.EventTopic);
+                        this.Subscribe(sa.EventType, sa.EventTopic, mh);
+                    }
+                }
+            }
+        }
+
+        public void UnsubscribeObject(object obj)
+        {
+            foreach (SubscriberInfo si in _idToSubscriberInfo.Values)
+            {
+                if (si.Handler != null && si.Handler.Target == obj)
+                {
+                    si.Handler = null;
+                }
             }
         }
 

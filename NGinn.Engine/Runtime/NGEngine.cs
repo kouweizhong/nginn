@@ -6,32 +6,51 @@ using Spring.Core;
 using NLog;
 using Amib.Threading;
 using System.Threading;
+using Spring.Context;
+using NGinn.Lib.Interfaces.MessageBus;
 
 namespace NGinn.Engine.Runtime
 {
-    public class NGEngine
+    public class NGEngine 
     {
         private INGEnvironment _environment;
         private int _executionThreads = 5;
         private volatile bool _stop = false;
         private Logger log = LogManager.GetCurrentClassLogger();
         private Thread _controllerThread = null;
+        private IApplicationContext _ctx;
+        private IMessageBus _msgBus;
 
         public NGEngine()
         {
-           
-        }
 
+        }
+        
         public INGEnvironment Environment
         {
             get { return _environment; }
-            set { _environment = value; }
+            set 
+            { 
+                _environment = value;
+            }
         }
 
         public int ExecutionThreads
         {
             get { return _executionThreads; }
             set { _executionThreads = value; }
+        }
+
+        public IMessageBus MessageBus
+        {
+            get { return _msgBus; }
+            set
+            {
+                if (_msgBus != null)
+                    _msgBus.UnsubscribeObject(this);
+                _msgBus = value;
+                _msgBus.SubscribeObject(this);
+            }
         }
 
         public void Start()
@@ -64,6 +83,7 @@ namespace NGinn.Engine.Runtime
                     _controllerThread.Abort();
                 }
                 _controllerThread = null;
+                
             }
         }
 
@@ -144,6 +164,7 @@ namespace NGinn.Engine.Runtime
             }
             return null;
         }
+
         
     }
 }

@@ -9,6 +9,7 @@ namespace NGinn.Engine
     {
         public string InstanceId;
         public string DefinitionId;
+        public string CorrelationId;
         public DateTime TimeStamp = DateTime.Now;
     }
 
@@ -25,7 +26,6 @@ namespace NGinn.Engine
     [Serializable]
     public class TransitionEvent : ProcessEvent
     {
-        public string CorrelationId;
         public string TaskId;
         public string TaskType;
     }

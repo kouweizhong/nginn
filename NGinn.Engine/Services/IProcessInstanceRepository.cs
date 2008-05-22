@@ -26,5 +26,6 @@ namespace NGinn.Engine.Services
         /// <param name="instanceId"></param>
         /// <param name="errorInfo"></param>
         void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, INGDataSession ds);
+
     }
 }

@@ -51,7 +51,7 @@ namespace NGinn.XmlFormsWWW
             log.Info("Input XML: {0}", xml);
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             INGEnvironment env = (INGEnvironment) ctx.GetObject("NGEnvironment");
-            string instanceId = env.StartProcessInstance(definitionId, xml);
+            string instanceId = env.StartProcessInstance(definitionId, xml, Request["correlationId"]);
             log.Info("Started process instance: {0}", instanceId);
             Response.Output.Write(instanceId);
             Response.End();

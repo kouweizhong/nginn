@@ -6,6 +6,7 @@ using Spring.Context;
 using NGinn.Engine.Services;
 using NLog;
 using NGinn.Lib.Interfaces;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -38,12 +39,14 @@ namespace NGinn.Engine.Runtime.Tasks
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
             inputVars["_NGinn_ParentProcess"] = this.ProcessInstanceId;
             log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
-            string xml = string.Format("<data><var1>ala</var1><var2>{0}</var2></data>", DateTime.Now);
-            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml);
+            IDataObject dob = GetTaskData();
+            string xml = dob.ToXmlString("data");
+            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml, this.CorrelationId);
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
             this.Status = TransitionStatus.ENABLED;
         }
 
+        
     }
 }

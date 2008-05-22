@@ -45,10 +45,10 @@ namespace NGinn.Engine.Runtime.MessageBus
 
         public ReliableMessageBus(string queueName)
         {
-            _queueName = queueName;
             InitSubscribers();
             _queueProc = new SQLQueueProcessor();
             _queueProc.MessageHandler = this;
+            QueueName = queueName;
         }
 
         public string QueueName
@@ -163,18 +163,7 @@ namespace NGinn.Engine.Runtime.MessageBus
 
         public void HandleApplicationEvent(object sender, ApplicationEventArgs e)
         {
-            if (e is Spring.Context.Events.ContextEventArgs)
-            {
-                Spring.Context.Events.ContextEventArgs args = (Spring.Context.Events.ContextEventArgs)e;
-                if (args.Event == Spring.Context.Events.ContextEventArgs.ContextEvent.Closed)
-                {
-                    this.Stop();
-                }
-                else if (args.Event == Spring.Context.Events.ContextEventArgs.ContextEvent.Refreshed)
-                {
-                    this.Start();
-                }
-            }
+            
         }
 
         #endregion

@@ -9,6 +9,7 @@ using Spring.Context;
 using NLog;
 using NGinn.Lib.Interfaces;
 using NGinn.Engine.Runtime;
+using System.IO;
 
 namespace NGinn.Engine.Host
 {
@@ -41,11 +42,22 @@ namespace NGinn.Engine.Host
         {
             lock (this)
             {
-                IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-                _eng = (NGEngine)ctx.GetObject("NGinn.Engine", typeof(NGEngine));
-                log.Debug("Starting the NGinn engine");
-                _eng.Start();
-                log.Debug("NGinn engine started");
+                try
+                {
+                    string path = Path.Combine(Path.GetDirectoryName(typeof(NGinnHostService).Assembly.Location), "NGinn.Engine.Host.exe.config");
+                    log.Debug("Configuring remoting from file: {0}", path);
+                    System.Runtime.Remoting.RemotingConfiguration.Configure(path, false);
+                    IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+                    _eng = (NGEngine)ctx.GetObject("NGinn.Engine", typeof(NGEngine));
+                    log.Debug("Starting the NGinn engine");
+                    _eng.Start();
+                    log.Debug("NGinn engine started");
+                }
+                catch (Exception ex)
+                {
+                    log.Error("Error starting engine: {0}", ex);
+                    throw;
+                }
             }
         }
     }

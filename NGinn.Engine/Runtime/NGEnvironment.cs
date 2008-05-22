@@ -69,7 +69,15 @@ namespace NGinn.Engine.Runtime
         public IMessageBus MessageBus
         {
             get { return _mbus; }
-            set { _mbus = value; }
+            set {
+                lock (this)
+                {
+                    if (_mbus != null)
+                        _mbus.UnsubscribeObject(this);
+                    _mbus = value;
+                    _mbus.SubscribeObject(this);
+                }
+            }
         }
 
         public IDictionary<string, object> EnvironmentVariables
@@ -125,7 +133,7 @@ namespace NGinn.Engine.Runtime
 
         #region INGEnvironment Members
 
-        public string StartProcessInstance(string definitionId, string inputXml)
+        public string StartProcessInstance(string definitionId, string inputXml, string processCorrelationId)
         {
             try
             {
@@ -137,6 +145,7 @@ namespace NGinn.Engine.Runtime
                 {
                     ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
                     pi.Environment = this;
+                    pi.CorrelationId = processCorrelationId;
                     pi.Activate();
 
                     log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
@@ -338,5 +347,21 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+
+
+        [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
+        protected object HandleProcessFinished(string topic, string sender, object msg)
+        {
+            ProcessFinished pf = (ProcessFinished)msg;
+            if (pf.CorrelationId == null || pf.CorrelationId.Length == 0)
+            {
+                return null;
+            }
+            TaskCompletionInfo tci = new TaskCompletionInfo();
+            
+            
+            //TODO:implement
+            return null;
+        }
     }
 }

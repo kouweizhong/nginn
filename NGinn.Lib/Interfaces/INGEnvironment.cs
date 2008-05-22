@@ -13,9 +13,10 @@ namespace NGinn.Lib.Interfaces
         /// Start new process instance
         /// </summary>
         /// <param name="definitionId">Process definition ID (check IProcessDefinitionRepository)</param>
-        /// <param name="inputVariables">Process input variables</param>
+        /// <param name="inputXml">Process input variables</param>
+        /// <param name="processCorrelationId">Process correlation id - externally assigned process identifier. Can be null. Uniqueness is not checked</param>
         /// <returns>new process instance ID</returns>
-        string StartProcessInstance(string definitionId, string inputXml);
+        string StartProcessInstance(string definitionId, string inputXml, string processCorrelationId);
         /// <summary>
         /// Get lists of processes that can be 'kicked', that is, have some work to do
         /// </summary>
