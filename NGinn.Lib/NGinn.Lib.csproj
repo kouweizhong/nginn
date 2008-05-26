@@ -83,6 +83,7 @@
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />
     <Compile Include="Interfaces\IResourceManager.cs" />
+    <Compile Include="Interfaces\Worklist\ITaskInformationProvider.cs" />
     <Compile Include="Interfaces\MessageBus\IMessageBus.cs" />
     <Compile Include="Interfaces\MessageBus\MessageBusSubscriberAttribute.cs" />
     <Compile Include="Interfaces\Worklist\ITODOListDataProvider.cs" />

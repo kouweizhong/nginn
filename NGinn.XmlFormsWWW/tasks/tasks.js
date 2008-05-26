@@ -110,7 +110,6 @@ Ext.onReady(function(){
     });
 	
 	selections.on('rowselect', function(me, rowIndex, rec ) {
-		alert("row selected: " + rec.data.Id);
         Ext.Ajax.request({
             url: 'TaskDetails.aspx?taskId=' + rec.data.Id,
             success: function(r) {

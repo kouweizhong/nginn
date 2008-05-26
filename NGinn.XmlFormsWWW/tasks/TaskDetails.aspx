@@ -1,9 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TaskDetails.aspx.cs" Inherits="NGinn.XmlFormsWWW.tasks.TaskDetails" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" %>
 Ext.onReady(function() {
     var form = new Ext.form.FormPanel({
         baseCls: 'x-plain',
         layout:'absolute',
-        url:'save-form.php',
+        url:'TaskSubmit.aspx',
         defaultType: 'textfield',
 
         items: [{
@@ -14,7 +14,9 @@ Ext.onReady(function() {
         },{
             x: 60,
             y: 0,
-            name: 'to',
+            name: 'items[0].to',
+            readOnly: true,
+            value: 'Some readonly text, believe me or not',
             anchor:'100%'  // anchor width by percentage
         },{
             x: 0,
@@ -29,11 +31,14 @@ Ext.onReady(function() {
         },{
             x:0,
             y: 60,
-            xtype: 'textarea',
+            xtype: 'htmleditor',
+            disabled: false,
             name: 'msg',
             anchor: '100% 100%'  // anchor width and height
         }]
     });
+    
+    var al = 'ala';
 
     var window = new Ext.Window({
         title: 'Resize Me',
@@ -48,7 +53,11 @@ Ext.onReady(function() {
         items: form,
 
         buttons: [{
-            text: 'Send'
+            text: 'Send',
+            handler: function() {
+                var v = form.getForm().getValues();
+                alert('v: ' + Ext.util.JSON.encode(v));
+            }
         },{
             text: 'Cancel'
         }]
