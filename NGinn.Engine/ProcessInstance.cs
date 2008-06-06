@@ -1285,6 +1285,57 @@ namespace NGinn.Engine
         {
             return ToXmlString();
         }
+
+        /// <summary>
+        /// Retrieve process instance id from task correlation Id.
+        /// Task correlation id format is "[process instance id].[task id]"
+        /// </summary>
+        /// <param name="taskCorrelationId"></param>
+        /// <returns></returns>
+        public static string ProcessInstanceIdFromTaskCorrelationId(string taskCorrelationId)
+        {
+            int idx = taskCorrelationId.IndexOf('.');
+            if (idx < 0) throw new ArgumentException("Invalid correlation id");
+            return taskCorrelationId.Substring(0, idx);
+        }
+
+        /// <summary>
+        /// Dispatch internal transition event to proper 
+        /// ActiveTransition object
+        /// </summary>
+        /// <param name="ite"></param>
+        internal virtual void DispatchInternalTransitionEvent(InternalTransitionEvent ite)
+        {
+            if (!_activated) throw new Exception("Process instance not activated");
+            if (ite.ProcessInstanceId != this.InstanceId) throw new ApplicationException("Incorrect activation id");
+            ActiveTransition at = GetActiveTransition(ite.CorrelationId);
+            at.HandleInternalTransitionEvent(ite);
+        }
+
+        /// <summary>
+        /// Used by ActiveTransitions to notify process instance
+        /// that the transition has completed and net status can be updated
+        /// </summary>
+        /// <param name="correlationId"></param>
+        internal void NotifyTransitionCompleted(string correlationId)
+        {
+            this.TransitionCompleted(correlationId);
+        }
+
+        /// <summary>
+        /// Used by ActiveTransitions to notify process instance
+        /// that the transition has been selected for execution, 
+        /// so the network status can be updated accordingly
+        /// </summary>
+        /// <param name="correlationId"></param>
+        internal void NotifyTransitionSelected(string correlationId)
+        {
+            this.TransitionSelected(correlationId);
+        }
+
+        
+
+        
     }
 
     

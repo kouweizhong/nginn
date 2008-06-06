@@ -13,12 +13,6 @@ namespace NGinn.Engine.Services
         ProcessDefinition GetProcessDefinition(string definitionId);
         string GetProcessDefinitionId(string packageName, string processName, int version);
         /// <summary>
-        /// Retrun XML schema for process input data
-        /// </summary>
-        /// <param name="definitionId"></param>
-        /// <returns></returns>
-        string GetProcessInputSchema(string definitionId);
-        /// <summary>
         /// Returns specified schema
         /// </summary>
         /// <param name="definitionId">process definition id or package name</param>
@@ -27,6 +21,17 @@ namespace NGinn.Engine.Services
         /// </param>
         /// <returns></returns>
         string GetPackageSchema(string definitionId, string schemaName);
+        /// <summary>
+        /// Retrun XML schema for process input data
+        /// </summary>
+        /// <param name="definitionId"></param>
+        /// <returns></returns>
+        string GetProcessInputSchema(string definitionId);
+        string GetProcessOutputSchema(string definitionId);
+        string GetProcessInternalDataSchema(string definitionId);
+        string GetTaskInputSchema(string definitionId, string taskId);
+        string GetTaskOutputSchema(string definitionId, string taskId);
+        string GetTaskInternalDataSchema(string definitionId, string taskId);
     }
 
     

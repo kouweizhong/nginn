@@ -23,6 +23,13 @@
         </data-definition>
     </task>
     
+    <task id="timeout" type="TimerTask" joinType="XOR" splitType="XOR">
+        <timerTask>
+            <delayTime>00:01:00</delayTime>
+        </timerTask>
+    </task>
+    
+    
     <task id="managerApproval" type="ManualTask" joinType="XOR" splitType="XOR">
 		<data-definition>
 			<variables>
@@ -60,6 +67,7 @@
   <flows>
     <flow from="start" to="initiate" />
     <flow from="initiate" to="managerApproval" />
+    <flow from="initiate" to="timeout" />
     <flow from="managerApproval" to="sendRequestCorrection" evalOrder="1">
   	    <inputCondition>managerApprovalDecision == 'Reject'</inputCondition>
     </flow>
@@ -67,6 +75,7 @@
     <flow from="sendRequestCorrection" to="managerApproval" />
     <flow from="completeOrderItems" to="deliverOrderItems"/>
     <flow from="deliverOrderItems" to="confirmOrderComplete" />
+    <flow from="timeout" to="end" />
     <flow from="confirmOrderComplete" to="end" />
     <flow from="confirmOrderComplete" to="completeOrderItems" />
   </flows>

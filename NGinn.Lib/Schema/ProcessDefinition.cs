@@ -264,6 +264,19 @@ namespace NGinn.Lib.Schema
             return WriteDataSchema(sd);
         }
 
+        /// <summary>
+        /// Get XML schema for task input xml
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        public string GetTaskInternalXmlSchema(string taskId)
+        {
+            Task tsk = GetTask(taskId);
+            StructDef sd = tsk.GetTaskInternalDataSchema();
+            sd.Name = "task";
+            return WriteDataSchema(sd);
+        }
+
         public String GetProcessInputXmlSchema()
         {
             StructDef sd = GetProcessInputDataSchema();

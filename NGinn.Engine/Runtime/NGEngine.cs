@@ -65,7 +65,10 @@ namespace NGinn.Engine.Runtime
                 Thread thr = new Thread(ts);
                 thr.Start();
                 _controllerThread = thr;
-
+                if (MessageBus != null)
+                {
+                    MessageBus.Notify("NGEngine", "NGinn.Engine.Runtime.MessageBus.ReliableMessageBus.Control", "START", false);
+                }
             }
         }
 
@@ -75,6 +78,10 @@ namespace NGinn.Engine.Runtime
             {
                 if (_controllerThread == null) return;
                 log.Debug("Stopping ...");
+                if (MessageBus != null)
+                {
+                    MessageBus.Notify("NGEngine", "NGinn.Engine.Runtime.MessageBus.ReliableMessageBus.Control", "STOP", false);
+                }
                 _stop = true;
                 _controllerThread.Interrupt();
                 if (!_controllerThread.Join(TimeSpan.FromSeconds(30)))

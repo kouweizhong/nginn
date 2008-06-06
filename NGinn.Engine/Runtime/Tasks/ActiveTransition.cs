@@ -44,6 +44,8 @@ namespace NGinn.Engine.Runtime.Tasks
         [NonSerialized]
         protected ProcessInstance _processInstance;
         [NonSerialized]
+        protected ITransitionCallback _containerCallback;
+        [NonSerialized]
         protected Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
         private bool _activated = false;
@@ -81,6 +83,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public virtual void Activate()
         {
             if (_processInstance == null) throw new ApplicationException("Process instance not set (call SetProcessInstance before activating)");
+            if (_containerCallback == null) _containerCallback = (ITransitionCallback)_processInstance;
             _activated = true;
         }
 
@@ -100,6 +103,23 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             get { ActivationRequired(true); return _processInstance.Definition.GetTask(TaskId); }
         }
+
+        protected virtual void OnTransitionEnabled()
+        {
+        }
+
+        protected virtual void OnTransitionStarted()
+        {
+        }
+
+        protected virtual void OnTransitionCompleted()
+        {
+        }
+
+        protected virtual void OnTransitionCancelled()
+        {
+        }
+
 
         protected StructDef GetTaskInternalDataSchema()
         {
@@ -242,6 +262,7 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             ActivationRequired(true);
             if (!IsImmediate) throw new ApplicationException("Execute is allowed only for immediate task");
+
         }
 
         /// <summary>
@@ -273,5 +294,25 @@ namespace NGinn.Engine.Runtime.Tasks
                 throw new ApplicationException(activated ? "Task must be activated" : "Task must be passivated");
             }
         }
+
+        /// <summary>
+        /// Handle internal transition event.
+        /// Override it to handle transition-specific internal events 
+        /// received from message bus
+        /// </summary>
+        /// <param name="ite"></param>
+        public virtual void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        {
+            if (ite.ProcessInstanceId != this.ProcessInstanceId) throw new ApplicationException("Invalid process instance id");
+            if (ite.CorrelationId != this.CorrelationId) throw new ApplicationException("Invalid correlation Id");
+        }
     }
+
+    [Serializable]
+    public class InternalTransitionEvent
+    {
+        public string ProcessInstanceId;
+        public string CorrelationId;
+    }
+    
 }

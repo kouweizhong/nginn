@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Interfaces
 {
@@ -57,5 +58,6 @@ namespace NGinn.Lib.Interfaces
         /// <param name="correlationId"></param>
         /// <returns></returns>
         string GetTaskInstanceXml(string correlationId);
+
     }
 }

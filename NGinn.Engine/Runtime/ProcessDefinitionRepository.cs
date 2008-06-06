@@ -55,25 +55,38 @@ namespace NGinn.Engine.Runtime
 
         public string GetPackageSchema(string definitionId, string schemaName)
         {
-            string pkgName = definitionId;
-            string procName = null;
-            int idx = definitionId.IndexOf('.');
-            if (idx >= 0)
-            {
-                pkgName = definitionId.Substring(0, idx);
-                procName = definitionId.Substring(idx + 1);
-            }
-            PackageDefinition pkg = PackageRepository.GetPackage(pkgName);
-            if (schemaName == "input")
-            {
-                if (procName == null) throw new ApplicationException("Process name missing");
-                ProcessDefinition pd = pkg.GetProcessDefinition(procName);
-                return pd.GetProcessInputXmlSchema();
-            }
-            else
-            {
-                return pkg.GetSchema(schemaName);
-            }
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            return pd.GetProcessInputXmlSchema();
+        }
+
+        public string GetProcessOutputSchema(string definitionId)
+        {
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            return pd.GetProcessOutputXmlSchema();
+        }
+
+        public string GetProcessInternalDataSchema(string definitionId)
+        {
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            throw new NotImplementedException();
+        }
+
+        public string GetTaskInputSchema(string definitionId, string taskId)
+        {
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            return pd.GetTaskInputXmlSchema(taskId);
+        }
+
+        public string GetTaskOutputSchema(string definitionId, string taskId)
+        {
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            return pd.GetTaskOutputXmlSchema(taskId);
+        }
+
+        public string GetTaskInternalDataSchema(string definitionId, string taskId)
+        {
+            ProcessDefinition pd = GetProcessDefinition(definitionId);
+            return pd.GetTaskInternalXmlSchema(taskId);
         }
 
         #endregion

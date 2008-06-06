@@ -1,0 +1,19 @@
+<objects xmlns="http://www.springframework.net">
+    <object id="ListInfoProvider" type="XmlForms.Lists.ListInfoProvider, XmlForms" singleton="true">
+        <property name="BaseDirectory" value="c:\dev\nginn\data\Lists" />    
+    </object>
+    
+    <!-- todo list data provider -->
+    <object name="TODOListDataProvider" type="NGinn.Worklist.TaskListDataProvider, NGinn.Worklist" singleton="true">
+    </object>
+
+  <object id="DBSchema"
+        type="NGinn.Worklist.BusinessObjects._DatabaseSchema, NGinn.Worklist"
+        factory-method="GetSchema" />
+  
+  <object name="DefaultListDataProvider" type="XmlForms.Lists.SoodaListDataProvider, XmlForms" singleton="true">
+    <property name="ListInfoProvider" ref="ListInfoProvider" />
+    <property name="DatabaseSchema" ref="DBSchema" />
+  </object>
+  
+</objects>

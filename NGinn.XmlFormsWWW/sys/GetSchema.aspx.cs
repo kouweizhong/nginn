@@ -32,11 +32,48 @@ namespace NGinn.XmlFormsWWW
             string pth = Request.PathInfo;
             if (pth.StartsWith("/")) pth = pth.Substring(1);
             string[] dt = pth.Split('/');
-            if (dt.Length < 2) throw new Exception("Expected /<process definition id or package name>/<schema name>");
+            if (dt.Length < 2) 
+            {
+                return;
+                //throw new Exception("Expected /<process definition id or package name>/<schema name>");
+            }
             string pkgid = dt[0];
             string schema = dt[1];
-            string schemaXml = pdr.GetPackageSchema(pkgid, schema);
-            Response.Output.Write(schemaXml);
+            string xml = null;
+            if (string.Compare(schema, "input", true) == 0)
+            {
+                xml = pdr.GetProcessInputSchema(pkgid);
+            }
+            else if (String.Compare(schema, "output", true) == 0)
+            {
+                xml = pdr.GetProcessOutputSchema(pkgid);
+            }
+            else if (string.Compare(schema, "internal", true) == 0)
+            {
+                xml = pdr.GetProcessInternalDataSchema(pkgid);
+            }
+            else if (string.Compare(schema, "task", true) == 0)
+            {
+                if (dt.Length < 4) throw new Exception("Expected task ID");
+                string taskId = dt[2];
+                string sch2 = dt[3];
+                if (String.Compare(sch2, "input", true) == 0)
+                {
+                    xml = pdr.GetTaskInputSchema(pkgid, taskId);
+                }
+                else if (String.Compare(sch2, "output", true) == 0)
+                {
+                    xml = pdr.GetTaskOutputSchema(pkgid, taskId);
+                }
+                else if (String.Compare(sch2, "internal", true) == 0)
+                {
+                    xml = pdr.GetTaskInternalDataSchema(pkgid, taskId);
+                }
+                else throw new Exception("Expected /task/<taskid>/[input|output|internal]");
+            }
+            else throw new Exception("Expected /<definition Id>/[input|output|internal|task]");
+            Response.ContentType = "text/xml";
+            Response.Output.Write(xml);
             Response.End();
         }
     }

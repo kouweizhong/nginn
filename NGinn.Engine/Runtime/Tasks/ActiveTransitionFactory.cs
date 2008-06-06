@@ -27,6 +27,10 @@ namespace NGinn.Engine.Runtime.Tasks
             {
                 at = new ScriptTaskActive((ScriptTask)tsk, pi);
             }
+            else if (tsk is TimerTask)
+            {
+                at = new TimerTaskActive((TimerTask)tsk, pi);
+            }
             else throw new Exception();
             at.ProcessInstanceId = pi.InstanceId;
             return at;

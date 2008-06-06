@@ -11,6 +11,7 @@ using System.Web.UI.HtmlControls;
 using Spring.Core;
 using Spring.Context;
 using NGinn.Lib.Interfaces.Worklist;
+using XmlForms.Interfaces;
 
 namespace NGinn.XmlFormsWWW
 {
@@ -18,12 +19,20 @@ namespace NGinn.XmlFormsWWW
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+            /*IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             ITODOListDataProvider prov = (ITODOListDataProvider)ctx.GetObject("TODOListDataProvider", typeof(ITODOListDataProvider));
             string xml = prov.GetListDataXml(null);
             Response.ContentType = "text/xml";
             Response.Output.Write(xml);
             Response.End();
+             * */
+            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+            IListDataProvider prov = (IListDataProvider)ctx.GetObject("DefaultListDataProvider", typeof(IListDataProvider));
+            string xml = prov.GetListData(Request["list"], "");
+            Response.ContentType = "text/xml";
+            Response.Output.Write(xml);
+            Response.End();
+            
         }
     }
 }

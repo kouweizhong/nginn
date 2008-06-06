@@ -13,6 +13,7 @@ using System.Xml.Schema;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
 using NGinn.Lib.Data;
+using NGinn.Engine.Runtime.Tasks;
 
 namespace NGinn.Engine.Runtime
 {
@@ -348,19 +349,64 @@ namespace NGinn.Engine.Runtime
         }
 
 
+        /// <summary>
+        /// Handle internal process events coming from the message bus
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="sender"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        [MessageBusSubscriber(typeof(InternalTransitionEvent), "*")]
+        protected object HandleInternalTransitionEvent(string topic, string sender, object msg)
+        {
+            InternalTransitionEvent ite = (InternalTransitionEvent)msg;
+            if (!LockManager.TryAcquireLock(ite.ProcessInstanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", ite.ProcessInstanceId);
+                throw new ApplicationException("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    pi.DispatchInternalTransitionEvent(ite);
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(ite.ProcessInstanceId);
+            }
+            return null;
+        }
 
         [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
         protected object HandleProcessFinished(string topic, string sender, object msg)
         {
             ProcessFinished pf = (ProcessFinished)msg;
+            log.Debug("Process finished: {0}", pf.InstanceId);
             if (pf.CorrelationId == null || pf.CorrelationId.Length == 0)
             {
                 return null;
             }
+            if (!SubprocessTaskActive.IsSubprocessCorrelationId(pf.CorrelationId))
+            {
+                return null;
+            }
+            string taskCorrId = SubprocessTaskActive.GetTaskCorrelationIdFromProcess(pf.CorrelationId);
+            log.Debug("Subprocess completed, task correlation id: {0}", taskCorrId);
             TaskCompletionInfo tci = new TaskCompletionInfo();
-            
-            
-            //TODO:implement
+            tci.CorrelationId = taskCorrId;
+            tci.ProcessInstance = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(taskCorrId);
+            tci.CompletedDate = pf.TimeStamp;
+            tci.ResultXml = null; //todo
+
+            this.ProcessTaskCompleted(tci);
             return null;
         }
     }

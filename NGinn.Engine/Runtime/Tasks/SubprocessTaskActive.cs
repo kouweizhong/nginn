@@ -41,12 +41,27 @@ namespace NGinn.Engine.Runtime.Tasks
             log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
             IDataObject dob = GetTaskData();
             string xml = dob.ToXmlString("data");
-            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml, this.CorrelationId);
+            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml, GetSubprocessCorrelationId(this.CorrelationId));
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
+            
             this.Status = TransitionStatus.ENABLED;
         }
 
-        
+        public static string GetSubprocessCorrelationId(string taskCorrelationId)
+        {
+            return string.Format("_NGINN_{0}", taskCorrelationId);
+        }
+
+        public static string GetTaskCorrelationIdFromProcess(string processCorrelationId)
+        {
+            if (!IsSubprocessCorrelationId(processCorrelationId)) return null;
+            return processCorrelationId.Substring(7);
+        }
+
+        public static bool IsSubprocessCorrelationId(string correlId)
+        {
+            return correlId.StartsWith("_NGINN_");
+        }
     }
 }

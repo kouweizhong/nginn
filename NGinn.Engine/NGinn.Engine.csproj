@@ -95,7 +95,9 @@
     <Compile Include="DataBinding.cs" />
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
+    <Compile Include="Runtime\Tasks\ITransitionCallback.cs" />
     <Compile Include="Runtime\Tasks\ManualTaskActive.cs" />
+    <Compile Include="Runtime\Tasks\MultiInstanceTaskActive.cs" />
     <Compile Include="Runtime\Tasks\NotificationTaskActive.cs" />
     <Compile Include="ProcessEvents.cs" />
     <Compile Include="ProcessInstance.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Runtime\ProcessDefinitionRepository.cs" />
     <Compile Include="Runtime\ProcessPackageRepository.cs" />
     <Compile Include="Runtime\Tasks\ScriptTaskActive.cs" />
+    <Compile Include="Runtime\Tasks\TimerTaskActive.cs" />
     <Compile Include="Runtime\XmlProcessingUtil.cs" />
     <Compile Include="Services\Dao\INGDataSession.cs" />
     <Compile Include="Services\Dao\INGDataStore.cs" />

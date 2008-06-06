@@ -8,13 +8,17 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using NLog;
 
 namespace NGinn.XmlFormsWWW
 {
     public partial class TaskForm : System.Web.UI.Page
     {
+        private static Logger log = LogManager.GetCurrentClassLogger();
+        
         protected void Page_Load(object sender, EventArgs e)
         {
+            log.Info("Page_Load");
 
         }
     }

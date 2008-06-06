@@ -7,10 +7,17 @@
     <title>Untitled Page</title>
 </head>
 <body>
-    <form id="form1" runat="server">
-    <div>
-    
-    </div>
-    </form>
+    <h2>GetSchema.aspx - get XML schema of process input/output data</h2>
+    <ul>
+        <li>GetSchema.aspx/[Package.Process]/input - process input schema</li>
+        <li>GetSchema.aspx/[Package.Process]/output - process output schema</li>
+        <li>GetSchema.aspx/[Package.Process]/task/[Task_Id]/input - task input schema</li>
+        <li>GetSchema.aspx/[Package.Process]/task/[Task_Id]/output - task output schema</li>
+    </ul>
+    <p>
+    Example: <br />
+    GetSchema.aspx/MyPackage.SomeProcess.1/input - will retrieve XML shema for
+    MyPackage.SomeProcess.1 process input data
+    </p>
 </body>
 </html>

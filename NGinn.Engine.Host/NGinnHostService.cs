@@ -44,7 +44,7 @@ namespace NGinn.Engine.Host
             {
                 try
                 {
-                    string path = Path.Combine(Path.GetDirectoryName(typeof(NGinnHostService).Assembly.Location), "NGinn.Engine.Host.exe.config");
+                    string path = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
                     log.Debug("Configuring remoting from file: {0}", path);
                     System.Runtime.Remoting.RemotingConfiguration.Configure(path, false);
                     IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();

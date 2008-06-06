@@ -1,0 +1,28 @@
+<ListInfo>
+    <ListName>User</ListName>
+    <Columns>
+        <ListColumnInfo>
+            <Header>Id</Header>
+            <DataField>Id</DataField>
+            <DataType>int</DataType>
+        </ListColumnInfo>
+        <ListColumnInfo>
+            <Header>Login</Header>
+            <DataField>UserId</DataField>
+            <DataType>string</DataType>
+        </ListColumnInfo>
+        <ListColumnInfo>
+            <Header>Nazwisko</Header>
+            <DataField>Name</DataField>
+            <DataType>string</DataType>
+        </ListColumnInfo>
+        <ListColumnInfo>
+            <Header>Email</Header>
+            <DataField>Email</DataField>
+            <DataType>string</DataType>
+        </ListColumnInfo>
+    </Columns>
+    <RecordClass>User</RecordClass>
+    <DataProvider>DefaultListDataProvider</DataProvider>
+    <KeyField>Id</KeyField>
+</ListInfo>

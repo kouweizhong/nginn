@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 
 namespace NGinn.Lib.Schema
 {
@@ -25,7 +26,13 @@ namespace NGinn.Lib.Schema
         internal override void LoadXml(System.Xml.XmlElement el, System.Xml.XmlNamespaceManager nsmgr)
         {
             base.LoadXml(el, nsmgr);
-            string p = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
+            XmlElement tEl = (XmlElement)el.SelectSingleNode(pr + "timerTask", nsmgr);
+            if (tEl == null) throw new Exception("Missing <timerTask> element");
+            XmlElement tBody = (XmlElement)tEl.SelectSingleNode(pr + "delayTime", nsmgr);
+            if (tBody == null) throw new Exception("Missing <delayTime> element");
+            DelayAmount = tBody.InnerText;
         }
 
 

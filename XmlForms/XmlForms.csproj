@@ -68,8 +68,17 @@
     <Compile Include="Elements\WebFormHandler.cs" />
     <Compile Include="FormProcessorFactory.cs" />
     <Compile Include="IFormHandler.cs" />
+    <Compile Include="Interfaces\IListDataProvider.cs" />
+    <Compile Include="Interfaces\IListInfoProvider.cs" />
+    <Compile Include="Interfaces\ListInfo.cs" />
+    <Compile Include="Lists\DefaultListDataProvider.cs" />
+    <Compile Include="Lists\ListInfoProvider.cs" />
+    <Compile Include="Lists\SoodaListDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlFormHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Web\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

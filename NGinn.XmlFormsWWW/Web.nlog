@@ -1,0 +1,10 @@
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <variable name="logDir" value="${basedir}/../logs"/>
+    <targets>
+        <target name="all" xsi:type="File" fileName="${logDir}/all.${shortdate}.log"/>
+    </targets>
+    <rules>
+        <logger name="*" minlevel="Debug" writeTo="all" />
+    </rules>
+</nlog>

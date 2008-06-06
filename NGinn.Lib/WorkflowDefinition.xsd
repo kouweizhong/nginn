@@ -136,7 +136,7 @@
   </xs:complexType>
   <xs:complexType name="TimerTask">
     <xs:sequence>
-      <xs:element name="delayTime" type="xs:duration" minOccurs="1" maxOccurs="1" />
+      <xs:element name="delayTime" type="xs:string" minOccurs="1" maxOccurs="1" />
       <xs:element name="scheme" type="xs:string" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>

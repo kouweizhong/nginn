@@ -61,7 +61,50 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ext\adapter\ext\ext-base.js" />
+    <Content Include="ext\adapter\jquery\ext-jquery-adapter.js" />
+    <Content Include="ext\adapter\jquery\jquery.js" />
+    <Content Include="ext\adapter\prototype\effects.js" />
+    <Content Include="ext\adapter\prototype\ext-prototype-adapter.js" />
+    <Content Include="ext\adapter\prototype\prototype.js" />
+    <Content Include="ext\adapter\prototype\scriptaculous.js" />
+    <Content Include="ext\adapter\yui\ext-yui-adapter.js" />
+    <Content Include="ext\adapter\yui\yui-utilities.js" />
+    <Content Include="ext\ext-all-debug.js" />
+    <Content Include="ext\ext-all.js" />
+    <Content Include="ext\ext-core-debug.js" />
+    <Content Include="ext\ext-core.js" />
+    <Content Include="ext\resources\css\borders.css" />
+    <Content Include="ext\resources\css\box.css" />
+    <Content Include="ext\resources\css\button.css" />
+    <Content Include="ext\resources\css\combo.css" />
+    <Content Include="ext\resources\css\core.css" />
+    <Content Include="ext\resources\css\date-picker.css" />
+    <Content Include="ext\resources\css\dd.css" />
+    <Content Include="ext\resources\css\debug.css" />
+    <Content Include="ext\resources\css\dialog.css" />
+    <Content Include="ext\resources\css\editor.css" />
+    <Content Include="ext\resources\css\ext-all.css" />
+    <Content Include="ext\resources\css\form.css" />
+    <Content Include="ext\resources\css\grid.css" />
+    <Content Include="ext\resources\css\layout.css" />
+    <Content Include="ext\resources\css\menu.css" />
+    <Content Include="ext\resources\css\panel.css" />
+    <Content Include="ext\resources\css\progress.css" />
+    <Content Include="ext\resources\css\qtips.css" />
+    <Content Include="ext\resources\css\README.txt" />
+    <Content Include="ext\resources\css\reset-min.css" />
+    <Content Include="ext\resources\css\reset.css" />
+    <Content Include="ext\resources\css\resizable.css" />
+    <Content Include="ext\resources\css\slider.css" />
+    <Content Include="ext\resources\css\tabs.css" />
+    <Content Include="ext\resources\css\toolbar.css" />
+    <Content Include="ext\resources\css\tree.css" />
+    <Content Include="ext\resources\css\window.css" />
+    <Content Include="ext\resources\css\xtheme-gray.css" />
+    <Content Include="ListInfo.aspx" />
     <Content Include="Default.aspx" />
+    <EmbeddedResource Include="lists-config.xml" />
     <Content Include="sys\GetInstanceXml.aspx" />
     <Content Include="sys\GetSchema.aspx" />
     <Content Include="Global.asax" />
@@ -90,6 +133,7 @@
     <Content Include="tasks\images\icon-show-all.gif" />
     <Content Include="tasks\images\icon-show-complete.gif" />
     <Content Include="tasks\images\s.gif" />
+    <Content Include="tasks\ListScript.aspx" />
     <Content Include="tasks\TaskDetails.aspx" />
     <Content Include="tasks\tasks.css" />
     <Content Include="tasks\tasks.html" />
@@ -111,9 +155,6 @@
     </Compile>
     <Compile Include="sys\GetSchema.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>GetSchema.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="sys\GetSchema.aspx.designer.cs">
       <DependentUpon>GetSchema.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
@@ -178,6 +219,9 @@
       <Project>{3B74CBF3-9E3C-4759-BC70-46C5E10538D7}</Project>
       <Name>XmlForms</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ext\resources\resources.jsb" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />

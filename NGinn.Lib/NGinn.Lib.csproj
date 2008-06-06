@@ -106,6 +106,7 @@
     <Compile Include="Schema\XmlHttpTask.cs" />
     <Compile Include="Services\FSPackageDataStore.cs" />
     <Compile Include="Services\IPackageDataStore.cs" />
+    <Compile Include="Util\DefaultConfigProvider.cs" />
     <Compile Include="Util\XmlConst.cs" />
   </ItemGroup>
   <ItemGroup>
