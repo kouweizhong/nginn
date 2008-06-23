@@ -10,9 +10,16 @@ namespace NGinn.Engine.Runtime.Tasks
     /// </summary>
     public interface ITransitionCallback
     {
-        void TransitionEnabled(string correlationId);
+        /// <summary>
+        /// Called after the transition has been started
+        /// This is optional callback. 
+        /// </summary>
+        /// <param name="correlationId"></param>
         void TransitionStarted(string correlationId);
+        /// <summary>
+        /// Called after the transition has been completed
+        /// </summary>
+        /// <param name="correlationId"></param>
         void TransitionCompleted(string correlationId);
-        void TransitionCancelled(string correlationId);
     }
 }

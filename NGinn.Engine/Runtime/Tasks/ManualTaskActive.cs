@@ -18,25 +18,18 @@ namespace NGinn.Engine.Runtime.Tasks
          
         }
 
-        public override void Activate()
-        {
-            base.Activate();
-        }
-
-        public override void Passivate()
-        {
-            base.Passivate();
-        }
-
         public ManualTask TheTask
         {
             get { return (ManualTask)ProcessTask; }
         }
 
-        /// <summary>
-        /// Initiate manual task
-        /// </summary>
-        public override void InitiateTask()
+
+        protected override void DoExecuteTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DoInitiateTask()
         {
             WorkItem wi = new WorkItem();
             wi.ProcessInstanceId = this.ProcessInstanceId;
@@ -47,15 +40,19 @@ namespace NGinn.Engine.Runtime.Tasks
             log.Info("Created work item");
         }
 
-        public override void CancelTask()
+        protected override void DoCancelTask()
         {
             this._processInstance.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
         }
 
-        public override void TaskCompleted()
+        /// <summary>
+        /// Manual task completion
+        /// </summary>
+        /// <param name="tci"></param>
+        protected override void OnTaskCompleted(TaskCompletionInfo tci)
         {
-            base.TaskCompleted();
-            this._processInstance.Environment.WorklistService.WorkItemCompleted(CorrelationId);
+            base.OnTaskCompleted(tci);
+            this._processInstance.Environment.WorklistService.WorkItemCompleted(this.CorrelationId);
         }
     }
 }

@@ -24,14 +24,25 @@ namespace NGinn.Engine.Runtime.Tasks
             }
         }
 
-        public override void ExecuteTask()
+        protected override void DoExecuteTask()
         {
-            base.ExecuteTask();
             ScriptTask st = (ScriptTask)ProcessTask;
             IScriptContext ctx = CreateTaskScriptContext();
             log.Debug("Executing script in task {0}", st.Id);
             Script.RunCode(st.Script, ctx);
             log.Debug("Script executed");
         }
+
+        protected override void DoCancelTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DoInitiateTask()
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

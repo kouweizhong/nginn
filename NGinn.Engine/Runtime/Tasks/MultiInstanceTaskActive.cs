@@ -42,5 +42,20 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
         #endregion
+
+        protected override void DoCancelTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DoExecuteTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DoInitiateTask()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

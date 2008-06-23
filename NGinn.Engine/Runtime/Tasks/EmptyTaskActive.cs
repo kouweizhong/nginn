@@ -6,6 +6,9 @@ using NLog;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
+    /// <summary>
+    /// Empty (routing-only) task.
+    /// </summary>
     [Serializable]
     public class EmptyTaskActive : ActiveTransition
     {
@@ -13,6 +16,18 @@ namespace NGinn.Engine.Runtime.Tasks
             : base(tsk, pi)
         {
 
+        }
+
+        protected override void DoCancelTask()
+        {
+        }
+
+        protected override void DoExecuteTask()
+        {   
+        }
+
+        protected override void DoInitiateTask()
+        {   
         }
     }
 

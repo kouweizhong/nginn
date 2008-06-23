@@ -253,7 +253,7 @@ namespace NGinn.Engine.Runtime
                     pi.Environment = this;
                     pi.Activate();
                     log.Info("Original: {0}", pi.ToString());
-                    pi.TransitionCompleted(info);
+                    pi.NotifyTaskCompleted(info);
                     log.Info("Modified: {0}", pi.ToString());
                     pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
@@ -285,7 +285,7 @@ namespace NGinn.Engine.Runtime
                     pi.Environment = this;
                     pi.Activate();
                     log.Info("Original: {0}", pi.ToString());
-                    pi.TransitionSelected(correlationId);
+                    pi.NotifyTransitionSelected(correlationId);
                     log.Info("Modified: {0}", pi.ToString());
                     pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi, ds);
@@ -409,5 +409,39 @@ namespace NGinn.Engine.Runtime
             this.ProcessTaskCompleted(tci);
             return null;
         }
+
+        #region INGEnvironment Members
+
+
+        public void CancelProcessInstance(string instanceId)
+        {
+            log.Info("Cancelling process {0}", instanceId);
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    pi.CancelProcessInstance();
+                    log.Info("Modified: {0}", pi.ToString());
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
+        #endregion
     }
 }

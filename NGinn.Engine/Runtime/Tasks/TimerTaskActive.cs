@@ -28,10 +28,9 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return false; }
         }
 
-        public override void InitiateTask()
+        protected override void DoInitiateTask()
         {
-            base.InitiateTask();
-            TimerTask tt = (TimerTask) ProcessTask;
+            TimerTask tt = (TimerTask)ProcessTask;
             TimeSpan ts = TimeSpan.Parse(tt.DelayAmount);
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;
@@ -41,10 +40,17 @@ namespace NGinn.Engine.Runtime.Tasks
             this._processInstance.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
         }
 
-        public override void TaskCompleted()
+        protected override void DoCancelTask()
         {
-            base.TaskCompleted();
+            
         }
+
+        protected override void DoExecuteTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        
 
         public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
@@ -55,8 +61,8 @@ namespace NGinn.Engine.Runtime.Tasks
                 if (this.Status == TransitionStatus.ENABLED ||
                     this.Status == TransitionStatus.STARTED)
                 {
-                    //this.Status = TransitionStatus.COMPLETED;
-                    _processInstance.NotifyTransitionCompleted(CorrelationId);
+                    this.Status = TransitionStatus.COMPLETED;
+                    _containerCallback.TransitionCompleted(CorrelationId);
                 }
                 else
                 {

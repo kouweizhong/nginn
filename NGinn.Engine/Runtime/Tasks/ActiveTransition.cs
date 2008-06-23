@@ -104,23 +104,7 @@ namespace NGinn.Engine.Runtime.Tasks
             get { ActivationRequired(true); return _processInstance.Definition.GetTask(TaskId); }
         }
 
-        protected virtual void OnTransitionEnabled()
-        {
-        }
-
-        protected virtual void OnTransitionStarted()
-        {
-        }
-
-        protected virtual void OnTransitionCompleted()
-        {
-        }
-
-        protected virtual void OnTransitionCancelled()
-        {
-        }
-
-
+        
         protected StructDef GetTaskInternalDataSchema()
         {
             StructDef sd = new StructDef();
@@ -241,8 +225,12 @@ namespace NGinn.Engine.Runtime.Tasks
         public virtual void InitiateTask()
         {
             ActivationRequired(true);
-            if (this.Tokens.Count == 0) throw new Exception("No input tokens");
+            this.Status = TransitionStatus.ENABLED;
+            DoInitiateTask();
         }
+
+
+        protected abstract void DoInitiateTask();
 
         /// <summary>
         /// Check if task is immediate
@@ -262,8 +250,15 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             ActivationRequired(true);
             if (!IsImmediate) throw new ApplicationException("Execute is allowed only for immediate task");
-
+            DoExecuteTask();
+            this.Status = TransitionStatus.COMPLETED;
+            this._containerCallback.TransitionCompleted(this.CorrelationId);
         }
+
+        /// <summary>
+        /// Abstract method. Execute the immediate task.
+        /// </summary>
+        protected abstract void DoExecuteTask();
 
         /// <summary>
         /// Invoked by runtime to cancel an active transition
@@ -273,19 +268,11 @@ namespace NGinn.Engine.Runtime.Tasks
             ActivationRequired(true);
             if (this.Status != TransitionStatus.ENABLED && Status != TransitionStatus.STARTED)
                 throw new ApplicationException("Cannot cancel task - status invalid");
+            DoCancelTask();
             this.Status = TransitionStatus.CANCELLED;
         }
 
-        /// <summary>
-        /// Invoked by runtime after transition has completed.
-        /// </summary>
-        public virtual void TaskCompleted()
-        {
-            ActivationRequired(true);
-            if (this.Status != TransitionStatus.ENABLED && this.Status != TransitionStatus.STARTED)
-                throw new ApplicationException("Cannot complete task - status invalid");
-            this.Status = TransitionStatus.COMPLETED;
-        }
+        protected abstract void DoCancelTask();
 
         protected void ActivationRequired(bool activated)
         {
@@ -305,6 +292,67 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             if (ite.ProcessInstanceId != this.ProcessInstanceId) throw new ApplicationException("Invalid process instance id");
             if (ite.CorrelationId != this.CorrelationId) throw new ApplicationException("Invalid correlation Id");
+        }
+
+        /// <summary>
+        /// Notify the transition that it has been 'selected'
+        /// By default, it does nothing but notifies the process instance
+        /// that the transition has been selected
+        /// </summary>
+        public void NotifyTransitionSelected()
+        {
+            ActivationRequired(true);
+            if (this.Status != TransitionStatus.ENABLED &&
+                this.Status != TransitionStatus.STARTED)
+                throw new Exception("Status invalid");
+            OnTransitionSelected();
+            this.Status = TransitionStatus.STARTED;
+            _containerCallback.TransitionStarted(this.CorrelationId);
+        }
+
+        /// <summary>
+        /// override this method to handle 'transition selected'
+        /// event. 
+        /// </summary>
+        protected virtual void OnTransitionSelected()
+        {
+
+        }
+
+        /// <summary>
+        /// Pass task completion information to active transition.
+        /// As a result, task internal data is updated and
+        /// OnTaskCompleted is invoked. Then the transition is marked
+        /// as completed and TransitionCompleted callback is invoked.
+        /// </summary>
+        /// <param name="tci"></param>
+        public void NotifyTaskCompleted(TaskCompletionInfo tci)
+        {
+            ActivationRequired(true);
+            if (Status != TransitionStatus.STARTED &&
+                Status != TransitionStatus.COMPLETED)
+                throw new ApplicationException("Invalid transition status");
+            if (tci.CorrelationId != this.CorrelationId)
+                throw new ApplicationException("Invalid correlation id");
+            if (tci.ResultXml != null)
+            {
+                DataObject dob = DataObject.ParseXml(tci.ResultXml);
+                this.UpdateTaskData(dob);
+            }
+            OnTaskCompleted(tci);
+            this.Status = TransitionStatus.COMPLETED;
+            _containerCallback.TransitionCompleted(CorrelationId);
+        }
+
+        /// <summary>
+        /// Handle task completion notification.
+        /// Override this method to implement external
+        /// notification about task completion.
+        /// </summary>
+        /// <param name="tci"></param>
+        protected virtual void OnTaskCompleted(TaskCompletionInfo tci)
+        {
+
         }
     }
 

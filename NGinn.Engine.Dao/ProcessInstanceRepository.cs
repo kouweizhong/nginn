@@ -65,6 +65,7 @@ namespace NGinn.Engine.Dao
                     PersistToken(tok, ss);
                 }
             }
+            pdb.Status = ProcessStatus.GetRef((int) pi.Status);
             pdb.InstanceData = SerializationUtil.Serialize(pi);
             pdb.RecordVersion = pdb.RecordVersion + 1;
             pdb.LastModified = DateTime.Now;

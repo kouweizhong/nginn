@@ -1,0 +1,1 @@
+c:\tools\curl --data-binary @NGinnTest\StartTimerTask.xml -H "Content-Type: text/xml" http://localhost/nginn/sys/StartProcess.aspx?definitionId=TestPackage3.TimerTask.1

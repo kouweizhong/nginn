@@ -109,6 +109,7 @@
     <Content Include="sys\GetSchema.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ListData.aspx" />
+    <Content Include="sys\index.htm" />
     <Content Include="sys\StartProcess.aspx" />
     <Content Include="SubmitXml.aspx" />
     <Content Include="sys\UpdateTaskXml.aspx" />

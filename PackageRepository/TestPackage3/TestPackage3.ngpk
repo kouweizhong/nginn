@@ -5,5 +5,8 @@
 	</dataSchemas>
 	<processDefinitions>
 		<process>PurchaseOrder.xml</process>
+        <process>TimerTask.xml</process>
+        <process>TimerTask2.xml</process>
+        <process>TimerTask3.xml</process>
 	</processDefinitions>
 </package>

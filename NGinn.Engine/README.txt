@@ -1,52 +1,27 @@
-MUlti instance tasks - how to do data binding
+TODO
 
-Let's assume we want to create instance of task for each xml record (that is, for each element of an array variable) 
-in the process data.
+co dalej
+- zadania... niech one bêd¹ trochê bardziej autonomiczne
 
-<xsl:for-each select="variableName">
-	curNode = '.'
-	calculateBindings for curNode -> this is task input data
-	
-now binding back
-	we have a list of task output variable sets
+ProcessInstance
+- enableTask
+- cancelTask
+Task callback
+- taskEnabled
+- taskCompleted
+- taskCancelled
 
-<xsl:for-each select="task-result-xml">
-	<outputVariableName>
-		<task-out-binding-result />
-	</outputVariableName>	
-</xsl:for-each>
+PI
+--> enableTask
+<-- taskStarted (opcjonalne) 
+<-- taskCompleted (wymagane)
+.
 
-where can we bind it? to a single variable??? 
-Well, it could be done. However, by default binding replaces the variable with new value.
-In case of incomplete task output data, we would lose some information in the variable. It would be better to merge the variable
-with task output data.
+--> cancelTask
+.
 
-??? KA¯DE zadanie mo¿e staæ siê multi-instance, no bo co stoi na przeszkodzie ???
+<-- taskCancelled (na razie nie implementujemy)
 
-XML kontra .net variables
-
-XML
-+ przenoœny format
-+ ³atwe definiowanie schematu
-+ nie wymaga definiowania serializacji
-+ ³atwa walidacja
-
-- trudno przetwarzaæ
-- data binding jest skomplikowany
-- utrudniony dostêp ze skryptu
-- trudniejsze zarz¹dzanie danymi w procesie
-
-.net variables
-+ ³atwo pisaæ wyra¿enia
-+ ³atwo bindowaæ
-+ ³atwiejsze operacje na danych
-+ ³adniejszy zapis
-
-- brak walidacji
-- brak definicji schematu
-
-
-
-
-
-
+czy task moze siê sam 'cancelowaæ'? na razie nie
+sk¹d task ma wiedzieæ czy siê zakoñczy³
+ma dostaæ event. Event zostanie dostarczony przez PI

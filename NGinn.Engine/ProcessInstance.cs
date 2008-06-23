@@ -34,7 +34,7 @@ namespace NGinn.Engine
     /// in parallel, but two threads shouldn't update the same ProcessInstance object. 
     /// </summary>
     [Serializable]
-    public class ProcessInstance
+    public class ProcessInstance : ITransitionCallback
     {
         [NonSerialized]
         private Logger log = LogManager.GetCurrentClassLogger();
@@ -871,13 +871,15 @@ namespace NGinn.Engine
         {
             Debug.Assert(at.IsImmediate);
             TransferDataToTransition(at);
-            at.ExecuteTask();
             foreach (string tokId in at.Tokens)
             {
                 Token tok1 = GetToken(tokId);
                 tok1.Status = TokenStatus.LOCKED_ENABLED;
             }
-            TransitionCompleted(at.CorrelationId);
+            at.ExecuteTask();
+            
+            //not needed (because of transition callback) 
+            //OnTransitionCompleted(at.CorrelationId);
         }
 
         
@@ -1008,35 +1010,38 @@ namespace NGinn.Engine
             return new List<ActiveTransition>(dict.Values);
         }
 
-        /// <summary>
-        /// Report that a process task has completed
-        /// </summary>
-        /// <param name="tci"></param>
-        public void TransitionCompleted(TaskCompletionInfo tci)
-        {
-            if (tci.ProcessInstance != this.InstanceId) throw new Exception("Invalid instance id");
-            ActiveTransition at = GetActiveTransition(tci.CorrelationId);
-            if (at == null) throw new Exception("Invalid correlation id");
-            if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
-            //1 update task data
-            if (tci.ResultXml != null)
-            {
-                DataObject dob = DataObject.ParseXml(tci.ResultXml);
-                at.UpdateTaskData(dob);
-            }
-            //2 complete the transition
-            TransitionCompleted(tci.CorrelationId);
-        }
+        
 
         /// <summary>
-        /// Select a transition for executing (used for deciding which deferred choice alternative has been selected)
+        /// Handle 'transition selected' event. In this case, all shared 
+        /// transitions are cancelled and only the selected transition
+        /// remains. Tokens are switched to 'LOCKED_ALLOCATED' status.
         /// </summary>
         /// <param name="correlationId"></param>
-        public void TransitionSelected(string correlationId)
+        private void AfterTransitionSelected(string correlationId)
         {
             ActiveTransition at = GetActiveTransition(correlationId);
             if (at == null) throw new Exception("Invalid correlation id");
-            if (at.Status != TransitionStatus.ENABLED) throw new Exception("Invalid transition status");
+            
+            bool found = false;
+            foreach (string t in at.Tokens)
+            {
+                Token tok = GetToken(t);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ENABLED ||
+                    tok.Status == TokenStatus.LOCKED_ALLOCATED);
+                if (tok.Status == TokenStatus.LOCKED_ENABLED)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                log.Debug("Did not find any locked_enabled tokens");
+                Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
+                return;
+            }
+
             log.Info("Transition selected: {0}", at.CorrelationId);
             Task tsk = Definition.GetTask(at.TaskId);
             //1 find all 'shared' transitions and cancel them
@@ -1057,9 +1062,7 @@ namespace NGinn.Engine
                 Debug.Assert(tok.ActiveTransitions.Count == 1 && tok.ActiveTransitions[0] == at.CorrelationId);
                 //if (!at.IsImmediate && tok.Status != TokenStatus.WAITING_ENABLED) throw new Exception();
                 tok.Status = TokenStatus.LOCKED_ALLOCATED;
-
             }
-            at.Status = TransitionStatus.STARTED;
         }
 
 
@@ -1070,29 +1073,51 @@ namespace NGinn.Engine
         /// Wow, looks quite complex.
         /// </summary>
         /// <param name="at"></param>
-        private void TransitionCompleted(string correlationId)
+        private void AfterTransitionCompleted(string correlationId)
         {
             ActiveTransition at = _activeTransitions[correlationId];
             log.Info("Transition completed: {0}", at.CorrelationId);
             Task tsk = Definition.GetTask(at.TaskId);
             //1 select the transition for processing
-            if (at.Status == TransitionStatus.ENABLED)
+            bool found = false;
+            foreach (string t in at.Tokens)
             {
-                TransitionSelected(at.CorrelationId);
+                Token tok = GetToken(t);
+                Debug.Assert(tok.Status == TokenStatus.LOCKED_ENABLED ||
+                    tok.Status == TokenStatus.LOCKED_ALLOCATED);
+                if (tok.Status == TokenStatus.LOCKED_ENABLED)
+                {
+                    found = true;
+                    break;
+                }
             }
-            Debug.Assert(GetSharedActiveTransitionsForTransition(at).Count == 0);
+            if (found)
+            {
+                AfterTransitionSelected(correlationId);
+            }
+            IList<ActiveTransition> sharedTrans = GetSharedActiveTransitionsForTransition(at);
+            Debug.Assert(sharedTrans.Count == 0); //after transition selected there should be no shared trans.
             foreach (string tokid in at.Tokens)
             {
                 Token tok = GetToken(tokid);
                 Debug.Assert(tok.Status == TokenStatus.LOCKED_ALLOCATED);
             }
             
-            at.TaskCompleted();
-            at.Status = TransitionStatus.COMPLETED;
+            //at.TaskCompleted();
+            //at.Status = TransitionStatus.COMPLETED;
             //2 retrieve data from transition
             TransferDataFromTransition(at);
             //3 move the tokens
             UpdateNetStatusAfterTransition(at);
+            //4 notify others
+            ActiveTransitionCompleted compl = new ActiveTransitionCompleted();
+            compl.CorrelationId = at.CorrelationId;
+            compl.InstanceId = this.InstanceId;
+            compl.TaskId = at.TaskId;
+            compl.TaskType = tsk.GetType().Name;
+            compl.TimeStamp = DateTime.Now;
+            compl.DefinitionId = this.ProcessDefinitionId;
+            NotifyProcessEvent(compl);
         }
 
         /// <summary>
@@ -1199,7 +1224,7 @@ namespace NGinn.Engine
             if (at.IsImmediate) throw new Exception("Cannot cancel an immediate transition");
             if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
             at.CancelTask();
-            at.Status = TransitionStatus.CANCELLED;
+            Debug.Assert(at.Status == TransitionStatus.CANCELLED);
             foreach (string t in at.Tokens)
             {
                 Token tok = GetToken(t);
@@ -1312,30 +1337,66 @@ namespace NGinn.Engine
             at.HandleInternalTransitionEvent(ite);
         }
 
-        /// <summary>
-        /// Used by ActiveTransitions to notify process instance
-        /// that the transition has completed and net status can be updated
-        /// </summary>
-        /// <param name="correlationId"></param>
-        internal void NotifyTransitionCompleted(string correlationId)
-        {
-            this.TransitionCompleted(correlationId);
-        }
-
-        /// <summary>
-        /// Used by ActiveTransitions to notify process instance
-        /// that the transition has been selected for execution, 
-        /// so the network status can be updated accordingly
-        /// </summary>
-        /// <param name="correlationId"></param>
-        internal void NotifyTransitionSelected(string correlationId)
-        {
-            this.TransitionSelected(correlationId);
-        }
-
         
 
         
+
+
+
+        #region ITransitionCallback Members
+
+        void ITransitionCallback.TransitionStarted(string correlationId)
+        {
+            this.AfterTransitionSelected(correlationId);
+        }
+
+        void ITransitionCallback.TransitionCompleted(string correlationId)
+        {
+            this.AfterTransitionCompleted(correlationId);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// External notification that the transition has been selected.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        public void NotifyTransitionSelected(string correlationId)
+        {
+            if (!_activated) throw new Exception("Process instance not activated");
+            ActiveTransition at = GetActiveTransition(correlationId);
+            if (at == null) throw new ApplicationException("Invalid correlation Id");
+            at.NotifyTransitionSelected();
+        }
+
+        /// <summary>
+        /// Report that a process task has completed
+        /// </summary>
+        /// <param name="tci"></param>
+        public void NotifyTaskCompleted(TaskCompletionInfo tci)
+        {
+            throw new NotImplementedException();
+            if (tci.ProcessInstance != this.InstanceId) throw new Exception("Invalid instance id");
+            ActiveTransition at = GetActiveTransition(tci.CorrelationId);
+            if (at == null) throw new Exception("Invalid correlation id");
+            if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
+            //at will callback us when the task is completed
+            at.NotifyTaskCompleted(tci);
+        }
+
+        /// <summary>
+        /// Cancel process instance
+        /// Cancels all currently active transitions and removes all tokens
+        /// from the process.
+        /// TODO: implement
+        /// </summary>
+        public void CancelProcessInstance()
+        {
+            throw new NotImplementedException();
+            //this.Status = ProcessStatus.Cancelled;
+        }
+
+
     }
 
     

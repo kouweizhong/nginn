@@ -17,9 +17,19 @@ namespace NGinn.Engine.Runtime.Tasks
 
         }
 
-        public override void InitiateTask()
+        protected override void DoCancelTask()
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException();
+        }
+
+        protected override void DoInitiateTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void DoExecuteTask()
+        {
+            throw new NotImplementedException();
         }
     }
 }
