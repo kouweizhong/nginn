@@ -1107,9 +1107,29 @@ namespace NGinn.Engine
             //at.Status = TransitionStatus.COMPLETED;
             //2 retrieve data from transition
             TransferDataFromTransition(at);
-            //3 move the tokens
+            //3 cancel set handling
+            if (tsk.CancelSet.Count > 0)
+            {
+                log.Debug("Transition {0} ({1}) has cancel set with {2} elements", tsk.Id, at.CorrelationId, tsk.CancelSet.Count);
+                foreach (string placeId in tsk.CancelSet)
+                {
+                    IList<Token> tokensInPlace = GetTokensInPlace(placeId);
+                    foreach (Token tok in tokensInPlace)
+                    {
+                        if (tok.Status == TokenStatus.READY ||
+                            tok.Status == TokenStatus.LOCKED_ENABLED ||
+                            tok.Status == TokenStatus.LOCKED_ALLOCATED ||
+                            tok.Status == TokenStatus.WAITING)
+                        {
+                            log.Debug("Cancelling token {0} in place {1}", tok.TokenId, placeId);
+                            CancelToken(tok);
+                        }
+                    }
+                }
+            }
+            //4 move the tokens
             UpdateNetStatusAfterTransition(at);
-            //4 notify others
+            //5 notify others
             ActiveTransitionCompleted compl = new ActiveTransitionCompleted();
             compl.CorrelationId = at.CorrelationId;
             compl.InstanceId = this.InstanceId;
@@ -1118,6 +1138,38 @@ namespace NGinn.Engine
             compl.TimeStamp = DateTime.Now;
             compl.DefinitionId = this.ProcessDefinitionId;
             NotifyProcessEvent(compl);
+        }
+
+        /// <summary>
+        /// Cancellation handling. Removes token from its current place and cancels
+        /// all transitions that the token has enabled.
+        /// TODO: test it
+        /// </summary>
+        /// <param name="tok"></param>
+        private void CancelToken(Token tok)
+        {
+            if (tok.Status == TokenStatus.READY ||
+                tok.Status == TokenStatus.WAITING)
+            {
+                Debug.Assert(tok.ActiveTransitions.Count == 0); //ready or waiting token canot have transitions
+                tok.Status = TokenStatus.CANCELLED;
+            }
+            else if (tok.Status == TokenStatus.LOCKED_ALLOCATED ||
+                tok.Status == TokenStatus.LOCKED_ENABLED)
+            {
+                Debug.Assert(tok.ActiveTransitions.Count > 0); //must have at least one transition
+                foreach (string atId in tok.ActiveTransitions)
+                {
+                    ActiveTransition at = GetActiveTransition(atId);
+                    Debug.Assert(at.Status == TransitionStatus.ENABLED || at.Status == TransitionStatus.STARTED);
+                    log.Debug("Cancelling transition {0}  because token {1} ({2})is cancelled", at.CorrelationId, tok.TokenId, tok.PlaceId);
+                    CancelActiveTransition(at);
+                    //after transition is cancelled, token should return to 'READY' or 'WAITING' state
+                    Debug.Assert(tok.Status == TokenStatus.READY || tok.Status == TokenStatus.WAITING);
+                    tok.Status = TokenStatus.CANCELLED;
+                }
+            }
+            else throw new Exception("Invalid token status");
         }
 
         /// <summary>

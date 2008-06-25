@@ -461,6 +461,11 @@ namespace NGinn.Lib.Schema
                     msgs.Add(new ValidationMessage(false, t.Id, string.Format("Task {0} has no input flows", t.Id)));
                 if (t.NodesOut.Count == 0)
                     msgs.Add(new ValidationMessage(false, t.Id, string.Format("Task {0} has no output flows", t.Id)));
+                foreach (string placeId in t.CancelSet)
+                {
+                    if (this.GetPlace(placeId) == null)
+                        msgs.Add(new ValidationMessage(true, t.Id, string.Format("Task [{0}]: cancel set contains not defined place {1}", t.Id, placeId)));
+                }
             }
             //check for deferred-choice places. Should not have task successors with multiple in-flows (synchronization)
             foreach (Place p in Places)

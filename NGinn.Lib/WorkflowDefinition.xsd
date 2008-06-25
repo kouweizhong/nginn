@@ -51,6 +51,9 @@
   <xs:complexType name="Task">
     <xs:sequence>
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <!-- orJoinCheckList is a list of places that should be checked for tokens when performing OR join
+          This will become redundant after or-join analysis will be implemented -->
+      <xs:element name="orJoinCheckList" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:choice minOccurs="0" maxOccurs="1">
         <xs:element name="manualTask" type="ManualTask" />
         <xs:element name="scriptTask" type="ScriptTask" />
@@ -64,8 +67,8 @@
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
-    <xs:attribute name="joinType" type="JoinType" use="required" />
-    <xs:attribute name="splitType" type="JoinType" use="required" />
+    <xs:attribute name="joinType" type="JoinType" use="optional" /><!-- AND join by default -->
+    <xs:attribute name="splitType" type="JoinType" use="optional" /><!-- AND split by default -->
   </xs:complexType>
   <xs:complexType name="Flow">
     <xs:sequence>

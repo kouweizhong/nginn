@@ -20,13 +20,14 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public abstract class Task : NetNode
     {
-        private JoinType _joinType;
-        private JoinType _splitType;
+        private JoinType _joinType = JoinType.AND;
+        private JoinType _splitType = JoinType.AND;
         private List<VariableDef> _taskVariables = new List<VariableDef>();
         private List<VariableBinding> _inputBindings = new List<VariableBinding>();
         private List<VariableBinding> _outputBindings = new List<VariableBinding>();
         private bool _isMultiInstance = false;
-
+        private List<string> _cancelSet = new List<string>();
+        private List<string> _orJoinChecklist = new List<string>();
         /// <summary>
         /// Test if this is a multi-instance task
         /// </summary>
@@ -122,9 +123,9 @@ namespace NGinn.Lib.Schema
             if (tp == null) throw new Exception("Unknown task type: " + t);
             Task tsk = (Task)Activator.CreateInstance(tp);
             t = el.GetAttribute("joinType");
-            tsk.JoinType = (JoinType) Enum.Parse(typeof(JoinType), t);
+            if (t != null && t.Length > 0) tsk.JoinType = (JoinType) Enum.Parse(typeof(JoinType), t);
             t = el.GetAttribute("splitType");
-            tsk.SplitType = (JoinType)Enum.Parse(typeof(JoinType), t);
+            if (t != null && t.Length > 0) tsk.SplitType = (JoinType)Enum.Parse(typeof(JoinType), t);
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();
             List<VariableBinding> inputBind = new List<VariableBinding>();
@@ -229,6 +230,27 @@ namespace NGinn.Lib.Schema
                 sd.Members.Add(vd);
             }
             return sd;
+        }
+
+        /// <summary>
+        /// Task's cancel set. Contains a list of ids of places.
+        /// </summary>
+        public IList<string> CancelSet
+        {
+            get { return _cancelSet;  }
+        }
+
+        /// <summary>
+        /// OR join checklist. List of places that should be checked for 
+        /// tokens when performing OR join. This will become redundant 
+        /// after OR-join analysis will be implemented.
+        /// </summary>
+        public IList<string> ORJoinChecklist
+        {
+            get
+            {
+                return _orJoinChecklist;
+            }
         }
     }
 }
