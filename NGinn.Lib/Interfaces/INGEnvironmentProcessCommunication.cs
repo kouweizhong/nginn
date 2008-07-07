@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using NGinn.Lib.Data;
 namespace NGinn.Lib.Interfaces
 {
     /// <summary>

@@ -17,6 +17,11 @@ namespace NGinn.Engine.Runtime.MessageBus
         public string Sender;
         public string Topic;
         public object Body;
+
+        public override string ToString()
+        {
+            return string.Format("Message [Topic: {0}, Sender: {1}, Body: {2} ({3})]", Topic, Sender, Body != null ? Body.GetType().Name : "", Body != null ? Body.ToString() : "");
+        }
     }
 
     

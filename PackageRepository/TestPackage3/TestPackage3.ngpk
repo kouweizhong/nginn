@@ -8,5 +8,6 @@
         <process>TimerTask.xml</process>
         <process>TimerTask2.xml</process>
         <process>TimerTask3.xml</process>
+        <process>XORRoute1.xml</process>
 	</processDefinitions>
 </package>

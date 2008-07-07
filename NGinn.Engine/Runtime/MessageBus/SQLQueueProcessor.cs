@@ -582,9 +582,9 @@ namespace NGinn.Engine.Runtime.MessageBus
                             Hashtable headers = new Hashtable();
                             headers["id"] = id;
                             msg_body = SerializationUtil.Deserialize(msg_data, _contentType);
-                            log.Info("Deserialized message {0}: {1}", id, msg_body);
+                            log.Debug("Deserialized message {0}: {1}", id, msg_body.ToString());
                             _handler.HandleMessage(msg_body, headers);
-                            log.Info("Message {0} processed successfully", id);
+                            log.Debug("Message {0} processed successfully", id);
                             MarkMessageProcessed(id, mylock, trans);
                         }
                         catch (ThreadAbortException)

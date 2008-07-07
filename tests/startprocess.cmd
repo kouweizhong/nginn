@@ -1,0 +1,1 @@
+c:\tools\curl.exe -d @%2 -H "Content-Type: text/xml" http://localhost/nginn/sys/startprocess.aspx?definitionId=%1

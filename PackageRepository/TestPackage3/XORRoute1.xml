@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="XORRoute" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+  <!-- test of XOR split with an input condition -->
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    <task id="init" type="EmptyTask" joinType="AND" splitType="XOR">
+	</task>
+    <task id="t1" type="EmptyTask" joinType="XOR">
+	</task>
+    <task id="t2" type="EmptyTask" joinType="XOR">
+	</task>
+  </tasks>
+  <flows>
+    <flow from="start" to="init" />
+    <flow from="init" to="t1" evalOrder="1">
+        <inputCondition>value == 'T1'</inputCondition>
+    </flow>
+    <flow from="init" to="t2" evalOrder="-1"/><!-- default flow -->
+    <flow from="t1" to="end" />
+    <flow from="t2" to="end" />
+</flows>
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+		<variable name="value" type="string" required="true" dir="In" />
+    </variables>
+</process>

@@ -112,6 +112,7 @@
     <Content Include="sys\index.htm" />
     <Content Include="sys\StartProcess.aspx" />
     <Content Include="SubmitXml.aspx" />
+    <Content Include="sys\UpdateTaskJSON.aspx" />
     <Content Include="sys\UpdateTaskXml.aspx" />
     <Content Include="TaskForm.aspx" />
     <Content Include="tasks\classes.js" />
@@ -179,6 +180,10 @@
     </Compile>
     <Compile Include="SubmitXml.aspx.designer.cs">
       <DependentUpon>SubmitXml.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="sys\UpdateTaskJSON.aspx.cs">
+      <DependentUpon>UpdateTaskJSON.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\UpdateTaskXml.aspx.cs">
       <DependentUpon>UpdateTaskXml.aspx</DependentUpon>
