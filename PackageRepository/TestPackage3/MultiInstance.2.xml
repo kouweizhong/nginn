@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="MultiInstance" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    <task id="init" type="TimerTask" multiInstance="true">
+        <timerTask>
+            <delayTime>00:01:00</delayTime>
+        </timerTask>
+        <data-definition>
+            <variables> 
+                <variable name="requestorName" type="string" isArray="false" required="true" dir="In" />
+            </variables>
+            <multi-instance>
+                <foreach query="requestorName" variableName="RQ" />
+                <resultsVariable>wyniki</resultsVariable>
+            </multi-instance>
+            <input-bindings>
+                <binding variable="requestorName" bindingType="Expr"><expression>RQ</expression></binding>
+            </input-bindings>
+        </data-definition>
+	</task>
+  </tasks>
+  <flows>
+    <flow from="start" to="init" />
+    <flow from="init" to="end" />
+</flows>
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+		<variable name="requestorName" type="string" isArray="true" required="true" dir="In" />
+    </variables>
+</process>

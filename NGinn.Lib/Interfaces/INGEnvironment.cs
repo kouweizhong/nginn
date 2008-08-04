@@ -64,5 +64,12 @@ namespace NGinn.Lib.Interfaces
         /// </summary>
         /// <param name="instanceId"></param>
         void CancelProcessInstance(string instanceId);
+
+        /// <summary>
+        /// Return task instance data
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        DataObject GetTaskData(string correlationId);
     }
 }

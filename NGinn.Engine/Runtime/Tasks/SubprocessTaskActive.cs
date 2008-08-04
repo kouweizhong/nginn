@@ -19,8 +19,8 @@ namespace NGinn.Engine.Runtime.Tasks
         [NonSerialized]
         private SubprocessTask _task;
 
-        public SubprocessTaskActive(SubprocessTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public SubprocessTaskActive(SubprocessTask tsk)
+            : base(tsk)
         {
             _subprocessInstanceId = tsk.SubprocessDefinitionId;
         }

@@ -85,19 +85,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
     <Compile Include="Runtime\MessageBus\ReliableMessageBus.cs" />
     <Compile Include="Runtime\MessageBus\SimplePublisher.cs" />
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\NGEngine.cs" />
+    <Compile Include="Runtime\Tasks\ActiveTaskBase.cs" />
     <Compile Include="Runtime\Tasks\ActiveTransition.cs" />
-    <Compile Include="Runtime\Tasks\ActiveTransitionFactory.cs" />
+    <Compile Include="Runtime\Tasks\ActiveTaskFactory.cs" />
     <Compile Include="DataBinding.cs" />
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
-    <Compile Include="Runtime\Tasks\ITransitionCallback.cs" />
+    <Compile Include="Runtime\IActiveTask.cs" />
+    <Compile Include="Runtime\ITransitionCallback.cs" />
     <Compile Include="Runtime\Tasks\ManualTaskActive.cs" />
     <Compile Include="Runtime\Tasks\MultiInstanceTaskActive.cs" />
+    <Compile Include="Runtime\MultiTaskShell.cs" />
     <Compile Include="Runtime\Tasks\NotificationTaskActive.cs" />
     <Compile Include="ProcessEvents.cs" />
     <Compile Include="ProcessInstance.cs" />
@@ -106,11 +110,13 @@
     <Compile Include="Runtime\ProcessDefinitionRepository.cs" />
     <Compile Include="Runtime\ProcessPackageRepository.cs" />
     <Compile Include="Runtime\Tasks\ScriptTaskActive.cs" />
+    <Compile Include="Runtime\TaskShell.cs" />
     <Compile Include="Runtime\Tasks\TimerTaskActive.cs" />
     <Compile Include="Runtime\XmlProcessingUtil.cs" />
     <Compile Include="Services\Dao\INGDataSession.cs" />
     <Compile Include="Services\Dao\INGDataStore.cs" />
     <Compile Include="Runtime\NGEnvironment.cs" />
+    <Compile Include="Services\IActiveTaskFactory.cs" />
     <Compile Include="Services\IProcessDefinitionRepository.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />

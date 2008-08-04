@@ -54,7 +54,7 @@ namespace NGinn.Engine
         [NonSerialized]
         private INGEnvironmentContext _environment;
         [NonSerialized]
-        private ActiveTaskFactory _transitionFactory;
+        private ActiveTransitionFactory _transitionFactory;
         /// <summary>map: correlation id->transition</summary>
         private IDictionary<string, TaskShell> _activeTransitions = new Dictionary<string, TaskShell>();
         /// <summary>helper map: task id -> list of active instances of the task</summary>
@@ -535,7 +535,7 @@ namespace NGinn.Engine
             if (_activated) throw new Exception("Process instance already activated");
             if (Environment == null) throw new Exception("Environment not initialized. Please set the 'Environment' property");
             log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
-            _transitionFactory = new ActiveTaskFactory();
+            _transitionFactory = new ActiveTransitionFactory();
             _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
             if (_processDataXmlString != null)
             {
@@ -976,30 +976,39 @@ namespace NGinn.Engine
             return new XmlNamespaceManager(_processData.NameTable);
         }
 
-        
-        
+        internal MultiInstanceTaskActive CreateMultiInstanceTransitionForTask(Task tsk)
+        {
+            MultiInstanceTaskActive mit = new MultiInstanceTaskActive(tsk);
+            mit.CorrelationId = GetNextTransitionId();
+            mit.ProcessInstanceId = this.InstanceId;
+            mit.SetProcessInstance(this);
+            mit.ContainerCallback = this;
+            return mit;
+        }
+
+        internal ActiveTransition CreateSingleInstanceTransitionForTask(Task tsk)
+        {
+            ActiveTransition at = _transitionFactory.CreateTransition(tsk);
+            at.ProcessInstanceId = this.InstanceId;
+            at.CorrelationId = GetNextTransitionId();
+            at.SetProcessInstance(this);
+            at.ContainerCallback = this;
+            return at;
+        }
         
 
         private TaskShell CreateActiveTransitionForTask(Task tsk)
         {
             if (tsk.IsMultiInstance)
             {
-                MultiTaskShell mts = new MultiTaskShell(this, tsk);
-                mts.CorrelationId = GetNextTransitionId();
-                mts.ProcessInstanceId = this.InstanceId;
-                mts.SetProcessInstance(this);
-                mts.ParentCallback = this;
-                return mts;
+                
+                //return CreateMultiInstanceTransitionForTask(tsk);
+                return new TaskShell();
             }
             else
             {
-
-                TaskShell ts = new TaskShell(this, tsk);
-                ts.CorrelationId = GetNextTransitionId();
-                ts.ProcessInstanceId = this.InstanceId;
-                ts.SetProcessInstance(this);
-                ts.ParentCallback = this;
-                return ts;
+                //return CreateSingleInstanceTransitionForTask(tsk);
+                return new TaskShell();
             }
         }
 

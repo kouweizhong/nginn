@@ -19,6 +19,9 @@
         <timerTask>
             <delayTime>00:01:00</delayTime>
         </timerTask>
+        <parameter-bindings>
+            <binding parameter="DelayTime" type="Literal">28.00</binding>
+        </parameter-bindings>
     </task>
     
   </tasks>

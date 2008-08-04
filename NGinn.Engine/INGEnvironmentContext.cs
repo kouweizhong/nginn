@@ -20,6 +20,11 @@ namespace NGinn.Engine
         {
             get;
         }
+
+        IActiveTaskFactory ActiveTaskFactory
+        {
+            get;
+        }
          
 
         INGDataStore DataStore
@@ -38,6 +43,11 @@ namespace NGinn.Engine
         }
 
         IMessageBus MessageBus
+        {
+            get;
+        }
+
+        IResourceManager ResourceManager
         {
             get;
         }

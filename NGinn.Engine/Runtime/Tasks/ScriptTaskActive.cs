@@ -11,8 +11,8 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     public class ScriptTaskActive : ActiveTransition
     {
-        public ScriptTaskActive(ScriptTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public ScriptTaskActive(ScriptTask tsk)
+            : base(tsk)
         {
         }
 

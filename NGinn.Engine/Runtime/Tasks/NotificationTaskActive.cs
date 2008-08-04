@@ -11,8 +11,8 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     public class NotificationTaskActive : ActiveTransition
     {
-        public NotificationTaskActive(NotificationTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public NotificationTaskActive(NotificationTask tsk)
+            : base(tsk)
         {
 
         }

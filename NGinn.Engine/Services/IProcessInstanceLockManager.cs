@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Spring.Threading;
 
 namespace NGinn.Engine.Services
 {
@@ -15,5 +16,6 @@ namespace NGinn.Engine.Services
         /// <returns></returns>
         bool TryAcquireLock(string instanceId, int timeout);
         void ReleaseLock(string instanceId);
+
     }
 }

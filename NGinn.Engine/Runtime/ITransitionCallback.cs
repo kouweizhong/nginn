@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NGinn.Engine.Runtime.Tasks
+namespace NGinn.Engine.Runtime
 {
     /// <summary>
     /// Interface for reporting transition status 

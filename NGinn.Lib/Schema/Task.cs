@@ -25,9 +25,14 @@ namespace NGinn.Lib.Schema
         private List<VariableDef> _taskVariables = new List<VariableDef>();
         private List<VariableBinding> _inputBindings = new List<VariableBinding>();
         private List<VariableBinding> _outputBindings = new List<VariableBinding>();
+        
         private bool _isMultiInstance = false;
         private List<string> _cancelSet = new List<string>();
         private List<string> _orJoinChecklist = new List<string>();
+        private List<TaskParameterBinding> _parameterBindings = new List<TaskParameterBinding>();
+        private string _multiInstQuery;
+        private string _multiInstVariable;
+        private string _multiInstResultVariable;
         /// <summary>
         /// Test if this is a multi-instance task
         /// </summary>
@@ -36,14 +41,32 @@ namespace NGinn.Lib.Schema
             get { return _isMultiInstance; }
         }
 
+        /// <summary>
+        /// Expression that will return an IEnumerable that will be used
+        /// as data provider for multi-instance tasks
+        /// </summary>
         public string MultiInstanceSplitQuery
         {
-            get { return null; }
+            get { return _multiInstQuery; }
+            set { _multiInstQuery = value; }
         }
 
+        /// <summary>
+        /// Variable that will hold data element returned by the multi instance split query
+        /// </summary>
+        public string MultiInstanceInputVariable
+        {
+            get { return _multiInstVariable; }
+            set { _multiInstVariable = value; }
+        }
+
+        /// <summary>
+        /// Name of variable that will receive multi-instance results
+        /// </summary>
         public string MultiInstanceResultVariable
         {
-            get { return null; }
+            get { return _multiInstResultVariable; }
+            set { _multiInstResultVariable = value; }
         }
 
         public JoinType JoinType
@@ -126,6 +149,8 @@ namespace NGinn.Lib.Schema
             if (t != null && t.Length > 0) tsk.JoinType = (JoinType) Enum.Parse(typeof(JoinType), t);
             t = el.GetAttribute("splitType");
             if (t != null && t.Length > 0) tsk.SplitType = (JoinType)Enum.Parse(typeof(JoinType), t);
+            t = el.GetAttribute("multiInstance");
+            if (t != null && t.Length > 0) tsk._isMultiInstance = Boolean.Parse(t);
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();
             List<VariableBinding> inputBind = new List<VariableBinding>();
@@ -134,7 +159,16 @@ namespace NGinn.Lib.Schema
             foreach (VariableDef vd in variables) tsk.AddTaskVariable(vd);
             foreach (VariableBinding vb in inputBind) tsk.InputBindings.Add(vb);
             foreach (VariableBinding vb in outputBind) tsk.OutputBindings.Add(vb);
-            
+            if (tsk.IsMultiInstance)
+            {
+                XmlElement multInst = (XmlElement) data.SelectSingleNode(pr + "multi-instance", nsmgr);
+                if (multInst == null) throw new ApplicationException("Missing multi instance binding definition for task " + tsk.Id);
+                XmlElement tmp = (XmlElement) multInst.SelectSingleNode(pr + "foreach", nsmgr);
+                if (tmp == null) throw new Exception("Missing 'foreach' in multi-instance");
+                tsk.MultiInstanceSplitQuery = tmp.GetAttribute("query");
+                tsk.MultiInstanceInputVariable = tmp.GetAttribute("variableName");
+                tsk.MultiInstanceResultVariable = SchemaUtil.GetXmlElementText(multInst, pr + "resultsVariable", nsmgr);
+            }
             tsk.LoadXml(el, nsmgr);
             return tsk;
         }
@@ -251,6 +285,16 @@ namespace NGinn.Lib.Schema
             {
                 return _orJoinChecklist;
             }
+        }
+
+        public virtual TaskParameterInfo[] GetTaskParameters()
+        {
+            return null;
+        }
+
+        public virtual IList<TaskParameterBinding> ParameterBindings
+        {
+            get { return _parameterBindings; }
         }
     }
 }

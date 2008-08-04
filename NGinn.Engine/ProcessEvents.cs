@@ -28,6 +28,7 @@ namespace NGinn.Engine
     {
         public string TaskId;
         public string TaskType;
+        public bool MultiInstance = false;
     }
 
     [Serializable]

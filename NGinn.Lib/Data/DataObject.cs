@@ -99,6 +99,7 @@ namespace NGinn.Lib.Data
 
         public DataObject(IDictionary dic) 
         {
+            if (dic == null) return;
             foreach (string key in dic.Keys)
             {
                 this.Add(key, dic[key]);
@@ -198,6 +199,12 @@ namespace NGinn.Lib.Data
             else return obj;
         }
 
+        /// <summary>
+        /// TODO:skonczyc
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="index"></param>
+        /// <param name="newValue"></param>
         public void Set(string name, object[] index, object newValue)
         {
             if (index != null && index.Length > 0) throw new Exception("Indexed setter not implemented");
@@ -460,7 +467,8 @@ namespace NGinn.Lib.Data
                 }
                 else
                 {
-                    if (recordType.ParentTypeSet.IsBasicType(md.TypeName))
+                    if (recordType.ParentTypeSet.IsBasicType(md.TypeName) ||
+                        recordType.ParentTypeSet.IsEnumType(md.TypeName))
                     {
                         ValidateSingleObject(md.Name, v, mType);
                     }
@@ -496,8 +504,16 @@ namespace NGinn.Lib.Data
             else if (td is SimpleTypeDef)
             {
                 SimpleTypeDef std = (SimpleTypeDef)td;
-                
             }
+            else if (td is EnumDef)
+            {
+                EnumDef ed = (EnumDef)td;
+                if (!ed.EnumValues.Contains(v))
+                {
+                    throw new ApplicationException(string.Format("Value {0} not defined in enum {1}", v, ed.Name));
+                }
+            }
+            else throw new Exception();
         }
 
         public void Validate()

@@ -9,5 +9,8 @@
         <process>TimerTask2.xml</process>
         <process>TimerTask3.xml</process>
         <process>XORRoute1.xml</process>
+        <process>DataStructs.1.xml</process>
+        <process>MultiInstance.1.xml</process>
+        <process>MultiInstance.2.xml</process>
 	</processDefinitions>
 </package>

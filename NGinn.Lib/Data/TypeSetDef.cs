@@ -41,6 +41,13 @@ namespace NGinn.Lib.Data
             return false;
         }
 
+        public bool IsEnumType(string typeName)
+        {
+            TypeDef td = GetTypeDef(typeName);
+            if (td is EnumDef) return true;
+            return false;
+        }
+
         public bool IsTypeDefined(string typeName)
         {
             return _types.ContainsKey(typeName);
@@ -68,7 +75,7 @@ namespace NGinn.Lib.Data
         public void AddTypes(ICollection<TypeDef> types)
         {
             ValidationCtx ctx = new ValidationCtx();
-            foreach (StructDef sd in types)
+            foreach (TypeDef sd in types)
             {
                 if (IsTypeDefined(sd.Name)) throw new ApplicationException("Type already defined: " + sd.Name);
                 ctx.NewTypes.Add(sd.Name, sd);
@@ -116,6 +123,10 @@ namespace NGinn.Lib.Data
                     }
                 }
             }
+            else if (td is EnumDef)
+            {
+                EnumDef ed = (EnumDef)td;
+            }
             else throw new Exception();
         }
 
@@ -144,11 +155,21 @@ namespace NGinn.Lib.Data
         {
             string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
             pr = (pr != null && pr.Length > 0) ? pr + ":" : "";
-            foreach (XmlElement el in rootNode.SelectNodes(pr + "struct", nsmgr))
+            foreach (XmlElement el in rootNode.ChildNodes)
             {
-                StructDef sd = new StructDef();
-                sd.LoadFromXml(el, nsmgr);
-                AddType(sd);
+                if (el.LocalName == "struct")
+                {
+                    StructDef sd = new StructDef();
+                    sd.LoadFromXml(el, nsmgr);
+                    AddType(sd);
+                }
+                else if (el.LocalName == "enum")
+                {
+                    EnumDef ed = new EnumDef();
+                    ed.LoadFromXml(el, nsmgr);
+                    AddType(ed);
+                }
+                else throw new Exception("Unexpected node: " + el.Name);
             }
         }
 

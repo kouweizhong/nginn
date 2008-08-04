@@ -32,43 +32,31 @@ namespace NGinn.Lib.Schema
             set { _descrTemplate = value; }
         }
 
-        public TaskAssignmentStrategy AssignmentStrategy
+        public string SelectionStrategy
         {
-            get { return _assignmentStrategy; }
-            set { _assignmentStrategy = value; }
+            get { return null; }
         }
+
 
         public override bool IsImmediate
         {
             get { return false; }
         }
 
-        public enum InitialTaskStatus
-        {
-            Offered,
-            Assigned
-        }
-
-        /// <summary>
-        /// Query syntax: TBD
-        /// </summary>
-        public string TaskAssigneeQuery
-        {
-            get { return _assigneeQuery; }
-            set { _assigneeQuery = value; }
-        }
-
-        public string ExcludeAssignees
-        {
-            get { return null; }
-            set { }
-        }
-
-        public string AssigneeSelectionFunction
+        public string AssigneeGroup
         {
             get { return null; }
         }
 
+        public string[] ExcludePeople
+        {
+            get { return null; }
+        }
+
+        public string Assignee
+        {
+            get { return null; }
+        }
 
     }
 }

@@ -4,20 +4,31 @@ using System.Text;
 using NGinn.Lib.Interfaces.MessageBus;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
+using NLog;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
     [Serializable]
-    public class TimerTaskActive : ActiveTransition
+    public class TimerTaskActive : ActiveTaskBase
     {
         private DateTime _expirationTime;
+        private TimeSpan _delayAmount;
+        private static Logger log = LogManager.GetCurrentClassLogger();
 
-        public TimerTaskActive(TimerTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public TimerTaskActive(Task tsk)
+            : base(tsk)
         {
 
         }
 
+        [TaskParameter(IsInput=true, Required=true, DynamicAllowed=true)]
+        public TimeSpan DelayAmount
+        {
+            get { return _delayAmount; }
+            set { _delayAmount = value; }
+        }
+
+        [TaskParameter(IsInput = false, Required = false, DynamicAllowed = true)]
         public DateTime ExpirationTime
         {
             get { return _expirationTime; }
@@ -28,24 +39,23 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return false; }
         }
 
-        protected override void DoInitiateTask()
+        public override void InitiateTask()
         {
-            TimerTask tt = (TimerTask)ProcessTask;
-            TimeSpan ts = TimeSpan.Parse(tt.DelayAmount);
+            _expirationTime = DateTime.Now + DelayAmount;
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;
             tex.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(this.CorrelationId);
-            tex.ExpirationDate = DateTime.Now + ts;
+            tex.ExpirationDate = _expirationTime;
             log.Debug("Timer task {0} expiration date: {1}", CorrelationId, tex.ExpirationDate);
-            this._processInstance.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
+            Context.ParentProcess.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
         }
 
-        protected override void DoCancelTask()
+        public override void CancelTask()
         {
             
         }
 
-        protected override void DoExecuteTask()
+        public override void ExecuteTask()
         {
             throw new NotImplementedException();
         }
@@ -58,11 +68,10 @@ namespace NGinn.Engine.Runtime.Tasks
             if (ite is TimerExpiredEvent)
             {
                 TimerExpiredEvent ev = (TimerExpiredEvent)ite;
-                if (this.Status == TransitionStatus.ENABLED ||
-                    this.Status == TransitionStatus.STARTED)
+                if (Context.Status == TransitionStatus.ENABLED ||
+                    Context.Status == TransitionStatus.STARTED)
                 {
-                    this.Status = TransitionStatus.COMPLETED;
-                    _containerCallback.TransitionCompleted(CorrelationId);
+                    Context.TransitionCompleted(this.CorrelationId);
                 }
                 else
                 {

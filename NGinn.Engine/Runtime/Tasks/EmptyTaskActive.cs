@@ -10,24 +10,25 @@ namespace NGinn.Engine.Runtime.Tasks
     /// Empty (routing-only) task.
     /// </summary>
     [Serializable]
-    public class EmptyTaskActive : ActiveTransition
+    public class EmptyTaskActive : ActiveTaskBase
     {
-        public EmptyTaskActive(EmptyTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public EmptyTaskActive(Task tsk)
+            : base(tsk)
         {
 
         }
 
-        protected override void DoCancelTask()
+        public override void CancelTask()
+        {
+            
+        }
+
+        public override void InitiateTask()
         {
         }
 
-        protected override void DoExecuteTask()
-        {   
-        }
-
-        protected override void DoInitiateTask()
-        {   
+        public override void ExecuteTask()
+        {
         }
     }
 

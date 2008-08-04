@@ -62,14 +62,20 @@
         <xs:element name="timerTask" type="TimerTask" />
         <xs:element name="externalTask" type="ExternalTask" />
         <xs:element name="notificationTask" type="NotificationTask" />
+        <!-- add custom task type here -->
       </xs:choice>
-      <xs:element name="data-definition" type="DataDefinition" minOccurs="0" maxOccurs="1" />
+      <!-- task variable and data-binding definitions -->
+      <xs:element name="data-definition" type="TaskDataDefinition" minOccurs="0" maxOccurs="1" />
+      <!-- task runtime parameter bindings -->
+      <xs:element name="parameter-bindings" type="ParameterBindings" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
     <xs:attribute name="joinType" type="JoinType" use="optional" /><!-- AND join by default -->
     <xs:attribute name="splitType" type="JoinType" use="optional" /><!-- AND split by default -->
+    <xs:attribute name="multiInstance" type="xs:boolean" use="optional" /><!-- task is multi-instance -->
   </xs:complexType>
+  
   <xs:complexType name="Flow">
     <xs:sequence>
       <xs:element name="inputCondition" type="xs:string" minOccurs="0" maxOccurs="1" />
@@ -108,6 +114,7 @@
       <xs:enumeration value="ExternalTask" />
       <xs:enumeration value="NotificationTask" />
       <xs:enumeration value="EmptyTask" />
+      <xs:enumeration value="CustomTask" />
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="Place">
@@ -171,6 +178,7 @@
       <xs:enumeration value="Expr" />
     </xs:restriction>
   </xs:simpleType>
+  <!-- task/process data binding for variables -->
   <xs:complexType name="VariableBinding">
     <xs:sequence>
       <xs:choice minOccurs="0" maxOccurs="1">
@@ -189,8 +197,24 @@
     <xs:attribute name="sourceVariable" type="xs:string" use="optional" />
   </xs:complexType>
   
-  <xs:complexType name="DataDefinition">
+  
+  <xs:complexType name="MultiInstanceDataDefinition">
     <xs:sequence>
+      <xs:choice>
+        <xs:element name="foreach">
+          <xs:complexType>
+            <xs:attribute name="query" type="xs:string" use="required" />
+            <xs:attribute name="variableName" type="xs:string" use="required"  />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="resultsVariable" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="TaskDataDefinition">
+    <xs:sequence>
+      
       <xs:element name="variables" minOccurs="0" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
@@ -198,6 +222,8 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="multi-instance" minOccurs="0" maxOccurs="1" type="MultiInstanceDataDefinition" />
+      
       <xs:element name="input-bindings" minOccurs="0" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
@@ -212,13 +238,18 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      
     </xs:sequence>
   </xs:complexType>
   <!-- definition of type set -->
   <xs:complexType name="TypeSetDef">
     <xs:sequence>
-      <xs:element name="struct" type="StructDef" minOccurs="0" maxOccurs="unbounded" />
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="struct" type="StructDef"  />
+        <xs:element name="enum" type="EnumDef" />
+      </xs:choice>
     </xs:sequence>
+    
   </xs:complexType>
   <!-- data record definition -->
   <xs:complexType name="StructDef">
@@ -227,6 +258,15 @@
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required" />
   </xs:complexType>
+  
+  <!-- enum type definition -->
+  <xs:complexType name="EnumDef">
+    <xs:sequence>
+      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+  
   <!-- struct member definition -->
   <xs:complexType name="MemberDef">
     <xs:attribute name="name" type="xs:string" use="required" />
@@ -244,6 +284,20 @@
         <xs:attribute name="dir" type="VariableDir" use="required" />
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ParameterBinding" mixed="true">
+    <xs:sequence>
+      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="parameter" type="xs:string" use="required" />
+    <xs:attribute name="type" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="ParameterBindings">
+    <xs:sequence>
+      <xs:element name="binding" type="ParameterBinding" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
   </xs:complexType>
   
   <xs:element name="process" type="Process" />

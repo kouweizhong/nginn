@@ -28,6 +28,9 @@ namespace NGinn.Engine.Runtime
         private IProcessInstanceLockManager _lockManager;
         private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
         private IMessageBus _mbus;
+        private IResourceManager _resMgr;
+        private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
+
         private bool _markErrors = true;
 
         public NGEnvironment()
@@ -41,6 +44,12 @@ namespace NGinn.Engine.Runtime
         {
             get { return _definitionRepository; }
             set { _definitionRepository = value; }
+        }
+
+        public IActiveTaskFactory ActiveTaskFactory
+        {
+            get { return _activeTaskFactory; }
+            set { _activeTaskFactory = value; }
         }
 
         public IProcessInstanceRepository InstanceRepository
@@ -79,6 +88,12 @@ namespace NGinn.Engine.Runtime
                     _mbus.SubscribeObject(this);
                 }
             }
+        }
+
+        public IResourceManager ResourceManager
+        {
+            get { return _resMgr; }
+            set { _resMgr = value; }
         }
 
         public IDictionary<string, object> EnvironmentVariables
@@ -348,6 +363,35 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+
+
+        public DataObject GetTaskData(string correlationId)
+        {
+            string instanceId = correlationId.Substring(0, correlationId.IndexOf('.'));
+            log.Info("Task selected in process {0}. Id: {1}", instanceId, correlationId);
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    return new DataObject(pi.GetTaskData(correlationId));
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
+        
 
         /// <summary>
         /// Handle internal process events coming from the message bus

@@ -12,8 +12,8 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     class ManualTaskActive : ActiveTransition
     {
-        public ManualTaskActive(ManualTask tsk, ProcessInstance pi)
-            : base(tsk, pi)
+        public ManualTaskActive(ManualTask tsk)
+            : base(tsk)
         {
          
         }

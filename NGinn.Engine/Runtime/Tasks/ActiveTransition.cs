@@ -12,14 +12,7 @@ using ScriptNET;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
-    public enum TransitionStatus
-    {
-        ENABLED,    //transition task created & offered (also for deferred choice to be selected)
-        STARTED,    //transition task started (deferred choice alternative has been selected)
-        COMPLETED,  //task finished
-        CANCELLED,  //task cancelled (other transition sharing the same token fired)
-        ERROR,      //task did not complete due to error
-    }
+    
 
     /// <summary>
     /// Represents an 'active' counterpart of workflow transition (Task). Task is a definition of an activity, and
@@ -45,8 +38,8 @@ namespace NGinn.Engine.Runtime.Tasks
         protected ProcessInstance _processInstance;
         [NonSerialized]
         protected ITransitionCallback _containerCallback;
-        [NonSerialized]
-        protected Logger log = LogManager.GetCurrentClassLogger();
+        
+        protected static Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
         private bool _activated = false;
         /// <summary>task data</summary>
@@ -54,17 +47,15 @@ namespace NGinn.Engine.Runtime.Tasks
         /// <summary>Serialized task xml data</summary>
         private string _taskDataXml;
         
-        public ActiveTransition(Task tsk, ProcessInstance pi)
+        public ActiveTransition(Task tsk)
         {
             this.Status = TransitionStatus.ENABLED;
             this.TaskId = tsk.Id;
-            this._processInstance = pi;
-            this.ProcessInstanceId = pi.InstanceId;
         }
 
         public virtual void SetProcessInstance(ProcessInstance pi)
         {
-            if (this.ProcessInstanceId != pi.InstanceId) throw new ApplicationException("Invalid process instance ID");
+            if (this.ProcessInstanceId != null && this.ProcessInstanceId != pi.InstanceId) throw new ApplicationException("Invalid process instance ID");
             this._processInstance = pi;
         }
 
@@ -75,6 +66,12 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             get { return _correlationId; }
             set { ActivationRequired(false); _correlationId = value; }
+        }
+
+        public ITransitionCallback ContainerCallback
+        {
+            get { return _containerCallback; }
+            set { _containerCallback = value; }
         }
 
         /// <summary>
@@ -133,13 +130,12 @@ namespace NGinn.Engine.Runtime.Tasks
             return _taskData;
         }
 
-        protected IScriptContext CreateTaskScriptContext()
+        protected IScriptContext CreateTaskScriptContext(IDataObject dob)
         {
             IScriptContext ctx = new ScriptContext();
             ctx.SetItem("_taskDef", ContextItem.Variable, ProcessTask);
             ctx.SetItem("_task", ContextItem.Variable, this);
             ctx.SetItem("_log", ContextItem.Variable, log);
-            IDataObject dob = GetTaskVariablesContainer();
             foreach (string fn in dob.FieldNames)
             {
                 ctx.SetItem(fn, ContextItem.Variable, dob[fn]);
@@ -147,6 +143,40 @@ namespace NGinn.Engine.Runtime.Tasks
             return ctx;
         }
 
+        protected IScriptContext CreateTaskScriptContext()
+        {
+            return CreateTaskScriptContext(GetTaskVariablesContainer());
+        }
+
+        /// <summary>
+        /// Execute input data bindings for the task. Retrieves task input data from dataSource
+        /// according to task's input data bindings.
+        /// </summary>
+        public virtual void TransferInputDataToTask(IDataObject dataSource)
+        {
+            IScriptContext ctx = CreateTaskScriptContext(dataSource);
+            DataObject taskInput = new DataObject();
+            DataBinding.ExecuteDataBinding(taskInput, ProcessTask.InputBindings, ctx);
+            this.SetTaskInputData(taskInput);
+        }
+
+        /// <summary>
+        /// Transfer output data from task to dataTarget. Puts task output data to dataTarget according
+        /// to task's output data bindings.
+        /// </summary>
+        /// <param name="dataTarget"></param>
+        public virtual void ReceiveOutputDataFromTask(IDataObject dataTarget)
+        {
+            IDataObject dob = this.GetTaskOutputData();
+            IScriptContext ctx = CreateTaskScriptContext(dob);
+            DataBinding.ExecuteDataBinding(dataTarget, ProcessTask.OutputBindings, ctx);
+        }
+
+
+        /// <summary>
+        /// Set task input data (validation included)
+        /// </summary>
+        /// <param name="inputData"></param>
         public virtual void SetTaskInputData(IDataObject inputData)
         {
             StructDef sd = ProcessTask.GetTaskInputDataSchema();
@@ -175,6 +205,10 @@ namespace NGinn.Engine.Runtime.Tasks
             _taskData = taskData;
         }
 
+        /// <summary>
+        /// Return task output data
+        /// </summary>
+        /// <returns></returns>
         public virtual IDataObject GetTaskOutputData()
         {
             StructDef sd = ProcessTask.GetTaskOutputDataSchema();
@@ -193,7 +227,7 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
         /// <summary>
-        /// Return current task data
+        /// Return current task data (full set of task variables)
         /// </summary>
         /// <returns></returns>
         public virtual IDataObject GetTaskData()
@@ -356,11 +390,6 @@ namespace NGinn.Engine.Runtime.Tasks
         }
     }
 
-    [Serializable]
-    public class InternalTransitionEvent
-    {
-        public string ProcessInstanceId;
-        public string CorrelationId;
-    }
+    
     
 }

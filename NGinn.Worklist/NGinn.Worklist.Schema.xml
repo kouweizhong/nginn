@@ -13,7 +13,9 @@
 			<field name="Name" dbcolumn="name" type="String" size="100" nullable="false" />
 			<field name="Email" dbcolumn="email" type="String" size="50" nullable="true" />
 		</table>
-	</class>
+    <collectionManyToMany name="Users" relation="Users2Groups" masterField="1" />
+
+  </class>
 	
 	<class name="Group" datasource="nginn.worklist">
 		<table name="GroupDb">
@@ -24,7 +26,9 @@
 			<field name="Supervisor" dbcolumn="supervisor" type="Integer" references="User" />
 			<field name="Email" dbcolumn="email" type="String" size="50" nullable="true" />
 		</table>
-	</class>
+    <collectionManyToMany name="Members" relation="Users2Groups" masterField="0" />
+
+  </class>
 	
 	<class name="GroupHierarchy" datasource="nginn.worklist">
 		<table name="GroupHierarchy">
@@ -65,4 +69,13 @@
     <const key="4" name="Completed" />
     <const key="5" name="Cancelled" />
   </class>
+
+  <relation name="Users2Groups">
+    <table name="Users2Groups">
+      <field name="User" dbcolumn="user_id" type="Integer" primaryKey="true" references="User" />
+      <field name="Group" dbcolumn="group_id" type="Integer" primaryKey="true" references="Group" />
+    </table>
+  </relation>
+  
+
 </schema>

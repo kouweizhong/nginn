@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="DataStructs" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+  <!-- test of data structures -->
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    <task id="init" type="EmptyTask" joinType="AND" splitType="XOR">
+	</task>
+    <task id="t1" type="EmptyTask" joinType="XOR">
+	</task>
+    <task id="t2" type="EmptyTask" joinType="XOR">
+	</task>
+  </tasks>
+  <flows>
+    <flow from="start" to="init" />
+    <flow from="init" to="t1" evalOrder="1">
+        <inputCondition>value == 'T1'</inputCondition>
+    </flow>
+    <flow from="init" to="t2" evalOrder="-1"/><!-- default flow -->
+    <flow from="t1" to="end" />
+    <flow from="t2" to="end" />
+</flows>
+    <processDataTypes>
+        <enum name="YesNo">
+            <value>NO</value>
+            <value>YES</value>
+        </enum>
+        
+        <enum name="WeekDay">
+            <value>Sun</value>
+            <value>Mon</value>
+            <value>Tue</value>
+            <value>Wed</value>
+            <value>Thu</value>
+            <value>Fri</value>
+            <value>Sat</value>
+        </enum>
+        
+        <struct name="DeStrukt">
+            <member name="Decision" type="YesNo" required="true" isArray="false" />
+            <member name="Day" type="WeekDay" required="true" isArray="false" />
+        </struct>
+        
+        
+    </processDataTypes>
+  	<variables>
+		<variable name="value" type="DeStrukt" required="true" dir="In" />
+    </variables>
+</process>

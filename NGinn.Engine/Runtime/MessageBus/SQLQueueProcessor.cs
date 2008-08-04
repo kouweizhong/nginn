@@ -593,7 +593,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                         }
                         catch (Exception ex)
                         {
-                            log.Error("Error processing message {0}", id);
+                            log.Warn("Error processing message {0}: {1}", id, ex);
                             if (retry_count >= _retryTimes.Length)
                             {
                                 log.Info("Message {0} retry count exceeded, moving to failed queue", id);
