@@ -253,7 +253,7 @@ namespace NGinn.Engine
         /// Allocate next active transition Id.
         /// </summary>
         /// <returns></returns>
-        private string GetNextTransitionId()
+        internal string GetNextTransitionId()
         {
             
             int n;
@@ -743,6 +743,7 @@ namespace NGinn.Engine
 
                     if (tsk.IsImmediate)
                     {
+                        //if task is immediate, no other tasks will run so we clear the newAts list
                         log.Info("Task {0} is immediate. Will start it now.", tsk.Id);
                         newAts.Clear();
                         newAts.Add(at);
@@ -772,6 +773,19 @@ namespace NGinn.Engine
                     Token t = GetToken(tokId);
                 }
 
+                AddActiveTransition(at);
+                InitiateTransition(at);
+                log.Info("Initiated transition {0}: {1}->{2}", at.CorrelationId, tok.PlaceId, at.TaskId);
+                if (!at.IsImmediate)
+                {
+                    foreach (string tokId in at.Tokens)
+                    {
+                        Token tok1 = GetToken(tokId);
+                        tok1.Status = TokenStatus.LOCKED_ENABLED;
+                        log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
+                    }
+                }
+                /*
                 if (at.IsImmediate)
                 {
                     AddActiveTransition(at);
@@ -789,6 +803,7 @@ namespace NGinn.Engine
                         log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
                     }
                 }
+                */
             }
 
             
@@ -910,6 +925,8 @@ namespace NGinn.Engine
             return lst;
         }
 
+        
+
         /// <summary>
         /// Initiate task
         /// </summary>
@@ -917,54 +934,36 @@ namespace NGinn.Engine
         private void InitiateTransition(TaskShell at)
         {
             log.Info("Initiating transition {0}", at.TaskId);
-            TransferDataToTransition(at);
-            at.InitiateTask();
+            at.InitiateTask(GetProcessDataSource());
+            if (at.IsImmediate)
+            {
+                if (at.Status != TransitionStatus.COMPLETED)
+                    throw new Exception("Immediate transition did not complete after initiation");
+            }
         }
 
         /// <summary>
         /// Execute immediate transition
         /// </summary>
         /// <param name="at"></param>
-        private void ExecuteTransition(TaskShell at)
+        /*private void ExecuteTransition(TaskShell at)
         {
             Debug.Assert(at.IsImmediate);
-            TransferDataToTransition(at);
             foreach (string tokId in at.Tokens)
             {
                 Token tok1 = GetToken(tokId);
                 tok1.Status = TokenStatus.LOCKED_ENABLED;
             }
-            at.ExecuteTask();
-            
-            //not needed (because of transition callback) 
-            //OnTransitionCompleted(at.CorrelationId);
-        }
-
-        
-        /// <summary>
-        /// Create input data for transition by executing task input data bindings.
-        /// TODO: Implement
-        /// All task input variables have to be bound...
-        /// 1. execute data bindings - get input variables in xml
-        /// 2. validate the xml document
-        /// 3. add local variables initial values
-        /// </summary>
-        /// <param name="at"></param>
-        private void TransferDataToTransition(TaskShell at)
-        {
-            log.Debug("Transferring data to transition {0}", at.CorrelationId);
-            at.TransferInputDataToTask(GetProcessDataSource());
-        }
-
-        /// <summary>
-        /// Extract output data from finished transition by executing task output data bindings
-        /// </summary>
-        /// <param name="at"></param>
-        private void TransferDataFromTransition(TaskShell at)
-        {
-            at.ReceiveOutputDataFromTask(GetProcessVariablesContainer());
+            IDataObject ds = GetProcessDataSource();
+            IDataObject trg = GetProcessVariablesContainer();
+            //execute the task and transfer the data
+            at.ExecuteTask(ds, trg);
+            //validate process data is correct
             ValidateProcessInternalData();
+            //and update the net status
+            AfterTransitionCompleted(at.CorrelationId);
         }
+        */
 
 
         /// <summary>
@@ -1173,7 +1172,7 @@ namespace NGinn.Engine
             //at.TaskCompleted();
             //at.Status = TransitionStatus.COMPLETED;
             //2 retrieve data from transition
-            TransferDataFromTransition(at);
+            //TransferDataFromTransition(at);
             //3 cancel set handling
             if (tsk.CancelSet.Count > 0)
             {
@@ -1383,7 +1382,8 @@ namespace NGinn.Engine
             if (at == null)
             {
                 MultiTaskShell mti = FindMultiInstanceTransitionWithSubtask(correlationId);
-                if (mti != null) at = mti.GetChildTransition(correlationId);
+                //if (mti != null) at = mti.GetChildTransition(correlationId);
+                throw new NotImplementedException();
             }
             return at.GetTaskData();
         }
@@ -1462,8 +1462,7 @@ namespace NGinn.Engine
                 if (at is MultiTaskShell)
                 {
                     MultiTaskShell mti = (MultiTaskShell)at;
-                    TaskShell at2 = mti.GetChildTransition(correlationId);
-                    if (at2 != null) return mti;
+                    if (mti.HasSubTask(correlationId)) return mti;
                 }
             }
             return null;
@@ -1506,47 +1505,20 @@ namespace NGinn.Engine
 
         void ITransitionCallback.TransitionCompleted(string correlationId)
         {
+            TaskShell ts = GetActiveTransition(correlationId);
+            //1. transfer task output data from transition
+            ts.TransferTaskOutputDataToParent(GetProcessVariablesContainer());
+            ValidateProcessInternalData();
+            //2. update network status
             this.AfterTransitionCompleted(correlationId);
         }
 
         #endregion
 
-        /// <summary>
-        /// External notification that the transition has been selected.
-        /// </summary>
-        /// <param name="correlationId"></param>
-        public void NotifyTransitionSelected(string correlationId)
-        {
-            if (!_activated) throw new Exception("Process instance not activated");
-            TaskShell at = GetActiveTransition(correlationId);
-            if (at == null)
-            {
-                MultiTaskShell mti = FindMultiInstanceTransitionWithSubtask(correlationId);
-                if (mti != null) at = mti.GetChildTransition(correlationId);
-            }
-            if (at == null) throw new ApplicationException("Invalid correlation Id");
-            at.NotifyTransitionSelected();
-        }
+        
 
-        /// <summary>
-        /// Report that a process task has completed
-        /// </summary>
-        /// <param name="tci"></param>
-        public void NotifyTaskCompleted(TaskCompletionInfo tci)
-        {
-            throw new NotImplementedException();
-            if (tci.ProcessInstance != this.InstanceId) throw new Exception("Invalid instance id");
-            TaskShell at = GetActiveTransition(tci.CorrelationId);
-            if (at == null)
-            {
-                MultiTaskShell mti = FindMultiInstanceTransitionWithSubtask(tci.CorrelationId);
-                if (mti != null) at = mti.GetChildTransition(tci.CorrelationId);
-            }
-            if (at == null) throw new Exception("Invalid correlation id");
-            if (at.Status != TransitionStatus.ENABLED && at.Status != TransitionStatus.STARTED) throw new Exception("Invalid transition status");
-            //at will callback us when the task is completed
-            at.NotifyTaskCompleted(tci);
-        }
+        
+        
 
         /// <summary>
         /// Cancel process instance

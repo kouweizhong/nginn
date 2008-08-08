@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
+using NGinn.Lib.Data;
 using NLog;
 
 namespace NGinn.Engine.Runtime.Tasks
@@ -23,12 +24,9 @@ namespace NGinn.Engine.Runtime.Tasks
             
         }
 
-        public override void InitiateTask()
+        public override void InitiateTask(IDataObject inputData)
         {
-        }
-
-        public override void ExecuteTask()
-        {
+            OnTaskCompleted();
         }
     }
 

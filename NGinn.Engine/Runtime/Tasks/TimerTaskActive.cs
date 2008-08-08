@@ -39,7 +39,7 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return false; }
         }
 
-        public override void InitiateTask()
+        public override void InitiateTask(IDataObject taskData)
         {
             _expirationTime = DateTime.Now + DelayAmount;
             TimerExpiredEvent tex = new TimerExpiredEvent();
@@ -55,13 +55,6 @@ namespace NGinn.Engine.Runtime.Tasks
             
         }
 
-        public override void ExecuteTask()
-        {
-            throw new NotImplementedException();
-        }
-
-        
-
         public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
             base.HandleInternalTransitionEvent(ite);
@@ -71,7 +64,7 @@ namespace NGinn.Engine.Runtime.Tasks
                 if (Context.Status == TransitionStatus.ENABLED ||
                     Context.Status == TransitionStatus.STARTED)
                 {
-                    Context.TransitionCompleted(this.CorrelationId);
+                    OnTaskCompleted();
                 }
                 else
                 {

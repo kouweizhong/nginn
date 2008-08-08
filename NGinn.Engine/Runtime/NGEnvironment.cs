@@ -255,30 +255,13 @@ namespace NGinn.Engine.Runtime
         public void ProcessTaskCompleted(TaskCompletionInfo info)
         {
             log.Info("Task completed in process {0}. Id: {1}", info.ProcessInstance, info.CorrelationId);
-            if (!LockManager.TryAcquireLock(info.ProcessInstance, 30000))
-            {
-                log.Info("Failed to obtain lock on process instance {0}", info.ProcessInstance);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(info.ProcessInstance, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    pi.NotifyTaskCompleted(info);
-                    log.Info("Modified: {0}", pi.ToString());
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                }
-            }
-            finally
-            {
-                LockManager.ReleaseLock(info.ProcessInstance);
-            }
+            TaskCompletedNotification tcn = new TaskCompletedNotification();
+            tcn.CorrelationId = info.CorrelationId;
+            tcn.ProcessInstanceId = info.ProcessInstance;
+            XmlReader xr = XmlReader.Create(new StringReader(info.ResultXml));
+            xr.MoveToContent();
+            tcn.TaskData = DataObject.ParseXmlElement(xr);
+            this.MessageBus.Notify("NGEnvironment", "NGinn.ProcessTaskCompleted", tcn, false);
         }
 
 
@@ -286,31 +269,10 @@ namespace NGinn.Engine.Runtime
 
         public void ProcessTaskSelectedForProcessing(string instanceId, string correlationId)
         {
-            log.Info("Task selected in process {0}. Id: {1}", instanceId, correlationId);
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
-            {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    pi.NotifyTransitionSelected(correlationId);
-                    log.Info("Modified: {0}", pi.ToString());
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                }
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+            TransitionSelectedNotification ev = new TransitionSelectedNotification();
+            ev.CorrelationId = correlationId;
+            ev.ProcessInstanceId = instanceId;
+            MessageBus.Notify("NGEnvironment", "NGinn.TransitionSelected", ev, false);
         }
 
 

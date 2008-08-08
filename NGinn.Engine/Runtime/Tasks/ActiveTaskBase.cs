@@ -15,6 +15,7 @@ namespace NGinn.Engine.Runtime.Tasks
     /// only the abstract methods of ActiveTaskBase.
     /// Information: immediate tasks don't need to be serializable (they will not be serialized)
     /// </summary>
+    [Serializable]
     public abstract class ActiveTaskBase : IActiveTask
     {
         private bool _activated = false;
@@ -67,9 +68,6 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public abstract void CancelTask();
 
-        public abstract void InitiateTask();
-        
-        public abstract void ExecuteTask();
         
         public virtual bool IsImmediate
         {
@@ -145,5 +143,23 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
         #endregion
+
+        #region IActiveTask Members
+
+
+        public abstract void InitiateTask(IDataObject inputData);
+
+        #endregion
+
+        /// <summary>
+        /// Call this method when the task completes.
+        /// It handles output data and notifying the container that the task has completed
+        /// TODO:implement
+        /// </summary>
+        protected void OnTaskCompleted()
+        {
+            DataObject dob = new DataObject(GetTaskData());
+            Context.TransitionCompleted(this.CorrelationId, dob); 
+        }
     }
 }

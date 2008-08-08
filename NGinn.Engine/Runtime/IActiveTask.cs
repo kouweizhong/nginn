@@ -22,7 +22,8 @@ namespace NGinn.Engine.Runtime
         /// Called after the transition has been completed
         /// </summary>
         /// <param name="correlationId"></param>
-        void TransitionCompleted(string correlationId);
+        /// <param name="taskOutputData"></param>
+        void TransitionCompleted(string correlationId, DataObject taskOutputData);
 
             }
 
@@ -53,23 +54,40 @@ namespace NGinn.Engine.Runtime
         /// </summary>
         void CancelTask();
 
-        void InitiateTask();
-        void ExecuteTask();
+        /// <summary>
+        /// Initiate task
+        /// In case of immediate tasks it should execute the task 
+        /// and return results through 'Context.TransitionCompleted' callback.
+        /// In case of non-immediate tasks, it should initiate the task execution.
+        /// </summary>
+        /// <param name="inputData">Task input data</param>
+        void InitiateTask(IDataObject inputData);
+
         bool IsImmediate { get; }
-        void SetInputData(IDataObject dob);
+        
         IDataObject GetOutputData();
         IDataObject GetTaskData();
         void UpdateTaskData(IDataObject dob);
+        
         /// <summary>
         /// Return list of task input parameters
         /// </summary>
         /// <returns></returns>
         IList<TaskParameterInfo> GetTaskInputParameters();
+        
         void SetTaskParameterValue(string paramName, object value);
+
         object GetTaskParameterValue(string paramName);
 
+        /// <summary>
+        /// Notify task instance that the transition has been selected.
+        /// </summary>
         void NotifyTransitionSelected();
 
+        /// <summary>
+        /// Pass internal transition event to task to handle it
+        /// </summary>
+        /// <param name="ite"></param>
         void HandleInternalTransitionEvent(InternalTransitionEvent ite);
     }
 }

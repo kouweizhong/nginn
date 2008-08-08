@@ -6,6 +6,7 @@ using NGinn.Engine;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
+using ScriptNET;
 
 namespace NGinn.Engine.Runtime
 {
@@ -32,6 +33,8 @@ namespace NGinn.Engine.Runtime
         private string _taskId;
         [NonSerialized]
         private Task _taskDefinition;
+        [NonSerialized]
+        private IDataObject _taskOutputData = null;
 
         public TaskShell(ProcessInstance pi, Task tsk)
         {
@@ -82,7 +85,16 @@ namespace NGinn.Engine.Runtime
             set { _correlationId = value; }
         }
 
-        public IList<string> Tokens = new List<string>();
+        private List<string> _tokens = new List<string>();
+
+        /// <summary>
+        /// List of task's input tokens
+        /// </summary>
+        public IList<string> Tokens
+        {
+            get { return _tokens; }
+        }
+
 
         [NonSerialized]
         protected ProcessInstance _processInstance;
@@ -90,11 +102,11 @@ namespace NGinn.Engine.Runtime
         [NonSerialized]
         protected Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
-        private bool _activated = false;
+        protected bool _activated = false;
 
         public bool IsImmediate
         {
-            get { return ActiveTask.IsImmediate; }
+            get { return TaskDefinition.IsImmediate; }
         }
 
         public ITransitionCallback ParentCallback
@@ -103,23 +115,106 @@ namespace NGinn.Engine.Runtime
             set { _parentCallback = value; }
         }
 
-        public void CancelTask()
+        public virtual void CancelTask()
         {
             ActiveTask.CancelTask();
             this.Status = TransitionStatus.CANCELLED;
         }
 
-        public void InitiateTask()
+        /// <summary>
+        /// Execute task, transferring data in and out of the task
+        /// </summary>
+        /// <param name="sourceData">Source for task data</param>
+        /// <param name="outputTargetData">Target for task data - usually the same as source</param>
+        /*public virtual void ExecuteTask(IDataObject sourceData, IDataObject outputTargetData)
         {
-            ActiveTask.InitiateTask();
-            this.Status = TransitionStatus.ENABLED;
+            IActiveTask tsk = CreateActiveTask();
+            tsk.Activate();
+            if (this.IsImmediate) throw new Exception("Cannot execute - non immediate task");
+            DataObject taskInputData = PrepareTaskInputData(sourceData);
+            _taskOutputData = null;
+            tsk.InitiateTask(taskInputData);
+            if (_taskOutputData == null) throw new Exception("Output data is null - immediate task did not call back on completion");
+            Status = TransitionStatus.COMPLETED;
+            TransferTaskOutputDataToParent(_taskOutputData, outputTargetData);
+        }
+        */
+
+        /// <summary>
+        /// Task output data - valid only after task has been completed.
+        /// Warning - this member is valid only during 
+        /// </summary>
+        public IDataObject TaskOutputData
+        {
+            get { return _taskOutputData; }
         }
 
-        public void ExecuteTask()
+        public virtual void InitiateTask(IDataObject sourceData)
         {
-            ActiveTask.ExecuteTask();
-            this.Status = TransitionStatus.COMPLETED;
-            ParentCallback.TransitionCompleted(ActiveTask.CorrelationId);
+            if (ActiveTask != null) throw new Exception("Active task already created");
+            IActiveTask tsk = CreateActiveTask();
+            tsk.Activate();
+            DataObject taskInputData = PrepareTaskInputData(sourceData);
+            _taskOutputData = null;
+            Status = TransitionStatus.ENABLED;
+            this.ActiveTask = tsk;
+            tsk.InitiateTask(taskInputData);
+            if (tsk.IsImmediate)
+            {
+                if (Status != TransitionStatus.COMPLETED) throw new Exception("Immediate task did not complete");
+                if (_taskOutputData == null) throw new Exception("Task output data missing");
+                this.ActiveTask = null; 
+            }
+            else
+            {
+            }
+        }
+
+        /// <summary>
+        /// Create new active task instance
+        /// </summary>
+        /// <returns></returns>
+        protected IActiveTask CreateActiveTask()
+        {
+            IActiveTask tsk = this.ParentProcess.Environment.ActiveTaskFactory.CreateActiveTask(TaskDefinition);
+            tsk.CorrelationId = this.CorrelationId;
+            tsk.SetContext(this);
+            return tsk;
+        }
+        
+        /// <summary>
+        /// Create task input data (execute bindings on source data)
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <returns></returns>
+        protected DataObject PrepareTaskInputData(IDataObject sourceData)
+        {
+            IScriptContext ctx = CreateTaskScriptContext(sourceData);
+            DataObject taskInput = new DataObject();
+            DataBinding.ExecuteDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
+            return taskInput;
+        }
+
+        protected void TransferTaskOutputDataToParent(IDataObject taskOutputData, IDataObject targetObj)
+        {
+            IScriptContext ctx = CreateTaskScriptContext(taskOutputData);
+            DataBinding.ExecuteDataBinding(targetObj, TaskDefinition.OutputBindings, ctx);
+        }
+
+        public virtual void TransferTaskOutputDataToParent(IDataObject target)
+        {
+            if (TaskOutputData == null) throw new Exception("Task output data is null");
+            TransferTaskOutputDataToParent(this.TaskOutputData, target);
+        }
+
+        protected IScriptContext CreateTaskScriptContext(IDataObject variables)
+        {
+            IScriptContext ctx = new ScriptContext();
+            foreach (string fn in variables.FieldNames)
+            {
+                ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
+            }
+            return ctx;
         }
 
         public void SetProcessInstance(ProcessInstance pi)
@@ -131,34 +226,34 @@ namespace NGinn.Engine.Runtime
 
         public virtual void Activate()
         {
+            if (_activated) throw new Exception("Already activated");
+            if (_processInstance == null || _parentCallback == null)
+                throw new Exception("Set process instance and parent callback before activation");
+            _taskDefinition = ParentProcess.Definition.GetTask(this.TaskId);
+            if (ActiveTask != null)
+            {
+                ActiveTask.SetContext(this);
+                ActiveTask.Activate();
+            }
             _activated = true;
         }
 
         public virtual void Passivate()
         {
+            if (ActiveTask != null)
+            {
+                ActiveTask.Passivate();
+            }
             _processInstance = null;
+            _taskDefinition = null;
+            _parentCallback = null;
             _activated = false;
         }
 
-        public virtual void TransferInputDataToTask(IDataObject dob)
-        {
-            bool createNewTask
-            if (_activeTask == null)
-            {
-                IActiveTask aTask = ParentProcess.Environment.ActiveTaskFactory.CreateActiveTask(TaskDefinition);
-                InitializeActiveTask(aTask);
-            
-            }
-
-        }
-
-        public virtual void ReceiveOutputDataFromTask(IDataObject target)
-        {
-
-        }
-
+        
         public IDataObject GetTaskData()
         {
+            ActivationRequired(true);
             return ActiveTask.GetTaskData();
         }
 
@@ -197,10 +292,9 @@ namespace NGinn.Engine.Runtime
 
         #region IActiveTaskContext Members
 
-
-        public NGinn.Lib.Schema.Task TaskDefinition
+        public Task TaskDefinition
         {
-            get { throw new NotImplementedException(); }
+            get { return _taskDefinition; }
         }
 
         public ProcessInstance ParentProcess
@@ -208,12 +302,12 @@ namespace NGinn.Engine.Runtime
             get { return _processInstance; }
         }
 
-        public void TransitionStarted(string correlationId)
+        void IActiveTaskContext.TransitionStarted(string correlationId)
         {
             throw new NotImplementedException();
         }
 
-        public void TransitionCompleted(string correlationId)
+        void IActiveTaskContext.TransitionCompleted(string correlationId, DataObject taskOutputData)
         {
             throw new NotImplementedException();
         }
