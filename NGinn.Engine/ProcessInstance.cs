@@ -71,10 +71,6 @@ namespace NGinn.Engine
         /// </summary>
         private Dictionary<string, string> _taskAssignees = new Dictionary<string, string>();
 
-        [NonSerialized]
-        private XmlDocument _processData = new XmlDocument();
-        /// <summary>process xml data in string form - for serialization purposes</summary>
-        private string _processDataXmlString = null;
         private string _correlationId;
 
         public ProcessInstance()
@@ -516,10 +512,6 @@ namespace NGinn.Engine
         public void Passivate()
         {
             log.Info("Passivating");
-            if (_processData != null)
-            {
-                _processDataXmlString = _processData.OuterXml;
-            }
             _tokensInPlaces = null;
             _definition = null;
             _environment = null;
@@ -537,11 +529,6 @@ namespace NGinn.Engine
             log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
             _transitionFactory = new ActiveTaskFactory();
             _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
-            if (_processDataXmlString != null)
-            {
-                //_processData = new XmlDocument();
-                //_processData.LoadXml(_processDataXmlString);
-            }
             BuildTokensInPlaces();
             BuildActiveTransitionsInTasks();
             foreach (TaskShell at in _activeTransitions.Values)
@@ -920,43 +907,8 @@ namespace NGinn.Engine
             }
         }
 
-        /// <summary>
-        /// Execute immediate transition
-        /// </summary>
-        /// <param name="at"></param>
-        /*private void ExecuteTransition(TaskShell at)
-        {
-            Debug.Assert(at.IsImmediate);
-            foreach (string tokId in at.Tokens)
-            {
-                Token tok1 = GetToken(tokId);
-                tok1.Status = TokenStatus.LOCKED_ENABLED;
-            }
-            IDataObject ds = GetProcessDataSource();
-            IDataObject trg = GetProcessVariablesContainer();
-            //execute the task and transfer the data
-            at.ExecuteTask(ds, trg);
-            //validate process data is correct
-            ValidateProcessInternalData();
-            //and update the net status
-            AfterTransitionCompleted(at.CorrelationId);
-        }
-        */
-
-
-        /// <summary>
-        /// Return xml namespace manager of process data xml
-        /// </summary>
-        /// <returns></returns>
-        protected XmlNamespaceManager GetProcessDataNamespaceManager()
-        {
-            return new XmlNamespaceManager(_processData.NameTable);
-        }
 
         
-        
-        
-
         private TaskShell CreateActiveTransitionForTask(Task tsk)
         {
             if (tsk.IsMultiInstance)
@@ -1506,8 +1458,29 @@ namespace NGinn.Engine
         /// </summary>
         public void CancelProcessInstance()
         {
-            throw new NotImplementedException();
-            //this.Status = ProcessStatus.Cancelled;
+            log.Info("Cancelling process");
+            foreach (Place pl in this.Definition.Places)
+            {
+                IList<Token> tokensInPlace = GetTokensInPlace(pl.Id);
+                foreach (Token tok in tokensInPlace)
+                {
+                    if (tok.Status == TokenStatus.READY ||
+                        tok.Status == TokenStatus.LOCKED_ENABLED ||
+                        tok.Status == TokenStatus.LOCKED_ALLOCATED ||
+                        tok.Status == TokenStatus.WAITING)
+                    {
+                        log.Debug("Cancelling token {0} in place {1}", tok.TokenId, pl.Id);
+                        CancelToken(tok);
+                    }
+                }
+            }
+            _status = ProcessStatus.Cancelled;
+            log.Info("Process cancelled");
+            ProcessCancelled pc = new ProcessCancelled();
+            pc.CorrelationId = this.CorrelationId;
+            pc.DefinitionId = this.ProcessDefinitionId;
+            pc.InstanceId = this.InstanceId;
+            NotifyProcessEvent(pc);
         }
 
 

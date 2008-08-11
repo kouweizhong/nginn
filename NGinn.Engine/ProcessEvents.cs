@@ -22,6 +22,12 @@ namespace NGinn.Engine
     public class ProcessFinished : ProcessEvent
     {
     }
+    
+    [Serializable]
+    public class ProcessCancelled : ProcessEvent
+    {
+    }
+
 
     [Serializable]
     public class TransitionEvent : ProcessEvent
