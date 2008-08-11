@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<process version="1" name="MultiInstance" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+<process version="2" name="MultiInstance" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
   <places>
     <place id="start" type="StartPlace"></place>
     <place id="end" type="EndPlace"></place>

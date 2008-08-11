@@ -11,11 +11,13 @@ using NGinn.Lib.Data;
 namespace NGinn.Engine.Runtime.Tasks
 {
     [Serializable]
-    class SubprocessTaskActive : ActiveTransition
+    class SubprocessTaskActive : ActiveTaskBase
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
 
         private string _subprocessInstanceId;
+        private string _subprocessDefinitionId;
+
         [NonSerialized]
         private SubprocessTask _task;
 
@@ -25,13 +27,22 @@ namespace NGinn.Engine.Runtime.Tasks
             _subprocessInstanceId = tsk.SubprocessDefinitionId;
         }
 
-        public override void Activate()
+        [TaskParameter(IsInput=true, Required=true, DynamicAllowed=true)]
+        public string ProcessDefinitionId
         {
-            base.Activate();
-            _task = (SubprocessTask) _processInstance.Definition.GetTask(TaskId);
+            get { return _subprocessDefinitionId; }
+            set { _subprocessDefinitionId = value; }
         }
 
-        protected override void DoInitiateTask()
+       
+        public override void InitiateTask(IDataObject inputData)
+        {
+            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
+
+            throw new NotImplementedException();
+        }
+
+        /*protected override void DoInitiateTask()
         {
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment", typeof(INGEnvironment));
@@ -44,21 +55,15 @@ namespace NGinn.Engine.Runtime.Tasks
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
         }
+        */
 
-        protected override void DoCancelTask()
+        public override void CancelTask()
         {
-            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment", typeof(INGEnvironment));
+            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
             log.Info("Task[{0}]: Cancelling subprocess {0}", CorrelationId, _subprocessInstanceId);
             env.CancelProcessInstance(this._subprocessInstanceId);
             log.Debug("Subprocess {0} cancelled", _subprocessInstanceId);
         }
-
-        protected override void DoExecuteTask()
-        {
-            throw new NotImplementedException();
-        }
-
         public static string GetSubprocessCorrelationId(string taskCorrelationId)
         {
             return string.Format("_NGINN_{0}", taskCorrelationId);

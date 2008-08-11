@@ -205,6 +205,12 @@ namespace NGinn.Lib.Schema
                     {
                         lst = new List<ProcessDefInformation>(); cache.Add(pdi.Name, lst);
                     }
+                    foreach (ProcessDefInformation pdi2 in lst)
+                    {
+                        if (pdi2.Version == pdi.Version &&
+                            pdi2.Name == pdi.Name)
+                            throw new ApplicationException(string.Format("Process {0}.{1} already defined in file {2}", pdi2.Name, pdi2.Version, pdi2.FileName));
+                    }
                     lst.Add(pdi);
                 }
 

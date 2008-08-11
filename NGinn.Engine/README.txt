@@ -1,5 +1,8 @@
 TODO
-
+* Usun¹c zapis informacji o tokenach w osobnej tabeli - niepotrzebne
+* Zrobiæ serializacjê XML ProcessInstance'u - bêdzie wgl¹d w dane. Potem kompresjê ZIP.
+* Usun¹æ z solutiona XmlForms. Zrobiæ z tego osobny solution.
+* Task 'ReceiveMessage' - taki MessageBox czekaj¹cy na komunikat z jakimœ ID
 * Parametry zadañ - mo¿liwoœæ bindowania do danych z procesu lub wpisywania wyra¿eñ w script.net
 * bindowanie parametrów do tasków
   - statyczne (wpisanie wartoœci w xml-u)
@@ -26,7 +29,6 @@ TODO
   przejœcia z cancel-setem (usuniêcie tokena mo¿e spowodowaæ ¿e warunek bêdzie spe³niony).
   To samo przy OR-joinie z tokenem który mo¿e 'wyjœæ' poza sieæ tego OR-joina (np z powodu
   wejœcia w inn¹ alternatywê). A co z tokenem który 'wszed³' z boku - takich nie powinno byæ...
-* Usun¹æ SmartThreadPool (zast¹piæ spring.net), PowerCollections (o ile niepotrzebne)
 * Dokoñczyæ mechanizm retry dla procesu
   a mo¿e tak: retry zrobiæ z MessageQueue (i w osobnym w¹tku robiæ ponowienie próby...)
   tylko ¿e wtedy error status trzeba by jakoœ dobrze obs³u¿yæ... nie, sam siê obs³u¿y

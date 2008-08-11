@@ -774,36 +774,14 @@ namespace NGinn.Engine
                 }
 
                 AddActiveTransition(at);
+                foreach (string tokId in at.Tokens)
+                {
+                    Token tok1 = GetToken(tokId);
+                    tok1.Status = TokenStatus.LOCKED_ENABLED;
+                    log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
+                }
                 InitiateTransition(at);
                 log.Info("Initiated transition {0}: {1}->{2}", at.CorrelationId, tok.PlaceId, at.TaskId);
-                if (!at.IsImmediate)
-                {
-                    foreach (string tokId in at.Tokens)
-                    {
-                        Token tok1 = GetToken(tokId);
-                        tok1.Status = TokenStatus.LOCKED_ENABLED;
-                        log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
-                    }
-                }
-                /*
-                if (at.IsImmediate)
-                {
-                    AddActiveTransition(at);
-                    ExecuteTransition(at);
-                }
-                else
-                {
-                    AddActiveTransition(at);
-                    InitiateTransition(at);
-                    log.Info("Initiated transition {0}: {1}->{2}", at.CorrelationId, tok.PlaceId, at.TaskId);
-                    foreach (string tokId in at.Tokens)
-                    {
-                        Token tok1 = GetToken(tokId);
-                        tok1.Status = TokenStatus.LOCKED_ENABLED;
-                        log.Info("Changed status of token ({0}) to {1}", tok1.TokenId, tok1.Status);
-                    }
-                }
-                */
             }
 
             

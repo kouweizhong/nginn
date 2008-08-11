@@ -29,6 +29,7 @@ namespace NGinn.Engine.Runtime
             public IActiveTask ActiveTask;
             public TransitionStatus Status = TransitionStatus.ENABLED;
             public DataObject OutputData;
+            public DataObject InputData;
         }
 
         private List<TaskInfo> _activeTasks = new List<TaskInfo>();
@@ -79,22 +80,29 @@ namespace NGinn.Engine.Runtime
             object ret = Script.RunCode(q, ctx);
             log.Debug("Returned: {0}", ret);
             string alias = TaskDefinition.MultiInstanceInputVariable;
-            if (ret is IEnumerable)
+            if (!(ret is IEnumerable))
             {
-                IEnumerable enu = ret as IEnumerable;
-                foreach (object ob in enu)
-                {
-                    ctx.SetItem(alias, ContextItem.Variable, ob);
-                    DataObject taskInput = new DataObject();
-                    DataBinding.ExecuteDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
-                    TaskInfo ti = new TaskInfo();
-                    ti.ActiveTask = CreateActiveTask();
-                    ti.ActiveTask.CorrelationId = ParentProcess.GetNextTransitionId();
-                    ti.ActiveTask.Activate();
-                    _activeTasks.Add(ti);
-                    ti.ActiveTask.InitiateTask(taskInput);
-                    log.Debug("Initiated multi-instance task: {0}", ti.ActiveTask.CorrelationId);
-                }
+                ArrayList al = new ArrayList();
+                al.Add(ret);
+                ret = al;
+            }
+            IEnumerable enu = ret as IEnumerable;
+            foreach (object ob in enu)
+            {
+                ctx.SetItem(alias, ContextItem.Variable, ob);
+                DataObject taskInput = new DataObject();
+                DataBinding.ExecuteDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
+                TaskInfo ti = new TaskInfo();
+                ti.ActiveTask = CreateActiveTask();
+                ti.ActiveTask.CorrelationId = ParentProcess.GetNextTransitionId();
+                ti.ActiveTask.Activate();
+                ti.InputData = taskInput;
+                _activeTasks.Add(ti);
+            }
+            log.Info("Created {0} multi-instance tasks", _activeTasks.Count);
+            foreach (TaskInfo ti in _activeTasks)
+            {
+                ti.ActiveTask.InitiateTask(ti.InputData);
             }
         }
 
@@ -126,6 +134,7 @@ namespace NGinn.Engine.Runtime
             if (!found) throw new Exception("Invalid correlation Id");
             if (completed)
             {
+                this.Status = TransitionStatus.COMPLETED;
                 this._parentCallback.TransitionCompleted(this.CorrelationId);
             }
         }

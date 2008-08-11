@@ -107,13 +107,12 @@
       <xs:enumeration value="ManualTask" />
       <xs:enumeration value="ScriptTask" />
       <xs:enumeration value="SubprocessTask" />
-      <xs:enumeration value="MultiManualTask" />
-      <xs:enumeration value="MultiSubprocessTask" />
       <xs:enumeration value="TimerTask" />
       <xs:enumeration value="CallWSTask" />
       <xs:enumeration value="ExternalTask" />
       <xs:enumeration value="NotificationTask" />
       <xs:enumeration value="EmptyTask" />
+      <xs:enumeration value="ReceiveMessageTask" />
       <xs:enumeration value="CustomTask" />
     </xs:restriction>
   </xs:simpleType>

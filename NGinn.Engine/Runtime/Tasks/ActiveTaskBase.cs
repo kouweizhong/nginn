@@ -6,6 +6,7 @@ using NGinn.Lib.Schema;
 using NLog;
 using System.Reflection;
 using System.Diagnostics;
+using ScriptNET;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -34,7 +35,6 @@ namespace NGinn.Engine.Runtime.Tasks
         public void SetContext(IActiveTaskContext ctx)
         {
             _ctx = ctx;
-            Debug.Assert(CorrelationId == ctx.CorrelationId);
         }
 
         public string CorrelationId
@@ -57,6 +57,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public virtual void Activate()
         {
             if (_ctx == null) throw new Exception("Context not set");
+            if (_correlationId == null || _correlationId.Length == 0) throw new Exception("Correlation ID not set");
             _activated = true;
         }
 
@@ -74,10 +75,7 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return _ctx.TaskDefinition.IsImmediate; }
         }
 
-        public virtual void SetInputData(NGinn.Lib.Data.IDataObject dob)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public virtual NGinn.Lib.Data.IDataObject GetOutputData()
         {
@@ -93,6 +91,17 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             throw new NotImplementedException();
         }
+
+        protected IScriptContext CreateScriptContext(IDataObject variables)
+        {
+            IScriptContext ctx = new ScriptContext();
+            foreach (string fn in variables.FieldNames)
+            {
+                ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
+            }
+            return ctx;
+        }
+
 
         public virtual IList<TaskParameterInfo> GetTaskInputParameters()
         {
@@ -142,12 +151,58 @@ namespace NGinn.Engine.Runtime.Tasks
             
         }
 
-        #endregion
-
-        #region IActiveTask Members
-
-
         public abstract void InitiateTask(IDataObject inputData);
+
+        /// <summary>
+        /// Set-up task parameter values according to parameter bindings.
+        /// Call this function at the beginning of InitiateTask so the task 
+        /// parameters are initalized.
+        /// </summary>
+        /// <param name="inputData"></param>
+        protected void InitateTakskParameters(IDataObject inputData)
+        {
+            IList<TaskParameterInfo> inputs = GetTaskInputParameters();
+            Dictionary<string, TaskParameterInfo> paramDict = new Dictionary<string,TaskParameterInfo>();
+            foreach(TaskParameterInfo tpi in inputs) paramDict[tpi.Name] = tpi;
+
+            IList<TaskParameterBinding> bindings = Context.TaskDefinition.ParameterBindings;
+            IScriptContext ctx = CreateScriptContext(inputData);
+
+            foreach (TaskParameterBinding tb in bindings)
+            {
+                TaskParameterInfo tpi;
+                if (!paramDict.TryGetValue(tb.PropertyName, out tpi))
+                    throw new ApplicationException("Parameter not found: " + tb.PropertyName);
+                
+                if (tb.BindingType == TaskParameterBinding.ParameterBindingType.Value)
+                {
+                    SetTaskParameterValue(tb.PropertyName, tb.BindingExpression);
+                }
+                else if (tb.BindingType == TaskParameterBinding.ParameterBindingType.Expr)
+                {
+                    object v = Script.RunCode(tb.BindingExpression, ctx);
+                    SetTaskParameterValue(tb.PropertyName, v);
+                }
+                else throw new Exception("Binding type not supported: " + tb.BindingType);
+                paramDict.Remove(tpi.Name);
+            }
+            foreach(string k in paramDict.Keys)
+            {
+                TaskParameterInfo tpi = paramDict[k];
+                if (tpi.Required) throw new ApplicationException("Required task parameter not initialized: " + tpi.Name);
+            }
+        }
+
+        /// <summary>
+        /// Validate task input data. Throws exception if input data structure
+        /// does not validate against task data schema.
+        /// </summary>
+        /// <param name="inputData"></param>
+        protected void ValidateInputData(IDataObject inputData)
+        {
+
+        }
+            
 
         #endregion
 

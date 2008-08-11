@@ -35,9 +35,6 @@ namespace NGinn.Engine.Runtime
 
         public NGEnvironment()
         {
-            //_appCtx = Spring.Context.Support.ContextRegistry.GetContext();
-            //_definitionRepository = (IProcessDefinitionRepository) _appCtx.GetObject("ProcessDefinitionRepository");
-            //_instanceRepository = (IProcessInstanceRepository)_appCtx.GetObject("ProcessInstanceRepository");
         }
 
         public IProcessDefinitionRepository DefinitionRepository
@@ -137,14 +134,6 @@ namespace NGinn.Engine.Runtime
                     return _envVariables[name];
                 return null;
             }
-        }
-
-        void RunSingleStep()
-        {
-            //1. select process instance to kick
-            //2. kick the instance
-            //3. commit changes
-
         }
 
         #region INGEnvironment Members

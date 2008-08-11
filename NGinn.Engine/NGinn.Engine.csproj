@@ -109,6 +109,7 @@
     <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
     <Compile Include="Runtime\ProcessDefinitionRepository.cs" />
     <Compile Include="Runtime\ProcessPackageRepository.cs" />
+    <Compile Include="Runtime\Tasks\ReceiveMessageTaskActive.cs" />
     <Compile Include="Runtime\Tasks\ScriptTaskActive.cs" />
     <Compile Include="Runtime\TaskShell.cs" />
     <Compile Include="Runtime\Tasks\TimerTaskActive.cs" />

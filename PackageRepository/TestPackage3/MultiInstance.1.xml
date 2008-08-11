@@ -28,5 +28,6 @@
     </processDataTypes>
   	<variables>
 		<variable name="requestorName" type="string" isArray="true" required="true" dir="In" />
+        <variable name="wyniki" type="string" isArray="true" required="false" dir="Local" />
     </variables>
 </process>
