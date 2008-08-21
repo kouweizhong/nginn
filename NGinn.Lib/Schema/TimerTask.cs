@@ -12,29 +12,6 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class TimerTask : Task
     {
-        private string _delayAmount;
-
-        /// <summary>
-        /// delay time, in TimeSpan format (for example: 3d 11:30 means 3 days, 11 hours and 30 minutes)
-        /// </summary>
-        public string DelayAmount
-        {
-            get { return _delayAmount; }
-            set { _delayAmount = value; }
-        }
-
-        internal override void LoadXml(System.Xml.XmlElement el, System.Xml.XmlNamespaceManager nsmgr)
-        {
-            base.LoadXml(el, nsmgr);
-            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
-            if (pr != null && pr.Length > 0) pr += ":";
-            XmlElement tEl = (XmlElement)el.SelectSingleNode(pr + "timerTask", nsmgr);
-            if (tEl == null) throw new Exception("Missing <timerTask> element");
-            XmlElement tBody = (XmlElement)tEl.SelectSingleNode(pr + "delayTime", nsmgr);
-            if (tBody == null) throw new Exception("Missing <delayTime> element");
-            DelayAmount = tBody.InnerText;
-        }
-
 
         public override bool IsImmediate
         {
@@ -47,6 +24,17 @@ namespace NGinn.Lib.Schema
                 new TaskParameterInfo("DelayAmount", typeof(TimeSpan), false, true, true),
                 new TaskParameterInfo("DelayUntil", typeof(DateTime), false, true, true),
             };
+        }
+
+        internal override bool Validate(IList<ValidationMessage> messages)
+        {
+            bool b = base.Validate(messages);
+            if (!b) return b;
+            if (!RequireInputParameter("DelayAmount") && !RequireInputParameter("DelayUntil"))
+            {
+                messages.Add(new ValidationMessage(true, Id, "Either DelayAmount or DelayUntil task parameter is required"));
+            }
+            return messages.Count == 0 ? true : false;
         }
     }
 }

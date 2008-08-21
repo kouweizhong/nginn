@@ -7,9 +7,17 @@
   <tasks>
     
     <task id="timeout" type="TimerTask" joinType="AND" splitType="AND">
-        <timerTask>
-            <delayTime>00:01:00</delayTime>
-        </timerTask>
+        <parameters>
+            <binding parameter="DelayAmount"><expr><![CDATA[TimeSpan.Parse(processDelayAmount)]]></expr></binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="processDelayAmount" type="string" isArray="false" required="true" dir="In" />
+            </variables>
+            <input-bindings>
+                <binding variable="processDelayAmount" bindingType="CopyVar" sourceVariable="delayAmount" />
+            </input-bindings>
+        </data-definition>
     </task>
     
   </tasks>

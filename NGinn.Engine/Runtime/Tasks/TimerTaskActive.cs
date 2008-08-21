@@ -21,15 +21,17 @@ namespace NGinn.Engine.Runtime.Tasks
 
         }
 
-        [TaskParameter(IsInput=true, Required=true, DynamicAllowed=true)]
+        [TaskParameter(IsInput=true, Required=false, DynamicAllowed=true)]
         public TimeSpan DelayAmount
         {
             get { return _delayAmount; }
             set { _delayAmount = value; }
         }
 
+        
+
         [TaskParameter(IsInput = false, Required = false, DynamicAllowed = true)]
-        public DateTime ExpirationTime
+        public DateTime CompletedDate
         {
             get { return _expirationTime; }
         }
@@ -41,6 +43,9 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public override void InitiateTask(IDataObject taskData)
         {
+            base.ValidateInputData(taskData);
+            base.InitateTakskParameters(taskData);
+
             _expirationTime = DateTime.Now + DelayAmount;
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;

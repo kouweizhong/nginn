@@ -11,32 +11,18 @@ namespace NGinn.Engine.Runtime.Tasks
     {
         public IActiveTask CreateActiveTask(Task tsk)
         {
-            /*
-            ActiveTransition at;
-            if (tsk is ManualTask)
+            
+            IActiveTask at;
+            if (tsk is EmptyTask)
             {
-                at = new ManualTaskActive((ManualTask)tsk);
-            }
-            else if (tsk is SubprocessTask)
-            {
-                at = new SubprocessTaskActive((SubprocessTask)tsk);
-            }
-            else if (tsk is EmptyTask)
-            {
-                at = new EmptyTaskActive((EmptyTask)tsk);
-            }
-            else if (tsk is ScriptTask)
-            {
-                at = new ScriptTaskActive((ScriptTask)tsk);
+                at = new EmptyTaskActive(tsk);
             }
             else if (tsk is TimerTask)
             {
-                at = new TimerTaskActive((TimerTask)tsk);
+                at = new TimerTaskActive(tsk);
             }
             else throw new Exception();
             return at;
-            */
-            return new EmptyTaskActive(tsk);
         }
     }
 }

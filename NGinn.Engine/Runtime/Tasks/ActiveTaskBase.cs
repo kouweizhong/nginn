@@ -180,8 +180,17 @@ namespace NGinn.Engine.Runtime.Tasks
                 }
                 else if (tb.BindingType == TaskParameterBinding.ParameterBindingType.Expr)
                 {
-                    object v = Script.RunCode(tb.BindingExpression, ctx);
-                    SetTaskParameterValue(tb.PropertyName, v);
+                    string code = tb.BindingExpression.Trim();
+                    if (!code.EndsWith(";")) code += ";";
+                    try
+                    {
+                        object v = Script.RunCode(code, ctx);
+                        SetTaskParameterValue(tb.PropertyName, v);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ApplicationException(string.Format("Failed to evaluate binding of parameter '{0}' in task '{1}'", tb.PropertyName, this.CorrelationId), ex);
+                    }
                 }
                 else throw new Exception("Binding type not supported: " + tb.BindingType);
                 paramDict.Remove(tpi.Name);
