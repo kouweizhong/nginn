@@ -30,9 +30,10 @@ namespace NGinn.Lib.Schema
             base.LoadXml(el, nsmgr);
         }
 
-        internal override bool Validate(out IList<ValidationMessage> messages)
+        internal override bool Validate(IList<ValidationMessage> messages)
         {
-            return base.Validate(out messages);
+            return base.Validate(messages);
+            
         }
     }
 }

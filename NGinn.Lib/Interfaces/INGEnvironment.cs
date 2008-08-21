@@ -18,7 +18,16 @@ namespace NGinn.Lib.Interfaces
         /// <param name="processCorrelationId">Process correlation id - externally assigned process identifier. Can be null. Uniqueness is not checked</param>
         /// <returns>new process instance ID</returns>
         string StartProcessInstance(string definitionId, string inputXml, string processCorrelationId);
-        
+
+        /// <summary>
+        /// Start new process instance
+        /// </summary>
+        /// <param name="definitionId"></param>
+        /// <param name="inputData"></param>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        string StartProcessInstance(string definitionId, IDataObject inputData, string correlationId);
+
         /// <summary>
         /// Get lists of processes that can be 'kicked', that is, have some work to do
         /// </summary>
@@ -44,7 +53,6 @@ namespace NGinn.Lib.Interfaces
         /// <param name="name"></param>
         /// <returns></returns>
         object GetEnvVariable(string name);
-
 
         /// <summary>
         /// Return xml document containing current process instance data

@@ -49,13 +49,23 @@ namespace NGinn.Lib.Schema
             set { _paramType = value; }
         }
 
+        private bool _isInput;
+
+        public bool IsInput
+        {
+            get { return _isInput; }
+            set { _isInput = value; }
+        }
+
         public TaskParameterInfo()
         {
         }
 
-        public TaskParameterInfo(string paramName, bool required, bool dynamicAllowed)
+        public TaskParameterInfo(string paramName, Type paramType, bool required, bool isInput, bool dynamicAllowed)
         {
             _name = paramName;
+            _paramType = paramType;
+            _isInput = isInput;
             _required = required;
             _dynamicAllowed = dynamicAllowed;
         }
@@ -133,6 +143,29 @@ namespace NGinn.Lib.Schema
             return sb.ToString();
         }
 
+        public static TaskParameterBinding LoadFromXml(XmlElement binding, XmlNamespaceManager nsmgr)
+        {
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
+            TaskParameterBinding tb = new TaskParameterBinding();
+            tb.PropertyName = binding.GetAttribute("parameter");
+            XmlElement el = (XmlElement)binding.SelectSingleNode(pr + "value", nsmgr);
+            if (el != null)
+            {
+                tb.BindingType = ParameterBindingType.Value;
+                tb.BindingExpression = el.InnerText;
+                return tb;
+            }
+            
+            el = (XmlElement) binding.SelectSingleNode(pr + "expr", nsmgr);
+            if (el != null)
+            {
+                tb.BindingType = ParameterBindingType.Expr;
+                tb.BindingExpression = el.InnerText;
+                return tb;
+            }
+            throw new ApplicationException("Invalid parameter binding: " + binding.OuterXml);
+        }
     }
 
 

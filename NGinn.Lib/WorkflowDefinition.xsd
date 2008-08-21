@@ -50,24 +50,15 @@
   -->
   <xs:complexType name="Task">
     <xs:sequence>
+      <!-- input bindings for task runtime parameters -->
+      <xs:element name="parameters" type="ParameterBindings" minOccurs="1" maxOccurs="1"/>
+      <!-- task cancel set (list of place ids comma separated) -->
       <xs:element name="cancelSet" type="xs:string" minOccurs="0" maxOccurs="1" />
       <!-- orJoinCheckList is a list of places that should be checked for tokens when performing OR join
           This will become redundant after or-join analysis will be implemented -->
       <xs:element name="orJoinCheckList" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:choice minOccurs="0" maxOccurs="1">
-        <xs:element name="manualTask" type="ManualTask" />
-        <xs:element name="scriptTask" type="ScriptTask" />
-        <xs:element name="subprocessTask" type="SubprocessTask" />
-        <xs:element name="callWSTask" type="CallWSTask" />
-        <xs:element name="timerTask" type="TimerTask" />
-        <xs:element name="externalTask" type="ExternalTask" />
-        <xs:element name="notificationTask" type="NotificationTask" />
-        <!-- add custom task type here -->
-      </xs:choice>
       <!-- task variable and data-binding definitions -->
       <xs:element name="data-definition" type="TaskDataDefinition" minOccurs="0" maxOccurs="1" />
-      <!-- task runtime parameter bindings -->
-      <xs:element name="parameter-bindings" type="ParameterBindings" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="id" use="required" type="xs:string" />
     <xs:attribute name="type" use="required" type="TaskType" />
@@ -285,12 +276,14 @@
     </xs:complexContent>
   </xs:complexType>
 
+  
+  <!-- runtime task parameter binding -->
   <xs:complexType name="ParameterBinding" mixed="true">
-    <xs:sequence>
-      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-    </xs:sequence>
+    <xs:choice>
+      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="expr" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:choice>
     <xs:attribute name="parameter" type="xs:string" use="required" />
-    <xs:attribute name="type" type="xs:string" use="required" />
   </xs:complexType>
   
   <xs:complexType name="ParameterBindings">

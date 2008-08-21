@@ -6,6 +6,9 @@
   </places>
   <tasks>
     <task id="init" type="EmptyTask" multiInstance="true">
+        <parameters>
+            
+        </parameters>
         <data-definition>
             <variables> 
                 <variable name="requestorName" type="string" isArray="false" required="true" dir="In" />

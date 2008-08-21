@@ -114,7 +114,7 @@ namespace NGinn.Engine.Runtime.Tasks
                     TaskParameterAttribute tpa = (TaskParameterAttribute) attrs[0];
                     if (tpa.IsInput)
                     {
-                        TaskParameterInfo tpi = new TaskParameterInfo(pi.Name, tpa.Required, tpa.DynamicAllowed);
+                        TaskParameterInfo tpi = new TaskParameterInfo(pi.Name, pi.PropertyType, tpa.Required, tpa.IsInput, tpa.DynamicAllowed);
                         tpi.ParameterType = pi.PropertyType;
                         lst.Add(tpi);
                     }

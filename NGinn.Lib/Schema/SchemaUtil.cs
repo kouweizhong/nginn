@@ -107,6 +107,18 @@ namespace NGinn.Lib.Schema
             return vb;
         }
 
+        public static void LoadTaskParameterBindings(XmlElement bindingsRoot, XmlNamespaceManager nsmgr, IList<TaskParameterBinding> outBindings)
+        {
+            if (bindingsRoot == null) return;
+            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
+            if (pr != null && pr.Length > 0) pr += ":";
+
+            foreach (XmlElement e2 in bindingsRoot.SelectNodes(string.Format("{0}binding", pr), nsmgr))
+            {
+                outBindings.Add(TaskParameterBinding.LoadFromXml(e2, nsmgr));
+            }
+        }
+
         /// <summary>
         /// Load 'DataDefinition'
         /// </summary>

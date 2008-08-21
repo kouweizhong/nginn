@@ -138,6 +138,42 @@ namespace NGinn.Engine.Runtime
 
         #region INGEnvironment Members
 
+
+
+        public string StartProcessInstance(string definitionId, IDataObject inputData, string correlationId)
+        {
+            try
+            {
+                ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
+                if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
+                StructDef sd = pd.GetProcessInputDataSchema();
+                inputData.Validate(sd);
+
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
+                    pi.Environment = this;
+                    pi.CorrelationId = correlationId;
+                    pi.Activate();
+
+                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                    pi.ProcessDefinitionId = definitionId;
+                    pi.SetProcessInputData(inputData);
+                    Token tok = pi.CreateNewStartToken();
+                    pi.AddToken(tok);
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi, ds);
+                    ds.Commit();
+                    return pi.InstanceId;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(string.Format("Error starting process: {0}", ex));
+                throw;
+            }
+        }
+
         public string StartProcessInstance(string definitionId, string inputXml, string processCorrelationId)
         {
             try

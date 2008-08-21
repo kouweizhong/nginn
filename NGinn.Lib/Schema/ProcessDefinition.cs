@@ -139,9 +139,6 @@ namespace NGinn.Lib.Schema
 
         public void AddTask(Task t)
         {
-            IList<ValidationMessage> msgs;
-            bool b = t.Validate(out msgs);
-            if (!b) throw new Exception(msgs[0].Message);
             if (t.FlowsOut.Count > 0) throw new Exception("Task cannot contain flows when adding to process definition");
             if (t.FlowsIn.Count > 0) throw new Exception("Task cannot contain flows when adding to process definition");
             NetNode nn = GetNode(t.Id);
@@ -506,6 +503,11 @@ namespace NGinn.Lib.Schema
             }
             if (!foundFinish)
                 msgs.Add(new ValidationMessage(true, null, "Process finish place is not reachable from start"));
+
+            foreach (Place pl in this.Places)
+                pl.Validate(msgs);
+            foreach (Task tsk in this.Tasks)
+                tsk.Validate(msgs);
             return msgs.Count == 0;
         }
 

@@ -132,9 +132,8 @@ namespace NGinn.Lib.Schema
             }
         }
 
-        internal virtual bool Validate(out IList<ValidationMessage> messages)
+        internal virtual bool Validate(IList<ValidationMessage> messages)
         {
-            messages = null;
             if (_id == null || _id.Length == 0) throw new Exception("Missing node Id");
             return true;
         }

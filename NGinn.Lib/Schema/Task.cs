@@ -151,6 +151,10 @@ namespace NGinn.Lib.Schema
             if (t != null && t.Length > 0) tsk.SplitType = (JoinType)Enum.Parse(typeof(JoinType), t);
             t = el.GetAttribute("multiInstance");
             if (t != null && t.Length > 0) tsk._isMultiInstance = Boolean.Parse(t);
+            XmlElement paramBinds = (XmlElement)el.SelectSingleNode(pr + "parameters", nsmgr);
+            if (paramBinds == null) throw new Exception();
+            List<TaskParameterBinding> bindingsList = new List<TaskParameterBinding>();
+            SchemaUtil.LoadTaskParameterBindings(paramBinds, nsmgr, tsk._parameterBindings);
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();
             List<VariableBinding> inputBind = new List<VariableBinding>();
@@ -295,6 +299,41 @@ namespace NGinn.Lib.Schema
         public virtual IList<TaskParameterBinding> ParameterBindings
         {
             get { return _parameterBindings; }
+        }
+
+        protected virtual bool RequireInputParameter(string name)
+        {
+            foreach (TaskParameterBinding tb in ParameterBindings)
+            {
+                if (tb.PropertyName == name) return true;
+            }
+            return false;
+        }
+
+        internal override bool Validate(IList<ValidationMessage> messages)
+        {
+            bool b = base.Validate(messages);
+            if (!b) return false;
+            Dictionary<string, TaskParameterBinding> bDict = new Dictionary<string, TaskParameterBinding>();
+            foreach (TaskParameterBinding tbi in ParameterBindings)
+            {
+                bDict[tbi.PropertyName] = tbi;
+            }
+            TaskParameterInfo[] tpis = GetTaskParameters();
+            if (tpis != null)
+            {
+                foreach (TaskParameterInfo tpi in this.GetTaskParameters())
+                {
+                    if (tpi.Required)
+                    {
+                        if (!bDict.ContainsKey(tpi.Name))
+                        {
+                            messages.Add(new ValidationMessage(true, Id, "Missing required task parameter binding: " + tpi.Name));
+                        }
+                    }
+                }
+            }
+            return messages.Count > 0 ? false : true;
         }
     }
 }

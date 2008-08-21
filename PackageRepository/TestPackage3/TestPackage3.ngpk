@@ -4,13 +4,16 @@
 		<schema>Types.xsd</schema>
 	</dataSchemas>
 	<processDefinitions>
+        <!--
 		<process>PurchaseOrder.xml</process>
         <process>TimerTask.xml</process>
         <process>TimerTask2.xml</process>
         <process>TimerTask3.xml</process>
         <process>XORRoute1.xml</process>
         <process>DataStructs.1.xml</process>
-        <process>MultiInstance.1.xml</process>
         <process>MultiInstance.2.xml</process>
+        -->
+        <process>MultiInstance.1.xml</process>
+        
 	</processDefinitions>
 </package>

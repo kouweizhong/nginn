@@ -40,5 +40,13 @@ namespace NGinn.Lib.Schema
         {
             get { return false; }
         }
+
+        public override TaskParameterInfo[] GetTaskParameters()
+        {
+            return new TaskParameterInfo[] {
+                new TaskParameterInfo("DelayAmount", typeof(TimeSpan), false, true, true),
+                new TaskParameterInfo("DelayUntil", typeof(DateTime), false, true, true),
+            };
+        }
     }
 }
