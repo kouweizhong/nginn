@@ -400,6 +400,30 @@ namespace NGinn.Engine
         }
 
         /// <summary>
+        /// Return process instance output data
+        /// Can be called only if Status == Finished
+        /// </summary>
+        /// <returns></returns>
+        public DataObject GetProcessOutputData()
+        {
+            if (Status != ProcessStatus.Finished) throw new ApplicationException("Process must be finished to get output data");
+            if (!_activated) throw new ApplicationException("Not activated");
+
+            StructDef sd = this.Definition.GetProcessOutputDataSchema();
+            DataObject dob = new DataObject(sd);
+            IDataObject src = this.GetProcessVariablesContainer();
+            foreach (VariableDef vd in Definition.ProcessVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.InOut || vd.VariableDir == VariableDef.Dir.Out)
+                {
+                    object obj = src[vd.Name];
+                    dob.Set(vd.Name, null, obj);
+                }
+            }
+            dob.Validate();
+            return dob;
+        }
+        /// <summary>
         /// Set process input data
         /// </summary>
         /// <param name="data"></param>

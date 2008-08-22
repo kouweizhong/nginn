@@ -28,8 +28,8 @@ namespace NGinn.Engine.Runtime
         {
             public IActiveTask ActiveTask;
             public TransitionStatus Status = TransitionStatus.ENABLED;
-            public DataObject OutputData;
-            public DataObject InputData;
+            public IDataObject OutputData;
+            public IDataObject InputData;
         }
 
         private List<TaskInfo> _activeTasks = new List<TaskInfo>();
@@ -112,7 +112,7 @@ namespace NGinn.Engine.Runtime
             throw new NotImplementedException();
         }
 
-        void IActiveTaskContext.TransitionCompleted(string correlationId, DataObject taskOutputData)
+        void IActiveTaskContext.TransitionCompleted(string correlationId, IDataObject taskOutputData)
         {
             bool found = false;
             bool completed = true;

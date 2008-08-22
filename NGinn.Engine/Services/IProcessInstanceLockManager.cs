@@ -7,6 +7,7 @@ namespace NGinn.Engine.Services
 {
     public interface IProcessInstanceLockManager
     {
+        
         /// <summary>
         /// Try to acquire a lock on process instance
         /// </summary>
@@ -16,6 +17,5 @@ namespace NGinn.Engine.Services
         /// <returns></returns>
         bool TryAcquireLock(string instanceId, int timeout);
         void ReleaseLock(string instanceId);
-
     }
 }

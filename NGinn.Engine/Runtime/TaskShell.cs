@@ -7,6 +7,7 @@ using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
 using ScriptNET;
+using System.Diagnostics;
 
 namespace NGinn.Engine.Runtime
 {
@@ -307,9 +308,13 @@ namespace NGinn.Engine.Runtime
             throw new NotImplementedException();
         }
 
-        void IActiveTaskContext.TransitionCompleted(string correlationId, DataObject taskOutputData)
+        void IActiveTaskContext.TransitionCompleted(string correlationId, IDataObject taskOutputData)
         {
-            throw new NotImplementedException();
+            Debug.Assert(CorrelationId == correlationId);
+            Debug.Assert(taskOutputData != null);
+            this._taskOutputData = taskOutputData;
+            this.Status = TransitionStatus.COMPLETED;
+            ParentCallback.TransitionCompleted(this.CorrelationId);
         }
 
         #endregion

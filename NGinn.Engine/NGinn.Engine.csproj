@@ -92,7 +92,6 @@
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\NGEngine.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskBase.cs" />
-    <Compile Include="Runtime\Tasks\ActiveTransition.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskFactory.cs" />
     <Compile Include="DataBinding.cs" />
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="Runtime\IActiveTask.cs" />
     <Compile Include="Runtime\ITransitionCallback.cs" />
     <Compile Include="Runtime\Tasks\ManualTaskActive.cs" />
-    <Compile Include="Runtime\Tasks\MultiInstanceTaskActive.cs" />
     <Compile Include="Runtime\MultiTaskShell.cs" />
     <Compile Include="Runtime\Tasks\NotificationTaskActive.cs" />
     <Compile Include="ProcessEvents.cs" />

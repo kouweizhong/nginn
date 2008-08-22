@@ -300,6 +300,33 @@ namespace NGinn.Engine.Runtime
             MessageBus.Notify("NGEnvironment", "NGinn.TransitionSelected", ev, false);
         }
 
+        public DataObject GetProcessOutputData(string instanceId)
+        {
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new ApplicationException("Failed to lock process instance");
+            }
+            try
+            {
+                using (INGDataSession ds = DataStore.OpenSession())
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
+                    pi.Environment = this;
+                    pi.Activate();
+                    if (pi.Status != ProcessStatus.Finished)
+                        throw new ApplicationException("Invalid process status");
+                    
+                    DataObject dob = pi.GetProcessOutputData();
+                    return dob;
+                }
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
 
         public string GetProcessInstanceData(string instanceId)
         {
@@ -430,14 +457,15 @@ namespace NGinn.Engine.Runtime
                 return null;
             }
             string taskCorrId = SubprocessTaskActive.GetTaskCorrelationIdFromProcess(pf.CorrelationId);
-            log.Debug("Subprocess completed, task correlation id: {0}", taskCorrId);
-            TaskCompletionInfo tci = new TaskCompletionInfo();
-            tci.CorrelationId = taskCorrId;
-            tci.ProcessInstance = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(taskCorrId);
-            tci.CompletedDate = pf.TimeStamp;
-            tci.ResultXml = null; //todo
+            string parentProcessId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(taskCorrId);
+            log.Debug("Subprocess completed, task correlation id: {0}. Notifying parent process {1}", taskCorrId, parentProcessId);
 
-            this.ProcessTaskCompleted(tci);
+            SubprocessCompleted sc = new SubprocessCompleted();
+            sc.SubprocessInstanceId = pf.InstanceId;
+            sc.ProcessInstanceId = parentProcessId;
+            sc.CorrelationId = taskCorrId;
+
+            MessageBus.Notify("NGEnvironment", "", sc, true);
             return null;
         }
 

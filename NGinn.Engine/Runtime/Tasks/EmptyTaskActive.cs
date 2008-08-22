@@ -24,11 +24,8 @@ namespace NGinn.Engine.Runtime.Tasks
             
         }
 
-        public override void InitiateTask(IDataObject inputData)
+        protected override void DoInitiateTask()
         {
-            base.ValidateInputData(inputData);
-            base.InitateTakskParameters(inputData);
-            
             OnTaskCompleted();
         }
     }

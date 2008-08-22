@@ -258,6 +258,8 @@ namespace NGinn.Lib.Schema
             return sd;
         }
 
+       
+
         public StructDef GetTaskInternalDataSchema()
         {
             if (ParentProcess == null) throw new Exception();
@@ -265,7 +267,15 @@ namespace NGinn.Lib.Schema
             sd.ParentTypeSet = ParentProcess.DataTypes;
             foreach (VariableDef vd in TaskVariables)
             {
-                sd.Members.Add(vd);
+                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    sd.Members.Add(vd);
+                }
+                else
+                {
+                    VariableDef vd2 = new VariableDef(vd); vd2.IsRequired = false;
+                    sd.Members.Add(vd2);
+                }
             }
             return sd;
         }

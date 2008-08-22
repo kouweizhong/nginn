@@ -41,11 +41,8 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return false; }
         }
 
-        public override void InitiateTask(IDataObject taskData)
+        protected override void DoInitiateTask()
         {
-            base.ValidateInputData(taskData);
-            base.InitateTakskParameters(taskData);
-
             _expirationTime = DateTime.Now + DelayAmount;
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;
@@ -53,7 +50,10 @@ namespace NGinn.Engine.Runtime.Tasks
             tex.ExpirationDate = _expirationTime;
             log.Debug("Timer task {0} expiration date: {1}", CorrelationId, tex.ExpirationDate);
             Context.ParentProcess.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
+
         }
+
+        
 
         public override void CancelTask()
         {
@@ -79,6 +79,9 @@ namespace NGinn.Engine.Runtime.Tasks
         }
     }
 
+    /// <summary>
+    /// Timer task expiration event
+    /// </summary>
     [Serializable]
     public class TimerExpiredEvent : InternalTransitionEvent
     {

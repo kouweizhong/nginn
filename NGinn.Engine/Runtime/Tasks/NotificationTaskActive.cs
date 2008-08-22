@@ -9,7 +9,7 @@ namespace NGinn.Engine.Runtime.Tasks
     /// Email notification task
     /// </summary>
     [Serializable]
-    public class NotificationTaskActive : ActiveTransition
+    public class NotificationTaskActive : ActiveTaskBase
     {
         public NotificationTaskActive(NotificationTask tsk)
             : base(tsk)
@@ -17,7 +17,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         }
 
-        protected override void DoCancelTask()
+        public override void CancelTask()
         {
             throw new NotImplementedException();
         }
@@ -27,9 +27,6 @@ namespace NGinn.Engine.Runtime.Tasks
             throw new NotImplementedException();
         }
 
-        protected override void DoExecuteTask()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

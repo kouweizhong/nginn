@@ -19,6 +19,8 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     public abstract class ActiveTaskBase : IActiveTask
     {
+        protected static Logger log = LogManager.GetCurrentClassLogger();
+
         private bool _activated = false;
         private string _correlationId; 
         [NonSerialized]
@@ -77,27 +79,36 @@ namespace NGinn.Engine.Runtime.Tasks
 
         
 
-        public virtual NGinn.Lib.Data.IDataObject GetOutputData()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public virtual NGinn.Lib.Data.IDataObject GetTaskData()
         {
-            return VariablesContainer;
+            return new DataObject(VariablesContainer);
         }
 
+        /// <summary>
+        /// TODO: implement
+        /// </summary>
+        /// <param name="dob"></param>
         public virtual void UpdateTaskData(NGinn.Lib.Data.IDataObject dob)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Create script evaluation context for given variable set
+        /// </summary>
+        /// <param name="variables"></param>
+        /// <returns></returns>
         protected IScriptContext CreateScriptContext(IDataObject variables)
         {
             IScriptContext ctx = new ScriptContext();
-            foreach (string fn in variables.FieldNames)
+            if (variables != null)
             {
-                ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
+                foreach (string fn in variables.FieldNames)
+                {
+                    ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
+                }
             }
             return ctx;
         }
@@ -143,7 +154,9 @@ namespace NGinn.Engine.Runtime.Tasks
 
 
         public virtual void NotifyTransitionSelected()
-        {}
+        {
+            Context.TransitionStarted(this.CorrelationId);
+        }
 
        
         public virtual void HandleInternalTransitionEvent(InternalTransitionEvent ite)
@@ -151,7 +164,25 @@ namespace NGinn.Engine.Runtime.Tasks
             
         }
 
-        public abstract void InitiateTask(IDataObject inputData);
+        /// <summary>
+        /// Implementation of InitiateTask. Provides input data validation and task parameter 
+        /// initialization, so don't override it if you want to use standard mechanism. Implement
+        /// DoInitiateTask to provide your task logic.
+        /// </summary>
+        /// <param name="inputData"></param>
+        public virtual void InitiateTask(IDataObject inputData)
+        {
+            InitializeTaskData(inputData);
+            InitateTakskParameters(inputData);
+            DoInitiateTask();
+        }
+
+        /// <summary>
+        /// Implement this method to execute task logic.
+        /// If the task does not complete immediately, just return.
+        /// If the task completes synchronously, call OnTaskCompleted before returning.
+        /// </summary>
+        protected abstract void DoInitiateTask();
 
         /// <summary>
         /// Set-up task parameter values according to parameter bindings.
@@ -203,15 +234,61 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
         /// <summary>
-        /// Validate task input data. Throws exception if input data structure
+        /// Prepare task data - validate the input and initialize task variables. Throws exception if input data structure
         /// does not validate against task data schema.
         /// </summary>
         /// <param name="inputData"></param>
-        protected void ValidateInputData(IDataObject inputData)
+        protected void InitializeTaskData(IDataObject inputData)
         {
+            StructDef sd = Context.TaskDefinition.GetTaskInputDataSchema();
+            inputData.Validate(sd);
+            DataObject taskData = new DataObject();
+            IScriptContext ctx = this.CreateScriptContext(null); 
+            ctx.SetItem("data", ContextItem.Variable, new DOBMutant(taskData));
 
+            foreach (VariableDef vd in Context.TaskDefinition.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.In ||
+                    vd.VariableDir == VariableDef.Dir.InOut)
+                {
+                    taskData[vd.Name] = inputData[vd.Name];
+                }
+                else
+                {
+                    if (vd.DefaultValueExpr != null && vd.DefaultValueExpr.Length > 0)
+                    {
+                        string code = vd.DefaultValueExpr.Trim();
+                        if (!code.EndsWith(";")) code += ";";
+                        taskData[vd.Name] = Script.RunCode(code, ctx);
+                    }
+                }
+            }
+            StructDef internalSchema = Context.TaskDefinition.GetTaskInternalDataSchema();
+            taskData.Validate(internalSchema);
+            this._taskData = taskData;
         }
-            
+
+        /// <summary>
+        /// Return task output data.
+        /// Performs output data validation
+        /// </summary>
+        /// <returns></returns>
+        public virtual IDataObject GetOutputData()
+        {
+            StructDef sd = Context.TaskDefinition.GetTaskOutputDataSchema();
+            DataObject dob = new DataObject(sd);
+            IDataObject src = VariablesContainer;
+            foreach (VariableDef vd in Context.TaskDefinition.TaskVariables)
+            {
+                if (vd.VariableDir == VariableDef.Dir.InOut || vd.VariableDir == VariableDef.Dir.Out)
+                {
+                    object obj = src[vd.Name];
+                    dob.Set(vd.Name, null, obj);
+                }
+            }
+            dob.Validate();
+            return dob;
+        }
 
         #endregion
 
@@ -222,7 +299,7 @@ namespace NGinn.Engine.Runtime.Tasks
         /// </summary>
         protected void OnTaskCompleted()
         {
-            DataObject dob = new DataObject(GetTaskData());
+            IDataObject dob = GetOutputData();
             Context.TransitionCompleted(this.CorrelationId, dob); 
         }
     }

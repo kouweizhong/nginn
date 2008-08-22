@@ -80,5 +80,13 @@ namespace NGinn.Lib.Interfaces
         /// <param name="correlationId"></param>
         /// <returns></returns>
         DataObject GetTaskData(string correlationId);
+
+        /// <summary>
+        /// Return process output data. Can be called only after process completes.
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        DataObject GetProcessOutputData(string instanceId);
+
     }
 }

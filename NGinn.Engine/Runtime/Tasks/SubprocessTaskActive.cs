@@ -39,23 +39,21 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
 
-            throw new NotImplementedException();
-        }
-
-        /*protected override void DoInitiateTask()
-        {
-            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment", typeof(INGEnvironment));
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
-            inputVars["_NGinn_ParentProcess"] = this.ProcessInstanceId;
+            inputVars["_NGinn_ParentProcess"] = Context.ParentProcess.InstanceId;
             log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
-            IDataObject dob = GetTaskData();
+            IDataObject dob = inputData;
             string xml = dob.ToXmlString("data");
             string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml, GetSubprocessCorrelationId(this.CorrelationId));
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
         }
-        */
+
+        protected override void DoInitiateTask()
+        {
+            throw new NotImplementedException();
+        }
+
 
         public override void CancelTask()
         {
@@ -79,5 +77,28 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             return correlId.StartsWith("_NGINN_");
         }
+
+        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        {
+            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
+            
+            if (ite is SubprocessCompleted)
+            {
+                SubprocessCompleted sc = (SubprocessCompleted)ite;
+                if (sc.SubprocessInstanceId != this._subprocessInstanceId)
+                    throw new Exception();
+                this.VariablesContainer = env.GetProcessOutputData(sc.SubprocessInstanceId);
+                OnTaskCompleted();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Message to notify SubprocessTask that the subprocess has completed
+    /// </summary>
+    [Serializable]
+    public class SubprocessCompleted : InternalTransitionEvent
+    {
+        public string SubprocessInstanceId;
     }
 }

@@ -23,7 +23,7 @@ namespace NGinn.Engine.Runtime
         /// </summary>
         /// <param name="correlationId"></param>
         /// <param name="taskOutputData"></param>
-        void TransitionCompleted(string correlationId, DataObject taskOutputData);
+        void TransitionCompleted(string correlationId, IDataObject taskOutputData);
 
             }
 
@@ -65,8 +65,16 @@ namespace NGinn.Engine.Runtime
 
         bool IsImmediate { get; }
         
-        IDataObject GetOutputData();
+        /// <summary>
+        /// Return current task data
+        /// </summary>
+        /// <returns></returns>
         IDataObject GetTaskData();
+
+        /// <summary>
+        /// Update task data
+        /// </summary>
+        /// <param name="dob"></param>
         void UpdateTaskData(IDataObject dob);
         
         /// <summary>
@@ -75,12 +83,23 @@ namespace NGinn.Engine.Runtime
         /// <returns></returns>
         IList<TaskParameterInfo> GetTaskInputParameters();
         
+        /// <summary>
+        /// Set value of task parameter
+        /// </summary>
+        /// <param name="paramName"></param>
+        /// <param name="value"></param>
         void SetTaskParameterValue(string paramName, object value);
 
+        /// <summary>
+        /// Return value of task parameter
+        /// </summary>
+        /// <param name="paramName"></param>
+        /// <returns></returns>
         object GetTaskParameterValue(string paramName);
 
         /// <summary>
         /// Notify task instance that the transition has been selected.
+        /// TODO: decide if this method is necessary
         /// </summary>
         void NotifyTransitionSelected();
 
