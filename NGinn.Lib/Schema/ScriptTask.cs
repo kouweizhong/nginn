@@ -16,21 +16,18 @@ namespace NGinn.Lib.Schema
             set { _code = value; }
         }
 
-        internal override void LoadXml(System.Xml.XmlElement el, System.Xml.XmlNamespaceManager nsmgr)
-        {
-            base.LoadXml(el, nsmgr);
-            string pr = nsmgr.LookupPrefix(ProcessDefinition.WORKFLOW_NAMESPACE);
-            if (pr != null && pr.Length > 0) pr += ":";
-            XmlElement tEl = (XmlElement) el.SelectSingleNode(pr + "scriptTask", nsmgr);
-            if (tEl == null) throw new Exception("Missing <scriptTask> element");
-            XmlElement tBody = (XmlElement) tEl.SelectSingleNode(pr + "script", nsmgr);
-            if (tBody == null) throw new Exception("Missing <script> element");
-            Script = tBody.InnerText;
-        }
+        
 
         public override bool IsImmediate
         {
             get { return true; }
+        }
+
+        public override TaskParameterInfo[] GetTaskParameters()
+        {
+            return new TaskParameterInfo[] {
+                new TaskParameterInfo("ScriptBody", typeof(string), true, true, false)
+            };
         }
     }
 }

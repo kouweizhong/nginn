@@ -14,6 +14,6 @@
         -->
         <process>TimerTask.xml</process>
         <process>MultiInstance.1.xml</process>
-        
+        <process>Notification.1.xml</process>
 	</processDefinitions>
 </package>

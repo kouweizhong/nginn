@@ -338,6 +338,7 @@ namespace NGinn.Lib.Data
         public static DataObject ParseXmlElement(XmlReader xr)
         {
             object obj = DeserializeXmlElement(xr);
+            if (obj == null) return new DataObject(); //empty data object
             if (!(obj is DataObject)) throw new ApplicationException("XML does not contain data object");
             return (DataObject) obj;
         }

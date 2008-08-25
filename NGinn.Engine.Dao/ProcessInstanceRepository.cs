@@ -26,6 +26,7 @@ namespace NGinn.Engine.Dao
 
         public ProcessInstance GetProcessInstance(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
+             
             SoodaSession ss = (SoodaSession) ds;
             ProcessInstanceDbList dbl = ProcessInstanceDb.GetList(ss.Transaction, ProcessInstanceDbField.InstanceId == instanceId);
             if (dbl.Count == 0) return null;
@@ -195,5 +196,7 @@ namespace NGinn.Engine.Dao
         }
 
         #endregion
+
+        
     }
 }

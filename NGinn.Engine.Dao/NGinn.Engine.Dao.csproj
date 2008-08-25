@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{26A7F419-0571-4C06-9142-2C1793675838}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -41,11 +41,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Sooda.dll</HintPath>
     </Reference>
+    <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Spring.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Spring.Services, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Spring.Services.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachingProcessInstanceRepository.cs" />
     <Compile Include="NGDataStore.cs" />
     <Compile Include="ProcessDefinitionRepository.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />

@@ -8,12 +8,17 @@ namespace NGinn.Engine.Services
 {
     public interface IProcessInstanceRepository
     {
+        /// <summary>
+        /// Retrieve process instance from a repository
+        /// </summary>
+        /// <param name="instanceId">Process instance ID</param>
+        /// <param name="ds">data session</param>
+        /// <returns></returns>
         ProcessInstance GetProcessInstance(string instanceId, INGDataSession ds);
+
         void UpdateProcessInstance(ProcessInstance pi, INGDataSession ds);
         ProcessInstance InitializeNewProcessInstance(string definitionId, INGDataSession ds);
-        IList<Token> GetProcessActiveTokens(string instanceId, INGDataSession ds);
         IList<string> SelectProcessesWithReadyTokens();
-        string GetProcessOutputXml(string instanceId);
         /// <summary>
         /// Set process instance status to 'error'.
         /// In this case engine will retry processing this instance
@@ -26,6 +31,5 @@ namespace NGinn.Engine.Services
         /// <param name="instanceId"></param>
         /// <param name="errorInfo"></param>
         void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, INGDataSession ds);
-
     }
 }

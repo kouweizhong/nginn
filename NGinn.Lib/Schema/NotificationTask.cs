@@ -16,5 +16,15 @@ namespace NGinn.Lib.Schema
         {
             get { return true; }
         }
+
+        public override TaskParameterInfo[] GetTaskParameters()
+        {
+            return new TaskParameterInfo[] {
+                new TaskParameterInfo("Recipients", typeof(string), true, true, true),
+                new TaskParameterInfo("Subject", typeof(string), true, true, true),
+                new TaskParameterInfo("Body", typeof(string), true, true, true),
+                new TaskParameterInfo("SenderName", typeof(string), false, true, false),
+            };
+        }
     }
 }

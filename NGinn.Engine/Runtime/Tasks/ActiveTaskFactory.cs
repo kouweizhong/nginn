@@ -21,6 +21,14 @@ namespace NGinn.Engine.Runtime.Tasks
             {
                 at = new TimerTaskActive(tsk);
             }
+            else if (tsk is ScriptTask)
+            {
+                at = new ScriptTaskActive((ScriptTask)tsk);
+            }
+            else if (tsk is NotificationTask)
+            {
+                at = new NotificationTaskActive((NotificationTask)tsk);
+            }
             else throw new Exception();
             return at;
         }

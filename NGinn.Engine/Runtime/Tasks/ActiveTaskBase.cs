@@ -110,6 +110,7 @@ namespace NGinn.Engine.Runtime.Tasks
                     ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
                 }
             }
+            ctx.SetItem("_log", ContextItem.Variable, log);
             return ctx;
         }
 

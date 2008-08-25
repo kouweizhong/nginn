@@ -5,9 +5,11 @@
     <place id="end" type="EndPlace"></place>
   </places>
   <tasks>
-    <task id="init" type="EmptyTask" multiInstance="true">
+    <task id="init" type="ScriptTask" multiInstance="true">
         <parameters>
-            
+            <binding parameter="ScriptBody"><value><![CDATA[
+            _log.Info('ScriptTask: {0}', requestorName);
+            ]]></value></binding>
         </parameters>
         <data-definition>
             <variables> 
