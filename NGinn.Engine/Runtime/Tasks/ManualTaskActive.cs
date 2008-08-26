@@ -22,7 +22,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public override void CancelTask()
         {
             log.Info("Cancelling manual task {0}", CorrelationId);
-            Context.ParentProcess.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
+            Context.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
         }
 
         protected override void DoInitiateTask()

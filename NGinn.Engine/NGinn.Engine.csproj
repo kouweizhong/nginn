@@ -121,6 +121,7 @@
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />
+    <Compile Include="Services\ITaskCorrelationIdResolver.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,7 +34,7 @@ namespace NGinn.Engine
     /// in parallel, but two threads shouldn't update the same ProcessInstance object. 
     /// </summary>
     [Serializable]
-    public class ProcessInstance : ITransitionCallback
+    public class ProcessInstance : IProcessTransitionCallback
     {
         [NonSerialized]
         private Logger log = LogManager.GetCurrentClassLogger();
@@ -525,7 +525,11 @@ namespace NGinn.Engine
         public bool Kick()
         {
             Token tok = SelectReadyTokenForProcessing();
-            if (tok == null) return false;
+            if (tok == null)
+            {
+                Debug.Assert(Status != ProcessStatus.Ready);
+                return false;
+            }
             KickToken(tok.TokenId);
             return Status == ProcessStatus.Ready;
         }
@@ -677,7 +681,7 @@ namespace NGinn.Engine
             if (!_activated) throw new Exception("Process instance not activated");
             log.Info("Kicking token {0}", tok.ToString());
             if (_tokens[tok.TokenId] != tok) throw new Exception("invalid token");
-            if (tok.Status != TokenStatus.READY) throw new Exception("invalid status");
+            if (tok.Status != TokenStatus.READY) throw new Exception("invalid token status");
             
             Place pl = Definition.GetPlace(tok.PlaceId);
             if (pl is EndPlace)
@@ -782,6 +786,7 @@ namespace NGinn.Engine
                 foreach (string tokId in at.Tokens)
                 {
                     Token t = GetToken(tokId);
+
                 }
 
                 AddActiveTransition(at);
@@ -958,6 +963,9 @@ namespace NGinn.Engine
 
         /// <summary>
         /// Add initialized active transition to the collection of active transitions
+        /// Updates transition list for each input token of at. Calculates sharedId for
+        /// the transition, if the transition is in implicit-choice group.
+        /// TODO: fix the sharedId calculation code.
         /// </summary>
         /// <param name="at"></param>
         private void AddActiveTransition(TaskShell at)
@@ -973,6 +981,7 @@ namespace NGinn.Engine
                 Token t = GetToken(tid);
                 foreach (string atid in t.ActiveTransitions)
                 {
+                    Debug.Assert(atid != at.CorrelationId); //at cannot be in token's transitions yet
                     if (!sharedTrans.ContainsKey(atid)) 
                         sharedTrans[atid] = GetActiveTransition(atid);
                 }
@@ -981,11 +990,24 @@ namespace NGinn.Engine
             if (strans.Count > 0)
             {
                 log.Info("Transition shares the same tokens with {0} active transitions.");
+                //IMPORTANT: currently we enable implicit choice groups with only one input token
+                //so if there are shared transitions and they have more than one input tokens
+                //just throw an error. TODO: in future we should handle such situation
+                //somehow
+                foreach (TaskShell at2 in strans)
+                {
+                    if (at2.Tokens.Count > 1) throw new ApplicationException(string.Format("Implicit choice groups do not currently allow more than one input token. For transition {0} we have more than 1 input token", at2.CorrelationId));
+                }
+                if (at.Tokens.Count > 1) throw new ApplicationException(string.Format("Implicit choice groups do not currently allow more than one input token. For transition {0} we have more than 1 input token", at.CorrelationId));
+                at.SharedId = at.Tokens[0];
+                //end IMPORTANT:
+                /* 
                 if (strans.Count == 1)
                 {
                     strans[0].SharedId = strans[0].CorrelationId;
                 }
                 at.SharedId = strans[0].SharedId;
+                */
                 foreach (TaskShell at2 in strans) Debug.Assert(at2.SharedId == at.SharedId);
             }
 
@@ -1452,12 +1474,12 @@ namespace NGinn.Engine
 
         #region ITransitionCallback Members
 
-        void ITransitionCallback.TransitionStarted(string correlationId)
+        void IProcessTransitionCallback.TransitionStarted(string correlationId)
         {
             this.AfterTransitionSelected(correlationId);
         }
 
-        void ITransitionCallback.TransitionCompleted(string correlationId)
+        void IProcessTransitionCallback.TransitionCompleted(string correlationId)
         {
             TaskShell ts = GetActiveTransition(correlationId);
             //1. transfer task output data from transition

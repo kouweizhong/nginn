@@ -30,6 +30,7 @@ namespace NGinn.Engine.Runtime
         private IMessageBus _mbus;
         private IResourceManager _resMgr;
         private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
+        private ITaskCorrelationIdResolver _resolver;
 
         private bool _markErrors = true;
 
@@ -71,6 +72,12 @@ namespace NGinn.Engine.Runtime
         {
             get { return _worklistService; }
             set { _worklistService = value; }
+        }
+
+        public ITaskCorrelationIdResolver CorrelationIdResolver
+        {
+            get { return _resolver; }
+            set { _resolver = value; }
         }
 
         public IMessageBus MessageBus
@@ -465,7 +472,7 @@ namespace NGinn.Engine.Runtime
             sc.ProcessInstanceId = parentProcessId;
             sc.CorrelationId = taskCorrId;
 
-            MessageBus.Notify("NGEnvironment", "", sc, true);
+            MessageBus.Notify("NGEnvironment", "SubprocessCompleted", sc, true);
             return null;
         }
 
@@ -499,6 +506,22 @@ namespace NGinn.Engine.Runtime
             {
                 LockManager.ReleaseLock(instanceId);
             }
+        }
+
+        
+
+
+        public void DispatchProcessMessage(string messageCorrelationId, DataObject messageBody)
+        {
+            string taskCorrelationId = CorrelationIdResolver.GetCorrelationId(messageCorrelationId);
+            if (taskCorrelationId == null) throw new ApplicationException("Did not find any process waiting for message with message CorrelationId=" + messageCorrelationId);
+            //ok, task found - so notify it about the message
+            ReceiveMessageTaskEvent te = new ReceiveMessageTaskEvent();
+            te.CorrelationId = taskCorrelationId;
+            te.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(taskCorrelationId);
+            te.MessageCorrelationId = messageCorrelationId;
+            te.MessageData = messageBody;
+            MessageBus.Notify("NGEnvironment", "ReceiveMessageTaskEvent", te, false);
         }
 
         #endregion

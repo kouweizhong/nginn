@@ -8,7 +8,7 @@ namespace NGinn.Engine.Runtime
     /// Interface for reporting transition status 
     /// to transition container (process instance or multi-instance task)
     /// </summary>
-    public interface ITransitionCallback
+    public interface IProcessTransitionCallback
     {
         /// <summary>
         /// Called after the transition has been started

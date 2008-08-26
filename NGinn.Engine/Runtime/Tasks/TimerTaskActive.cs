@@ -49,7 +49,7 @@ namespace NGinn.Engine.Runtime.Tasks
             tex.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(this.CorrelationId);
             tex.ExpirationDate = _expirationTime;
             log.Debug("Timer task {0} expiration date: {1}", CorrelationId, tex.ExpirationDate);
-            Context.ParentProcess.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
+            Context.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
 
         }
 

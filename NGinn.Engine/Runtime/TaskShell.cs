@@ -99,7 +99,8 @@ namespace NGinn.Engine.Runtime
 
         [NonSerialized]
         protected ProcessInstance _processInstance;
-        protected ITransitionCallback _parentCallback;
+        [NonSerialized]
+        protected IProcessTransitionCallback _parentCallback;
         [NonSerialized]
         protected Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
@@ -110,7 +111,7 @@ namespace NGinn.Engine.Runtime
             get { return TaskDefinition.IsImmediate; }
         }
 
-        public ITransitionCallback ParentCallback
+        public IProcessTransitionCallback ParentCallback
         {
             get { return _parentCallback; }
             set { _parentCallback = value; }
@@ -222,7 +223,7 @@ namespace NGinn.Engine.Runtime
         {
             if (pi.InstanceId != this.ProcessInstanceId) throw new Exception();
             _processInstance = pi;
-            if (_parentCallback == null) _parentCallback = pi as ITransitionCallback;
+            if (_parentCallback == null) _parentCallback = pi as IProcessTransitionCallback;
         }
 
         public virtual void Activate()
@@ -249,6 +250,11 @@ namespace NGinn.Engine.Runtime
             _taskDefinition = null;
             _parentCallback = null;
             _activated = false;
+        }
+
+        public bool IsActivated
+        {
+            get { return _activated; }
         }
 
         
@@ -315,6 +321,11 @@ namespace NGinn.Engine.Runtime
             this._taskOutputData = taskOutputData;
             this.Status = TransitionStatus.COMPLETED;
             ParentCallback.TransitionCompleted(this.CorrelationId);
+        }
+
+        public INGEnvironmentContext Environment
+        {
+            get { return  ParentProcess.Environment; }
         }
 
         #endregion

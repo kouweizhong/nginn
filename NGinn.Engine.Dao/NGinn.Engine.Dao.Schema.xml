@@ -66,5 +66,14 @@
       <field name="TransitionData" dbcolumn="transition_data" type="Blob" nullable="false" />
     </table>
   </class>
-  
-</schema>
+
+  <class name="MessageCorrelationIdMapping" label="FullName">
+    <table name="MessageIdMap">
+      <field name="Id" dbcolumn="id" type="Integer" primaryKey="true" nullable="false" />
+      <field name="MessageId" dbcolumn="message_id" type="String" size="100" nullable="false" />
+      <field name="TaskCorrelationId" dbcolumn="task_id" type="String" size="100" nullable="false" />
+    </table>
+  </class>
+
+
+    </schema>

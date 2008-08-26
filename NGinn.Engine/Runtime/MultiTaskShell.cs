@@ -15,7 +15,7 @@ namespace NGinn.Engine.Runtime
     /// </summary>
     [Serializable]
     class MultiTaskShell : TaskShell, IActiveTaskContext
-    {
+    { 
         public MultiTaskShell(ProcessInstance pi, Task tsk)
         {
             this.TaskId = tsk.Id;

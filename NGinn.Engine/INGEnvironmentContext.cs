@@ -25,6 +25,11 @@ namespace NGinn.Engine
         {
             get;
         }
+
+        ITaskCorrelationIdResolver CorrelationIdResolver
+        {
+            get;
+        }
          
 
         INGDataStore DataStore

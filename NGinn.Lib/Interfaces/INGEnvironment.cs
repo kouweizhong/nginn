@@ -88,5 +88,12 @@ namespace NGinn.Lib.Interfaces
         /// <returns></returns>
         DataObject GetProcessOutputData(string instanceId);
 
+        /// <summary>
+        /// Dispatch message to process waiting for it.
+        /// </summary>
+        /// <param name="messageCorrelationId">Message ID, used for finding the task waiting for the message</param>
+        /// <param name="messageBody">Message data content</param>
+        void DispatchProcessMessage(string messageCorrelationId, DataObject messageBody);
+
     }
 }

@@ -3,15 +3,42 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
+using NGinn.Lib.Interfaces;
+using NGinn.Engine;
 
 namespace NGinn.Engine.Runtime
 {
+    /// <summary>
+    /// Context information available to active tasks
+    /// </summary>
     public interface IActiveTaskContext
     {
+        /// <summary>
+        /// transition's correlation id
+        /// Usually the same as task correlation id, different only in case of multi-instance tasks
+        /// </summary>
         string CorrelationId { get; }
+        /// <summary>
+        /// task definition
+        /// </summary>
         Task TaskDefinition { get; }
-        ProcessInstance ParentProcess { get; }
+        /// <summary>
+        /// parent process instance ID
+        /// </summary>
+        string ProcessInstanceId { get; }
+        /// <summary>
+        /// transition's status
+        /// </summary>
         TransitionStatus Status { get; }
+        /// <summary>
+        /// environment where process is hosted
+        /// </summary>
+        INGEnvironmentContext Environment { get; }
+        /// <summary>
+        /// Information about ID of implicit choice task group (so the tasks know
+        /// that they belong to the same implicit choice group).
+        /// </summary>
+        string SharedId { get; }
         /// <summary>
         /// Called after the transition has been started
         /// This is optional callback. 

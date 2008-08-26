@@ -37,10 +37,10 @@ namespace NGinn.Engine.Runtime.Tasks
        
         public override void InitiateTask(IDataObject inputData)
         {
-            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
+            INGEnvironment env = (INGEnvironment)Context.Environment;
 
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
-            inputVars["_NGinn_ParentProcess"] = Context.ParentProcess.InstanceId;
+            inputVars["_NGinn_ParentProcess"] = Context.ProcessInstanceId;
             log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
             IDataObject dob = inputData;
             string xml = dob.ToXmlString("data");
@@ -57,7 +57,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public override void CancelTask()
         {
-            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
+            INGEnvironment env = (INGEnvironment)Context.Environment;
             log.Info("Task[{0}]: Cancelling subprocess {0}", CorrelationId, _subprocessInstanceId);
             env.CancelProcessInstance(this._subprocessInstanceId);
             log.Debug("Subprocess {0} cancelled", _subprocessInstanceId);
@@ -80,7 +80,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
-            INGEnvironment env = (INGEnvironment)Context.ParentProcess.Environment;
+            INGEnvironment env = (INGEnvironment)Context.Environment;
             
             if (ite is SubprocessCompleted)
             {

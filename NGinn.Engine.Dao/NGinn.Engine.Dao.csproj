@@ -58,6 +58,7 @@
     <Compile Include="NGDataStore.cs" />
     <Compile Include="ProcessDefinitionRepository.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />
+    <Compile Include="ProcessMessageTargetResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProcessDefinitionDb.cs" />
     <Compile Include="ProcessInstanceDb.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="_Stubs.cs" />
     <Compile Include="ProcessStatus.cs" />
     <Compile Include="ActiveTransition.cs" />
+    <Compile Include="MessageCorrelationIdMapping.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">

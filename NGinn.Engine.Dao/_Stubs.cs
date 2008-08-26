@@ -288,6 +288,60 @@ namespace NGinn.Engine.Dao {
       return new ActiveTransitionList(base.GetSnapshot2());
     }
   }
+  public class MessageCorrelationIdMappingList : Sooda.ObjectMapper.SoodaObjectCollectionWrapperGeneric<NGinn.Engine.Dao.MessageCorrelationIdMapping> {
+    public MessageCorrelationIdMappingList() {
+    }
+    public MessageCorrelationIdMappingList(ISoodaObjectList list) : 
+        base(list) {
+    }
+    public new MessageCorrelationIdMapping this[int pos] {
+      get {
+        return ((MessageCorrelationIdMapping)(base.GetItem(pos)));
+      }
+    }
+    public int Add(MessageCorrelationIdMapping obj) {
+      return base.Add2(obj);
+    }
+    public void Remove(MessageCorrelationIdMapping obj) {
+      base.Remove2(obj);
+    }
+    public bool Contains(MessageCorrelationIdMapping obj) {
+      return base.Contains2(obj);
+    }
+    public MessageCorrelationIdMappingList Sort(IComparer comparer) {
+      return new MessageCorrelationIdMappingList(base.Sort2(comparer));
+    }
+    public MessageCorrelationIdMappingList Sort(string sortOrder) {
+      return new MessageCorrelationIdMappingList(base.Sort2(sortOrder));
+    }
+    public MessageCorrelationIdMappingList Sort(Sooda.QL.SoqlExpression sortExpression) {
+      return new MessageCorrelationIdMappingList(base.Sort2(sortExpression));
+    }
+    public MessageCorrelationIdMappingList Sort(Sooda.QL.SoqlExpression sortExpression, Sooda.SortOrder sortOrder) {
+      return new MessageCorrelationIdMappingList(base.Sort2(sortExpression, sortOrder));
+    }
+    public MessageCorrelationIdMappingList SelectFirst(int count) {
+      return new MessageCorrelationIdMappingList(base.SelectFirst2(count));
+    }
+    public MessageCorrelationIdMappingList SelectLast(int count) {
+      return new MessageCorrelationIdMappingList(base.SelectLast2(count));
+    }
+    public MessageCorrelationIdMappingList SelectRange(int _from, int _to) {
+      return new MessageCorrelationIdMappingList(base.SelectRange2(_from, _to));
+    }
+    public MessageCorrelationIdMappingList Filter(SoodaObjectFilter f) {
+      return new MessageCorrelationIdMappingList(base.Filter2(f));
+    }
+    public MessageCorrelationIdMappingList Filter(Sooda.QL.SoqlBooleanExpression sortExpression) {
+      return new MessageCorrelationIdMappingList(base.Filter2(sortExpression));
+    }
+    public MessageCorrelationIdMappingList Filter(SoodaWhereClause whereClause) {
+      return new MessageCorrelationIdMappingList(base.Filter2(whereClause));
+    }
+    public MessageCorrelationIdMappingList GetSnapshot() {
+      return new MessageCorrelationIdMappingList(base.GetSnapshot2());
+    }
+  }
 }
 namespace NGinn.Engine.Dao.Stubs {
   using System;
@@ -1716,6 +1770,233 @@ namespace NGinn.Engine.Dao.Stubs {
       this.AfterFieldUpdate("TransitionData", oldValue, newValue);
     }
   }
+  public class MessageCorrelationIdMapping_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
+    public int Id;
+    public string MessageId;
+    public string TaskCorrelationId;
+    public MessageCorrelationIdMapping_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
+        base(other) {
+    }
+    public MessageCorrelationIdMapping_Values(string[] fieldNames) : 
+        base(fieldNames) {
+    }
+    public override Sooda.SoodaObjectFieldValues Clone() {
+      return new MessageCorrelationIdMapping_Values(this);
+    }
+  }
+  public class MessageCorrelationIdMapping_Stub : SoodaObject {
+    private static IPrimaryKeyGenerator keyGenerator = new Sooda.ObjectMapper.KeyGenerators.TableBasedGenerator("MessageCorrelationIdMapping", NGinnEngineDao._DatabaseSchema.GetSchema().GetDataSourceInfo("default"));
+    public MessageCorrelationIdMapping_Stub(SoodaTransaction tran) : 
+        base(tran) {
+      this.InitNewObject();
+    }
+    public MessageCorrelationIdMapping_Stub(SoodaConstructor c) : 
+        base(c) {
+    }
+    public int Id {
+      get {
+        return ((int)(this.GetPrimaryKeyValue()));
+      }
+      set {
+        this.SetPrimaryKeyValue(value);
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(100)]
+    public string MessageId {
+      get {
+        return this.GetMessageCorrelationIdMappingFieldValuesForRead(0).MessageId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "MessageId", 1, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_MessageId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_MessageId));
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(100)]
+    public string TaskCorrelationId {
+      get {
+        return this.GetMessageCorrelationIdMappingFieldValuesForRead(0).TaskCorrelationId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "TaskCorrelationId", 2, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_TaskCorrelationId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_TaskCorrelationId));
+      }
+    }
+    private MessageCorrelationIdMapping_Values GetMessageCorrelationIdMappingFieldValuesForRead(int requiredTable) {
+      return ((MessageCorrelationIdMapping_Values)(Sooda.ObjectMapper.SoodaObjectImpl.GetFieldValuesForRead(this, requiredTable)));
+    }
+    protected override SoodaObjectFieldValues InitFieldValues(int fieldCount, string[] fieldNames) {
+      return new MessageCorrelationIdMapping_Values(fieldNames);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public override Sooda.Schema.ClassInfo GetClassInfo() {
+      return MessageCorrelationIdMapping_Factory.TheClassInfo;
+    }
+    protected override Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return MessageCorrelationIdMapping_Factory.InternalGetFieldHandler(ordinal);
+    }
+    public static IPrimaryKeyGenerator GetKeyGenerator() {
+      return keyGenerator;
+    }
+    protected override void InitNewObject() {
+      this.SetPrimaryKeyValue(GetKeyGenerator().GetNextKeyValue());
+    }
+    public static MessageCorrelationIdMapping LoadSingleObject(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((MessageCorrelationIdMapping)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(SoodaTransaction.ActiveTransaction, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static MessageCorrelationIdMapping LoadSingleObject(Sooda.SoodaWhereClause @where) {
+      return ((MessageCorrelationIdMapping)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static MessageCorrelationIdMapping LoadSingleObject(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((MessageCorrelationIdMapping)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(tran, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static MessageCorrelationIdMapping LoadSingleObject(SoodaTransaction tran, Sooda.SoodaWhereClause @where) {
+      return ((MessageCorrelationIdMapping)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(tran, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static MessageCorrelationIdMappingList GetAllObjects() {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause("1=1"), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetAllObjects(SoodaTransaction transaction) {
+      return DoGetList(transaction, null, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(tran, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, topCount, options);
+    }
+    private static MessageCorrelationIdMappingList DoGetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderByClause, int topCount, SoodaSnapshotOptions options) {
+      return new MessageCorrelationIdMappingList(new Sooda.ObjectMapper.SoodaObjectListSnapshot(tran, whereClause, orderByClause, topCount, options, MessageCorrelationIdMapping_Factory.TheClassInfo));
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static MessageCorrelationIdMappingList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static MessageCorrelationIdMapping Load(int id) {
+      return Load(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static MessageCorrelationIdMapping Load(SoodaTransaction tran, int id) {
+      MessageCorrelationIdMapping retVal = MessageCorrelationIdMapping_Stub.GetRef(tran, id);
+      Sooda.ObjectMapper.SoodaObjectImpl.LoadAllData(retVal);
+      return retVal;
+    }
+    public static MessageCorrelationIdMapping GetRef(int id) {
+      return GetRef(SoodaTransaction.ActiveTransaction, id);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static MessageCorrelationIdMapping TryGet(int id) {
+      return TryGet(SoodaTransaction.ActiveTransaction, id);
+    }
+    public static MessageCorrelationIdMapping GetRef(SoodaTransaction tran, int id) {
+      return ((MessageCorrelationIdMapping)(Sooda.SoodaObject.GetRefHelper(tran, MessageCorrelationIdMapping_Factory.TheFactory, id)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static MessageCorrelationIdMapping TryGet(SoodaTransaction tran, int id) {
+      return ((MessageCorrelationIdMapping)(tran.FindObjectWithKey("MessageCorrelationIdMapping", id, typeof(MessageCorrelationIdMapping))));
+    }
+    public static MessageCorrelationIdMapping GetRef(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((MessageCorrelationIdMapping)(Sooda.SoodaObject.GetRefHelper(tran, MessageCorrelationIdMapping_Factory.TheFactory, tuple)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static MessageCorrelationIdMapping TryGet(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((MessageCorrelationIdMapping)(tran.FindObjectWithKey("MessageCorrelationIdMapping", tuple, typeof(MessageCorrelationIdMapping))));
+    }
+    protected virtual void BeforeFieldUpdate_MessageId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("MessageId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_MessageId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("MessageId", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_TaskCorrelationId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("TaskCorrelationId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_TaskCorrelationId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("TaskCorrelationId", oldValue, newValue);
+    }
+  }
   [SoodaObjectFactoryAttribute("ProcessDefinitionDb", typeof(ProcessDefinitionDb))]
   public class ProcessDefinitionDb_Factory : object, ISoodaObjectFactory {
     private static SoodaFieldHandler[] _fieldHandlers;
@@ -2030,6 +2311,66 @@ namespace NGinn.Engine.Dao.Stubs {
     }
     public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
       ActiveTransition retVal = new ActiveTransition(SoodaConstructor.Constructor);
+      retVal.InitRawObject(tran);
+      return retVal;
+    }
+  }
+  [SoodaObjectFactoryAttribute("MessageCorrelationIdMapping", typeof(MessageCorrelationIdMapping))]
+  public class MessageCorrelationIdMapping_Factory : object, ISoodaObjectFactory {
+    private static SoodaFieldHandler[] _fieldHandlers;
+    private static SoodaFieldHandler _primaryKeyFieldHandler = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+    private static MessageCorrelationIdMapping_Factory _theFactory = new MessageCorrelationIdMapping_Factory();
+    private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Engine.Dao._DatabaseSchema.GetSchema().FindClassByName("MessageCorrelationIdMapping");
+    private static Type _theType = typeof(MessageCorrelationIdMapping);
+    static MessageCorrelationIdMapping_Factory() {
+      _fieldHandlers = new SoodaFieldHandler[3];
+      _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+    }
+    public MessageCorrelationIdMapping_Factory() {
+    }
+    public static MessageCorrelationIdMapping_Factory TheFactory {
+      get {
+        return _theFactory;
+      }
+    }
+    public virtual Type TheType {
+      get {
+        return _theType;
+      }
+    }
+    public static Sooda.Schema.ClassInfo TheClassInfo {
+      get {
+        return _theClassInfo;
+      }
+    }
+    public virtual SoodaObject GetRef(SoodaTransaction tran, object keyValue) {
+      return MessageCorrelationIdMapping_Stub.GetRef(tran, ((int)(keyValue)));
+    }
+    public virtual SoodaObject TryGet(SoodaTransaction tran, object keyValue) {
+      return MessageCorrelationIdMapping_Stub.TryGet(tran, ((int)(keyValue)));
+    }
+    public virtual System.Collections.IList GetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return MessageCorrelationIdMapping_Stub.GetList(tran, whereClause, orderBy, options);
+    }
+    public virtual Sooda.Schema.ClassInfo GetClassInfo() {
+      return TheClassInfo;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetPrimaryKeyFieldHandler() {
+      return _primaryKeyFieldHandler;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return InternalGetFieldHandler(ordinal);
+    }
+    internal static Sooda.ObjectMapper.SoodaFieldHandler InternalGetFieldHandler(int ordinal) {
+      return _fieldHandlers[ordinal];
+    }
+    public virtual SoodaObject CreateNew(SoodaTransaction tran) {
+      return new MessageCorrelationIdMapping(tran);
+    }
+    public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
+      MessageCorrelationIdMapping retVal = new MessageCorrelationIdMapping(SoodaConstructor.Constructor);
       retVal.InitRawObject(tran);
       return retVal;
     }
@@ -2774,6 +3115,138 @@ namespace NGinn.Engine.Dao.Stubs {
       return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
     }
   }
+  public class MessageCorrelationIdMappingCollectionExpression : Sooda.QL.TypedWrappers.SoqlCollectionWrapperExpression {
+    public MessageCorrelationIdMappingCollectionExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(MessageCorrelationIdMapping item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(MessageCorrelationIdMappingWrapperExpression item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(int item) {
+      return this.ContainsImpl(new Sooda.QL.SoqlLiteralExpression(item));
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression ContainsMessageCorrelationIdMappingWhere(Sooda.QL.SoqlBooleanExpression whereClause) {
+      return this.ContainsExprImpl("MessageCorrelationIdMapping", whereClause);
+    }
+  }
+  public class MessageCorrelationIdMappingWrapperExpression : Sooda.QL.SoqlPathExpression {
+    public MessageCorrelationIdMappingWrapperExpression() {
+    }
+    public MessageCorrelationIdMappingWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(this));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "Id"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression MessageId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "MessageId"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression TaskCorrelationId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "TaskCorrelationId"));
+      }
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params MessageCorrelationIdMappingWrapperExpression[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params MessageCorrelationIdMapping[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params int[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(int left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(int left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(MessageCorrelationIdMappingWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(MessageCorrelationIdMappingWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(MessageCorrelationIdMapping left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(MessageCorrelationIdMapping left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMapping right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMapping right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(int left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(int left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(MessageCorrelationIdMappingWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(MessageCorrelationIdMappingWrapperExpression left, int right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(MessageCorrelationIdMapping left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(MessageCorrelationIdMapping left, MessageCorrelationIdMappingWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMapping right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(MessageCorrelationIdMappingWrapperExpression left, MessageCorrelationIdMapping right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public override bool Equals(object o) {
+      return object.ReferenceEquals(this, o);
+    }
+    public override int GetHashCode() {
+      return base.GetHashCode();
+    }
+  }
+  public class MessageCorrelationIdMappingNullableWrapperExpression : MessageCorrelationIdMappingWrapperExpression {
+    public MessageCorrelationIdMappingNullableWrapperExpression() {
+    }
+    public MessageCorrelationIdMappingNullableWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, false);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNotNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
+    }
+  }
 }
 namespace NGinn.Engine.Dao.TypedQueries {
   using System;
@@ -2973,6 +3446,28 @@ namespace NGinn.Engine.Dao.TypedQueries {
       }
     }
   }
+  public class MessageCorrelationIdMappingField : object {
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(null));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression Id {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("Id"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression MessageId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("MessageId"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression TaskCorrelationId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("TaskCorrelationId"));
+      }
+    }
+  }
 }
 namespace NGinn.Engine.Dao {
   using System;
@@ -2994,7 +3489,8 @@ namespace NGinn.Engine.Dao {
           NGinn.Engine.Dao.Stubs.ProcessInstanceDb_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.ProcessStatus_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.TokenDb_Factory.TheFactory,
-          NGinn.Engine.Dao.Stubs.ActiveTransition_Factory.TheFactory};
+          NGinn.Engine.Dao.Stubs.ActiveTransition_Factory.TheFactory,
+          NGinn.Engine.Dao.Stubs.MessageCorrelationIdMapping_Factory.TheFactory};
     }
     public virtual Sooda.Schema.SchemaInfo Schema {
       get {
