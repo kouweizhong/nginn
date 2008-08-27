@@ -89,12 +89,12 @@
     <Compile Include="Interfaces\Worklist\ITODOListDataProvider.cs" />
     <Compile Include="Interfaces\Worklist\IWorkListService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schema\ReceiveMessageTask.cs" />
     <Compile Include="Schema\ParameterBinding.cs" />
     <Compile Include="Schema\CustomTask.cs" />
     <Compile Include="Schema\EmptyTask.cs" />
     <Compile Include="Schema\Flow.cs" />
     <Compile Include="Schema\ManualTask.cs" />
-    <Compile Include="Schema\MultiManualTask.cs" />
     <Compile Include="Schema\NotificationTask.cs" />
     <Compile Include="Schema\Package.cs" />
     <Compile Include="Schema\Place.cs" />

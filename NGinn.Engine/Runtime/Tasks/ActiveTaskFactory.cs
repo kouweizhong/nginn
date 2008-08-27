@@ -7,6 +7,9 @@ using NGinn.Engine.Services;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
+    /// <summary>
+    /// TODO: Make factory class configurable through script.net
+    /// </summary>
     internal class ActiveTaskFactory : IActiveTaskFactory
     {
         public IActiveTask CreateActiveTask(Task tsk)
@@ -28,6 +31,14 @@ namespace NGinn.Engine.Runtime.Tasks
             else if (tsk is NotificationTask)
             {
                 at = new NotificationTaskActive((NotificationTask)tsk);
+            }
+            else if (tsk is ReceiveMessageTask)
+            {
+                at = new ReceiveMessageTaskActive(tsk);
+            }
+            else if (tsk is ManualTask)
+            {
+                at = new ManualTaskActive((ManualTask)tsk);
             }
             else throw new Exception();
             return at;

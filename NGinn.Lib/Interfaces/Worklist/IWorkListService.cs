@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Interfaces.Worklist
 {
@@ -16,7 +17,7 @@ namespace NGinn.Lib.Interfaces.Worklist
         /// <summary>Process definition ID</summary>
         public string ProcessDefinitionId;
         ///<summary>List of correlationIds of work items mutually exclusive with this.</summary>
-        public string[] SharedWorkItems;
+        public string SharedId;
         /// <summary>Work item title - as it will appear on TODO list</summary>
         public string Title;
         /// <summary>Work item description (body) - non mandatory</summary>
@@ -33,10 +34,8 @@ namespace NGinn.Lib.Interfaces.Worklist
         public bool CanAssigneeDelegateTask;
         /// <summary>in case of group tasks, if false - group members can take the task from group queue, if true - group manager has to assign tasks to group members</summary>
         public bool ManagerAssignsTask;
-        /// <summary>List of options for task result. If this list is empty or null, no task result code is required</summary>
-        public List<string> OptionsForResultCode;
-        /// <summary>Work item input variables</summary>
-        public Dictionary<string, object> InputVariables = new Dictionary<string, object>();
+        /// <summary>copy of task's data</summary>
+        public DataObject TaskData;
     }
     /// <summary>
     /// Interface for creating and tracking work items. It is used by workflow engine for assigning tasks to people.

@@ -41,7 +41,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         protected override void DoInitiateTask()
         {
-            if (MessageCorrelationId == null) //assume there's only one receive message task per process
+            if (MessageCorrelationId == null) //assume there's only one instance of this receive message task 
             {
                 MessageCorrelationId = string.Format("{0}.{1}", Context.ProcessInstanceId, Context.TaskDefinition.Id);
             }
@@ -63,6 +63,11 @@ namespace NGinn.Engine.Runtime.Tasks
             if (ev.MessageCorrelationId != null && !string.Equals(ev.MessageCorrelationId, this.MessageCorrelationId))
                 throw new ApplicationException(string.Format("Task {0}: invalid message correlation id: {1} (expected: {2})", CorrelationId, ev.MessageCorrelationId, this.MessageCorrelationId));
             //TODO: retrieve and validate message data
+            ev.MessageData.Validate(Context.TaskDefinition.GetTaskOutputDataSchema());
+            foreach (string fldName in ev.MessageData.FieldNames)
+            {
+                VariablesContainer[fldName] = ev.MessageData[fldName];
+            }
             Context.Environment.CorrelationIdResolver.RemoveMapping(this.MessageCorrelationId, this.CorrelationId);
             OnTaskCompleted();
         }

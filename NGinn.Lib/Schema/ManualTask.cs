@@ -15,48 +15,21 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class ManualTask : Task
     {
-        private string _name;
-        private string _descrTemplate;
-        private TaskAssignmentStrategy _assignmentStrategy = TaskAssignmentStrategy.PERSON;
-        private string _assigneeQuery;
-
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        public string DescriptionTemplate
-        {
-            get { return _descrTemplate; }
-            set { _descrTemplate = value; }
-        }
-
-        public string SelectionStrategy
-        {
-            get { return null; }
-        }
-
-
         public override bool IsImmediate
         {
             get { return false; }
         }
 
-        public string AssigneeGroup
+        public override TaskParameterInfo[] GetTaskParameters()
         {
-            get { return null; }
+            return new TaskParameterInfo[] {
+                new TaskParameterInfo("AssigneeId", typeof(string), false, true, true),
+                new TaskParameterInfo("AssigneeGroup", typeof(string), false, true, true),
+                new TaskParameterInfo("Title", typeof(string), false, true, true),
+                new TaskParameterInfo("Description", typeof(string), false, true, true),
+            };
         }
 
-        public string[] ExcludePeople
-        {
-            get { return null; }
-        }
-
-        public string Assignee
-        {
-            get { return null; }
-        }
 
     }
 }

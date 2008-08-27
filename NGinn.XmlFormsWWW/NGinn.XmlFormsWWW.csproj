@@ -146,6 +146,9 @@
     <Content Include="tasks\tasks.html" />
     <Content Include="tasks\tasks.js" />
     <Content Include="tasks\TaskSubmit.aspx" />
+    <Content Include="TODO.aspx" />
+    <Content Include="userwww\dojolist.html" />
+    <Content Include="userwww\testlist.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +214,13 @@
     </Compile>
     <Compile Include="tasks\TaskSubmit.aspx.designer.cs">
       <DependentUpon>TaskSubmit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TODO.aspx.cs">
+      <DependentUpon>TODO.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TODO.aspx.designer.cs">
+      <DependentUpon>TODO.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

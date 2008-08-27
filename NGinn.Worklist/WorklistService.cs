@@ -31,6 +31,7 @@ namespace NGinn.Worklist
                 tsk.CorrelationId = wi.CorrelationId;
                 tsk.ProcessInstance = wi.ProcessInstanceId;
                 tsk.Title = wi.Title;
+                tsk.Description = wi.Description;
                 tsk.TaskId = wi.TaskId;
                 tsk.Status = TaskStatus.AssignedGroup;
                 if (!wi.IsGroupResponsible)

@@ -57,7 +57,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public override void CancelTask()
         {
-            
+            log.Info("Timer task {0} cancelling", CorrelationId);
         }
 
         public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
