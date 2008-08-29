@@ -24,9 +24,10 @@ namespace NGinn.Lib.Interfaces
         /// </summary>
         /// <param name="definitionId"></param>
         /// <param name="inputData"></param>
+        /// <param name="userId">Id of user who starts the process</param>
         /// <param name="correlationId"></param>
         /// <returns></returns>
-        string StartProcessInstance(string definitionId, IDataObject inputData, string correlationId);
+        string StartProcessInstance(string definitionId, IDataObject inputData, string userId, string correlationId);
 
         /// <summary>
         /// Get lists of processes that can be 'kicked', that is, have some work to do
@@ -95,5 +96,13 @@ namespace NGinn.Lib.Interfaces
         /// <param name="messageBody">Message data content</param>
         void DispatchProcessMessage(string messageCorrelationId, DataObject messageBody);
 
+        /// <summary>
+        /// Inform NGInn process that a task has been completed.
+        /// Used with manual tasks.
+        /// </summary>
+        /// <param name="correlationId">Task's correlation Id</param>
+        /// <param name="updatedTaskData">Task variables to update</param>
+        /// <param name="userId">Id of user completing the task</param>
+        void ReportTaskFinished(string correlationId, DataObject updatedTaskData, string userId);
     }
 }

@@ -12,6 +12,9 @@ using Sooda;
 using NGinn.Worklist;
 using NGinn.Worklist.BusinessObjects;
 using NGinn.Worklist.BusinessObjects.TypedQueries;
+using NGinn.Lib.Interfaces;
+using NGinn.Lib.Data;
+using Spring.Context;
 
 namespace NGinn.XmlFormsWWW
 {
@@ -32,7 +35,21 @@ namespace NGinn.XmlFormsWWW
         {
             if (e.CommandName == "TaskCompleted")
             {
-
+                string rid = e.CommandArgument.ToString();
+                int row;
+                if (Int32.TryParse(rid, out row))
+                {
+                    DataKey dk = this.GridView1.DataKeys[row];
+                    using (SoodaTransaction st = new SoodaTransaction(typeof(Task).Assembly))
+                    {
+                        Task tsk = Task.GetRef(Convert.ToInt32(dk.Value));
+                        string corrid = tsk.CorrelationId.Value;
+                        IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+                        INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment");
+                        env.ReportTaskFinished(corrid, new DataObject(), Context.User.Identity.Name);
+                    }
+                }
+                
             }
         }
     }

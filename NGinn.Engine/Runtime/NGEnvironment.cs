@@ -147,7 +147,7 @@ namespace NGinn.Engine.Runtime
 
 
 
-        public string StartProcessInstance(string definitionId, IDataObject inputData, string correlationId)
+        public string StartProcessInstance(string definitionId, IDataObject inputData, string userId, string correlationId)
         {
             try
             {
@@ -524,6 +524,15 @@ namespace NGinn.Engine.Runtime
             MessageBus.Notify("NGEnvironment", "ReceiveMessageTaskEvent", te, false);
         }
 
+        public void ReportTaskFinished(string correlationId, DataObject updatedTaskData, string userId)
+        {
+            TaskCompletedNotification tn = new TaskCompletedNotification();
+            tn.CompletedBy = userId;
+            tn.CorrelationId = correlationId;
+            tn.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(correlationId);
+            tn.TaskData = updatedTaskData;
+            MessageBus.Notify("NGEnvironment", "ReportTaskFinished", tn, false);
+        }
         #endregion
     }
 }

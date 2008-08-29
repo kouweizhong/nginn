@@ -91,6 +91,7 @@ namespace NGinn.Lib.Data
         private List<string> _membersAdded = new List<string>();
         private Dictionary<string, object> _data = new Dictionary<string, object>();
         private static Logger log = LogManager.GetCurrentClassLogger();
+        [NonSerialized]
         private StructDef _recType = null;
 
         public DataObject()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <config>
   <sooda.logging>nlog</sooda.logging>
-  <sooda.cachingPolicy>all</sooda.cachingPolicy>
+  <sooda.cachingPolicy>none</sooda.cachingPolicy>
   <sooda.cache>
     <type>inprocess</type>
   </sooda.cache>

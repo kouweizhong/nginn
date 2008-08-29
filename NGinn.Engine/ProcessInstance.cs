@@ -1451,6 +1451,12 @@ namespace NGinn.Engine
         /// <param name="ite"></param>
         internal virtual void DispatchInternalTransitionEvent(InternalTransitionEvent ite)
         {
+            if (Status != ProcessStatus.Ready &&
+                Status != ProcessStatus.Waiting)
+            {
+                log.Info("Process {0} - ignoring transition event {1} because process is finished or cancelled", InstanceId, ite);
+                return;
+            }
             if (!_activated) throw new Exception("Process instance not activated");
             if (ite.ProcessInstanceId != this.InstanceId) throw new ApplicationException("Incorrect activation id");
             TaskShell at = GetActiveTransition(ite.CorrelationId);
@@ -1474,11 +1480,19 @@ namespace NGinn.Engine
 
         #region ITransitionCallback Members
 
+        /// <summary>
+        /// Handle callback from task shell that the transition has been started.
+        /// </summary>
+        /// <param name="correlationId"></param>
         void IProcessTransitionCallback.TransitionStarted(string correlationId)
         {
             this.AfterTransitionSelected(correlationId);
         }
 
+        /// <summary>
+        /// Handle callback from task shell that the transition has completed.
+        /// </summary>
+        /// <param name="correlationId"></param>
         void IProcessTransitionCallback.TransitionCompleted(string correlationId)
         {
             TaskShell ts = GetActiveTransition(correlationId);

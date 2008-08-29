@@ -92,7 +92,13 @@ namespace NGinn.Engine.Runtime.Tasks
         /// <param name="dob"></param>
         public virtual void UpdateTaskData(NGinn.Lib.Data.IDataObject dob)
         {
-            throw new NotImplementedException();
+            DataObject td = VariablesContainer;
+            foreach (string fn in dob.FieldNames)
+            {
+                td[fn] = dob[fn];
+            }
+            StructDef internalSchema = Context.TaskDefinition.GetTaskInternalDataSchema();
+            td.Validate(internalSchema);
         }
 
         /// <summary>
@@ -160,9 +166,31 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
        
+        /// <summary>
+        /// Default implementation of internal transition event handler.
+        /// Currently it handles TaskCompletedNotification and TransitionSelectedNotification.
+        /// Override it to handle other event types.
+        /// </summary>
+        /// <param name="ite"></param>
         public virtual void HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
-            
+            if (ite is TaskCompletedNotification)
+            {
+                DefaultHandleTaskCompletedEvent((TaskCompletedNotification)ite);
+            }
+        }
+
+        /// <summary>
+        /// Default 'task completed' handler. 
+        /// </summary>
+        /// <param name="ev"></param>
+        protected void DefaultHandleTaskCompletedEvent(TaskCompletedNotification ev)
+        {
+            if (ev.TaskData != null)
+            {
+                UpdateTaskData(ev.TaskData);
+            }
+            OnTaskCompleted();
         }
 
         /// <summary>

@@ -19,9 +19,7 @@ namespace NGinn.Engine.Runtime.Tasks
         {
          
         }
-
         
-
         private string _title;
 
         [TaskParameter(IsInput=true, Required=false, DynamicAllowed=true)]
@@ -56,6 +54,22 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
 
+        private string _completedBy;
+        /// <summary>
+        /// Id of person who completed the task
+        /// </summary>
+        [TaskParameter(IsInput=false)]
+        public string CompletedBy
+        {
+            get { return _completedBy; }
+            set { _completedBy = value; }
+        }
+
+
+        
+
+
+
         protected override void DoInitiateTask()
         {
             WorkItem wi = new WorkItem();
@@ -78,6 +92,26 @@ namespace NGinn.Engine.Runtime.Tasks
             log.Info("Cancelling manual task {0}", CorrelationId);
             Context.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
         }
-        
+
+        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        {
+            if (ite is TaskCompletedNotification)
+            {
+                if (Context.Status != TransitionStatus.ENABLED &&
+                    Context.Status != TransitionStatus.STARTED)
+                {
+                    log.Info("Invalid task status - ignoring the notification");
+                    return;
+                }
+                TaskCompletedNotification tn = (TaskCompletedNotification)ite;
+                Context.Environment.WorklistService.WorkItemCompleted(CorrelationId);
+                this.CompletedBy = tn.CompletedBy;
+                DefaultHandleTaskCompletedEvent((TaskCompletedNotification)ite);
+            }
+            else
+            {
+                base.HandleInternalTransitionEvent(ite);
+            }
+        }
     }
 }

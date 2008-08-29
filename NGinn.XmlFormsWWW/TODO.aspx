@@ -11,7 +11,8 @@
     <div style="font-family: Arial, Helvetica, sans-serif; font-size: x-large; background-color: #FF9966">
     
         Lista zadan</div>
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False">
+    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
+        DataKeyNames="Id">
         <Columns>
             <asp:BoundField DataField="Id" HeaderText="Id" />
             <asp:BoundField DataField="Title" HeaderText="Title" />
