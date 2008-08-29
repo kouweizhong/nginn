@@ -4,15 +4,17 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <title>Untitled Page</title>
+    <title>Task List</title>
+    <meta http-equiv="refresh" content="3"/>
 </head>
 <body>
     <form id="form1" runat="server">
     <div style="font-family: Arial, Helvetica, sans-serif; font-size: x-large; background-color: #FF9966">
     
-        Lista zadan</div>
+        TODO List</div>
+        <hr />
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
-        DataKeyNames="Id">
+        DataKeyNames="Id" BorderStyle="Solid" CellPadding="2">
         <Columns>
             <asp:BoundField DataField="Id" HeaderText="Id" />
             <asp:BoundField DataField="Title" HeaderText="Title" />
@@ -24,6 +26,7 @@
             <asp:ButtonField ButtonType="Button" CommandName="TaskCompleted" 
                 Text="Zrealizowane" />
         </Columns>
+        <AlternatingRowStyle BackColor="#99CCFF" BorderStyle="Solid" />
     </asp:GridView>
     </form>
 </body>

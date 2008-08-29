@@ -1010,6 +1010,10 @@ namespace NGinn.Engine
                 */
                 foreach (TaskShell at2 in strans) Debug.Assert(at2.SharedId == at.SharedId);
             }
+            else
+            {
+                at.SharedId = at.Tokens[0];
+            }
 
             Task tsk = Definition.GetTask(at.TaskId);
             _activeTransitions[at.CorrelationId] = at;

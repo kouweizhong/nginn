@@ -38,18 +38,27 @@ namespace NGinn.Engine.Runtime
         {
         }
 
+        /// <summary>
+        /// Environment's process definition repository
+        /// </summary>
         public IProcessDefinitionRepository DefinitionRepository
         {
             get { return _definitionRepository; }
             set { _definitionRepository = value; }
         }
 
+        /// <summary>
+        /// Factory used for creating new active tasks
+        /// </summary>
         public IActiveTaskFactory ActiveTaskFactory
         {
             get { return _activeTaskFactory; }
             set { _activeTaskFactory = value; }
         }
 
+        /// <summary>
+        /// Process instance repository implementation
+        /// </summary>
         public IProcessInstanceRepository InstanceRepository
         {
             get { return _instanceRepository; }

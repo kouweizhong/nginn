@@ -7,7 +7,7 @@
 	<property name="out" value="Graph.gif" overwrite="false" />
 	
     <property name="nxsl" value="${nant.project.basedir}\extlib\tools\nxslt-2.3-bin\nxslt2.exe" />
-    <property name="dot" value="z:\Program Files\Graphviz2.18\bin\dot.exe" />
+    <property name="dot" value="c:\tools\Graphviz\bin\dot.exe" />
 	<property name="dbserver" value="(local)" />
     <property name="database" value="NGinn" />
     <property name="dbuser" value="nginn" />

@@ -6,6 +6,7 @@
 	<processDefinitions>
         
         <process>ManualTask.1.xml</process>
-        
+        <process>ManualTask.2.xml</process>
+        <process>ManualTask.3.xml</process>
 	</processDefinitions>
 </package>

@@ -22,10 +22,10 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
         [TaskParameter(IsInput=true, Required=false, DynamicAllowed=true)]
-        public TimeSpan DelayAmount
+        public string DelayAmount
         {
-            get { return _delayAmount; }
-            set { _delayAmount = value; }
+            get { return _delayAmount.ToString(); }
+            set { _delayAmount = TimeSpan.Parse(value); }
         }
 
         
@@ -43,7 +43,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         protected override void DoInitiateTask()
         {
-            _expirationTime = DateTime.Now + DelayAmount;
+            _expirationTime = DateTime.Now + _delayAmount;
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;
             tex.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(this.CorrelationId);
