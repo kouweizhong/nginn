@@ -17,6 +17,9 @@ using NGinn.Engine.Runtime.Tasks;
 
 namespace NGinn.Engine.Runtime
 {
+    /// <summary>
+    /// NGinn environment implementation
+    /// </summary>
     public class NGEnvironment : INGEnvironment, INGEnvironmentProcessCommunication, INGEnvironmentContext
     {
         private Spring.Context.IApplicationContext _appCtx;
@@ -121,7 +124,7 @@ namespace NGinn.Engine.Runtime
         /// false - do not mark failing process with 'Error' status, 
         /// its persisted version will remain unchanged
         /// </summary>
-        public bool MarkInstanceErrors
+        public bool AutomaticRetryAfterKickError
         {
             get { return _markErrors; }
             set { _markErrors = value; }
@@ -165,23 +168,20 @@ namespace NGinn.Engine.Runtime
                 StructDef sd = pd.GetProcessInputDataSchema();
                 inputData.Validate(sd);
 
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
-                    pi.Environment = this;
-                    pi.CorrelationId = correlationId;
-                    pi.Activate();
+                ProcessInstance pi = new ProcessInstance();
+                pi.InstanceId = Guid.NewGuid().ToString("N");
+                pi.ProcessDefinitionId = definitionId;
+                pi.Environment = this;
+                pi.CorrelationId = correlationId;
+                pi.Activate();
 
-                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
-                    pi.ProcessDefinitionId = definitionId;
-                    pi.SetProcessInputData(inputData);
-                    Token tok = pi.CreateNewStartToken();
-                    pi.AddToken(tok);
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                    return pi.InstanceId;
-                }
+                log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                pi.SetProcessInputData(inputData);
+                Token tok = pi.CreateNewStartToken();
+                pi.AddToken(tok);
+                pi.Passivate();
+                InstanceRepository.InsertNewProcessInstance(pi);
+                return pi.InstanceId;
             }
             catch (Exception ex)
             {
@@ -197,24 +197,20 @@ namespace NGinn.Engine.Runtime
                 ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
                 if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
                 pd.ValidateProcessInputXml(inputXml);
-                
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.InitializeNewProcessInstance(definitionId, ds);
-                    pi.Environment = this;
-                    pi.CorrelationId = processCorrelationId;
-                    pi.Activate();
 
-                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
-                    pi.ProcessDefinitionId = definitionId;
-                    pi.SetProcessInputData(inputXml);
-                    Token tok = pi.CreateNewStartToken();
-                    pi.AddToken(tok);
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                    return pi.InstanceId;
-                }
+                ProcessInstance pi = new ProcessInstance();
+                pi.InstanceId = Guid.NewGuid().ToString("N");
+                pi.ProcessDefinitionId = definitionId;
+                pi.Environment = this;
+                pi.Activate();
+
+                log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                pi.SetProcessInputData(inputXml);
+                Token tok = pi.CreateNewStartToken();
+                pi.AddToken(tok);
+                pi.Passivate();
+                InstanceRepository.InsertNewProcessInstance(pi);
+                return pi.InstanceId;
             }
             catch (Exception ex)
             {
@@ -238,6 +234,11 @@ namespace NGinn.Engine.Runtime
         }
 
         public void KickProcess(string instanceId)
+        {
+            KickProcessInternal(instanceId, false);
+        }
+
+        private void KickProcessInternal(string instanceId, bool autoRetry)
         {
             log.Info("Kicking process {0}", instanceId);
 
@@ -265,10 +266,13 @@ namespace NGinn.Engine.Runtime
                     {
                         //error moving process forward. Mark it for retry ....
                         log.Error("Error updating process {0} : {1}", instanceId, ex);
-                        if (MarkInstanceErrors)
+                        if (autoRetry)
                         {
                             error = true;
                             InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString(), ds);
+                            KickProcessEvent kpe = new KickProcessEvent();
+                            kpe.InstanceId = instanceId;
+                            MessageBus.Notify("NGEnvironment", "NGEnvironment.KickProcess.Retry." + instanceId, kpe, true);
                         }
                         else
                         {
@@ -325,17 +329,14 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    if (pi.Status != ProcessStatus.Finished)
-                        throw new ApplicationException("Invalid process status");
-                    
-                    DataObject dob = pi.GetProcessOutputData();
-                    return dob;
-                }
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                pi.Environment = this;
+                pi.Activate();
+                if (pi.Status != ProcessStatus.Finished)
+                    throw new ApplicationException("Invalid process status");
+                
+                DataObject dob = pi.GetProcessOutputData();
+                return dob;
             }
             finally
             {
@@ -353,14 +354,12 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    IDataObject dob = pi.GetProcessVariablesContainer();
-                    return dob.ToXmlString(pi.Definition.Name);
-                }
+                
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                pi.Environment = this;
+                pi.Activate();
+                IDataObject dob = pi.GetProcessVariablesContainer();
+                return dob.ToXmlString(pi.Definition.Name);
             }
             finally
             {
@@ -378,14 +377,11 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    IDataObject dob = pi.GetTaskData(correlationId);
-                    return dob.ToXmlString("data");
-                }
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                pi.Environment = this;
+                pi.Activate();
+                IDataObject dob = pi.GetTaskData(correlationId);
+                return dob.ToXmlString("data");
             }
             finally
             {

@@ -11,7 +11,7 @@ namespace NGinn.Engine.Dao {
 
       
 
-    public ProcessInstanceDb(SoodaConstructor c) : 
+    public ProcessInstanceDb(SoodaConstructor c) :  
         base(c) {
       // Do not modify this constructor.
     }

@@ -168,6 +168,7 @@ namespace NGinn.Engine.Runtime
             catch (Exception ex)
             {
                 log.Error("Error kicking process {0}: {1}", id, ex);
+                INGEnvironmentContext ctx = (INGEnvironmentContext)Environment;
             }
             return null;
         }

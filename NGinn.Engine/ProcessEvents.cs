@@ -28,6 +28,16 @@ namespace NGinn.Engine
     {
     }
 
+    /// <summary>
+    /// Kick process message used for retrying processes
+    /// with error status.
+    /// </summary>
+    [Serializable]
+    internal class KickProcessEvent : ProcessEvent
+    {
+
+    }
+
 
     [Serializable]
     public class TransitionEvent : ProcessEvent

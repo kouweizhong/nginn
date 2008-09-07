@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Xml;
+using ICSharpCode.SharpZipLib.GZip;
 
 namespace NGinn.Engine.Dao
 {
@@ -15,16 +16,22 @@ namespace NGinn.Engine.Dao
         public static byte[] Serialize(object obj)
         {
             MemoryStream ms = new MemoryStream();
-            BinaryFormatter bf = new BinaryFormatter(new RemotingSurrogateSelector(), new StreamingContext(StreamingContextStates.Persistence));
-            bf.Serialize(ms, obj);
+            using (GZipOutputStream stm = new GZipOutputStream(ms))
+            {
+                BinaryFormatter bf = new BinaryFormatter(new RemotingSurrogateSelector(), new StreamingContext(StreamingContextStates.Persistence));
+                bf.Serialize(stm, obj);
+            }
             return ms.GetBuffer();
         }
 
         public static object Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data);
-            BinaryFormatter bf = new BinaryFormatter(new RemotingSurrogateSelector(), new StreamingContext(StreamingContextStates.Persistence));
-            return bf.Deserialize(ms);
+            using (GZipInputStream stm = new GZipInputStream(ms))
+            {
+                BinaryFormatter bf = new BinaryFormatter(new RemotingSurrogateSelector(), new StreamingContext(StreamingContextStates.Persistence));
+                return bf.Deserialize(stm);
+            }
         }
     }
 }

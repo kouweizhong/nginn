@@ -24,9 +24,7 @@
             <field name="CreatedDate" dbcolumn="created_date" type="DateTime" nullable="false" />
             <field name="FinishedDate" dbcolumn="finished_date" type="DateTime" nullable="true" />
             <field name="LastModified" dbcolumn="last_modified" type="DateTime" nullable="false" />
-            <field name="RetryCount" dbcolumn="retry_count" type="Integer" nullable="false" />
             <field name="ErrorInfo" dbcolumn="error_info" type="String" nullable="true" />
-            <field name="NextRetry" dbcolumn="next_retry" type="DateTime" nullable="true" />
         </table>
 	</class>
 	
@@ -42,6 +40,7 @@
         <const key="5" name="Error" />
 	</class>
 	
+  <!--
 	<class name="TokenDb">
 		<table name="Token">
 			<field name="Id" dbcolumn="id" type="String" size="50" primaryKey="true" nullable="false" />
@@ -52,20 +51,8 @@
 			<field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
 		</table>
 	</class>
+  -->
 
-  <class name="ActiveTransition">
-    <table name="ActiveTransition">
-      <field name="Id" dbcolumn="id" type="String" size="100" primaryKey="true" nullable="false"/>
-      <field name="ProcessInstance" dbcolumn="process_instance" type="String" size="50" nullable="false" />
-      <field name="TaskId" dbcolumn="task" type="String" size="50" nullable="false" />
-      <field name="Status" dbcolumn="status" type="Integer" nullable="false" />
-      <field name="DeferredChoiceId" dbcolumn="deferred_id" type="String" size="100" nullable="true" />
-      <field name="EnabledDate" dbcolumn="enabled_date" type="DateTime" nullable="true" />
-      <field name="CompletedDate" dbcolumn="completed_date" type="DateTime" nullable="true" />
-      <field name="RecordVersion" dbcolumn="rec_version" type="Integer" nullable="false" />
-      <field name="TransitionData" dbcolumn="transition_data" type="Blob" nullable="false" />
-    </table>
-  </class>
 
   <class name="MessageCorrelationIdMapping" label="FullName">
     <table name="MessageIdMap">

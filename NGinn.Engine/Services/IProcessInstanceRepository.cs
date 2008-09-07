@@ -31,5 +31,10 @@ namespace NGinn.Engine.Services
         /// <param name="instanceId"></param>
         /// <param name="errorInfo"></param>
         void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, INGDataSession ds);
+
+        ProcessInstance GetProcessInstance(string instanceId);
+        void UpdateProcessInstance(ProcessInstance pi);
+        void SetProcessInstanceErrorStatus(string instanceId, string errorInfo);
+        void InsertNewProcessInstance(ProcessInstance pi);
     }
 }

@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
@@ -51,10 +55,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CachingProcessInstanceRepository.cs" />
     <Compile Include="NGDataStore.cs" />
     <Compile Include="ProcessDefinitionRepository.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />
@@ -64,11 +68,9 @@
     <Compile Include="ProcessInstanceDb.cs" />
     <Compile Include="SerializationUtil.cs" />
     <Compile Include="SpringConfigProvider.cs" />
-    <Compile Include="TokenDb.cs" />
     <EmbeddedResource Include="_DBSchema.bin" />
     <Compile Include="_Stubs.cs" />
     <Compile Include="ProcessStatus.cs" />
-    <Compile Include="ActiveTransition.cs" />
     <Compile Include="MessageCorrelationIdMapping.cs" />
   </ItemGroup>
   <ItemGroup>

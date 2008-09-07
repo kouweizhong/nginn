@@ -4,73 +4,129 @@ using System.Text;
 using NGinn.Engine.Services;
 using NGinn.Engine.Dao.TypedQueries;
 using Sooda;
+using NLog;
+using Spring.Caching;
 
 namespace NGinn.Engine.Dao
 { 
     class ProcessInstanceRepository : IProcessInstanceRepository
     {
-        public static readonly TimeSpan[] RetryTimes = new TimeSpan[] {
-        TimeSpan.FromHours(72),
-        TimeSpan.FromHours(48),
-        TimeSpan.FromHours(24),
-        TimeSpan.FromHours(12),
-        TimeSpan.FromHours(6),
-        TimeSpan.FromHours(3),
-        TimeSpan.FromHours(1),
-        TimeSpan.FromMinutes(30),
-        TimeSpan.FromMinutes(5),
-        TimeSpan.FromMinutes(1)
-      };
+
+        private static Logger log = LogManager.GetCurrentClassLogger();
+        private ICache _cache;
+
+        public ICache Cache
+        {
+            get { return _cache; }
+            set { _cache = value; }
+        }
+
+        public ProcessInstanceRepository()
+        {
+            _cache = new Spring.Caching.NonExpiringCache();
+        }
 
         #region IProcessInstanceRepository Members
 
         public ProcessInstance GetProcessInstance(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
-             
+
             SoodaSession ss = (SoodaSession) ds;
             ProcessInstanceDbList dbl = ProcessInstanceDb.GetList(ss.Transaction, ProcessInstanceDbField.InstanceId == instanceId);
             if (dbl.Count == 0) return null;
             ProcessInstance pi = (ProcessInstance)SerializationUtil.Deserialize(dbl[0].InstanceData);
             pi.PersistedVersion = dbl[0].RecordVersion;
-            //IList<Token> tokens = GetProcessActiveTokens(instanceId, ds);
-            //pi.InitTokenInformation(tokens);
             return pi;
         }
-
-        private void PersistToken(Token tok, SoodaSession ss)
+        
+        /// <summary>
+        /// Todo: improve concurrency by moving database access outside the lock
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        public ProcessInstance GetProcessInstance(string instanceId)
         {
-            TokenDbList dbl = TokenDb.GetList(TokenDbField.Id == tok.TokenId);
-            TokenDb tdb = null;
-            if (dbl.Count > 0)
+            int version = -1;
+            lock (this)
             {
-                tdb = dbl[0];
+                byte[] data = (byte[])Cache.Get(instanceId);
+                if (data == null)
+                {
+                    using (SoodaTransaction st = new SoodaTransaction(typeof(ProcessInstanceDb).Assembly))
+                    {
+                        ProcessInstanceDbList dbl = ProcessInstanceDb.GetList(st, ProcessInstanceDbField.InstanceId == instanceId);
+                        if (dbl.Count == 0) return null;
+                        data = dbl[0].InstanceData;
+                        version = dbl[0].RecordVersion;
+                        Cache.Insert(instanceId, data);
+                    }
+                }
+
+                ProcessInstance pi = (ProcessInstance)SerializationUtil.Deserialize(data);
+                if (version >= 0) pi.PersistedVersion = version;
+                return pi;
             }
-            else
-            {
-                tdb = new TokenDb();
-                tdb.Id = tok.TokenId;
-            }
-            UpdateTokenDb(tok, tdb);
         }
 
+        public void InsertNewProcessInstance(ProcessInstance pi)
+        {
+            pi.Passivate();
+            lock (this)
+            {
+                if (GetProcessInstance(pi.InstanceId) != null) throw new ApplicationException("Duplicate instance ID");
+                using (SoodaTransaction st = new SoodaTransaction(typeof(ProcessInstanceDb).Assembly))
+                {
+                    ProcessInstanceDb pdb = new ProcessInstanceDb();
+                    pdb.InstanceId = pi.InstanceId;
+                    pdb.InstanceData = SerializationUtil.Serialize(pi);
+                    pdb.Status = ProcessStatus.GetRef((int) pi.Status);
+                    pdb.RecordVersion = pi.PersistedVersion;
+                    pdb.LastModified = DateTime.Now;
+                    st.Commit();
+                }
+            }
+        }
+
+      
         public void UpdateProcessInstance(ProcessInstance pi, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
+
             SoodaSession ss = (SoodaSession)ds;
             ProcessInstanceDb pdb = ProcessInstanceDb.Load(ss.Transaction, pi.InstanceId);
             pi.Passivate();
-            IList<Token> toks = pi.GetAllTokens();
-            foreach (Token tok in toks)
+            if (pdb.RecordVersion != pi.PersistedVersion)
             {
-                if (tok.Dirty)
-                {
-                    PersistToken(tok, ss);
-                }
+                log.Error("Warning: process {0}: in-memory record version ({1}) is different from persisted version ({2})", pi.InstanceId, pi.PersistedVersion, pdb.RecordVersion);
             }
             pdb.Status = ProcessStatus.GetRef((int) pi.Status);
             pdb.InstanceData = SerializationUtil.Serialize(pi);
             pdb.RecordVersion = pdb.RecordVersion + 1;
             pdb.LastModified = DateTime.Now;
         }
+        
+        public void UpdateProcessInstance(ProcessInstance pi)
+        {
+            using (SoodaTransaction st = new SoodaTransaction(typeof(ProcessInstanceDb).Assembly))
+            {
+                lock (this)
+                {
+                    ProcessInstanceDb pdb = ProcessInstanceDb.Load(st, pi.InstanceId);
+                    pi.Passivate();
+                    if (pdb.RecordVersion != pi.PersistedVersion)
+                    {
+                        log.Error("Warning: process {0}: in-memory record version ({1}) is different from persisted version ({2})", pi.InstanceId, pi.PersistedVersion, pdb.RecordVersion);
+                    }
+                    pdb.Status = ProcessStatus.GetRef((int)pi.Status);
+                    pdb.InstanceData = SerializationUtil.Serialize(pi);
+                    pdb.RecordVersion = pdb.RecordVersion + 1;
+                    pdb.LastModified = DateTime.Now;
+                    st.Commit();
+                    Cache.Remove(pi.InstanceId);
+                }
+            }
+        }
+
+
 
         public ProcessInstance InitializeNewProcessInstance(string definitionId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
@@ -87,7 +143,7 @@ namespace NGinn.Engine.Dao
             return pi;
         }
 
-       
+        /*
 
         public void UpdateToken(Token tok, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
@@ -142,6 +198,7 @@ namespace NGinn.Engine.Dao
             }
             return lt;
         }
+        */
 
         #endregion
 
@@ -150,16 +207,16 @@ namespace NGinn.Engine.Dao
 
         public IList<string> SelectProcessesWithReadyTokens()
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            List<string> s = new List<string>();
             using (SoodaTransaction st = new SoodaTransaction())
             {
-                TokenDbList dbl = TokenDb.GetList(TokenDbField.Status == (int)TokenStatus.READY, 100);
-                foreach (TokenDb tdb in dbl)
+                ProcessInstanceDbList pdbl = ProcessInstanceDb.GetList(ProcessInstanceDbField.Status == ProcessStatus.Ready, new SoodaOrderBy(ProcessInstanceDbField.CreatedDate, SortOrder.Ascending), SoodaSnapshotOptions.NoWriteObjects);
+                foreach (ProcessInstanceDb pdb in pdbl)
                 {
-                    if (!dict.ContainsKey(tdb.ProcessInstance)) dict[tdb.ProcessInstance] = tdb.ProcessInstance;
+                    s.Add(pdb.InstanceId);
                 }
             }
-            return new List<string>(dict.Keys);
+            return s;
         }
 
         #endregion
@@ -175,6 +232,17 @@ namespace NGinn.Engine.Dao
         #endregion
 
         #region IProcessInstanceRepository Members
+        public void SetProcessInstanceErrorStatus(string instanceId, string errorInfo)
+        {
+
+            using (SoodaTransaction st = new SoodaTransaction(typeof(ProcessInstanceDb).Assembly))
+            {
+                ProcessInstanceDb inst = ProcessInstanceDb.Load(st, instanceId);
+                inst.Status = ProcessStatus.Error;
+                inst.ErrorInfo = errorInfo;
+                st.Commit();
+            }
+        }
 
 
         public void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, NGinn.Engine.Services.Dao.INGDataSession ds)
@@ -183,7 +251,7 @@ namespace NGinn.Engine.Dao
             ProcessInstanceDb inst = ProcessInstanceDb.Load(instanceId);
             inst.Status = ProcessStatus.Error;
             inst.ErrorInfo = errorInfo;
-            if (inst.RetryCount > 0)
+            /*if (inst.RetryCount > 0)
             {
                 inst.RetryCount--;
                 inst.NextRetry = DateTime.Now.Add(RetryTimes[inst.RetryCount]);
@@ -193,6 +261,7 @@ namespace NGinn.Engine.Dao
                 //retry limit reached
             }
             inst.LastModified = DateTime.Now;
+            */
         }
 
         #endregion
