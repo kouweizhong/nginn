@@ -487,7 +487,7 @@ namespace NGinn.Lib.Schema
                 foreach (string placeId in t.CancelSet)
                 {
                     if (this.GetPlace(placeId) == null)
-                        msgs.Add(new ValidationMessage(true, t.Id, string.Format("Task [{0}]: cancel set contains not defined place {1}", t.Id, placeId)));
+                        msgs.Add(new ValidationMessage(true, t.Id, string.Format("Task [{0}]: cancel set contains undefined place: {1}", t.Id, placeId)));
                 }
             }
             //check for deferred-choice places. Should not have task successors with multiple in-flows (synchronization)

@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="2" name="OJTest" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <!-- 
+    Test case - a cancel set interfering with OR-join's checklist
+    -->
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+    <place id="p1" type="Place"></place>
+    <place id="p2" type="Place"></place>
+  </places>
+  <tasks>
+    
+    <task id="t1" type="EmptyTask" joinType="AND" splitType="AND">
+        <parameters>
+        </parameters>
+         <data-definition>
+            <variables> 
+            </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="t2" type="EmptyTask" joinType="AND" splitType="OR">
+        <parameters>
+        </parameters>
+         <data-definition>
+            <variables> 
+            </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="t3" type="ManualTask">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>t3</value></binding>
+            <binding parameter="Description"><value>t3</value>
+            </binding>
+        </parameters>
+        <cancelSet>p2</cancelSet>
+         <data-definition>
+            <variables> 
+             </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    
+    <task id="eval_candidate" type="ManualTask" joinType="AND" splitType="AND">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>eval_candidate</value></binding>
+            <binding parameter="Description"><value>eval_candidate</value>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+             </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="eval_candidate2" type="ManualTask" joinType="AND" splitType="AND">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>eval_candidate2</value></binding>
+            <binding parameter="Description"><value>eval_candidate2</value>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+             </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    
+    
+    <task id="eval_candidate4" type="ManualTask" joinType="OR" splitType="AND">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>eval_candidate4</value></binding>
+            <binding parameter="Description"><value>eval_candidate4</value>
+            </binding>
+        </parameters>
+        <orJoinCheckList>p1, p2</orJoinCheckList>
+        <data-definition>
+            <variables> 
+             </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    
+  </tasks>
+  <flows>
+    <flow from="start" to="t1" />
+    <flow from="t1" to="t2" />
+    <flow from="t1" to="t3" />
+    
+    <flow from="t2" to="p1" label="V1?"><inputCondition>1==1</inputCondition></flow>
+    <flow from="t2" to="p2" label="V2?"><inputCondition>1==1</inputCondition></flow>
+    
+    <flow from="p1" to="eval_candidate" />
+    <flow from="p2" to="eval_candidate2" />
+    
+    
+    <flow from="eval_candidate" to="eval_candidate4" />
+    <flow from="eval_candidate2" to="eval_candidate4" />
+    <flow from="t3" to="end" />
+    <flow from="eval_candidate4" to="end" />
+    </flows>
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+		<variable name="userName" type="string" required="true" dir="In" />
+        <variable name="email" type="string" required="true" dir="In" />
+        <variable name="remarks" type="string" required="false" dir="In" />
+    </variables>
+</process>

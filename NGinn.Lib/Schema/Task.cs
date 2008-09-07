@@ -165,7 +165,16 @@ namespace NGinn.Lib.Schema
                     tsk.ORJoinChecklist.Add(st);
                 }
             }
-
+            string s = SchemaUtil.GetXmlElementText(el, pr + "cancelSet", nsmgr);
+            if (s != null && s.Length > 0)
+            {
+                string[] ids = s.Split(',');
+                foreach (string id in ids)
+                {
+                    string st = id.Trim();
+                    tsk.CancelSet.Add(st);
+                }
+            }
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();
             List<VariableBinding> inputBind = new List<VariableBinding>();

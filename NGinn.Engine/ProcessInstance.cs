@@ -1208,7 +1208,8 @@ namespace NGinn.Engine
                 tok.Status == TokenStatus.LOCKED_ENABLED)
             {
                 Debug.Assert(tok.ActiveTransitions.Count > 0); //must have at least one transition
-                foreach (string atId in tok.ActiveTransitions)
+                List<string> lst = new List<string>(tok.ActiveTransitions);//clone the list
+                foreach (string atId in lst)
                 {
                     TaskShell at = GetActiveTransition(atId);
                     Debug.Assert(at.Status == TransitionStatus.ENABLED || at.Status == TransitionStatus.STARTED);

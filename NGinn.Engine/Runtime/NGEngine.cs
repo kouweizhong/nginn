@@ -158,21 +158,58 @@ namespace NGinn.Engine.Runtime
 
         private object KickProcess(object id)
         {
-            string pid = (string) id;
-            log.Info("Kicking process {0}", id);
+            return KickProcessInternal((string) id, true);
+        }
+
+
+        private object KickProcessInternal(string pid, bool handleRetry)
+        {
+            log.Info("Kicking process {0}", pid);
             try
             {
-                //Thread.Sleep(2000);
                 Environment.KickProcess(pid);
             }
             catch (Exception ex)
             {
-                log.Error("Error kicking process {0}: {1}", id, ex);
-                INGEnvironmentContext ctx = (INGEnvironmentContext)Environment;
+                //hm, should be more transactional...
+                log.Error("Error kicking process {0}: {1}", pid, ex);
+                if (handleRetry)
+                {
+                    log.Info("Scheduling retry message for process {0}", pid);
+                    INGEnvironmentContext ctx = (INGEnvironmentContext)Environment;
+                    ctx.InstanceRepository.SetProcessInstanceErrorStatus(pid, ex.ToString());
+                    KickProcessEvent ev = new KickProcessEvent();
+                    ev.InstanceId = pid;
+                    MessageBus.Notify("NGEngine", "NGEngine.KickProcess.Retry." + pid, ev, true);
+                }
+                else
+                {
+                    throw;
+                }
             }
             return null;
         }
 
+        /// <summary>
+        /// Handle kickprocess retry
+        /// </summary>
+        /// <returns></returns>
+        [MessageBusSubscriber(typeof(KickProcessEvent), "NGEngine.KickProcess.Retry*")]
+        public object HandleKickProcessEvent(string topic, string sender, object msg)
+        {
+            KickProcessEvent kpe = (KickProcessEvent)msg;
+            log.Info("Retrying kick process {0}", kpe.InstanceId);
+            try
+            {
+                KickProcessInternal(kpe.InstanceId, false);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                log.Error("RETRY: error kicking process {0}: {1}", kpe.InstanceId, ex);
+                throw;
+            }
+        }
         
     }
 }

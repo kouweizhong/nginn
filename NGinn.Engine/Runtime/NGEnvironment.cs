@@ -35,7 +35,6 @@ namespace NGinn.Engine.Runtime
         private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
         private ITaskCorrelationIdResolver _resolver;
 
-        private bool _markErrors = true;
 
         public NGEnvironment()
         {
@@ -117,18 +116,7 @@ namespace NGinn.Engine.Runtime
             get { return _envVariables; }
         }
 
-        /// <summary>
-        /// true - when KickProcess fails, mark the failing process
-        /// with 'Error' status, so it will not be selected for processing
-        /// next time.
-        /// false - do not mark failing process with 'Error' status, 
-        /// its persisted version will remain unchanged
-        /// </summary>
-        public bool AutomaticRetryAfterKickError
-        {
-            get { return _markErrors; }
-            set { _markErrors = value; }
-        }
+        
 
         /// <summary>
         /// Set environment variable
@@ -249,42 +237,40 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
+                
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                bool error = false;
+                try
                 {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    bool error = false;
-                    try
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    pi.Kick();
+                    log.Info("Modified: {0}", pi.ToString());
+                    pi.Passivate();
+                }
+                catch(Exception ex)
+                {
+                    //error moving process forward. Mark it for retry ....
+                    log.Error("Error updating process {0} : {1}", instanceId, ex);
+                    throw ex;
+                    if (autoRetry)//don't use that
                     {
-                        pi.Environment = this;
-                        pi.Activate();
-                        log.Info("Original: {0}", pi.ToString());
-                        pi.Kick();
-                        log.Info("Modified: {0}", pi.ToString());
-                        pi.Passivate();
+                        error = true;
+                        InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString());
+                        KickProcessEvent kpe = new KickProcessEvent();
+                        kpe.InstanceId = instanceId;
+                        MessageBus.Notify("NGEnvironment", "NGEnvironment.KickProcess.Retry." + instanceId, kpe, true);
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        //error moving process forward. Mark it for retry ....
-                        log.Error("Error updating process {0} : {1}", instanceId, ex);
-                        if (autoRetry)
-                        {
-                            error = true;
-                            InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString(), ds);
-                            KickProcessEvent kpe = new KickProcessEvent();
-                            kpe.InstanceId = instanceId;
-                            MessageBus.Notify("NGEnvironment", "NGEnvironment.KickProcess.Retry." + instanceId, kpe, true);
-                        }
-                        else
-                        {
-                            throw ex;
-                        }
+                        throw ex;
                     }
+                }
 
-                    if (!error)
-                    {
-                        InstanceRepository.UpdateProcessInstance(pi, ds);
-                    }
-                    ds.Commit();
+                if (!error)
+                {
+                    InstanceRepository.UpdateProcessInstance(pi);
                 }
             }
             finally

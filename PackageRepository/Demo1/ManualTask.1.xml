@@ -6,7 +6,7 @@
   </places>
   <tasks>
     
-    <task id="t1" type="ManualTask" joinType="AND" splitType="AND">
+    <task id="t1" type="ManualTask">
         <parameters>
             <binding parameter="AssigneeId"><value>1</value></binding>
             <binding parameter="Title"><expr><![CDATA[string.Format('Nowy user: {0}, email: {1}', userName, email);]]></expr></binding>
@@ -26,10 +26,26 @@
         </data-definition>
     </task>
     
+    <task id="scr" type="ScriptTask">
+        <parameters>
+            <binding parameter="ScriptBody"><value><![CDATA[
+            throw new Exception('SCRIPT!!!');
+            ]]></value></binding>
+        </parameters>
+        <data-definition>
+            <variables> 
+            </variables>
+            
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+	</task>
+    
   </tasks>
   <flows>
     <flow from="start" to="t1" />
-    <flow from="t1" to="end" />
+    <flow from="t1" to="scr" />
+    <flow from="scr" to="end" />
     </flows>
     <processDataTypes>
     </processDataTypes>
