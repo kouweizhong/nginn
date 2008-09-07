@@ -14,6 +14,8 @@ namespace NGinn.Engine.Dao
 
         private static Logger log = LogManager.GetCurrentClassLogger();
         private ICache _cache;
+        private int _cacheHits = 0;
+        private int _cacheMisses = 0;
 
         public ICache Cache
         {
@@ -28,7 +30,7 @@ namespace NGinn.Engine.Dao
 
         #region IProcessInstanceRepository Members
 
-        public ProcessInstance GetProcessInstance(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
+        /*public ProcessInstance GetProcessInstance(string instanceId, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
 
             SoodaSession ss = (SoodaSession) ds;
@@ -38,6 +40,7 @@ namespace NGinn.Engine.Dao
             pi.PersistedVersion = dbl[0].RecordVersion;
             return pi;
         }
+        */
         
         /// <summary>
         /// Todo: improve concurrency by moving database access outside the lock
@@ -52,18 +55,20 @@ namespace NGinn.Engine.Dao
                 byte[] data = (byte[])Cache.Get(instanceId);
                 if (data == null)
                 {
+                    _cacheMisses++;
                     using (SoodaTransaction st = new SoodaTransaction(typeof(ProcessInstanceDb).Assembly))
                     {
                         ProcessInstanceDbList dbl = ProcessInstanceDb.GetList(st, ProcessInstanceDbField.InstanceId == instanceId);
                         if (dbl.Count == 0) return null;
                         data = dbl[0].InstanceData;
                         version = dbl[0].RecordVersion;
-                        Cache.Insert(instanceId, data);
+                        Cache.Insert(instanceId, data, TimeSpan.FromMinutes(30.0));
                     }
                 }
-
+                else _cacheHits++;
                 ProcessInstance pi = (ProcessInstance)SerializationUtil.Deserialize(data);
                 if (version >= 0) pi.PersistedVersion = version;
+                log.Debug("Process instance cache hits: {0}, misses: {1}", _cacheHits, _cacheMisses);
                 return pi;
             }
         }

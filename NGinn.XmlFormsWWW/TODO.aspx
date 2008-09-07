@@ -23,6 +23,7 @@
             <asp:BoundField DataField="Description" HeaderText="Description">
                 <ItemStyle Height="40px" />
             </asp:BoundField>
+            <asp:BoundField DataField="ProcessInstance" HeaderText="Instance Id" />
             <asp:ButtonField ButtonType="Button" CommandName="TaskCompleted" 
                 Text="Zrealizowane" />
         </Columns>

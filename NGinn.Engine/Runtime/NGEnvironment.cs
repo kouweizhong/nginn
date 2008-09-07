@@ -27,7 +27,6 @@ namespace NGinn.Engine.Runtime
         private IProcessDefinitionRepository _definitionRepository;
         private IProcessInstanceRepository _instanceRepository;
         private IWorkListService _worklistService;
-        private INGDataStore _dataStore;
         private IProcessInstanceLockManager _lockManager;
         private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
         private IMessageBus _mbus;
@@ -67,11 +66,6 @@ namespace NGinn.Engine.Runtime
             set { _instanceRepository = value; }
         }
 
-        public INGDataStore DataStore
-        {
-            get { return _dataStore; }
-            set { _dataStore = value; }
-        }
 
         public IProcessInstanceLockManager LockManager
         {
@@ -388,14 +382,11 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    return new DataObject(pi.GetTaskData(correlationId));
-                }
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                pi.Environment = this;
+                pi.Activate();
+                log.Info("Original: {0}", pi.ToString());
+                return new DataObject(pi.GetTaskData(correlationId));
             }
             finally
             {
@@ -423,16 +414,12 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    pi.DispatchInternalTransitionEvent(ite);
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                }
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId);
+                pi.Environment = this;
+                pi.Activate();
+                pi.DispatchInternalTransitionEvent(ite);
+                pi.Passivate();
+                InstanceRepository.UpdateProcessInstance(pi);
             }
             finally
             {
@@ -480,18 +467,14 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                using (INGDataSession ds = DataStore.OpenSession())
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId, ds);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    pi.CancelProcessInstance();
-                    log.Info("Modified: {0}", pi.ToString());
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi, ds);
-                    ds.Commit();
-                }
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                pi.Environment = this;
+                pi.Activate();
+                log.Info("Original: {0}", pi.ToString());
+                pi.CancelProcessInstance();
+                log.Info("Modified: {0}", pi.ToString());
+                pi.Passivate();
+                InstanceRepository.UpdateProcessInstance(pi);
             }
             finally
             {

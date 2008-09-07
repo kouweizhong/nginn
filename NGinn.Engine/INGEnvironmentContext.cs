@@ -32,11 +32,6 @@ namespace NGinn.Engine
         }
          
 
-        INGDataStore DataStore
-        {
-            get; 
-        }
-        
         IProcessInstanceLockManager LockManager
         {
             get; 
