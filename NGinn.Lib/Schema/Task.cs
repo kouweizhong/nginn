@@ -155,6 +155,17 @@ namespace NGinn.Lib.Schema
             if (paramBinds == null) throw new Exception();
             List<TaskParameterBinding> bindingsList = new List<TaskParameterBinding>();
             SchemaUtil.LoadTaskParameterBindings(paramBinds, nsmgr, tsk._parameterBindings);
+            if (tsk.JoinType == JoinType.OR)
+            {
+                string lst = SchemaUtil.GetXmlElementText(el, pr + "orJoinCheckList", nsmgr);
+                string[] ids = lst.Split(',');
+                foreach (string id in ids)
+                {
+                    string st = id.Trim();
+                    tsk.ORJoinChecklist.Add(st);
+                }
+            }
+
             XmlElement data = (XmlElement) el.SelectSingleNode(pr + "data-definition", nsmgr);
             List<VariableDef> variables = new List<VariableDef>();
             List<VariableBinding> inputBind = new List<VariableBinding>();

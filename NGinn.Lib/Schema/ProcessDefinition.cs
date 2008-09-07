@@ -333,6 +333,12 @@ namespace NGinn.Lib.Schema
         public void Load(Stream stm)
         {
             LoadXml(XmlReader.Create(stm));
+            List<ValidationMessage> msgs = new List<ValidationMessage>();
+            bool b = Validate(msgs);
+            foreach (ValidationMessage msg in msgs)
+            {
+                log.Log(msg.IsError ? LogLevel.Error : LogLevel.Warn, "Process {0}, Node {1}: {2}", this.Name, msg.NodeId, msg.Message);
+            }
         }
 
         public void LoadXml(string xml)
