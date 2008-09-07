@@ -39,14 +39,32 @@
 	</xsl:template>
 	
 	<xsl:template match="ng:place">
-		<xsl:value-of select="@id" /> [shape=circle, style=filled, fillcolor=lightblue, peripheries=1];
+		<xsl:value-of select="@id" /> [shape=circle, style=filled, fillcolor=lightblue, peripheries=1
+            <xsl:if test="@label">
+                ,label="<xsl:value-of select="@label" />"
+            </xsl:if>];
 	</xsl:template>
 	
 	
-	
+	<xsl:template match="ng:task[@type='EmptyTask']">
+		<xsl:value-of select="@id" /> [shape=polygon, sides=4,orientation=45,regular=false, style=filled, fillcolor=yellow, color=black, peripheries=1
+        <xsl:if test="@label">
+            ,label="<xsl:value-of select="@label" />"
+        </xsl:if>];
+	</xsl:template>
 	
 	<xsl:template match="ng:task">
-		<xsl:value-of select="@id" /> [shape=box, style=filled, fillcolor=yellow, color=black, peripheries=1];
+		<xsl:value-of select="@id" /> [shape=box, style=filled, fillcolor=yellow, color=black, peripheries=1
+        <xsl:if test="@label">
+            ,label="<xsl:value-of select="@label" />"
+        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="@type='SubprocessTask'">
+                ,peripheries=2
+            </xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+        ];
 	</xsl:template>
 	
 	<xsl:template match="ng:flow">

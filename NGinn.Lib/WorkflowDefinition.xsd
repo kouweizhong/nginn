@@ -65,6 +65,8 @@
     <xs:attribute name="joinType" type="JoinType" use="optional" /><!-- AND join by default -->
     <xs:attribute name="splitType" type="JoinType" use="optional" /><!-- AND split by default -->
     <xs:attribute name="multiInstance" type="xs:boolean" use="optional" /><!-- task is multi-instance -->
+    <xs:attribute name="label" type="xs:string" use="optional" /><!-- label  -->
+    <!-- task is multi-instance -->
   </xs:complexType>
   
   <xs:complexType name="Flow">
@@ -113,6 +115,7 @@
     </xs:sequence>
     <xs:attribute name="id" type="xs:string" use="required" />
     <xs:attribute name="type" type="PlaceType" use="required" />
+    <xs:attribute name="label" type="xs:string" use="optional" />
   </xs:complexType>
   <xs:complexType name="DataBinding">
   </xs:complexType>
