@@ -171,31 +171,16 @@ namespace NGinn.Lib.Schema
         {
             Id = el.GetAttribute("id");
         }
-        
-        /*
-        internal static Place LoadPlace(XmlElement el, XmlNamespaceManager nsmgr)
+
+        /// <summary>
+        /// Check if the place belongs to Or-join checklist of some task
+        /// </summary>
+        /// <returns></returns>
+        public bool BelongsToOrJoinChecklist()
         {
-            string type = el.GetAttribute("type");
-            Type ptype = Type.GetType("YAWN.Lib.Schema." + type);
-            if (ptype == null) throw new Exception("Unrecognized task type: " + type);
-            Place pl = (Place)Activator.CreateInstance(ptype);
-            pl.ParseXml(el, nsmgr);
-            return pl;
+            return this.ParentProcess.GetOrJoinsWithPlaceInChecklist(this.Id).Count > 0;
         }
 
-        internal void AddOutTransition(Transition tr)
-        {
-            if (tr.From != this) throw new Exception("Invalid transition start place");
-            _transitionsOut.Add(tr);
-        }
-
-        internal void AddInTransition(Transition tr)
-        {
-            if (tr.To != this) throw new Exception("Invalid transition target place");
-            _transitionsIn.Add(tr);
-        }
-
-        */
     }
 
     [Serializable]

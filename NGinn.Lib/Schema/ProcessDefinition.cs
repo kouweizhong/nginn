@@ -300,7 +300,27 @@ namespace NGinn.Lib.Schema
             get { return _finish; }
         }
 
-        
+        /// <summary>
+        /// Returns list of OR-join tasks containing specified place
+        /// on their checklist.
+        /// </summary>
+        /// <param name="placeId">Id of the place</param>
+        /// <returns>empty list if place doesn't belong to any checklist</returns>
+        public IList<Task> GetOrJoinsWithPlaceInChecklist(string placeId)
+        {
+            List<Task> l = new List<Task>();
+            foreach (Task tsk in Tasks)
+            {
+                if (tsk.JoinType == JoinType.OR)
+                {
+                    foreach (string pId in tsk.ORJoinChecklist)
+                    {
+                        if (pId == placeId) { l.Add(tsk); break; }
+                    }
+                }
+            }
+            return l;
+        }
 
         public void LoadFile(string fileName)
         {

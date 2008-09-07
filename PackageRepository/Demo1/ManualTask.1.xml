@@ -9,8 +9,8 @@
     <task id="t1" type="ManualTask" joinType="AND" splitType="AND">
         <parameters>
             <binding parameter="AssigneeId"><value>1</value></binding>
-            <binding parameter="Title"><expr><![CDATA[string.Format('Nowy user: {0}', userName);]]></expr></binding>
-            <binding parameter="Description"><value>Biegnij na e4 i zamiataj, gamoniu</value></binding>
+            <binding parameter="Title"><expr><![CDATA[string.Format('Nowy user: {0}, email: {1}', userName, email);]]></expr></binding>
+            <binding parameter="Description"><expr><![CDATA[string.Format('Uwagi: {0}', remarks);]]></expr></binding>
         </parameters>
          <data-definition>
             <variables> 

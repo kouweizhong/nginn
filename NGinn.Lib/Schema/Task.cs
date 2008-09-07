@@ -324,6 +324,13 @@ namespace NGinn.Lib.Schema
         {
             bool b = base.Validate(messages);
             if (!b) return false;
+            if (this.JoinType == JoinType.OR)
+            {
+                if (this.ORJoinChecklist.Count == 0)
+                {
+                    messages.Add(new ValidationMessage(true, Id, "OR-join task has no or-join checklist. In this version of NGinn you MUST specify the checklist for each OR-join"));
+                }
+            }
             Dictionary<string, TaskParameterBinding> bDict = new Dictionary<string, TaskParameterBinding>();
             foreach (TaskParameterBinding tbi in ParameterBindings)
             {

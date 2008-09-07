@@ -55,6 +55,9 @@
 		<xsl:variable name="fromnode" select="//ng:*[@id=$fromid]" />
 		<xsl:variable name="tonode" select="//ng:*[@id=$toid]" />
 		<xsl:value-of select="@from" /> -&gt; <xsl:value-of select="@to" /> [
+            <xsl:if test="@label">
+                label="<xsl:value-of select="@label" />",
+            </xsl:if>
 			<xsl:choose>
 				<xsl:when test="$fromnode/@splitType = 'XOR'">arrowtail=diamond</xsl:when>
 				<xsl:when test="$fromnode/@splitType = 'OR'">arrowtail=odiamond</xsl:when>

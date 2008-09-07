@@ -965,7 +965,7 @@ namespace NGinn.Engine
         /// Add initialized active transition to the collection of active transitions
         /// Updates transition list for each input token of at. Calculates sharedId for
         /// the transition, if the transition is in implicit-choice group.
-        /// TODO: fix the sharedId calculation code.
+        /// TODO: fix the sharedId calculation code (for now fixed by allowing only one shared Id).
         /// </summary>
         /// <param name="at"></param>
         private void AddActiveTransition(TaskShell at)
@@ -1117,6 +1117,8 @@ namespace NGinn.Engine
         /// and cancel all transitions that share the same tokens.
         /// Also, if some tokens were waiting, put them in 'READY' state.
         /// Wow, looks quite complex.
+        /// TODO: fix case when transition completion removes token from 
+        /// some or-join checklist
         /// </summary>
         /// <param name="at"></param>
         private void AfterTransitionCompleted(string correlationId)
@@ -1186,10 +1188,12 @@ namespace NGinn.Engine
             NotifyProcessEvent(compl);
         }
 
+        
+
         /// <summary>
         /// Cancellation handling. Removes token from its current place and cancels
         /// all transitions that the token has enabled.
-        /// TODO: test it
+        /// TODO: fix case when cancel removes token from or-join checklist
         /// </summary>
         /// <param name="tok"></param>
         private void CancelToken(Token tok)
@@ -1216,12 +1220,47 @@ namespace NGinn.Engine
                 }
             }
             else throw new Exception("Invalid token status");
+            UpdateOrJoinChecklistStatusAfterTokenRemoval(tok);
+        }
+
+        /// <summary>
+        /// When token is removed from some place that belongs to or-join's checklist,
+        /// it can enable the or-join as no more tokens will be in the checklist.
+        /// This method updates the status of or-join's waiting input tokens so next time
+        /// nginn will re-evaluate or-join's status.
+        /// </summary>
+        /// <param name="tok">removed token</param>
+        private void UpdateOrJoinChecklistStatusAfterTokenRemoval(Token tok)
+        {
+            Debug.Assert(tok.Status == TokenStatus.CONSUMED || tok.Status == TokenStatus.CANCELLED);
+            IList<Task> lst = Definition.GetOrJoinsWithPlaceInChecklist(tok.PlaceId);
+            if (lst.Count > 0) 
+            {
+                foreach (Task tsk in lst)
+                {
+                    foreach(Place pl in tsk.NodesIn)
+                    {
+                        foreach (Token t2 in GetTokensInPlace(pl.Id))
+                        {
+                            if (t2.Status == TokenStatus.WAITING)
+                            {
+                                log.Info("UpdateOrJoinChecklistStatus: marking OR-join token {0} as READY because token {1} was removed", t2.TokenId, tok.TokenId);
+                                t2.Status = TokenStatus.READY;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// This function is responsible for updating net status after transition has fired.
         /// It consumes transition input tokens and produces tokens in transition output places.
         /// Also, transition input conditions are evaluated before creating output tokens.
+        /// TODO: fix: in case when new token is created or token is removed from place that 
+        /// belongs to some or-join's checklist, re-evaluate the or-join condition by 
+        /// switching waiting tokens at that or-join to 'ready' status. We only need to handle 
+        /// token removal as adding new tokens will not cause or join to fire.
         /// </summary>
         /// <param name="at"></param>
         private void UpdateNetStatusAfterTransition(TaskShell at)
@@ -1234,6 +1273,7 @@ namespace NGinn.Engine
                 Debug.Assert(tok.ActiveTransitions.Count == 1);
                 Debug.Assert(tok.ActiveTransitions[0] == at.CorrelationId);
                 tok.Status = TokenStatus.CONSUMED;
+                UpdateOrJoinChecklistStatusAfterTokenRemoval(tok);
             }
 
             IList<Token> newTokens = new List<Token>();
