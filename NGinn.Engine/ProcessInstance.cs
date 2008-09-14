@@ -363,6 +363,13 @@ namespace NGinn.Engine
         protected internal IScriptContext CreateProcessScriptContext()
         {
             IScriptContext ctx = new ScriptContext();
+            DataObject env = new DataObject(Environment.EnvironmentVariables);
+            env["log"] = log;
+            env["messageBus"] = Environment.MessageBus;
+            env["environment"] = Environment;
+            env["processDefinition"] = Definition;
+            ctx.SetItem("__env", ContextItem.Variable, env);
+            
             IDataObject variables = GetProcessDataSource();
             if (variables != null)
             {

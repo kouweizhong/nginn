@@ -5,6 +5,7 @@ using System.Collections;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
+using Spring.Context;
 
 namespace NGinn.XmlFormsWWW
 {
@@ -13,7 +14,7 @@ namespace NGinn.XmlFormsWWW
 
         protected void Application_Start(object sender, EventArgs e)
         {
-
+            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
         }
 
         protected void Application_End(object sender, EventArgs e)

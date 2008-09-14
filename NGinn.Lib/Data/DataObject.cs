@@ -7,6 +7,7 @@ using Wintellect.PowerCollections;
 using System.Collections;
 using NLog;
 using MutantFramework;
+using System.Collections.Specialized;
 
 namespace NGinn.Lib.Data
 {
@@ -88,8 +89,10 @@ namespace NGinn.Lib.Data
     [Serializable]
     public class DataObject : DictionaryBase<string, object>, IDataObject
     {
-        private List<string> _membersAdded = new List<string>();
-        private Dictionary<string, object> _data = new Dictionary<string, object>();
+        private StringCollection _membersAdded = new StringCollection();
+        //private List<string> _membersAdded = new List<string>();
+        //private Dictionary<string, object> _data = new Dictionary<string, object>();
+        private Hashtable _data = new Hashtable();
         private static Logger log = LogManager.GetCurrentClassLogger();
         [NonSerialized]
         private StructDef _recType = null;
@@ -106,6 +109,8 @@ namespace NGinn.Lib.Data
                 this.Add(key, dic[key]);
             }
         }
+
+        
 
         public DataObject(StructDef recType)
         {
@@ -126,7 +131,10 @@ namespace NGinn.Lib.Data
         {
             get
             {
-                return _membersAdded;
+                List<string> lst = new List<string>();
+                foreach (string s in _membersAdded) lst.Add(s);
+                return lst;
+                //return new List<string>(_membersAdded);
             }
         }
 
@@ -144,13 +152,15 @@ namespace NGinn.Lib.Data
             lock (this)
             {
                 _data.Remove(key);
-                return _membersAdded.Remove(key);
+                _membersAdded.Remove(key);
+                return true;
             }
         }
 
         public override bool TryGetValue(string key, out object value)
         {
-            return _data.TryGetValue(key, out value);
+            value = _data[key];
+            return value != null;
         }
 
         public override int Count

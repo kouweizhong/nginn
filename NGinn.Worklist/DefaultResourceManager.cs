@@ -65,6 +65,98 @@ namespace NGinn.Worklist
             }
         }
 
+        private User FindUserByUserId(string userId)
+        {
+            int uId;
+            if (Int32.TryParse(userId, out uId))
+            {
+                return User.Load(uId);
+            }
+            else
+            {
+                UserList ul = User.GetList(UserField.UserId == userId && UserField.Active == true, SoodaSnapshotOptions.NoWriteObjects);
+                if (ul.Count > 1) throw new ApplicationException("Not unique user Id: " + userId);
+                if (ul.Count == 0) return null;
+                return ul[0];
+            }
+        }
+
+        private Group FindGroupByGroupId(string groupId)
+        {
+            int uId;
+            if (Int32.TryParse(groupId, out uId))
+            {
+                return Group.Load(uId);
+            }
+            else
+            {
+                GroupList ul = Group.GetList(GroupField.Name == groupId, SoodaSnapshotOptions.NoWriteObjects);
+                if (ul.Count > 1) throw new ApplicationException("Not unique group Id: " + groupId);
+                if (ul.Count == 0) return null;
+                return ul[0];
+            }
+        }
+
+        private object SelectResource(string root, string relations)
+        {
+            SoodaObject rootObj = null;
+            if (root.StartsWith("group:"))
+            {
+                string s = root.Substring(6);
+                rootObj = FindGroupByGroupId(s);
+            }
+            else if (root.StartsWith("person:"))
+            {
+                string s = root.Substring(7);
+                rootObj = FindUserByUserId(s);
+            }
+            else throw new ApplicationException("root resource Id should start with group: or person:");
+            object ret = rootObj;
+            if (relations != null && relations.Length > 0)
+            {
+                ret = rootObj.Evaluate(relations, true);
+            }
+            return ret;
+        }
+        
+        public string SelectPerson(string root, string relations)
+        {
+            using (SoodaTransaction st = new SoodaTransaction(typeof(User).Assembly))
+            {
+                object obj = SelectResource(root, relations);
+                if (obj is User)
+                {
+                    return ((User)obj).UserId;
+                }
+                else
+                {
+                    string uid = Convert.ToString(obj);
+                    User usr = FindUserByUserId(uid);
+                    if (usr == null) throw new ApplicationException("User not found for ID: " + uid);
+                    return usr.UserId;
+                }
+            }
+        }
+
+        public string SelectGroup(string root, string relations)
+        {
+            using (SoodaTransaction st = new SoodaTransaction(typeof(User).Assembly))
+            {
+                object obj = SelectResource(root, relations);
+                if (obj is Group)
+                {
+                    return ((Group)obj).Id.ToString();
+                }
+                else
+                {
+                    string uid = Convert.ToString(obj);
+                    Group usr = FindGroupByGroupId(uid);
+                    if (usr == null) throw new ApplicationException("User not found for ID: " + uid);
+                    return usr.Id.ToString();
+                }
+            }
+        }
+
         #endregion
     }
 }

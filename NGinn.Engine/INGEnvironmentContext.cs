@@ -6,6 +6,7 @@ using NGinn.Engine.Services.Dao;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
 using NGinn.Lib.Interfaces.MessageBus;
+using System.Collections;
 
 namespace NGinn.Engine
 {
@@ -51,5 +52,7 @@ namespace NGinn.Engine
         {
             get;
         }
+
+        IDictionary EnvironmentVariables { get; }
     }
 }

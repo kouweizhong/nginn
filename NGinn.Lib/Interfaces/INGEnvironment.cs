@@ -55,6 +55,8 @@ namespace NGinn.Lib.Interfaces
         /// <returns></returns>
         object GetEnvVariable(string name);
 
+        
+
         /// <summary>
         /// Return xml document containing current process instance data
         /// </summary>

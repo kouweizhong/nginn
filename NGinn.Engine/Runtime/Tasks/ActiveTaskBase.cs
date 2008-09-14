@@ -109,6 +109,12 @@ namespace NGinn.Engine.Runtime.Tasks
         protected IScriptContext CreateScriptContext(IDataObject variables)
         {
             IScriptContext ctx = new ScriptContext();
+            DataObject env = new DataObject(Context.Environment.EnvironmentVariables);
+            env["log"] = log;
+            env["messageBus"] = Context.Environment.MessageBus;
+            env["environment"] = Context.Environment;
+            env["taskDefinition"] = Context.TaskDefinition;
+            ctx.SetItem("__env", ContextItem.Variable, env);
             if (variables != null)
             {
                 foreach (string fn in variables.FieldNames)
@@ -116,7 +122,6 @@ namespace NGinn.Engine.Runtime.Tasks
                     ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
                 }
             }
-            ctx.SetItem("_log", ContextItem.Variable, log);
             return ctx;
         }
 

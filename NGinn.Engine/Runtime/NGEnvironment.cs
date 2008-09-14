@@ -14,6 +14,8 @@ using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
 using NGinn.Lib.Data;
 using NGinn.Engine.Runtime.Tasks;
+using System.Collections;
+using System.Transactions;
 
 namespace NGinn.Engine.Runtime
 {
@@ -28,12 +30,13 @@ namespace NGinn.Engine.Runtime
         private IProcessInstanceRepository _instanceRepository;
         private IWorkListService _worklistService;
         private IProcessInstanceLockManager _lockManager;
-        private IDictionary<string, object> _envVariables = new Dictionary<string, object>();
+        private Dictionary<string, object> _envVariables = new Dictionary<string, object>();
         private IMessageBus _mbus;
         private IResourceManager _resMgr;
         private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
         private ITaskCorrelationIdResolver _resolver;
-
+        private Dictionary<string, object> _contextObjects = new Dictionary<string, object>();
+        private TransactionScopeOption _transactionOption = TransactionScopeOption.RequiresNew;
 
         public NGEnvironment()
         {
@@ -55,6 +58,15 @@ namespace NGinn.Engine.Runtime
         {
             get { return _activeTaskFactory; }
             set { _activeTaskFactory = value; }
+        }
+
+        /// <summary>
+        /// Use implicit transaction scope 
+        /// </summary>
+        public bool UseImplicitTransactions
+        {
+            get { return _transactionOption == TransactionScopeOption.RequiresNew || _transactionOption == TransactionScopeOption.Required; }
+            set { _transactionOption = value ? TransactionScopeOption.RequiresNew : TransactionScopeOption.Suppress; }
         }
 
         /// <summary>
@@ -105,7 +117,7 @@ namespace NGinn.Engine.Runtime
             set { _resMgr = value; }
         }
 
-        public IDictionary<string, object> EnvironmentVariables
+        public IDictionary EnvironmentVariables
         {
             get { return _envVariables; }
         }
@@ -149,21 +161,25 @@ namespace NGinn.Engine.Runtime
                 if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
                 StructDef sd = pd.GetProcessInputDataSchema();
                 inputData.Validate(sd);
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                {
+                    ProcessInstance pi = new ProcessInstance();
+                    pi.InstanceId = Guid.NewGuid().ToString("N");
+                    pi.ProcessDefinitionId = definitionId;
+                    pi.Environment = this;
+                    pi.CorrelationId = correlationId;
+                    pi.Activate();
 
-                ProcessInstance pi = new ProcessInstance();
-                pi.InstanceId = Guid.NewGuid().ToString("N");
-                pi.ProcessDefinitionId = definitionId;
-                pi.Environment = this;
-                pi.CorrelationId = correlationId;
-                pi.Activate();
-
-                log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
-                pi.SetProcessInputData(inputData);
-                Token tok = pi.CreateNewStartToken();
-                pi.AddToken(tok);
-                pi.Passivate();
-                InstanceRepository.InsertNewProcessInstance(pi);
-                return pi.InstanceId;
+                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                    pi.SetProcessInputData(inputData);
+                    Token tok = pi.CreateNewStartToken();
+                    pi.AddToken(tok);
+                    pi.Passivate();
+                    InstanceRepository.InsertNewProcessInstance(pi);
+                    ts.Complete();
+                    return pi.InstanceId;    
+                }
+                
             }
             catch (Exception ex)
             {
@@ -179,20 +195,23 @@ namespace NGinn.Engine.Runtime
                 ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
                 if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
                 pd.ValidateProcessInputXml(inputXml);
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                {
+                    ProcessInstance pi = new ProcessInstance();
+                    pi.InstanceId = Guid.NewGuid().ToString("N");
+                    pi.ProcessDefinitionId = definitionId;
+                    pi.Environment = this;
+                    pi.Activate();
 
-                ProcessInstance pi = new ProcessInstance();
-                pi.InstanceId = Guid.NewGuid().ToString("N");
-                pi.ProcessDefinitionId = definitionId;
-                pi.Environment = this;
-                pi.Activate();
-
-                log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
-                pi.SetProcessInputData(inputXml);
-                Token tok = pi.CreateNewStartToken();
-                pi.AddToken(tok);
-                pi.Passivate();
-                InstanceRepository.InsertNewProcessInstance(pi);
-                return pi.InstanceId;
+                    log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
+                    pi.SetProcessInputData(inputXml);
+                    Token tok = pi.CreateNewStartToken();
+                    pi.AddToken(tok);
+                    pi.Passivate();
+                    InstanceRepository.InsertNewProcessInstance(pi);
+                    ts.Complete();
+                    return pi.InstanceId;
+                }
             }
             catch (Exception ex)
             {
@@ -229,48 +248,42 @@ namespace NGinn.Engine.Runtime
                 log.Info("Failed to lock process {0}. Ignoring");
                 return;
             }
+            bool error = false;
             try
             {
-                
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                bool error = false;
-                try
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
                 {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
                     pi.Environment = this;
                     pi.Activate();
                     log.Info("Original: {0}", pi.ToString());
                     pi.Kick();
                     log.Info("Modified: {0}", pi.ToString());
                     pi.Passivate();
-                }
-                catch(Exception ex)
-                {
-                    //error moving process forward. Mark it for retry ....
-                    log.Error("Error updating process {0} : {1}", instanceId, ex);
-                    throw ex;
-                    if (autoRetry)//don't use that
-                    {
-                        error = true;
-                        InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString());
-                        KickProcessEvent kpe = new KickProcessEvent();
-                        kpe.InstanceId = instanceId;
-                        MessageBus.Notify("NGEnvironment", "NGEnvironment.KickProcess.Retry." + instanceId, kpe, true);
-                    }
-                    else
-                    {
-                        throw ex;
-                    }
-                }
-
-                if (!error)
-                {
                     InstanceRepository.UpdateProcessInstance(pi);
+                    ts.Complete();
+                }
+            }
+            catch(Exception ex)
+            {
+                log.Error("Error kicking process {0} : {1}", instanceId, ex);
+                if (autoRetry)
+                {
+                    InstanceRepository.SetProcessInstanceErrorStatus(instanceId, ex.ToString());
+                    KickProcessEvent kpe = new KickProcessEvent();
+                    kpe.InstanceId = instanceId;
+                    MessageBus.Notify("NGEnvironment", "NGEnvironment.KickProcess.Retry." + instanceId, kpe, true);
+                }
+                else
+                {
+                    throw ex;
                 }
             }
             finally
             {
                 LockManager.ReleaseLock(instanceId);
             }
+            
             
         }
 
@@ -414,12 +427,17 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId);
-                pi.Environment = this;
-                pi.Activate();
-                pi.DispatchInternalTransitionEvent(ite);
-                pi.Passivate();
-                InstanceRepository.UpdateProcessInstance(pi);
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId);
+                    pi.Environment = this;
+                    pi.Activate();
+                    pi.DispatchInternalTransitionEvent(ite);
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi);
+                    ts.Complete();
+                }
+
             }
             finally
             {
@@ -467,14 +485,19 @@ namespace NGinn.Engine.Runtime
             }
             try
             {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                pi.Environment = this;
-                pi.Activate();
-                log.Info("Original: {0}", pi.ToString());
-                pi.CancelProcessInstance();
-                log.Info("Modified: {0}", pi.ToString());
-                pi.Passivate();
-                InstanceRepository.UpdateProcessInstance(pi);
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                {
+                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                    pi.Environment = this;
+                    pi.Activate();
+                    log.Info("Original: {0}", pi.ToString());
+                    pi.CancelProcessInstance();
+                    log.Info("Modified: {0}", pi.ToString());
+                    pi.Passivate();
+                    InstanceRepository.UpdateProcessInstance(pi);
+                    ts.Complete();
+                }
+
             }
             finally
             {
@@ -508,5 +531,8 @@ namespace NGinn.Engine.Runtime
             MessageBus.Notify("NGEnvironment", "ReportTaskFinished", tn, false);
         }
         #endregion
+
+
+        
     }
 }
