@@ -11,7 +11,6 @@ using System.Web.UI.HtmlControls;
 using Spring.Core;
 using Spring.Context;
 using NGinn.Lib.Interfaces.Worklist;
-using XmlForms.Interfaces;
 
 namespace NGinn.XmlFormsWWW
 {

@@ -284,8 +284,6 @@ namespace NGinn.Engine
             t.PlaceId = this.Definition.GetPlace(placeId).Id;
             t.Status = TokenStatus.READY;
             t.Mode = TokenMode.LIVE;
-            t.PersistedVersion = 0;
-            t.Dirty = true;
             return t;
         }
 

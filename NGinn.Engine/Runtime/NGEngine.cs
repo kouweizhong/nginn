@@ -195,14 +195,13 @@ namespace NGinn.Engine.Runtime
         /// </summary>
         /// <returns></returns>
         [MessageBusSubscriber(typeof(KickProcessEvent), "NGEngine.KickProcess.Retry*")]
-        public object HandleKickProcessEvent(string topic, string sender, object msg)
+        public void HandleKickProcessEvent(object msg, IMessageContext ctx)
         {
             KickProcessEvent kpe = (KickProcessEvent)msg;
             log.Info("Retrying kick process {0}", kpe.InstanceId);
             try
             {
                 KickProcessInternal(kpe.InstanceId, false);
-                return null;
             }
             catch (Exception ex)
             {

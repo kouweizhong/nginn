@@ -53,6 +53,51 @@ namespace NGinn.Engine.Runtime.MessageBus
         private Hashtable _typeToSubscriberInfo = new Hashtable(); //typ->si
         private static Logger log = LogManager.GetCurrentClassLogger();
 
+        private class MsgContext : IMessageContext
+        {
+            private object _retval;
+            private bool _cancelProcessing = false;
+            private bool _notified = false;
+            private string _sender;
+            private string _topic;
+
+            public MsgContext(string sender, string topic)
+            {
+                _sender = sender; _topic = topic;
+            }
+
+            public object Retval
+            {
+                get { return _retval; }
+                set { _retval = value; }
+            }
+
+            public bool CancelFurtherProcessing
+            {
+                get { return _cancelProcessing; }
+                set { _cancelProcessing = value; }
+            }
+
+            public bool AnyNotified
+            {
+                get { return _notified; }
+                set { _notified = value; }
+            }
+
+            public string Sender
+            {
+                get { return _sender; }
+                set { _sender = value; }
+            }
+
+            public string Topic
+            {
+                get { return _topic; }
+                set { _topic = value; }
+            }
+            
+        }
+
         public SimplePublisher()
         { 
         }
@@ -85,45 +130,52 @@ namespace NGinn.Engine.Runtime.MessageBus
         protected object NotifyInternal(object msg, string topic, string sender)
         {
             object ret = null;
+            MsgContext ctx = new MsgContext(sender, topic);
+            ctx.CancelFurtherProcessing = false;
+
             Type t = msg.GetType();
             while (t != null)
             {
                 object tmp;
-                bool b = NotifyInternalForType(msg, topic, sender, t, out tmp);
-                if (b) ret = tmp;
+                NotifyInternalForType(msg, t, ctx);
+                if (ctx.CancelFurtherProcessing)
+                {
+                    ret = ctx.Retval;
+                    break;
+                }
                 t = t.BaseType;
             }
             return ret;
         }
 
-        private bool NotifyInternalForType(object msg, string topic, string sender, Type t, out object retval)
+        private void NotifyInternalForType(object msg, Type t, MsgContext ctx)
         {
-            retval = null;
             ArrayList al;
             lock (this)
             {
                 al = (ArrayList) _typeToSubscriberInfo[t];
             }
-            if (al == null) return false;
-            return NotifyInternalList(msg, topic, sender, al, out retval);
+            if (al == null) return;
+            NotifyInternalList(msg, al, ctx);
         }
-
-        private bool NotifyInternalList(object msg, string topic, string sender, ArrayList subscribers, out object retval)
+         
+        private void NotifyInternalList(object msg, ArrayList subscribers, MsgContext ctx)
         {
-            retval = null;
-            bool match = false;
             foreach (SubscriberInfo si in subscribers)
             {
-                if (si.MatchesTopic(topic))
+                if (si.MatchesTopic(ctx.Topic))
                 {
-                    match = true;
                     if (si.Handler != null)
                     {
-                        retval = si.Handler.Invoke(topic, sender, msg);
+                        ctx.AnyNotified = true;
+                        si.Handler.Invoke(msg, ctx);
+                        if (ctx.CancelFurtherProcessing)
+                        {
+                            break;
+                        }
                     }
                 }
             }
-            return match;
         }
 
         public void Unsubscribe(string subscriptionId)
@@ -177,11 +229,19 @@ namespace NGinn.Engine.Runtime.MessageBus
                 object[] attrs = mi.GetCustomAttributes(typeof(MessageBusSubscriberAttribute), true);
                 if (attrs.Length > 0)
                 {
-                    MessageHandler mh = (MessageHandler)System.Delegate.CreateDelegate(typeof(MessageHandler), obj, mi, true);
-                    foreach (MessageBusSubscriberAttribute sa in attrs)
+                    try
                     {
-                        log.Info("Subscribing {0}.{1} for EventType {2} and Topic {3}", t.Name, mi.Name, sa.EventType.Name, sa.EventTopic);
-                        this.Subscribe(sa.EventType, sa.EventTopic, mh);
+                        MessageHandler mh = (MessageHandler)System.Delegate.CreateDelegate(typeof(MessageHandler), obj, mi, true);
+                        foreach (MessageBusSubscriberAttribute sa in attrs)
+                        {
+                            log.Info("Subscribing {0}.{1} for EventType {2} and Topic {3}", t.Name, mi.Name, sa.EventType.Name, sa.EventTopic);
+                            this.Subscribe(sa.EventType, sa.EventTopic, mh);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Failed to subscribe handler {0}.{1} : {2}", t.Name, mi.Name, ex);
+                        throw;
                     }
                 }
             }

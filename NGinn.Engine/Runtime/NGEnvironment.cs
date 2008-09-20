@@ -417,7 +417,7 @@ namespace NGinn.Engine.Runtime
         /// <param name="msg"></param>
         /// <returns></returns>
         [MessageBusSubscriber(typeof(InternalTransitionEvent), "*")]
-        protected object HandleInternalTransitionEvent(string topic, string sender, object msg)
+        protected void HandleInternalTransitionEvent(object msg, IMessageContext ctx)
         {
             InternalTransitionEvent ite = (InternalTransitionEvent)msg;
             if (!LockManager.TryAcquireLock(ite.ProcessInstanceId, 30000))
@@ -443,21 +443,20 @@ namespace NGinn.Engine.Runtime
             {
                 LockManager.ReleaseLock(ite.ProcessInstanceId);
             }
-            return null;
         }
 
         [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
-        protected object HandleProcessFinished(string topic, string sender, object msg)
+        protected void HandleProcessFinished(object msg, IMessageContext ctx)
         {
             ProcessFinished pf = (ProcessFinished)msg;
             log.Debug("Process finished: {0}", pf.InstanceId);
             if (pf.CorrelationId == null || pf.CorrelationId.Length == 0)
             {
-                return null;
+                return;
             }
             if (!SubprocessTaskActive.IsSubprocessCorrelationId(pf.CorrelationId))
             {
-                return null;
+                return;
             }
             string taskCorrId = SubprocessTaskActive.GetTaskCorrelationIdFromProcess(pf.CorrelationId);
             string parentProcessId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(taskCorrId);
@@ -469,7 +468,6 @@ namespace NGinn.Engine.Runtime
             sc.CorrelationId = taskCorrId;
 
             MessageBus.Notify("NGEnvironment", "SubprocessCompleted", sc, true);
-            return null;
         }
 
         #region INGEnvironment Members

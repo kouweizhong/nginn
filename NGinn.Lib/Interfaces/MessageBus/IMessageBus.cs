@@ -4,10 +4,20 @@ using System.Text;
 
 namespace NGinn.Lib.Interfaces.MessageBus
 {
+    public interface IMessageContext
+    {
+        string Sender { get; }
+        string Topic { get; }
+        object Retval { get; set; }
+        bool CancelFurtherProcessing { get; set; }
+    }
+
     ///<summary>
     ///Message processing delegate
     ///</summary>
-    public delegate object MessageHandler(string topic, string sender, object msg);
+    public delegate void MessageHandler(object msg, IMessageContext ctx);
+
+    
 
     public interface IMessageBus
     {

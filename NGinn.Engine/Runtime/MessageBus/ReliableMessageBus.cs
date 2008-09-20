@@ -72,24 +72,24 @@ namespace NGinn.Engine.Runtime.MessageBus
         {
             this.Subscribe(typeof(ScheduledMessage), "*", new MessageHandler(HandleScheduledMessage));
             this.Subscribe(typeof(string), "NGinn.Engine.Runtime.MessageBus.ReliableMessageBus.Control", new MessageHandler(HandleControlMessage)); 
-        }
+        } 
 
-        private object HandleScheduledMessage(string sender, string topic, object message)
+        private void HandleScheduledMessage(object message, IMessageContext ctx)
         {
             ScheduledMessage sm = message as ScheduledMessage;
             if (sm == null) throw new ArgumentException("Expected ScheduledMessage");
             MessageWrapper mw = new MessageWrapper();
-            mw.Sender = sender;
-            mw.Topic = topic;
+            mw.Sender = ctx.Sender;
+            mw.Topic = ctx.Topic;
             mw.Body = sm.Body;
             Hashtable ht = new Hashtable();
             ht["label"] = GetMessageLabel(mw);
             ht["deliver_at"] = sm.DeliverAt;
             string msgid = _queueProc.GetInputPort().SendMessage(mw, ht);
-            return msgid;
+            ctx.Retval = msgid;
         }
 
-        private object HandleControlMessage(string sender, string topic, object message)
+        private void HandleControlMessage(object message, IMessageContext ctx)
         {
             string msg = (string)message;
             if (msg == "START")
@@ -101,7 +101,6 @@ namespace NGinn.Engine.Runtime.MessageBus
                 Stop();
             }
             else throw new Exception("Unknown command: " + msg);
-            return null;
         }
 
         public void Start()

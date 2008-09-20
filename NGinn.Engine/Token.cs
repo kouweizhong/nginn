@@ -27,7 +27,7 @@ namespace NGinn.Engine
     }
 
     /// <summary>
-    /// Token - reprezentuje nasz token wêdruj¹cy przez proces
+    /// Token 
     /// </summary>
     [Serializable]
     public class Token
@@ -42,44 +42,36 @@ namespace NGinn.Engine
         
         public Token()
         {
-            Dirty = true; 
         }
 
         public TokenMode Mode
         {
             get { return _mode; }
-            set { _mode = value; Dirty = true; }
+            set { _mode = value; }
         }
 
         public TokenStatus Status
         {
             get { return _status; }
-            set { _status = value; Dirty = true; }
+            set { _status = value; }
         }
 
         public string PlaceId
         {
             get { return _placeId; }
-            set { _placeId = value; Dirty = true; }
+            set { _placeId = value; }
         }
-        /// <summary>version number of persisted token record</summary>
-        public int PersistedVersion;
-        /// <summary>true if token data has been modified</summary>
-        public bool Dirty;
+        
+        
+        private List<string> _activeTransitions = new List<string>();
+
         /// <summary>
         /// List of transition (correlation ids) that have been initiated by the token. If one of these transitions completes
         /// it will consume the token and cancel all the other transitions
         /// </summary>
-        public List<string> ActiveTransitions = new List<string>();
-
-        private Dictionary<string, object> _tokenVariables = new Dictionary<string, object>();
-
-        /// <summary>
-        /// Token variables. Token holds all 'out' variables from the immediately preceding task.
-        /// </summary>
-        public IDictionary<string, object> TokenVariables
+        public IList<string> ActiveTransitions
         {
-            get { return _tokenVariables; }
+            get { return _activeTransitions; }
         }
 
         public override string ToString()
