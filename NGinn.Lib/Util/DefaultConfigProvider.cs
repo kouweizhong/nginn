@@ -31,6 +31,13 @@ namespace NGinn.Lib.Util
 
         public string ResolveVariable(string name)
         {
+            string s = ResolveVariableInternal(name);
+            //log.Debug("{0}={1}", name, s);
+            return s;
+        }
+
+        private string ResolveVariableInternal(string name)
+        {
             string val;
             if (!_variables.TryGetValue(name, out val))
                 return _props == null ? null : _props.ResolveVariable(name);

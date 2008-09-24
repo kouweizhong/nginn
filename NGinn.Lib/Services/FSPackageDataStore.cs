@@ -8,7 +8,7 @@ namespace NGinn.Lib.Services
     /// <summary>
     /// Default package data store - in a directory
     /// </summary>
-    public class FSPackageDataStore : IPackageDataStore
+    public class FSPackageDataStore : MarshalByRefObject, IPackageDataStore
     {
         private string _packageDefFile;
 

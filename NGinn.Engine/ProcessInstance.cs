@@ -17,6 +17,8 @@ using NGinn.Engine.Runtime.Tasks;
 
 namespace NGinn.Engine
 {
+    
+
     /// <summary>
     /// Enumeration of possible process instance statuses
     /// </summary>
@@ -140,7 +142,7 @@ namespace NGinn.Engine
         /// Called before 'Activate' to insert token information into process instance
         /// </summary>
         /// <param name="activeTokens"></param>
-        public void InitTokenInformation(ICollection<Token> tokens)
+        private void InitTokenInformation(ICollection<Token> tokens)
         {
             Dictionary<string, Token> d = new Dictionary<string, Token>();
             foreach (Token t in tokens)
@@ -1394,7 +1396,7 @@ namespace NGinn.Engine
         /// </summary>
         /// <param name="correlationId"></param>
         /// <returns></returns>
-        private TaskShell GetActiveTransition(string correlationId)
+        internal TaskShell GetActiveTransition(string correlationId)
         {
             TaskShell at = null;
             _activeTransitions.TryGetValue(correlationId, out at);
@@ -1435,7 +1437,7 @@ namespace NGinn.Engine
                 xw.WriteAttributeString("place", tok.PlaceId);
                 xw.WriteAttributeString("status", tok.Status.ToString());
                 xw.WriteAttributeString("mode", tok.Mode.ToString());
-                foreach (string at in tok.ActiveTransitions) xw.WriteElementString("Transition", at);
+                if (tok.ActiveTransitions != null) foreach (string at in tok.ActiveTransitions) xw.WriteElementString("Transition", at);
                 xw.WriteEndElement();
             }
             xw.WriteEndElement();

@@ -8,9 +8,48 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div>
     
-    </div>
+    <asp:Panel ID="Panel1" runat="server" Height="31px">
+        Zadanie nr
+    </asp:Panel>
+    <asp:Panel ID="Panel2" runat="server" Height="310px">
+        <table border="1">
+            <tr>
+                <td>Status</td>
+                <td>Created date</td>
+                <td>Execution start</td>
+                <td>Execution end</td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:TextBox ID="TextBox2" runat="server"></asp:TextBox></td>
+                <td>
+                    <asp:TextBox ID="TextBox3" runat="server"></asp:TextBox></td>
+                <td>
+                    <asp:TextBox ID="TextBox4" runat="server"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td>Assignee group</td>
+                <td>Assignee</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="4">Summary</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <asp:TextBox ID="_tbSummary" runat="server"></asp:TextBox>
+                </td>
+            </tr>
+        </table>
+    </asp:Panel>
+    
     </form>
 </body>
 </html>

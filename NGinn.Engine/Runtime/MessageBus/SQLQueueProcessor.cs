@@ -203,7 +203,7 @@ namespace NGinn.Engine.Runtime.MessageBus
 
     }
 
-    public class SQLQueueProcessor : MarshalByRefObject, IInputProcessor, IInputProcessorAdmin, IXmlConfigure
+    public class SQLQueueProcessor : MarshalByRefObject, IInputProcessor, IInputProcessorAdmin
     {
         private Logger log = LogManager.GetCurrentClassLogger();
         private string _connStr;
@@ -746,15 +746,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             return p;
         }
 
-        #region IXmlConfigure Members
-
-        public void Configure(XmlElement el)
-        {
-
-            
-        }
-
-        #endregion
+        
 
         ~SQLQueueProcessor()
         {

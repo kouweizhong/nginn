@@ -11,6 +11,8 @@ namespace NGinn.Lib.Schema
     /// <summary>
     /// Workflow package definition.
     /// Package contains processes, additional data schemas and all other objects necessary
+    /// TODO: fix the serialization of PackageDefinition and ProcessDefinition
+    /// TODO: currently they try to serialize too much
     /// </summary>
     [Serializable]
     public class PackageDefinition
@@ -223,6 +225,7 @@ namespace NGinn.Lib.Schema
             }
         }
         
+        [Serializable]
         protected class ProcessDefInformation
         {
             public string Name;

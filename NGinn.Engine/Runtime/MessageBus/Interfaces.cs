@@ -78,10 +78,7 @@ namespace NGinn.Engine.Runtime.MessageBus
     }
 
     
-    public interface IXmlConfigure
-    {
-        void Configure(XmlElement el);
-    }
+    
 
     /// <summary>
     /// Wyj¹tek, który pozwala powiedzieæ ¿eby nie próbowaæ ponownego przetwarzania

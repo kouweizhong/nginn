@@ -11,6 +11,12 @@ using NGinn.Lib.Interfaces.MessageBus;
 
 namespace NGinn.Engine.Runtime
 {
+    /// <summary>
+    /// NGinn engine host class. Hosts an instance of NGEnvironment and provides process
+    /// execution threads.
+    /// Start/stop can be controlled by posting string 'START'/'STOP' commands to messagebus
+    /// with subject 'NGinn.Engine.Runtime.NGEngine.Control'.
+    /// </summary>
     public class NGEngine 
     {
         private INGEnvironment _environment;
@@ -52,6 +58,22 @@ namespace NGinn.Engine.Runtime
                 _msgBus.SubscribeObject(this);
             }
         }
+
+        [MessageBusSubscriber(typeof(string), "NGinn.Engine.Runtime.NGEngine.Control")]
+        private void HandleControlMessage(object message, IMessageContext ctx)
+        {
+            string msg = (string)message;
+            if (msg == "START")
+            {
+                Start();
+            }
+            else if (msg == "STOP")
+            {
+                Stop();
+            }
+            else throw new Exception("Unknown command: " + msg);
+        }
+
 
         public void Start()
         {

@@ -530,7 +530,63 @@ namespace NGinn.Engine.Runtime
         }
         #endregion
 
+        public ProcessInstanceInfo GetProcessInstanceInfo(string instanceId)
+        {
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                if (pi == null) return null;
+                pi.Environment = this;
+                ProcessInstanceInfo pii = new ProcessInstanceInfo();
+                pii.ProcessInstanceId = pi.InstanceId;
+                pii.ProcessFinished = (pi.Status == ProcessStatus.Cancelled || pi.Status == ProcessStatus.Finished);
+                pii.ProcessDefinitionId = pi.ProcessDefinitionId;
 
-        
+                return pii;
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
+
+        public TaskInstanceInfo GetTaskInstanceInfo(string taskCorrelationId)
+        {
+            int idx = taskCorrelationId.IndexOf('.');
+            if (idx < 0) throw new Exception("Invalid taskCorrelationId");
+            string instanceId = taskCorrelationId.Substring(0, idx);
+            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            {
+                log.Info("Failed to obtain lock on process instance {0}", instanceId);
+                throw new Exception("Failed to lock process instance");
+            }
+            try
+            {
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                if (pi == null) return null;
+                pi.Environment = this;
+                pi.Activate();
+                TaskInstanceInfo tii = new TaskInstanceInfo();
+                tii.CorrelationId = taskCorrelationId;
+                tii.ProcessDefinitionId = pi.ProcessDefinitionId;
+                tii.ProcessInstanceId = pi.InstanceId;
+                //TODO: better method for accessing task information. 
+                //TODO: handling multiinstances
+                TaskShell ts = pi.GetActiveTransition(taskCorrelationId);
+                tii.TaskCompleted = ts.Status == TransitionStatus.COMPLETED || ts.Status == TransitionStatus.CANCELLED;
+                tii.TaskId = ts.TaskId;
+                pi.Passivate();
+                return tii;
+            }
+            finally
+            {
+                LockManager.ReleaseLock(instanceId);
+            }
+        }
     }
 }

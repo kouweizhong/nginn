@@ -144,7 +144,6 @@ namespace NGinn.Engine.Dao
             ProcessInstance pi = new ProcessInstance();
             pi.InstanceId = pdb.InstanceId;
             pi.ProcessDefinitionId = definitionId;
-            pi.InitTokenInformation(new List<Token>());
             return pi;
         }
 

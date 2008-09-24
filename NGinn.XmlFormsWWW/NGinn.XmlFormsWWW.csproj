@@ -69,6 +69,7 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CompleteTask.aspx" />
     <Content Include="ext\adapter\ext\ext-base.js" />
     <Content Include="ext\adapter\jquery\ext-jquery-adapter.js" />
     <Content Include="ext\adapter\jquery\jquery.js" />
@@ -149,18 +150,26 @@
     <Content Include="tasks\tasks.html" />
     <Content Include="tasks\tasks.js" />
     <Content Include="tasks\TaskSubmit.aspx" />
+    <Content Include="TaskXml.aspx" />
     <Content Include="TODO.aspx" />
     <Content Include="userwww\dojolist.html" />
     <Content Include="userwww\testlist.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompleteTask.aspx.cs">
+      <DependentUpon>CompleteTask.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SoodaPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\DispatchProcessMessage.aspx.cs">
       <DependentUpon>DispatchProcessMessage.aspx</DependentUpon>
@@ -204,15 +213,16 @@
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>TaskForm.aspx</DependentUpon>
     </Compile>
-    <Compile Include="TaskForm.aspx.designer.cs">
-      <DependentUpon>TaskForm.aspx</DependentUpon>
-    </Compile>
     <Compile Include="tasks\TaskSubmit.aspx.cs">
       <DependentUpon>TaskSubmit.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="tasks\TaskSubmit.aspx.designer.cs">
       <DependentUpon>TaskSubmit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TaskXml.aspx.cs">
+      <DependentUpon>TaskXml.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="TODO.aspx.cs">
       <DependentUpon>TODO.aspx</DependentUpon>

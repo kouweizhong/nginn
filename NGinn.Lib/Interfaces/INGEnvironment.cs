@@ -5,6 +5,25 @@ using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Interfaces
 {
+    [Serializable]
+    public class ProcessInstanceInfo
+    {
+        public string ProcessInstanceId;
+        public string ProcessDefinitionId;
+        public bool ProcessFinished;
+    }
+
+    [Serializable]
+    public class TaskInstanceInfo
+    {
+        public string ProcessInstanceId;
+        public string ProcessDefinitionId;
+        public bool ProcessFinished;
+        public string CorrelationId;
+        public string TaskId;
+        public bool TaskCompleted;
+    }
+
     /// <summary>
     /// Process hosting environment interface
     /// </summary>
@@ -106,5 +125,19 @@ namespace NGinn.Lib.Interfaces
         /// <param name="updatedTaskData">Task variables to update</param>
         /// <param name="userId">Id of user completing the task</param>
         void ReportTaskFinished(string correlationId, DataObject updatedTaskData, string userId);
+
+        /// <summary>
+        /// Return information about a process instance
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        ProcessInstanceInfo GetProcessInstanceInfo(string instanceId);
+        
+        /// <summary>
+        /// Return information about a task instance
+        /// </summary>
+        /// <param name="taskCorrelationId"></param>
+        /// <returns></returns>
+        TaskInstanceInfo GetTaskInstanceInfo(string taskCorrelationId);
     }
 }
