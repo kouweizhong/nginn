@@ -439,6 +439,11 @@ namespace NGinn.Engine.Runtime
                 }
 
             }
+            catch (Exception ex)
+            {
+                log.Error("Error handling transition event: {0} : {1}", ite.ToString(), ex);
+                throw;
+            }
             finally
             {
                 LockManager.ReleaseLock(ite.ProcessInstanceId);

@@ -151,6 +151,7 @@
     <Content Include="tasks\tasks.js" />
     <Content Include="tasks\TaskSubmit.aspx" />
     <Content Include="TaskXml.aspx" />
+    <Content Include="task_details.xsl" />
     <Content Include="TODO.aspx" />
     <Content Include="userwww\dojolist.html" />
     <Content Include="userwww\testlist.html" />

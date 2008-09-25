@@ -27,8 +27,6 @@
                 <ItemStyle Height="40px" />
             </asp:BoundField>
             <asp:BoundField DataField="CorrelationId" HeaderText="CorrelationId" />
-            <asp:ButtonField ButtonType="Button" CommandName="TaskCompleted" 
-                Text="Zrealizowane" />
             <asp:HyperLinkField DataNavigateUrlFields="Id" 
                 DataNavigateUrlFormatString="TaskXml.aspx?id={0}" DataTextField="Id" 
                 DataTextFormatString="Przejdź do {0}" HeaderText="Link" Text="Link" />

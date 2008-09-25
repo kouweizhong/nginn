@@ -29,14 +29,17 @@
           border: none;
           readonly: true;
           border: solid 1px #a0a0a0;
+          width:100%;
           }
           input.field_rw {
           border: solid 1px #a0a0a0;
           border: none;
+          width:100%;
           }
           input.field_rq {
           border: solid 1px red;
           background:yellow;
+          width:100%;
           }
         </style>
       </head>
@@ -47,8 +50,15 @@
   </xsl:template>
 
   <xsl:template match="Task">
-    <form>
-    <table cellpadding="0" cellspacing="0">
+    <form name="taskDetails" id="taskDetails" method="POST">
+      <xsl:attribute name="action">CompleteTask.aspx?correlationId=<xsl:value-of select="CorrelationId"/>
+      </xsl:attribute>
+
+      <div>
+        <input type="button" name="btn_complete" value="Complete task" onclick="javascript:document.getElementById('taskDetails').submit()"/>
+        <input type="button" name="btn_back" value="Exit" onclick="javascript:history.back()"/>
+      </div>
+    <table cellpadding="0" cellspacing="0" >
       <col width="25%" />
       <col width="25%" />
       <col width="25%" />
@@ -102,7 +112,8 @@
         </td>
       </tr>
       <tr>
-        <td colspan="4" class="label">Description</td>
+        <td colspan="3" class="label">Description</td>
+        <td colspan="1" class="label">Task variables</td>
       </tr>
       <tr height="150px">
         <td colspan="3" style="vertical-align:top" class="field">
@@ -119,7 +130,7 @@
   </xsl:template>
 
   <xsl:template match="NGinnTaskData">
-    <table style="">
+    <table style="" width="100%">
       <xsl:for-each select="field">
         <tr>
           <td class="label">
@@ -138,7 +149,7 @@
   </xsl:template>
 
   <xsl:template match="field">
-    <input type="text" class="field2">
+    <input type="text">
       <xsl:attribute name="name">
         <xsl:value-of select="@name"/>
       </xsl:attribute>
