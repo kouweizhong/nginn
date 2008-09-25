@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WorkflowDefinitionBaseTypes"
+    targetNamespace="http://www.nginn.org/WorkflowDefinition.1_0.xsd" 
+    elementFormDefault="qualified" 
+    xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" 
+    xmlns:mstns="http://tempuri.org/WorkflowDefinition.xsd" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <!-- definition of type set -->
+  <xs:complexType name="TypeSetDef">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="struct" type="StructDef"  />
+        <xs:element name="enum" type="EnumDef" />
+      </xs:choice>
+    </xs:sequence>
+
+  </xs:complexType>
+  <!-- data record definition -->
+  <xs:complexType name="StructDef">
+    <xs:sequence>
+      <xs:element name="member" type="MemberDef" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!-- enum type definition -->
+  <xs:complexType name="EnumDef">
+    <xs:sequence>
+      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!-- struct member definition -->
+  <xs:complexType name="MemberDef">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="xs:string" use="required" />
+    <xs:attribute name="required" type="xs:boolean" use="optional" />
+    <xs:attribute name="isArray" type="xs:boolean" use="optional" />
+  </xs:complexType>
+
+</xs:schema>

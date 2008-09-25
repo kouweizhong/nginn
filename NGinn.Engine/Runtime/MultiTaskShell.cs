@@ -158,7 +158,46 @@ namespace NGinn.Engine.Runtime
 
             target.Set(TaskDefinition.MultiInstanceResultVariable, null, al);
         }
-        
 
+
+
+        #region IActiveTaskContext Members
+
+        string IActiveTaskContext.CorrelationId
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        Task IActiveTaskContext.TaskDefinition
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        string IActiveTaskContext.ProcessInstanceId
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        TransitionStatus IActiveTaskContext.Status
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        INGEnvironmentContext IActiveTaskContext.Environment
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        string IActiveTaskContext.SharedId
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        Logger IActiveTaskContext.Log
+        {
+            get { return log; }
+        }
+
+        #endregion
     }
 }

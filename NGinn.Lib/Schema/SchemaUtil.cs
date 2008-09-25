@@ -9,6 +9,43 @@ using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Schema
 {
+    internal class AssemblyResourceXmlResolver : XmlUrlResolver
+    {
+        private static Logger log = LogManager.GetCurrentClassLogger();
+        private string _defaultPrefix = "assembly://NGinn.Lib/NGinn.Lib/";
+        public AssemblyResourceXmlResolver(string defaultPrefix)
+        {
+        }
+
+        public AssemblyResourceXmlResolver()
+        {
+        }
+
+        public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+        {
+            log.Info("GetEntity: {0}", absoluteUri.ToString());
+            if (absoluteUri.Scheme == "assembly")
+            {
+                IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+                IResource rc = ctx.GetResource(absoluteUri.OriginalString);
+                if (rc == null)
+                    throw new Exception("Schema resource not found: " + absoluteUri);
+                return rc.InputStream;
+            }
+            return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+        }
+
+        public override Uri ResolveUri(Uri baseUri, string relativeUri)
+        {
+            if (baseUri == null || (!baseUri.IsAbsoluteUri && baseUri.OriginalString.Length == 0))
+            {
+                return new Uri(string.Format("{0}{1}", _defaultPrefix, relativeUri));
+            }
+            log.Info("ResolveUri: {0} : {1}", baseUri.ToString(), relativeUri);
+            return base.ResolveUri(baseUri, relativeUri);
+        }
+    }
+
     internal class SchemaUtil
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
@@ -23,18 +60,26 @@ namespace NGinn.Lib.Schema
                 return t.Value;
         }
 
-        public static XmlReader GetWorkflowSchemaReader()
+        public static XmlReader GetAssemblySchemaReader(string schemaName)
         {
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            IResource rc = ctx.GetResource("assembly://NGinn.Lib/NGinn.Lib/WorkflowDefinition.xsd");
-            return XmlReader.Create(rc.InputStream);
+            IResource rc = ctx.GetResource(string.Format("assembly://NGinn.Lib/NGinn.Lib/{0}", schemaName));
+            if (rc == null)
+                throw new Exception("Schema resource not found: " + schemaName);
+            XmlReaderSettings rs = new XmlReaderSettings();
+            //rs.XmlResolver = new AssemblyResourceXmlResolver();
+            
+            return XmlReader.Create(rc.InputStream, rs);
+        }
+
+        public static XmlReader GetWorkflowSchemaReader()
+        {
+            return GetAssemblySchemaReader("WorkflowDefinition.xsd");
         }
 
         public static XmlReader GetPackageSchemaReader()
         {
-            IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            IResource rc = ctx.GetResource("assembly://NGinn.Lib/NGinn.Lib/PackageDefinition.xsd");
-            return XmlReader.Create(rc.InputStream);
+            return GetAssemblySchemaReader("PackageDefinition.xsd");
         }
 
         public static readonly string SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";

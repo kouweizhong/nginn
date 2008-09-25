@@ -44,9 +44,12 @@ namespace NGinn.Engine.Runtime.MessageBus
     
     }
     
-    ///Prosty publisher do zarzadzania dystrybucja eventow typu 'Message' i dowolnego innego typu
-    ///Mozna sie zapisywac na typ zdarzenia, a w przypadku typu 'Message' na nazwe zdarzenia (EventType)
-    public class SimplePublisher : MarshalByRefObject, IMessageBus
+    /// <summary>
+    /// Simple publish-subscribe message broker.
+    /// Does not have store and forward mechanism, all messages
+    /// are distributed synchronously.
+    /// </summary>
+    public class SimpleMessageBroker : MarshalByRefObject, IMessageBus
     {
         private int _counter = 0;
         private Hashtable _idToSubscriberInfo = new Hashtable(); //id->si
@@ -98,7 +101,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             
         }
 
-        public SimplePublisher()
+        public SimpleMessageBroker()
         { 
         }
 

@@ -26,11 +26,10 @@ namespace NGinn.Engine.Runtime.MessageBus
 
     
     /// <summary>
-    /// Publisher z obs³ug¹ komunikatów asynchronicznych
-    /// Parametry z Atmo.Config.xml:
-    /// Atmo.MessageBus.AtmoMessageBus.QueueName - nazwa kolejki wejsciowej (standardowo sql://MessageQueue/AtmoMessageBus)
+    /// Message broker with store and forward support for asynchronous messages and
+    /// for handling retries
     /// </summary>
-    public class ReliableMessageBus : SimplePublisher, IMessageHandler, IApplicationContextAware, IApplicationEventListener
+    public class ReliableMessageBroker : SimpleMessageBroker, IMessageHandler
     {
         private SQLQueueProcessor _queueProc = null;
         private bool _inited = false;
@@ -40,7 +39,7 @@ namespace NGinn.Engine.Runtime.MessageBus
         private Logger log = LogManager.GetCurrentClassLogger();
 
         
-        public ReliableMessageBus()
+        public ReliableMessageBroker()
         {
             _queueName = null;
             InitSubscribers();
@@ -48,7 +47,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             _queueProc.MessageHandler = this;
         }
 
-        public ReliableMessageBus(string queueName)
+        public ReliableMessageBroker(string queueName)
         {
             InitSubscribers();
             _queueProc = new SQLQueueProcessor();
@@ -147,29 +146,6 @@ namespace NGinn.Engine.Runtime.MessageBus
             base.Notify(mw.Sender, mw.Topic, mw.Body, false);
         }
 
-        #region IApplicationContextAware Members
-
-        public IApplicationContext ApplicationContext
-        {
-            get
-            {
-                return _ctx;
-            }
-            set
-            {
-                _ctx = value;
-            }
-        }
-
-        #endregion
-
-        #region IApplicationEventListener Members
-
-        public void HandleApplicationEvent(object sender, ApplicationEventArgs e)
-        {
-            
-        }
-
-        #endregion
+        
     }
 }

@@ -5,6 +5,7 @@ using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
 using NGinn.Engine;
+using NLog;
 
 namespace NGinn.Engine.Runtime
 {
@@ -52,7 +53,12 @@ namespace NGinn.Engine.Runtime
         /// <param name="taskOutputData"></param>
         void TransitionCompleted(string correlationId, IDataObject taskOutputData);
 
-            }
+        /// <summary>
+        /// Process instance logger
+        /// </summary>
+        Logger Log { get; }
+
+    }
 
     /// <summary>
     /// Interface implemented by all active tasks

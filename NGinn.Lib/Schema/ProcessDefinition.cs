@@ -53,6 +53,11 @@ namespace NGinn.Lib.Schema
             set { _version = value; }
         }
 
+        public string DefinitionId
+        {
+            get { return string.Format("{0}.{1}.{2}", Package.PackageName, Name, Version); }
+        }
+
         /// <summary>
         /// List of additional schemas
         /// </summary>
@@ -352,8 +357,8 @@ namespace NGinn.Lib.Schema
             XmlReaderSettings rs = new XmlReaderSettings();
             rs.ValidationType = ValidationType.Schema;
 
-            XmlReader schemaRdr = SchemaUtil.GetWorkflowSchemaReader();
-            rs.Schemas.Add(WORKFLOW_NAMESPACE, schemaRdr);
+            rs.Schemas.XmlResolver = new AssemblyResourceXmlResolver();
+            rs.Schemas.Add(ProcessDefinition.WORKFLOW_NAMESPACE, "WorkflowDefinition.xsd");
             using (XmlReader xr = XmlReader.Create(input, rs))
             {
                 doc.Load(xr);

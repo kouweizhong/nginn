@@ -232,6 +232,7 @@ namespace NGinn.Engine.Runtime
             if (_processInstance == null || _parentCallback == null)
                 throw new Exception("Set process instance and parent callback before activation");
             _taskDefinition = ParentProcess.Definition.GetTask(this.TaskId);
+            log = LogManager.GetCurrentClassLogger();
             if (ActiveTask != null)
             {
                 ActiveTask.SetContext(this);
@@ -326,6 +327,11 @@ namespace NGinn.Engine.Runtime
         public INGEnvironmentContext Environment
         {
             get { return  ParentProcess.Environment; }
+        }
+
+        public Logger Log
+        {
+            get { return log; }
         }
 
         #endregion

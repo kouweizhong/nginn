@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WorkflowDefinition" targetNamespace="http://www.nginn.org/WorkflowDefinition.1_0.xsd" elementFormDefault="qualified" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:mstns="http://tempuri.org/WorkflowDefinition.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include  schemaLocation="WorkflowDefinitionBaseTypes.xsd" />
+  
+  <xs:element name="typeSet" type="TypeSetDef" />
+</xs:schema>

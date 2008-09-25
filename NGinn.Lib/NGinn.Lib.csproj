@@ -120,12 +120,17 @@
       <SubType>
       </SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="TypeSetDefinition.xsd" />
+    <None Include="TypeSetDefinition.xsx">
+      <DependentUpon>TypeSetDefinition.xsd</DependentUpon>
+    </None>
     <None Include="PackageDefinition.xsx">
       <DependentUpon>PackageDefinition.xsd</DependentUpon>
     </None>
     <None Include="WorkflowDefinition.xsx">
       <DependentUpon>WorkflowDefinition.xsd</DependentUpon>
     </None>
+    <EmbeddedResource Include="WorkflowDefinitionBaseTypes.xsd" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

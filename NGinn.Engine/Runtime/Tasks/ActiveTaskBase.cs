@@ -19,7 +19,8 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     public abstract class ActiveTaskBase : IActiveTask
     {
-        protected static Logger log = LogManager.GetCurrentClassLogger();
+        [NonSerialized]
+        protected Logger log;
 
         private bool _activated = false;
         private string _correlationId; 
@@ -30,6 +31,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public ActiveTaskBase(Task tsk)
         {
+            log = LogManager.GetCurrentClassLogger();
         }
 
         #region IActiveTask Members
@@ -37,6 +39,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public void SetContext(IActiveTaskContext ctx)
         {
             _ctx = ctx;
+            log = ctx.Log;
         }
 
         public string CorrelationId

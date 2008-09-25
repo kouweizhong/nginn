@@ -74,8 +74,9 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             WorkItem wi = new WorkItem();
             wi.ProcessInstanceId = Context.ProcessInstanceId;
-            wi.TaskId = Context.TaskDefinition.Id;
+            wi.ProcessDefinitionId = Context.TaskDefinition.ParentProcess.DefinitionId;
             wi.CorrelationId = this.CorrelationId;
+            wi.TaskId = Context.TaskDefinition.Id;
             wi.Title = Title;
             wi.Description = Description;
             wi.AssigneeGroupId = AssigneeGroup;
