@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="ReceiveMessage" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    
+    <task id="t1" type="ReceiveMessageTask" joinType="AND" splitType="AND">
+         <parameters>
+         </parameters>
+         <data-definition>
+            <variables> 
+                
+            </variables>
+            <input-bindings>
+                
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+  </tasks>
+  <flows>
+    <flow from="start" to="t1" />
+    <flow from="t1" to="end" />
+    </flows>
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+    </variables>
+</process>

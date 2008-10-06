@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="4" name="ManualTask" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <!-- wersja: manual task + timeout task -->
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    
+    <task id="eval_candidate" type="ManualTask" joinType="AND" splitType="AND">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><expr><![CDATA[string.Format('Akceptuj kandydata: {0}. Masz 120 sekund.', userName);]]></expr></binding>
+            <binding parameter="Description"><expr><![CDATA[string.Format('Nowy kandydat: {0}\nEmail: {1}\n{2}', userName, email, remarks);]]></expr></binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="userName" type="string" required="true" dir="In" />
+                <variable name="email" type="string" required="true" dir="In" />
+                <variable name="remarks" type="string" required="false" dir="In" />
+                <variable name="decision" type="ApprovalDecision" required="true" dir="Out"  />
+            </variables>
+            <input-bindings>
+                <binding variable="userName" bindingType="CopyVar" sourceVariable="userName" />
+                <binding variable="email" bindingType="CopyVar" sourceVariable="email" />
+                <binding variable="remarks" bindingType="CopyVar" sourceVariable="remarks" />
+            </input-bindings>
+            <output-bindings>
+                <binding variable="approval1" bindingType="CopyVar" sourceVariable="decision" />
+            </output-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="timeout" type="TimerTask" joinType="AND" splitType="AND">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:02:00</value></binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+            </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+  </tasks>
+  <flows>
+    <flow from="start" to="eval_candidate" />
+    <flow from="start" to="timeout" />
+    <flow from="eval_candidate" to="end" />
+    <flow from="timeout" to="end" />
+    </flows>
+    <processDataTypes>
+        <enum name="ApprovalDecision">
+            <value>Approve</value>
+            <value>Reject</value>
+        </enum>
+    </processDataTypes>
+  	<variables>
+		<variable name="userName" type="string" required="true" dir="In" />
+        <variable name="email" type="string" required="true" dir="In" />
+        <variable name="remarks" type="string" required="false" dir="In" />
+        <variable name="approval1" type="ApprovalDecision" required="false" dir="Local" />
+    </variables>
+</process>

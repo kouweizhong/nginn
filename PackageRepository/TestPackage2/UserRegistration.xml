@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="UserRegistration" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+  <places>
+    <place id="start" type="StartPlace">
+    </place>
+    <place id="end" type="EndPlace">
+    </place>
+    <place id="wait" type="Place" />
+
+  </places>
+  <tasks>
+    <task id="sendConfirmationEmail" type="EmptyTask">
+      <joinType>AND</joinType>
+      <splitType>AND</splitType>
+    </task>
+    <task id="receiveConfirmation" type="EmptyTask">
+      <joinType>AND</joinType>
+      <splitType>AND</splitType>
+    </task>
+    <task id="confirmationTimeout" type="EmptyTask">
+      <joinType>AND</joinType>
+      <splitType>AND</splitType>
+      <cancelSet></cancelSet>
+    </task>
+    <task id="saveUserAccount" type="EmptyTask">
+      <joinType>AND</joinType>
+      <splitType>AND</splitType>
+    </task>
+  </tasks>
+  <flows>
+        <flow from="start" to="sendConfirmationEmail" />
+        <flow from="sendConfirmationEmail" to="wait" />
+        <flow from="wait" to="receiveConfirmation" />
+        <flow from="wait" to="confirmationTimeout" />
+        <flow from="confirmationTimeout" to="end" />
+        <flow from="receiveConfirmation" to="saveUserAccount" />
+        <flow from="saveUserAccount" to="end" />
+    </flows>
+    <processDataTypes>
+    </processDataTypes>
+    <variables>
+        <variable name="Login" type="string" required="true" dir="In" />
+        <variable name="UserName" type="string" required="true" dir="In" />
+        <variable name="Email" type="string" required="true" dir="In" />
+    </variables>
+</process>
