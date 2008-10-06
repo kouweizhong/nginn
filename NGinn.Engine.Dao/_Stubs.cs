@@ -126,6 +126,60 @@ namespace NGinn.Engine.Dao {
       return new ProcessInstanceDbList(base.GetSnapshot2());
     }
   }
+  public class ProcessInstanceDbXmlList : Sooda.ObjectMapper.SoodaObjectCollectionWrapperGeneric<NGinn.Engine.Dao.ProcessInstanceDbXml> {
+    public ProcessInstanceDbXmlList() {
+    }
+    public ProcessInstanceDbXmlList(ISoodaObjectList list) : 
+        base(list) {
+    }
+    public new ProcessInstanceDbXml this[int pos] {
+      get {
+        return ((ProcessInstanceDbXml)(base.GetItem(pos)));
+      }
+    }
+    public int Add(ProcessInstanceDbXml obj) {
+      return base.Add2(obj);
+    }
+    public void Remove(ProcessInstanceDbXml obj) {
+      base.Remove2(obj);
+    }
+    public bool Contains(ProcessInstanceDbXml obj) {
+      return base.Contains2(obj);
+    }
+    public ProcessInstanceDbXmlList Sort(IComparer comparer) {
+      return new ProcessInstanceDbXmlList(base.Sort2(comparer));
+    }
+    public ProcessInstanceDbXmlList Sort(string sortOrder) {
+      return new ProcessInstanceDbXmlList(base.Sort2(sortOrder));
+    }
+    public ProcessInstanceDbXmlList Sort(Sooda.QL.SoqlExpression sortExpression) {
+      return new ProcessInstanceDbXmlList(base.Sort2(sortExpression));
+    }
+    public ProcessInstanceDbXmlList Sort(Sooda.QL.SoqlExpression sortExpression, Sooda.SortOrder sortOrder) {
+      return new ProcessInstanceDbXmlList(base.Sort2(sortExpression, sortOrder));
+    }
+    public ProcessInstanceDbXmlList SelectFirst(int count) {
+      return new ProcessInstanceDbXmlList(base.SelectFirst2(count));
+    }
+    public ProcessInstanceDbXmlList SelectLast(int count) {
+      return new ProcessInstanceDbXmlList(base.SelectLast2(count));
+    }
+    public ProcessInstanceDbXmlList SelectRange(int _from, int _to) {
+      return new ProcessInstanceDbXmlList(base.SelectRange2(_from, _to));
+    }
+    public ProcessInstanceDbXmlList Filter(SoodaObjectFilter f) {
+      return new ProcessInstanceDbXmlList(base.Filter2(f));
+    }
+    public ProcessInstanceDbXmlList Filter(Sooda.QL.SoqlBooleanExpression sortExpression) {
+      return new ProcessInstanceDbXmlList(base.Filter2(sortExpression));
+    }
+    public ProcessInstanceDbXmlList Filter(SoodaWhereClause whereClause) {
+      return new ProcessInstanceDbXmlList(base.Filter2(whereClause));
+    }
+    public ProcessInstanceDbXmlList GetSnapshot() {
+      return new ProcessInstanceDbXmlList(base.GetSnapshot2());
+    }
+  }
   public class ProcessStatusList : Sooda.ObjectMapper.SoodaObjectCollectionWrapperGeneric<NGinn.Engine.Dao.ProcessStatus> {
     public ProcessStatusList() {
     }
@@ -818,6 +872,308 @@ namespace NGinn.Engine.Dao.Stubs {
       this.AfterFieldUpdate("ErrorInfo", oldValue, newValue);
     }
   }
+  public class ProcessInstanceDbXml_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
+    public string InstanceId;
+    public string DefinitionId;
+    public System.Data.SqlTypes.SqlInt32 Status;
+    public string InstanceData;
+    public int RecordVersion;
+    public System.DateTime CreatedDate;
+    public System.Data.SqlTypes.SqlDateTime FinishedDate;
+    public System.DateTime LastModified;
+    public ProcessInstanceDbXml_Values(Sooda.SoodaObjectReflectionBasedFieldValues other) : 
+        base(other) {
+    }
+    public ProcessInstanceDbXml_Values(string[] fieldNames) : 
+        base(fieldNames) {
+    }
+    public override Sooda.SoodaObjectFieldValues Clone() {
+      return new ProcessInstanceDbXml_Values(this);
+    }
+  }
+  public class ProcessInstanceDbXml_Stub : SoodaObject {
+    private SoodaObject[] _refcache = new Sooda.SoodaObject[1];
+    public ProcessInstanceDbXml_Stub(SoodaTransaction tran) : 
+        base(tran) {
+      this.InitNewObject();
+    }
+    public ProcessInstanceDbXml_Stub(SoodaConstructor c) : 
+        base(c) {
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public string InstanceId {
+      get {
+        return ((string)(this.GetPrimaryKeyValue()));
+      }
+      set {
+        this.SetPrimaryKeyValue(value);
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(50)]
+    public string DefinitionId {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).DefinitionId;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "DefinitionId", 1, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_DefinitionId), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_DefinitionId));
+      }
+    }
+    public ProcessStatus Status {
+      get {
+        if ((this._refcache[0] == null)) {
+          if ((this.GetProcessInstanceDbXmlFieldValuesForRead(0).Status.IsNull == false)) {
+            this._refcache[0] = ProcessStatus_Stub.GetRef(this.GetTransaction(), this.GetProcessInstanceDbXmlFieldValuesForRead(0).Status.Value);
+          }
+        }
+        return ((ProcessStatus)(this._refcache[0]));
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetRefFieldValue(this, 0, "Status", 2, value, this._refcache, 0, ProcessStatus_Factory.TheFactory);
+      }
+    }
+    [Sooda.SoodaFieldSizeAttribute(100000)]
+    public string InstanceData {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).InstanceData;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "InstanceData", 3, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_InstanceData), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_InstanceData));
+      }
+    }
+    public int RecordVersion {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).RecordVersion;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "RecordVersion", 4, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_RecordVersion), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_RecordVersion));
+      }
+    }
+    public System.DateTime CreatedDate {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).CreatedDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "CreatedDate", 5, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_CreatedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_CreatedDate));
+      }
+    }
+    public System.Data.SqlTypes.SqlDateTime FinishedDate {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).FinishedDate;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "FinishedDate", 6, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_FinishedDate), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_FinishedDate));
+      }
+    }
+    public System.DateTime LastModified {
+      get {
+        return this.GetProcessInstanceDbXmlFieldValuesForRead(0).LastModified;
+      }
+      set {
+        Sooda.ObjectMapper.SoodaObjectImpl.SetPlainFieldValue(this, 0, "LastModified", 7, Sooda.SoodaNullable.Box(value), new Sooda.SoodaFieldUpdateDelegate(this.BeforeFieldUpdate_LastModified), new Sooda.SoodaFieldUpdateDelegate(this.AfterFieldUpdate_LastModified));
+      }
+    }
+    private ProcessInstanceDbXml_Values GetProcessInstanceDbXmlFieldValuesForRead(int requiredTable) {
+      return ((ProcessInstanceDbXml_Values)(Sooda.ObjectMapper.SoodaObjectImpl.GetFieldValuesForRead(this, requiredTable)));
+    }
+    protected override SoodaObjectFieldValues InitFieldValues(int fieldCount, string[] fieldNames) {
+      return new ProcessInstanceDbXml_Values(fieldNames);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public override Sooda.Schema.ClassInfo GetClassInfo() {
+      return ProcessInstanceDbXml_Factory.TheClassInfo;
+    }
+    protected override Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return ProcessInstanceDbXml_Factory.InternalGetFieldHandler(ordinal);
+    }
+    public static ProcessInstanceDbXml LoadSingleObject(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((ProcessInstanceDbXml)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(SoodaTransaction.ActiveTransaction, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ProcessInstanceDbXml LoadSingleObject(Sooda.SoodaWhereClause @where) {
+      return ((ProcessInstanceDbXml)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ProcessInstanceDbXml LoadSingleObject(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return ((ProcessInstanceDbXml)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectBE(filterExpression, DoGetList(tran, new Sooda.SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ProcessInstanceDbXml LoadSingleObject(SoodaTransaction tran, Sooda.SoodaWhereClause @where) {
+      return ((ProcessInstanceDbXml)(Sooda.ObjectMapper.SoodaObjectImpl.SelectSingleObjectWC(@where, DoGetList(tran, @where, SoodaOrderBy.Unsorted, 2, SoodaSnapshotOptions.Default))));
+    }
+    public static ProcessInstanceDbXmlList GetAllObjects() {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause("1=1"), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetAllObjects(SoodaTransaction transaction) {
+      return DoGetList(transaction, null, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy) {
+      return DoGetList(tran, @where, orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, @where, orderBy, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, @where, orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, SoodaWhereClause @where, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, @where, orderBy, topCount, options);
+    }
+    private static ProcessInstanceDbXmlList DoGetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderByClause, int topCount, SoodaSnapshotOptions options) {
+      return new ProcessInstanceDbXmlList(new Sooda.ObjectMapper.SoodaObjectListSnapshot(tran, whereClause, orderByClause, topCount, options, ProcessInstanceDbXml_Factory.TheClassInfo));
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, -1, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(SoodaTransaction.ActiveTransaction, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), SoodaOrderBy.Unsorted, topCount, options);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, SoodaSnapshotOptions.Default);
+    }
+    public static ProcessInstanceDbXmlList GetList(SoodaTransaction tran, Sooda.QL.SoqlBooleanExpression filterExpression, SoodaOrderBy orderBy, int topCount, SoodaSnapshotOptions options) {
+      return DoGetList(tran, new SoodaWhereClause(filterExpression), orderBy, topCount, options);
+    }
+    public static ProcessInstanceDbXml Load(string instanceId) {
+      return Load(SoodaTransaction.ActiveTransaction, instanceId);
+    }
+    public static ProcessInstanceDbXml Load(SoodaTransaction tran, string instanceId) {
+      ProcessInstanceDbXml retVal = ProcessInstanceDbXml_Stub.GetRef(tran, instanceId);
+      Sooda.ObjectMapper.SoodaObjectImpl.LoadAllData(retVal);
+      return retVal;
+    }
+    public static ProcessInstanceDbXml GetRef(string instanceId) {
+      return GetRef(SoodaTransaction.ActiveTransaction, instanceId);
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ProcessInstanceDbXml TryGet(string instanceId) {
+      return TryGet(SoodaTransaction.ActiveTransaction, instanceId);
+    }
+    public static ProcessInstanceDbXml GetRef(SoodaTransaction tran, string instanceId) {
+      return ((ProcessInstanceDbXml)(Sooda.SoodaObject.GetRefHelper(tran, ProcessInstanceDbXml_Factory.TheFactory, instanceId)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ProcessInstanceDbXml TryGet(SoodaTransaction tran, string instanceId) {
+      return ((ProcessInstanceDbXml)(tran.FindObjectWithKey("ProcessInstanceDbXml", instanceId, typeof(ProcessInstanceDbXml))));
+    }
+    public static ProcessInstanceDbXml GetRef(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((ProcessInstanceDbXml)(Sooda.SoodaObject.GetRefHelper(tran, ProcessInstanceDbXml_Factory.TheFactory, tuple)));
+    }
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    public static ProcessInstanceDbXml TryGet(SoodaTransaction tran, SoodaTuple tuple) {
+      return ((ProcessInstanceDbXml)(tran.FindObjectWithKey("ProcessInstanceDbXml", tuple, typeof(ProcessInstanceDbXml))));
+    }
+    protected virtual void BeforeFieldUpdate_DefinitionId(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("DefinitionId", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_DefinitionId(object oldValue, object newValue) {
+      this.AfterFieldUpdate("DefinitionId", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_Status(ProcessStatus oldValue, ProcessStatus newValue) {
+      this.BeforeFieldUpdate("Status", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_Status(ProcessStatus oldValue, ProcessStatus newValue) {
+      this.AfterFieldUpdate("Status", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_InstanceData(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("InstanceData", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_InstanceData(object oldValue, object newValue) {
+      this.AfterFieldUpdate("InstanceData", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_RecordVersion(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("RecordVersion", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_RecordVersion(object oldValue, object newValue) {
+      this.AfterFieldUpdate("RecordVersion", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_CreatedDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("CreatedDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_CreatedDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("CreatedDate", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_FinishedDate(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("FinishedDate", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_FinishedDate(object oldValue, object newValue) {
+      this.AfterFieldUpdate("FinishedDate", oldValue, newValue);
+    }
+    protected virtual void BeforeFieldUpdate_LastModified(object oldValue, object newValue) {
+      this.BeforeFieldUpdate("LastModified", oldValue, newValue);
+    }
+    protected virtual void AfterFieldUpdate_LastModified(object oldValue, object newValue) {
+      this.AfterFieldUpdate("LastModified", oldValue, newValue);
+    }
+  }
   public class ProcessStatus_Values : Sooda.SoodaObjectReflectionBasedFieldValues {
     public int Id;
     public string Name;
@@ -1409,6 +1765,71 @@ namespace NGinn.Engine.Dao.Stubs {
       return retVal;
     }
   }
+  [SoodaObjectFactoryAttribute("ProcessInstanceDbXml", typeof(ProcessInstanceDbXml))]
+  public class ProcessInstanceDbXml_Factory : object, ISoodaObjectFactory {
+    private static SoodaFieldHandler[] _fieldHandlers;
+    private static SoodaFieldHandler _primaryKeyFieldHandler = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+    private static ProcessInstanceDbXml_Factory _theFactory = new ProcessInstanceDbXml_Factory();
+    private static Sooda.Schema.ClassInfo _theClassInfo = NGinn.Engine.Dao._DatabaseSchema.GetSchema().FindClassByName("ProcessInstanceDbXml");
+    private static Type _theType = typeof(ProcessInstanceDbXml);
+    static ProcessInstanceDbXml_Factory() {
+      _fieldHandlers = new SoodaFieldHandler[8];
+      _fieldHandlers[0] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[1] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[2] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[3] = new Sooda.ObjectMapper.FieldHandlers.StringFieldHandler(false);
+      _fieldHandlers[4] = new Sooda.ObjectMapper.FieldHandlers.Int32FieldHandler(false);
+      _fieldHandlers[5] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
+      _fieldHandlers[6] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(true);
+      _fieldHandlers[7] = new Sooda.ObjectMapper.FieldHandlers.DateTimeFieldHandler(false);
+    }
+    public ProcessInstanceDbXml_Factory() {
+    }
+    public static ProcessInstanceDbXml_Factory TheFactory {
+      get {
+        return _theFactory;
+      }
+    }
+    public virtual Type TheType {
+      get {
+        return _theType;
+      }
+    }
+    public static Sooda.Schema.ClassInfo TheClassInfo {
+      get {
+        return _theClassInfo;
+      }
+    }
+    public virtual SoodaObject GetRef(SoodaTransaction tran, object keyValue) {
+      return ProcessInstanceDbXml_Stub.GetRef(tran, ((string)(keyValue)));
+    }
+    public virtual SoodaObject TryGet(SoodaTransaction tran, object keyValue) {
+      return ProcessInstanceDbXml_Stub.TryGet(tran, ((string)(keyValue)));
+    }
+    public virtual System.Collections.IList GetList(SoodaTransaction tran, SoodaWhereClause whereClause, SoodaOrderBy orderBy, SoodaSnapshotOptions options) {
+      return ProcessInstanceDbXml_Stub.GetList(tran, whereClause, orderBy, options);
+    }
+    public virtual Sooda.Schema.ClassInfo GetClassInfo() {
+      return TheClassInfo;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetPrimaryKeyFieldHandler() {
+      return _primaryKeyFieldHandler;
+    }
+    public virtual Sooda.ObjectMapper.SoodaFieldHandler GetFieldHandler(int ordinal) {
+      return InternalGetFieldHandler(ordinal);
+    }
+    internal static Sooda.ObjectMapper.SoodaFieldHandler InternalGetFieldHandler(int ordinal) {
+      return _fieldHandlers[ordinal];
+    }
+    public virtual SoodaObject CreateNew(SoodaTransaction tran) {
+      return new ProcessInstanceDbXml(tran);
+    }
+    public virtual SoodaObject GetRawObject(SoodaTransaction tran) {
+      ProcessInstanceDbXml retVal = new ProcessInstanceDbXml(SoodaConstructor.Constructor);
+      retVal.InitRawObject(tran);
+      return retVal;
+    }
+  }
   [SoodaObjectFactoryAttribute("ProcessStatus", typeof(ProcessStatus))]
   public class ProcessStatus_Factory : object, ISoodaObjectFactory {
     private static SoodaFieldHandler[] _fieldHandlers;
@@ -1827,6 +2248,163 @@ namespace NGinn.Engine.Dao.Stubs {
       return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
     }
   }
+  public class ProcessInstanceDbXmlCollectionExpression : Sooda.QL.TypedWrappers.SoqlCollectionWrapperExpression {
+    public ProcessInstanceDbXmlCollectionExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(ProcessInstanceDbXml item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(ProcessInstanceDbXmlWrapperExpression item) {
+      return this.ContainsImpl(item);
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression Contains(string item) {
+      return this.ContainsImpl(new Sooda.QL.SoqlLiteralExpression(item));
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlBooleanWrapperExpression ContainsProcessInstanceDbXmlWhere(Sooda.QL.SoqlBooleanExpression whereClause) {
+      return this.ContainsExprImpl("ProcessInstanceDbXml", whereClause);
+    }
+  }
+  public class ProcessInstanceDbXmlWrapperExpression : Sooda.QL.SoqlPathExpression {
+    public ProcessInstanceDbXmlWrapperExpression() {
+    }
+    public ProcessInstanceDbXmlWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(this));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression InstanceId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "InstanceId"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression DefinitionId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "DefinitionId"));
+      }
+    }
+    public virtual ProcessStatusWrapperExpression Status {
+      get {
+        return new ProcessStatusWrapperExpression(this, "Status");
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlStringWrapperExpression InstanceData {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "InstanceData"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression(this, "RecordVersion"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression CreatedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "CreatedDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "FinishedDate"));
+      }
+    }
+    public virtual Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression LastModified {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression(this, "LastModified"));
+      }
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params ProcessInstanceDbXmlWrapperExpression[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params ProcessInstanceDbXml[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression In(params string[] items) {
+      return new Sooda.QL.SoqlBooleanInExpression(this, items);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(string left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(string left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ProcessInstanceDbXmlWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ProcessInstanceDbXmlWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ProcessInstanceDbXml left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ProcessInstanceDbXml left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator ==(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXml right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression operator !=(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXml right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(string left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(string left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ProcessInstanceDbXmlWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ProcessInstanceDbXmlWrapperExpression left, string right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ProcessInstanceDbXml left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ProcessInstanceDbXml left, ProcessInstanceDbXmlWrapperExpression right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(new Sooda.QL.SoqlLiteralExpression(left.GetPrimaryKeyValue()), right, Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression Equals(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXml right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.Equal);
+    }
+    public static Sooda.QL.SoqlBooleanRelationalExpression NotEqualTo(ProcessInstanceDbXmlWrapperExpression left, ProcessInstanceDbXml right) {
+      return new Sooda.QL.SoqlBooleanRelationalExpression(left, new Sooda.QL.SoqlLiteralExpression(right.GetPrimaryKeyValue()), Sooda.QL.SoqlRelationalOperator.NotEqual);
+    }
+    public override bool Equals(object o) {
+      return object.ReferenceEquals(this, o);
+    }
+    public override int GetHashCode() {
+      return base.GetHashCode();
+    }
+  }
+  public class ProcessInstanceDbXmlNullableWrapperExpression : ProcessInstanceDbXmlWrapperExpression {
+    public ProcessInstanceDbXmlNullableWrapperExpression() {
+    }
+    public ProcessInstanceDbXmlNullableWrapperExpression(Sooda.QL.SoqlPathExpression left, string name) : 
+        base(left, name) {
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, false);
+    }
+    public virtual Sooda.QL.SoqlBooleanExpression IsNotNull() {
+      return new Sooda.QL.SoqlBooleanIsNullExpression(this, true);
+    }
+  }
   public class ProcessStatusCollectionExpression : Sooda.QL.TypedWrappers.SoqlCollectionWrapperExpression {
     public ProcessStatusCollectionExpression(Sooda.QL.SoqlPathExpression left, string name) : 
         base(left, name) {
@@ -2174,6 +2752,53 @@ namespace NGinn.Engine.Dao.TypedQueries {
       }
     }
   }
+  public class ProcessInstanceDbXmlField : object {
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlSoodaClassExpression(null));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression InstanceId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("InstanceId"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression DefinitionId {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("DefinitionId"));
+      }
+    }
+    public static ProcessStatusWrapperExpression Status {
+      get {
+        return new ProcessStatusWrapperExpression(null, "Status");
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression InstanceData {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlStringWrapperExpression(new Sooda.QL.SoqlPathExpression("InstanceData"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression RecordVersion {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlInt32WrapperExpression(new Sooda.QL.SoqlPathExpression("RecordVersion"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression CreatedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("CreatedDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression FinishedDate {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlNullableDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("FinishedDate"));
+      }
+    }
+    public static Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression LastModified {
+      get {
+        return new Sooda.QL.TypedWrappers.SoqlDateTimeWrapperExpression(new Sooda.QL.SoqlPathExpression("LastModified"));
+      }
+    }
+  }
   public class ProcessStatusField : object {
     public static Sooda.QL.TypedWrappers.SoqlStringWrapperExpression SoodaClass {
       get {
@@ -2232,6 +2857,7 @@ namespace NGinn.Engine.Dao {
       this._factories = new ISoodaObjectFactory[] {
           NGinn.Engine.Dao.Stubs.ProcessDefinitionDb_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.ProcessInstanceDb_Factory.TheFactory,
+          NGinn.Engine.Dao.Stubs.ProcessInstanceDbXml_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.ProcessStatus_Factory.TheFactory,
           NGinn.Engine.Dao.Stubs.MessageCorrelationIdMapping_Factory.TheFactory};
     }

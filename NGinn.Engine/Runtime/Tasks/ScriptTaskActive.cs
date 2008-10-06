@@ -18,13 +18,7 @@ namespace NGinn.Engine.Runtime.Tasks
         {
         }
 
-        public override bool IsImmediate
-        {
-            get
-            {
-                return true;
-            }
-        }
+      
 
         [TaskParameter(IsInput=true, Required=true, DynamicAllowed=false)]
         public string ScriptBody

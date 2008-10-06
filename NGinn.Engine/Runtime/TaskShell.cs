@@ -8,6 +8,7 @@ using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
 using ScriptNET;
 using System.Diagnostics;
+using System.Collections;
 
 namespace NGinn.Engine.Runtime
 {
@@ -22,32 +23,33 @@ namespace NGinn.Engine.Runtime
     /// <summary>
     /// Task shell wraps active task instance providing common interface between task instance and
     /// process instance
+    /// Restoring task state: task state is restored in two phases. First, TaskShell's fields
+    /// are initialized and active task's state is remembered. The task will be restored
+    /// on activation. Cannot do it earlier because TaskShell's members are not initialized.
     /// </summary>
     [Serializable]
-    class TaskShell : IActiveTaskContext
+    class TaskShell : IActiveTaskContext, INGinnPersistent
     {
         private string _correlationId;
-        private string _processInstanceId;
         private object _activeTask;
         private string _sharedId;
         private TransitionStatus _status;
         private string _taskId;
+        
         [NonSerialized]
         private Task _taskDefinition;
         [NonSerialized]
         private IDataObject _taskOutputData = null;
-
-        public TaskShell(ProcessInstance pi, Task tsk)
+        [NonSerialized]
+        private INGEnvironmentContext _envCtx;
+        /// <summary>restored task state - before activation</summary>
+        [NonSerialized]
+        private DataObject _taskState;
+        [NonSerialized]
+        ProcessInstance _parentProces;
+        public TaskShell()
         {
-            this.TaskId = tsk.Id;
-            _taskDefinition = tsk;
-            _processInstance = pi;
-            _processInstanceId = pi.InstanceId;
             Status = TransitionStatus.ENABLED;
-        }
-
-        protected TaskShell()
-        {
         }
 
         public string TaskId
@@ -62,10 +64,26 @@ namespace NGinn.Engine.Runtime
             set { _sharedId = value; }
         }
 
+        public INGEnvironmentContext EnvironmentContext
+        {
+            get { return _envCtx; }
+            set { _envCtx = value; }
+        }
+
         public string ProcessInstanceId
         {
-            get { return _processInstanceId; }
-            set { _processInstanceId = value; }
+            get { return _parentProces.InstanceId; }
+        }
+
+        public ProcessInstance ParentProcess
+        {
+            get { return _parentProces; }
+        }
+
+        public void SetProcessInstance(ProcessInstance pi)
+        {
+            _parentProces = pi;
+            if (_parentCallback == null) _parentCallback = pi;
         }
 
         public TransitionStatus Status
@@ -86,19 +104,19 @@ namespace NGinn.Engine.Runtime
             set { _correlationId = value; }
         }
 
-        private List<string> _tokens = new List<string>();
+        private List<string> _allocatedPlaces;
 
-        /// <summary>
-        /// List of task's input tokens
-        /// </summary>
-        public IList<string> Tokens
+        public IList<string> AllocatedPlaces
         {
-            get { return _tokens; }
+            get { return _allocatedPlaces; }
+        }
+
+        public void SetAllocatedPlaces(IList<string> lst)
+        {
+            _allocatedPlaces = new List<string>(lst);
         }
 
 
-        [NonSerialized]
-        protected ProcessInstance _processInstance;
         [NonSerialized]
         protected IProcessTransitionCallback _parentCallback;
         [NonSerialized]
@@ -106,70 +124,54 @@ namespace NGinn.Engine.Runtime
         [NonSerialized]
         protected bool _activated = false;
 
-        public bool IsImmediate
-        {
-            get { return TaskDefinition.IsImmediate; }
-        }
-
         public IProcessTransitionCallback ParentCallback
         {
             get { return _parentCallback; }
             set { _parentCallback = value; }
         }
 
+        /// <summary>
+        /// Cancel enabled or started transition
+        /// </summary>
         public virtual void CancelTask()
         {
+            RequireActivation(true);
             ActiveTask.CancelTask();
-            this.Status = TransitionStatus.CANCELLED;
         }
 
         /// <summary>
-        /// Execute task, transferring data in and out of the task
+        /// Make sure task shell is activated or not
         /// </summary>
-        /// <param name="sourceData">Source for task data</param>
-        /// <param name="outputTargetData">Target for task data - usually the same as source</param>
-        /*public virtual void ExecuteTask(IDataObject sourceData, IDataObject outputTargetData)
+        /// <param name="activated"></param>
+        protected void RequireActivation(bool activated)
         {
-            IActiveTask tsk = CreateActiveTask();
-            tsk.Activate();
-            if (this.IsImmediate) throw new Exception("Cannot execute - non immediate task");
-            DataObject taskInputData = PrepareTaskInputData(sourceData);
-            _taskOutputData = null;
-            tsk.InitiateTask(taskInputData);
-            if (_taskOutputData == null) throw new Exception("Output data is null - immediate task did not call back on completion");
-            Status = TransitionStatus.COMPLETED;
-            TransferTaskOutputDataToParent(_taskOutputData, outputTargetData);
+            if (activated != _activated) throw new Exception(activated ? "Error: activation required" : "Error: task shell should be passivated");
         }
-        */
+        
 
         /// <summary>
         /// Task output data - valid only after task has been completed.
-        /// Warning - this member is valid only during 
         /// </summary>
         public IDataObject TaskOutputData
         {
             get { return _taskOutputData; }
         }
 
+        /// <summary>
+        /// Enable the transition.
+        /// </summary>
+        /// <param name="sourceData"></param>
         public virtual void InitiateTask(IDataObject sourceData)
         {
+            RequireActivation(true);
             if (ActiveTask != null) throw new Exception("Active task already created");
+            
             IActiveTask tsk = CreateActiveTask();
             tsk.Activate();
             DataObject taskInputData = PrepareTaskInputData(sourceData);
             _taskOutputData = null;
-            Status = TransitionStatus.ENABLED;
             this.ActiveTask = tsk;
             tsk.InitiateTask(taskInputData);
-            if (tsk.IsImmediate)
-            {
-                if (Status != TransitionStatus.COMPLETED) throw new Exception("Immediate task did not complete");
-                if (_taskOutputData == null) throw new Exception("Task output data missing");
-                this.ActiveTask = null; 
-            }
-            else
-            {
-            }
         }
 
         /// <summary>
@@ -178,7 +180,7 @@ namespace NGinn.Engine.Runtime
         /// <returns></returns>
         protected IActiveTask CreateActiveTask()
         {
-            IActiveTask tsk = this.ParentProcess.Environment.ActiveTaskFactory.CreateActiveTask(TaskDefinition);
+            IActiveTask tsk =  this.EnvironmentContext.ActiveTaskFactory.CreateActiveTask(TaskDefinition);
             tsk.CorrelationId = this.CorrelationId;
             tsk.SetContext(this);
             return tsk;
@@ -205,6 +207,7 @@ namespace NGinn.Engine.Runtime
 
         public virtual void TransferTaskOutputDataToParent(IDataObject target)
         {
+            RequireActivation(true);
             if (TaskOutputData == null) throw new Exception("Task output data is null");
             TransferTaskOutputDataToParent(this.TaskOutputData, target);
         }
@@ -219,26 +222,32 @@ namespace NGinn.Engine.Runtime
             return ctx;
         }
 
-        public void SetProcessInstance(ProcessInstance pi)
-        {
-            if (pi.InstanceId != this.ProcessInstanceId) throw new Exception();
-            _processInstance = pi;
-            if (_parentCallback == null) _parentCallback = pi as IProcessTransitionCallback;
-        }
-
         public virtual void Activate()
         {
-            if (_activated) throw new Exception("Already activated");
-            if (_processInstance == null || _parentCallback == null)
-                throw new Exception("Set process instance and parent callback before activation");
-            _taskDefinition = ParentProcess.Definition.GetTask(this.TaskId);
-            log = LogManager.GetCurrentClassLogger();
-            if (ActiveTask != null)
+            lock (this)
             {
-                ActiveTask.SetContext(this);
-                ActiveTask.Activate();
+                if (_activated) throw new Exception("Already activated");
+                if (_parentCallback == null)
+                    throw new Exception("Set process parent callback before activation");
+                if (_envCtx == null) throw new Exception("EnvironmentContext not set");
+                if (_parentProces == null) throw new Exception("Process instance not set");
+                if (TaskId == null) throw new Exception("TaskId not set");
+                _taskDefinition = ParentProcess.Definition.GetTask(this.TaskId);
+                log = LogManager.GetCurrentClassLogger();
+                
+                if (_taskState != null)
+                {
+                    log.Debug("TaskShell {0}: Restoring task state from {1}", CorrelationId, _taskState.ToString());
+                    IActiveTask at = RestoreTaskState(_taskState, _taskDefinition);
+                    ActiveTask = at;
+                }
+                if (ActiveTask != null)
+                {
+                    ActiveTask.SetContext(this);
+                    ActiveTask.Activate();
+                }
+                _activated = true;
             }
-            _activated = true;
         }
 
         public virtual void Passivate()
@@ -247,7 +256,7 @@ namespace NGinn.Engine.Runtime
             {
                 ActiveTask.Passivate();
             }
-            _processInstance = null;
+            _parentProces = null;
             _taskDefinition = null;
             _parentCallback = null;
             _activated = false;
@@ -265,9 +274,9 @@ namespace NGinn.Engine.Runtime
             return ActiveTask.GetTaskData();
         }
 
-        public virtual void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public virtual bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
-            ActiveTask.HandleInternalTransitionEvent(ite);
+            return ActiveTask.HandleInternalTransitionEvent(ite);
         }
 
         protected void ActivationRequired(bool activated)
@@ -278,24 +287,9 @@ namespace NGinn.Engine.Runtime
         public virtual void NotifyTransitionSelected()
         {
             ActivationRequired(true);
-            if (this.Status != TransitionStatus.ENABLED &&
-                this.Status != TransitionStatus.STARTED)
-                throw new Exception("Status invalid");
             ActiveTask.NotifyTransitionSelected();
-            this.Status = TransitionStatus.STARTED;
             _parentCallback.TransitionStarted(this.CorrelationId);
         }
-
-        public virtual void NotifyTaskCompleted(TaskCompletionInfo tci)
-        {
-        }
-
-            
-
-
-
-
-
 
 
         #region IActiveTaskContext Members
@@ -304,15 +298,14 @@ namespace NGinn.Engine.Runtime
         {
             get { return _taskDefinition; }
         }
-
-        public ProcessInstance ParentProcess
-        {
-            get { return _processInstance; }
-        }
-
         void IActiveTaskContext.TransitionStarted(string correlationId)
         {
-            throw new NotImplementedException();
+            Debug.Assert(CorrelationId == correlationId);
+            if (Status != TransitionStatus.ENABLED)
+            {
+                return;
+            }
+            ParentCallback.TransitionStarted(this.CorrelationId);
         }
 
         void IActiveTaskContext.TransitionCompleted(string correlationId, IDataObject taskOutputData)
@@ -320,13 +313,7 @@ namespace NGinn.Engine.Runtime
             Debug.Assert(CorrelationId == correlationId);
             Debug.Assert(taskOutputData != null);
             this._taskOutputData = taskOutputData;
-            this.Status = TransitionStatus.COMPLETED;
             ParentCallback.TransitionCompleted(this.CorrelationId);
-        }
-
-        public INGEnvironmentContext Environment
-        {
-            get { return  ParentProcess.Environment; }
         }
 
         public Logger Log
@@ -334,6 +321,121 @@ namespace NGinn.Engine.Runtime
             get { return log; }
         }
 
+        public override string ToString()
+        {
+            return string.Format("[Task: {0}, Status: {1}, CorrelationId: {2}]", this.TaskId, CorrelationId, Status);
+        }
+
+        public virtual DataObject SaveState()
+        {
+            DataObject dob = new DataObject();
+            dob["Type"] = GetType().Name;
+            dob["CorrelationId"] = CorrelationId;
+            dob["TaskId"] = TaskId;
+            dob["Status"] = Status.ToString();
+            dob["SharedId"] = SharedId;
+            List<string> ls = new List<string>();
+            if (AllocatedPlaces != null)
+            {
+                foreach (string tok in this.AllocatedPlaces)
+                {
+                    ls.Add(tok);
+                }
+            }
+            dob["AllocatedPlaces"] = ls;
+            if (ActiveTask != null)
+            {
+                dob["Task"] = SaveTaskState(ActiveTask);
+            }
+            return dob;
+        }
+
+        /// <summary>
+        /// Save the state of ActiveTask
+        /// Use INGinnPersinstent if supported. If not, use binary serialization.
+        /// </summary>
+        /// <returns></returns>
+        protected DataObject SaveTaskState(IActiveTask at)
+        {
+            if (at == null) return null;
+            INGinnPersistent pers = at as INGinnPersistent;
+            if (pers != null)
+            {
+                return pers.SaveState();
+            }
+            else
+            {
+                DataObject dob = new DataObject();
+                dob["NGINN_BINARY_DATA"] = "Here goes binary serialized task";
+                return dob;
+            }
+        }
+
+        /// <summary>
+        /// Restore task's state from DataObject.
+        /// Use INGinnPersistent if supported. If not, use binary serialization.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected IActiveTask RestoreTaskState(DataObject data, Task definition)
+        {
+            string bs = (string)data["NGINN_BINARY_DATA"];
+            if (bs != null)
+            {
+                //binary restore here
+            }
+            //restore activetask here...
+            IActiveTask at = EnvironmentContext.ActiveTaskFactory.CreateActiveTask(definition);
+            INGinnPersistent pers = at as INGinnPersistent;
+            if (pers != null)
+            {
+                pers.RestoreState(data);
+                return at;
+            }
+            log.Error("Don't know how to restore state of task {0} from {1}", at.GetType().FullName, data.ToString());
+            throw new Exception(string.Format("Don't know how to restore state of task {0}", at.GetType().FullName));
+        }
+
+        /// <summary>
+        /// Restore task shell's state
+        /// </summary>
+        /// <param name="state"></param>
+        public virtual void RestoreState(DataObject state)
+        {
+            RequireActivation(false);
+            CorrelationId = (string)state["CorrelationId"];
+            TaskId = (string)state["TaskId"];
+            _status = (TransitionStatus)Enum.Parse(typeof(TransitionStatus), (string)state["Status"]);
+            SharedId = (string)state["SharedId"];
+            IList lst = state.GetArray("AllocatedPlaces");
+            if (lst != null)
+            {
+                List<string> ls = new List<string>();
+                foreach (string s in lst) ls.Add(s);
+                SetAllocatedPlaces(ls);
+            }
+            _taskState = (DataObject)state["Task"];
+        }
+
+        public static TaskShell RestoreTaskShell(DataObject state)
+        {
+            string tname = (string)state["Type"];
+            TaskShell ts;
+            if (tname == "MultiTaskShell")
+            {
+                ts = new MultiTaskShell();
+            }
+            else if (tname == "TaskShell")
+            {
+                ts = new TaskShell();
+            }
+            else throw new Exception();
+            ts.RestoreState(state);
+            return ts;
+        }
+
         #endregion
+
+        
     }
 }

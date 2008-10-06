@@ -143,7 +143,20 @@ namespace NGinn.Lib.Schema
 
             string t = el.GetAttribute("type");
             Type tp = Type.GetType("NGinn.Lib.Schema." + t);
-            if (tp == null) throw new Exception("Unknown task type: " + t);
+            if (t == "Custom")
+            {
+                t = el.GetAttribute("schemaClass");
+                if (t != null && t.Length > 0)
+                {
+                    tp = Type.GetType(t);
+                }
+                if (tp == null) throw new Exception("Unknown task definition type: " + t);
+                if (tp != typeof(CustomTask) && !tp.IsSubclassOf(typeof(CustomTask)))
+                {
+                    throw new Exception("Error loading custom task schema. schemaClass should be a subclass of NGinn.Lib.Schema.CustomTask");
+                }
+            }
+            if (tp == null) throw new Exception("Unknown task definition type: " + t);
             Task tsk = (Task)Activator.CreateInstance(tp);
             t = el.GetAttribute("joinType");
             if (t != null && t.Length > 0) tsk.JoinType = (JoinType) Enum.Parse(typeof(JoinType), t);
@@ -202,17 +215,7 @@ namespace NGinn.Lib.Schema
             Id = el.GetAttribute("id");
         }
 
-        /// <summary>
-        /// Tells whether transition is immediate (executes immediately in single transaction)
-        /// If the transition is not immediate, system will initiate it and wait for completion.
-        /// </summary>
-        public abstract bool IsImmediate
-        {
-            get;
-        }
-
         
-
         /// <summary>
         /// Get XSD for task input xml
         /// </summary>

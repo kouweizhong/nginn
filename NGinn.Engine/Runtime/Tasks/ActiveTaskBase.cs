@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Data;
 using NGinn.Lib.Schema;
+using NGinn.Lib.Interfaces;
 using NLog;
 using System.Reflection;
 using System.Diagnostics;
@@ -74,15 +75,6 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public abstract void CancelTask();
 
-        
-        public virtual bool IsImmediate
-        {
-            get { return _ctx.TaskDefinition.IsImmediate; }
-        }
-
-        
-
-        
 
         public virtual NGinn.Lib.Data.IDataObject GetTaskData()
         {
@@ -112,10 +104,10 @@ namespace NGinn.Engine.Runtime.Tasks
         protected IScriptContext CreateScriptContext(IDataObject variables)
         {
             IScriptContext ctx = new ScriptContext();
-            DataObject env = new DataObject(Context.Environment.EnvironmentVariables);
+            DataObject env = new DataObject(Context.EnvironmentContext.EnvironmentVariables);
             env["log"] = log;
-            env["messageBus"] = Context.Environment.MessageBus;
-            env["environment"] = Context.Environment;
+            env["messageBus"] = Context.EnvironmentContext.MessageBus;
+            env["environment"] = Context.EnvironmentContext;
             env["taskDefinition"] = Context.TaskDefinition;
             ctx.SetItem("__env", ContextItem.Variable, env);
             if (variables != null)
@@ -180,12 +172,14 @@ namespace NGinn.Engine.Runtime.Tasks
         /// Override it to handle other event types.
         /// </summary>
         /// <param name="ite"></param>
-        public virtual void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public virtual bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
             if (ite is TaskCompletedNotification)
             {
                 DefaultHandleTaskCompletedEvent((TaskCompletedNotification)ite);
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -339,5 +333,28 @@ namespace NGinn.Engine.Runtime.Tasks
             IDataObject dob = GetOutputData();
             Context.TransitionCompleted(this.CorrelationId, dob); 
         }
+
+       
+
+
+        
+        public virtual DataObject SaveTaskState()
+        {
+            DataObject dob = new DataObject();
+            dob["TaskData"] = new DataObject(VariablesContainer);
+            dob["CorrelationId"] = _correlationId;
+            return dob;
+        }
+
+        public virtual void RestoreTaskState(DataObject dob)
+        {
+            if (_activated) throw new Exception("Task should not be activated when restoring state");
+            _taskData = (DataObject)dob["TaskData"];
+            if (_taskData == null) _taskData = new DataObject();
+            _correlationId = (string)dob["CorrelationId"];
+            if (_correlationId == null) throw new Exception("Missing CorrelationId");
+        }
+
+        
     }
 }

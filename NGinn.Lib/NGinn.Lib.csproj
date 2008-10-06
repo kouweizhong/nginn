@@ -81,6 +81,7 @@
     <Compile Include="Data\VariableDef.cs" />
     <Compile Include="Interfaces\INGEnvironment.cs" />
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
+    <Compile Include="Interfaces\INGinnPersistent.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />
     <Compile Include="Interfaces\IResourceManager.cs" />
     <Compile Include="Interfaces\Worklist\ITaskInformationProvider.cs" />

@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompleteTask.aspx" />
+    <Content Include="SelectTask.aspx" />
     <Content Include="ext\adapter\ext\ext-base.js" />
     <Content Include="ext\adapter\jquery\ext-jquery-adapter.js" />
     <Content Include="ext\adapter\jquery\jquery.js" />
@@ -114,6 +115,7 @@
     <Content Include="ListInfo.aspx" />
     <Content Include="Default.aspx" />
     <EmbeddedResource Include="lists-config.xml" />
+    <Content Include="sys\CancelProcess.aspx" />
     <Content Include="sys\DispatchProcessMessage.aspx" />
     <Content Include="sys\GetInstanceXml.aspx" />
     <Content Include="sys\GetSchema.aspx" />
@@ -162,6 +164,10 @@
       <DependentUpon>CompleteTask.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="SelectTask.aspx.cs">
+      <DependentUpon>SelectTask.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
@@ -170,6 +176,10 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="SoodaPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="sys\CancelProcess.aspx.cs">
+      <DependentUpon>CancelProcess.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\DispatchProcessMessage.aspx.cs">

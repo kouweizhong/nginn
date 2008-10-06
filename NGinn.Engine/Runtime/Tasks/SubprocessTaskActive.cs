@@ -24,7 +24,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public SubprocessTaskActive(SubprocessTask tsk)
             : base(tsk)
         {
-            _subprocessInstanceId = tsk.SubprocessDefinitionId;
+            
         }
 
         [TaskParameter(IsInput=true, Required=true, DynamicAllowed=true)]
@@ -34,17 +34,18 @@ namespace NGinn.Engine.Runtime.Tasks
             set { _subprocessDefinitionId = value; }
         }
 
-       
+        
+
         public override void InitiateTask(IDataObject inputData)
         {
-            INGEnvironment env = (INGEnvironment)Context.Environment;
+            INGEnvironment env = (INGEnvironment)Context.EnvironmentContext;
 
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
             inputVars["_NGinn_ParentProcess"] = Context.ProcessInstanceId;
-            log.Info("Starting subprocess {0}", _task.SubprocessDefinitionId);
+            log.Info("Starting subprocess {0}", ProcessDefinitionId);
             IDataObject dob = inputData;
             string xml = dob.ToXmlString("data");
-            string id = env.StartProcessInstance(_task.SubprocessDefinitionId, xml, GetSubprocessCorrelationId(this.CorrelationId));
+            string id = env.StartProcessInstance(ProcessDefinitionId, xml, GetSubprocessCorrelationId(this.CorrelationId));
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
         }
@@ -57,7 +58,7 @@ namespace NGinn.Engine.Runtime.Tasks
 
         public override void CancelTask()
         {
-            INGEnvironment env = (INGEnvironment)Context.Environment;
+            INGEnvironment env = (INGEnvironment)Context.EnvironmentContext;
             log.Info("Task[{0}]: Cancelling subprocess {0}", CorrelationId, _subprocessInstanceId);
             env.CancelProcessInstance(this._subprocessInstanceId);
             log.Debug("Subprocess {0} cancelled", _subprocessInstanceId);
@@ -78,9 +79,9 @@ namespace NGinn.Engine.Runtime.Tasks
             return correlId.StartsWith("_NGINN_");
         }
 
-        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public override bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
-            INGEnvironment env = (INGEnvironment)Context.Environment;
+            INGEnvironment env = (INGEnvironment)Context.EnvironmentContext;
             
             if (ite is SubprocessCompleted)
             {
@@ -89,7 +90,9 @@ namespace NGinn.Engine.Runtime.Tasks
                     throw new Exception();
                 this.VariablesContainer = env.GetProcessOutputData(sc.SubprocessInstanceId);
                 OnTaskCompleted();
+                return true;
             }
+            return false;
         }
     }
 

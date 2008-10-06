@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NGinn.Lib.Data;
+using System.Collections;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine
 {
@@ -30,26 +33,24 @@ namespace NGinn.Engine
     /// Token 
     /// </summary>
     [Serializable]
-    public class Token
+    public class Token : INGinnPersistent
     {
 
         private TokenStatus _status;
         private TokenMode _mode;
         private string _placeId;
+        private string _id;
 
-        public string TokenId;
-        public string ProcessInstanceId;
+        public string TokenId
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
         
         public Token()
         {
         }
-
-        public TokenMode Mode
-        {
-            get { return _mode; }
-            set { _mode = value; }
-        }
-
+        
         public TokenStatus Status
         {
             get { return _status; }
@@ -76,7 +77,46 @@ namespace NGinn.Engine
 
         public override string ToString()
         {
-            return string.Format("{1} ({2}). ST: {3}", ProcessInstanceId, TokenId, PlaceId, Status);
+            return string.Format("{0} ({1}). ST: {2}", TokenId, PlaceId, Status);
+        }
+
+        public DataObject SaveState()
+        {
+            DataObject tdob = new DataObject();
+            tdob["Id"] = TokenId;
+            tdob["PlaceId"] = PlaceId;
+            tdob["Status"] = Status.ToString();
+            List<string> ls = new List<string>();
+            foreach (string tranid in ActiveTransitions)
+            {
+                ls.Add(tranid);
+            }
+            tdob["ActiveTransition"] = ls;
+            return tdob;
+        }
+
+        public void RestoreState(DataObject dob)
+        {
+            this.TokenId = (string)dob["Id"];
+            this.Status = (TokenStatus)Enum.Parse(typeof(TokenStatus), (string)dob["Status"]);
+            this.PlaceId = (string)dob["PlaceId"];
+            _activeTransitions = new List<string>();
+            object t = dob["ActiveTransition"];
+            if (t != null)
+            {
+                if (t is string)
+                {
+                    _activeTransitions.Add(t as string);
+                }
+                else if (t is IList)
+                {
+                    foreach (string s in t as IList)
+                    {
+                        _activeTransitions.Add(s);
+                    }
+                }
+                else throw new Exception();
+            }
         }
     }
 }

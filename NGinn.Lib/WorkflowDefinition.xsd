@@ -69,7 +69,7 @@
     <xs:attribute name="splitType" type="JoinType" use="optional" /><!-- AND split by default -->
     <xs:attribute name="multiInstance" type="xs:boolean" use="optional" /><!-- task is multi-instance -->
     <xs:attribute name="label" type="xs:string" use="optional" /><!-- label  -->
-    <!-- task is multi-instance -->
+    <xs:attribute name="schemaClass" type="xs:string" use="optional" /><!-- custom task's definition class (NGinn.Lib.Schema.Task subclass)-->
   </xs:complexType>
   
   <xs:complexType name="Flow">

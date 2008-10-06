@@ -16,12 +16,7 @@ namespace NGinn.Lib.Schema
             set { _code = value; }
         }
 
-        
-
-        public override bool IsImmediate
-        {
-            get { return true; }
-        }
+       
 
         public override TaskParameterInfo[] GetTaskParameters()
         {

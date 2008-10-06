@@ -5,6 +5,7 @@ using NGinn.Lib.Interfaces.MessageBus;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NLog;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -36,11 +37,7 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return _expirationTime; }
         }
 
-        public override bool IsImmediate
-        {
-            get { return false; }
-        }
-
+        
         protected override void DoInitiateTask()
         {
             _expirationTime = DateTime.Now + _delayAmount;
@@ -49,7 +46,7 @@ namespace NGinn.Engine.Runtime.Tasks
             tex.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(this.CorrelationId);
             tex.ExpirationDate = _expirationTime;
             log.Debug("Timer task {0} expiration date: {1}", CorrelationId, tex.ExpirationDate);
-            Context.Environment.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
+            Context.EnvironmentContext.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
 
         }
 
@@ -60,7 +57,7 @@ namespace NGinn.Engine.Runtime.Tasks
             log.Info("Timer task {0} cancelling", CorrelationId);
         }
 
-        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public override bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
             base.HandleInternalTransitionEvent(ite);
             if (ite is TimerExpiredEvent)
@@ -70,11 +67,28 @@ namespace NGinn.Engine.Runtime.Tasks
                     Context.Status == TransitionStatus.STARTED)
                 {
                     OnTaskCompleted();
+                    return true;
                 }
-                else
-                {
-                    //ignore the event...
-                }
+            }
+            return false;
+        }
+
+        public override DataObject SaveTaskState()
+        {
+            DataObject dob = base.SaveTaskState();
+            dob["DelayAmount"] = DelayAmount;
+            dob["CompletedDate"] = _expirationTime;
+
+            return dob;
+        }
+
+        public override void RestoreTaskState(DataObject dob)
+        {
+            base.RestoreTaskState(dob);
+            DelayAmount = (string)dob["DelayAmount"];
+            if (dob.ContainsKey("CompletedDate"))
+            {
+                _expirationTime = (DateTime) Convert.ChangeType(dob["CompletedDate"], typeof(DateTime));
             }
         }
     }

@@ -48,9 +48,6 @@ namespace NGinn.Lib.Schema
             set { _httpMethod = value; }
         }
 
-        public override bool IsImmediate
-        {
-            get { return !IsAsync; }
-        }
+        
     }
 }

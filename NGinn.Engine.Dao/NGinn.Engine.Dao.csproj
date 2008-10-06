@@ -41,6 +41,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PowerCollections, Version=1.0.2141.24679, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\PowerCollections.dll</HintPath>
+    </Reference>
     <Reference Include="Sooda, Version=1.0.0.428, Culture=neutral, PublicKeyToken=102bbd392415062a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Sooda.dll</HintPath>
@@ -59,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessInstanceXmlRepository.cs" />
     <Compile Include="NGDataStore.cs" />
     <Compile Include="ProcessDefinitionRepository.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />
@@ -72,6 +77,7 @@
     <Compile Include="_Stubs.cs" />
     <Compile Include="ProcessStatus.cs" />
     <Compile Include="MessageCorrelationIdMapping.cs" />
+    <Compile Include="ProcessInstanceDbXml.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">

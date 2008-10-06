@@ -6,23 +6,21 @@ namespace NGinn.Lib.Schema
 {
     /// <summary>
     /// Custom task - based on provided task implementation class
+    /// We need to handle the case when actual task implementation class
+    /// is not known before evaluation of runtime task parameters.
     /// </summary>
     [Serializable]
     public class CustomTask : Task
     {
-
-        private string _implementationClass;
         private bool _isImmediate;
+        
 
-        public string ImplementationClass
+       
+        public override TaskParameterInfo[] GetTaskParameters()
         {
-            get { return _implementationClass; }
-            set { _implementationClass = value; }
-        }
-
-        public override bool IsImmediate
-        {
-            get { return _isImmediate; }
+            return new TaskParameterInfo[] {
+                new TaskParameterInfo("ImplementationClass", typeof(string), true, true, true),
+            };
         }
 
         internal override void LoadXml(System.Xml.XmlElement el, System.Xml.XmlNamespaceManager nsmgr)

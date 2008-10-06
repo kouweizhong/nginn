@@ -7,11 +7,12 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class SubprocessTask: Task
     {
-        public string SubprocessDefinitionId;
-
-        public override bool IsImmediate
+        public override TaskParameterInfo[] GetTaskParameters()
         {
-            get { return false; }
+            TaskParameterInfo[] pars = new TaskParameterInfo[] {
+                new TaskParameterInfo("ProcessDefinitionId", typeof(string), true, true, true),
+            };
+            return pars;
         }
     }
 }

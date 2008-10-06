@@ -34,10 +34,7 @@ namespace NGinn.Engine.Runtime.Tasks
             set { _messageCorrelationId = value; }
         }
 
-        public override bool IsImmediate
-        {
-            get {return false;}
-        }
+        
 
         protected override void DoInitiateTask()
         {
@@ -45,17 +42,17 @@ namespace NGinn.Engine.Runtime.Tasks
             {
                 MessageCorrelationId = string.Format("{0}.{1}", Context.ProcessInstanceId, Context.TaskDefinition.Id);
             }
-            Context.Environment.CorrelationIdResolver.RegisterMapping(this.MessageCorrelationId, this.CorrelationId);
+            Context.EnvironmentContext.CorrelationIdResolver.RegisterMapping(this.MessageCorrelationId, this.CorrelationId);
             log.Info("Task {0} is waiting for message with message correlationID={1}", this.CorrelationId, this.MessageCorrelationId);
         }
 
         public override void CancelTask()
         {
             log.Info("Task {0} is cancelling. Removing mapping for message with message correlationID={1}", this.CorrelationId, this.MessageCorrelationId);
-            Context.Environment.CorrelationIdResolver.RemoveMapping(this.MessageCorrelationId, this.CorrelationId);
+            Context.EnvironmentContext.CorrelationIdResolver.RemoveMapping(this.MessageCorrelationId, this.CorrelationId);
         }
 
-        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public override bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
             if (!(ite is ReceiveMessageTaskEvent)) throw new Exception("Invalid event type");
             ReceiveMessageTaskEvent ev = (ReceiveMessageTaskEvent)ite;
@@ -68,8 +65,9 @@ namespace NGinn.Engine.Runtime.Tasks
             {
                 VariablesContainer[fldName] = ev.MessageData[fldName];
             }
-            Context.Environment.CorrelationIdResolver.RemoveMapping(this.MessageCorrelationId, this.CorrelationId);
+            Context.EnvironmentContext.CorrelationIdResolver.RemoveMapping(this.MessageCorrelationId, this.CorrelationId);
             OnTaskCompleted();
+            return true;
         }
     }
 }

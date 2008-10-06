@@ -34,20 +34,20 @@ namespace NGinn.Engine.Runtime
         /// <summary>
         /// environment where process is hosted
         /// </summary>
-        INGEnvironmentContext Environment { get; }
+        INGEnvironmentContext EnvironmentContext { get; }
         /// <summary>
         /// Information about ID of implicit choice task group (so the tasks know
         /// that they belong to the same implicit choice group).
         /// </summary>
         string SharedId { get; }
         /// <summary>
-        /// Called after the transition has been started
+        /// Notify task's container that the task has been started (selected for execution)
         /// This is optional callback. 
         /// </summary>
         /// <param name="correlationId"></param>
         void TransitionStarted(string correlationId);
         /// <summary>
-        /// Called after the transition has been completed
+        /// Notify task's container that the task has completed
         /// </summary>
         /// <param name="correlationId"></param>
         /// <param name="taskOutputData"></param>
@@ -96,7 +96,7 @@ namespace NGinn.Engine.Runtime
         /// <param name="inputData">Task input data</param>
         void InitiateTask(IDataObject inputData);
 
-        bool IsImmediate { get; }
+       
         
         /// <summary>
         /// Return current task data
@@ -140,6 +140,8 @@ namespace NGinn.Engine.Runtime
         /// Pass internal transition event to task to handle it
         /// </summary>
         /// <param name="ite"></param>
-        void HandleInternalTransitionEvent(InternalTransitionEvent ite);
+        /// <returns>true if event was handled and false if event was not handled
+        /// (did not modify anything)</returns>
+        bool HandleInternalTransitionEvent(InternalTransitionEvent ite);
     }
 }

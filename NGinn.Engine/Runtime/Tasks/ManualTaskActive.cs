@@ -66,9 +66,6 @@ namespace NGinn.Engine.Runtime.Tasks
         }
 
 
-        
-
-
 
         protected override void DoInitiateTask()
         {
@@ -84,17 +81,17 @@ namespace NGinn.Engine.Runtime.Tasks
             wi.TaskData = new DataObject(VariablesContainer);
             wi.SharedId = Context.SharedId;
 
-            Context.Environment.WorklistService.CreateWorkItem(wi);
+            Context.EnvironmentContext.WorklistService.CreateWorkItem(wi);
             log.Info("Created work item");
         }
 
         public override void CancelTask()
         {
             log.Info("Cancelling manual task {0}", CorrelationId);
-            Context.Environment.WorklistService.CancelWorkItem(this.CorrelationId);
+            Context.EnvironmentContext.WorklistService.CancelWorkItem(this.CorrelationId);
         }
 
-        public override void HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        public override bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
         {
             if (ite is TaskCompletedNotification)
             {
@@ -102,17 +99,48 @@ namespace NGinn.Engine.Runtime.Tasks
                     Context.Status != TransitionStatus.STARTED)
                 {
                     log.Info("Invalid task status - ignoring the notification");
-                    return;
+                    return false;
                 }
                 TaskCompletedNotification tn = (TaskCompletedNotification)ite;
-                Context.Environment.WorklistService.WorkItemCompleted(CorrelationId);
+                Context.EnvironmentContext.WorklistService.WorkItemCompleted(CorrelationId);
                 this.CompletedBy = tn.CompletedBy;
                 DefaultHandleTaskCompletedEvent((TaskCompletedNotification)ite);
+                return true;
+            }
+            else if (ite is TransitionSelectedNotification)
+            {
+                if (Context.Status == TransitionStatus.ENABLED)
+                {
+                    Context.TransitionStarted(this.CorrelationId);
+                    return true;
+                }
+                return false;
             }
             else
             {
-                base.HandleInternalTransitionEvent(ite);
+                return base.HandleInternalTransitionEvent(ite);
             }
+        }
+
+        public override DataObject SaveTaskState()
+        {
+            DataObject dob = base.SaveTaskState();
+            dob["Title"] = this.Title;
+            dob["Description"] = this.Description;
+            dob["AssigneeGroup"] = this.AssigneeGroup;
+            dob["AssigneeId"] = this.AssigneeId;
+            dob["CompletedBy"] = this.CompletedBy;
+            return dob;
+        }
+
+        public override void RestoreTaskState(DataObject dob)
+        {
+            base.RestoreTaskState(dob);
+            Title = (string)dob["Title"];
+            Description = (string)dob["Description"];
+            AssigneeGroup = (string)dob["AssigneeGroup"];
+            AssigneeId = (string)dob["AssigneeId"];
+            CompletedBy = (string)dob["CompletedBy"];
         }
     }
 }

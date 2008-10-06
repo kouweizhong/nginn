@@ -13,10 +13,7 @@ namespace NGinn.Lib.Schema
     public class TimerTask : Task
     {
 
-        public override bool IsImmediate
-        {
-            get { return false; }
-        }
+       
 
         public override TaskParameterInfo[] GetTaskParameters()
         {

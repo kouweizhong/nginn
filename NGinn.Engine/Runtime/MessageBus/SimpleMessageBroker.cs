@@ -63,6 +63,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             private bool _notified = false;
             private string _sender;
             private string _topic;
+            private bool _retryError = true;
 
             public MsgContext(string sender, string topic)
             {
@@ -98,7 +99,12 @@ namespace NGinn.Engine.Runtime.MessageBus
                 get { return _topic; }
                 set { _topic = value; }
             }
-            
+
+            public bool RetryAfterError
+            {
+                get { return _retryError; }
+                set { _retryError = value; }
+            }
         }
 
         public SimpleMessageBroker()
@@ -139,7 +145,6 @@ namespace NGinn.Engine.Runtime.MessageBus
             Type t = msg.GetType();
             while (t != null)
             {
-                object tmp;
                 NotifyInternalForType(msg, t, ctx);
                 if (ctx.CancelFurtherProcessing)
                 {

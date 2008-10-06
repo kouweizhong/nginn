@@ -15,10 +15,7 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class ManualTask : Task
     {
-        public override bool IsImmediate
-        {
-            get { return false; }
-        }
+        
 
         public override TaskParameterInfo[] GetTaskParameters()
         {

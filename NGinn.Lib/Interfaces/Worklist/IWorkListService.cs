@@ -28,8 +28,8 @@ namespace NGinn.Lib.Interfaces.Worklist
         public string AssigneeGroupId;
         /// <summary>True if task should be assigned to group, false - if it should be assigned to a person</summary>
         public bool IsGroupResponsible;
-        /// <summary>In case of 'person' responsibility, if true system will automatically put the task in 'executing' state, otherwise it will be in 'assigned' state</summary>
-        public bool ImplicitStartExecution;
+        /// <summary>Information if task should be in 'enabled' status (execution not started yet) or 'executing' status</summary>
+        public bool ExecutionStarted;
         /// <summary>true if task assignee can give the task to another person, false if assignee cannot change person responsible</summary>
         public bool CanAssigneeDelegateTask;
         /// <summary>in case of group tasks, if false - group members can take the task from group queue, if true - group manager has to assign tasks to group members</summary>

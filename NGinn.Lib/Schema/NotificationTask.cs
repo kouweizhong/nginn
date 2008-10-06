@@ -12,10 +12,7 @@ namespace NGinn.Lib.Schema
     {
         public string _notificationTemplate;
 
-        public override bool IsImmediate
-        {
-            get { return true; }
-        }
+       
 
         public override TaskParameterInfo[] GetTaskParameters()
         {

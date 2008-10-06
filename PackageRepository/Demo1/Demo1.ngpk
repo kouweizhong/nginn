@@ -8,7 +8,9 @@
         <process>ManualTask.1.xml</process>
         <process>ManualTask.2.xml</process>
         <process>ManualTask.3.xml</process>
+        <process>ManualTask.4.xml</process>
         <process>OJTest.1.xml</process>
         <process>OJTest.2.xml</process>
+        <process>SharedTest.1.xml</process>
 	</processDefinitions>
 </package>

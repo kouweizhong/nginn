@@ -127,6 +127,13 @@ namespace NGinn.Lib.Interfaces
         void ReportTaskFinished(string correlationId, DataObject updatedTaskData, string userId);
 
         /// <summary>
+        /// Notify process that task execution has started (user has started 
+        /// executing manual task)
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="userId"></param>
+        void NotifyTaskExecutionStarted(string correlationId, string userId);
+        /// <summary>
         /// Return information about a process instance
         /// </summary>
         /// <param name="instanceId"></param>

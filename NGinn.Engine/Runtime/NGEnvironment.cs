@@ -172,8 +172,7 @@ namespace NGinn.Engine.Runtime
 
                     log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                     pi.SetProcessInputData(inputData);
-                    Token tok = pi.CreateNewStartToken();
-                    pi.AddToken(tok);
+                    pi.CreateStartToken();
                     pi.Passivate();
                     InstanceRepository.InsertNewProcessInstance(pi);
                     ts.Complete();
@@ -205,8 +204,7 @@ namespace NGinn.Engine.Runtime
 
                     log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                     pi.SetProcessInputData(inputXml);
-                    Token tok = pi.CreateNewStartToken();
-                    pi.AddToken(tok);
+                    pi.CreateStartToken();
                     pi.Passivate();
                     InstanceRepository.InsertNewProcessInstance(pi);
                     ts.Complete();
@@ -256,9 +254,9 @@ namespace NGinn.Engine.Runtime
                     ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
                     pi.Environment = this;
                     pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
+                    log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));
                     pi.Kick();
-                    log.Info("Modified: {0}", pi.ToString());
+                    log.Info("Modified: {0}", pi.SaveState().ToXmlString("Process"));
                     pi.Passivate();
                     InstanceRepository.UpdateProcessInstance(pi);
                     ts.Complete();
@@ -387,7 +385,6 @@ namespace NGinn.Engine.Runtime
         public DataObject GetTaskData(string correlationId)
         {
             string instanceId = correlationId.Substring(0, correlationId.IndexOf('.'));
-            log.Info("Task selected in process {0}. Id: {1}", instanceId, correlationId);
             if (!LockManager.TryAcquireLock(instanceId, 30000))
             {
                 log.Info("Failed to obtain lock on process instance {0}", instanceId);
@@ -523,6 +520,16 @@ namespace NGinn.Engine.Runtime
             te.MessageData = messageBody;
             MessageBus.Notify("NGEnvironment", "ReceiveMessageTaskEvent", te, false);
         }
+
+        public void NotifyTaskExecutionStarted(string correlationId, string userId)
+        {
+            TransitionSelectedNotification tsn = new TransitionSelectedNotification();
+            tsn.CorrelationId = correlationId;
+            tsn.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(correlationId);
+            tsn.TimeStamp = DateTime.Now;
+            MessageBus.Notify("NGEnvironment", "TaskExecutionStarted", tsn, false);
+        }
+
 
         public void ReportTaskFinished(string correlationId, DataObject updatedTaskData, string userId)
         {

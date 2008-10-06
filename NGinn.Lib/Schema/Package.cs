@@ -211,12 +211,33 @@ namespace NGinn.Lib.Schema
         protected void LoadPackageDataTypes()
         {
             _packageTypes = new TypeSet();
+            XmlReaderSettings rs = new XmlReaderSettings();
+            rs.ValidationType = ValidationType.Schema;
+            rs.Schemas.XmlResolver = new AssemblyResourceXmlResolver();
+            rs.Schemas.Add(ProcessDefinition.WORKFLOW_NAMESPACE, "TypeSetDefinition.xsd");
+
             foreach (string fileName in _schemaFiles)
             {
-                log.Info("Will load type definitions from file: {0}", fileName);
-                using (Stream stm = DataStore.GetPackageContentStream(fileName))
+                try
                 {
-                    
+                    log.Info("Will load type definitions from file: {0}", fileName);
+                    using (Stream stm = DataStore.GetPackageContentStream(fileName))
+                    {
+                        XmlDocument doc = new XmlDocument();
+                        using (XmlReader xr = XmlReader.Create(stm, rs))
+                        {
+                            doc.Load(xr);
+                        }
+                        XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+                        nsmgr.AddNamespace(string.Empty, ProcessDefinition.WORKFLOW_NAMESPACE);
+                        nsmgr.AddNamespace("wf", ProcessDefinition.WORKFLOW_NAMESPACE);
+                        _packageTypes.LoadXml(doc.DocumentElement, nsmgr);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("Error loading package schema file: {0}.{1}", PackageName, fileName);
+                    throw;
                 }
             }
         }

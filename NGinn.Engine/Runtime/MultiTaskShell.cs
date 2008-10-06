@@ -10,17 +10,23 @@ using System.Collections;
 
 namespace NGinn.Engine.Runtime
 {
+
     /// <summary>
     /// Multi-instance task shell
     /// </summary>
     [Serializable]
     class MultiTaskShell : TaskShell, IActiveTaskContext
     { 
-        public MultiTaskShell(ProcessInstance pi, Task tsk)
+#warning "Multi task shell should contain TaskShells"
+
+        public MultiTaskShell(ProcessInstance pi, string taskId)
         {
-            this.TaskId = tsk.Id;
-            this.ProcessInstanceId = pi.InstanceId;
+            this.TaskId = taskId;
             SetProcessInstance(pi);
+        }
+
+        public MultiTaskShell() : base()
+        {
         }
 
         [Serializable]
@@ -183,10 +189,7 @@ namespace NGinn.Engine.Runtime
             get { throw new NotImplementedException(); }
         }
 
-        INGEnvironmentContext IActiveTaskContext.Environment
-        {
-            get { throw new NotImplementedException(); }
-        }
+        
 
         string IActiveTaskContext.SharedId
         {
@@ -199,5 +202,27 @@ namespace NGinn.Engine.Runtime
         }
 
         #endregion
+
+        public override DataObject SaveState()
+        {
+            DataObject dob = base.SaveState();
+            List<DataObject> ls = new List<DataObject>();
+            foreach (TaskInfo ti in this._activeTasks)
+            {
+                DataObject dob2 = new DataObject();
+                dob2["Status"] = ti.Status.ToString();
+                if (ti.OutputData != null) dob2["OutputData"] = ti.OutputData;
+                if (ti.ActiveTask != null) dob2["Subtask"] = SaveTaskState(ti.ActiveTask);
+                ls.Add(dob2);
+            }
+            dob["Task"] = ls;
+            return dob;
+        }
+
+        public override void RestoreState(DataObject state)
+        {
+            base.RestoreState(state);
+
+        }
     }
 }

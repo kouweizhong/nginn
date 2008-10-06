@@ -11,9 +11,6 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class EmptyTask : Task
     {
-        public override bool IsImmediate
-        {
-            get { return true; }
-        }
+        
     }
 }

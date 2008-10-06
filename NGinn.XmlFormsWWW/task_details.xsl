@@ -50,14 +50,22 @@
   </xsl:template>
 
   <xsl:template match="Task">
+    <div>
+      <input type="button" name="btn_complete" value="Complete task" onclick="javascript:document.getElementById('taskDetails').submit()"/>
+      &#160;
+      <xsl:if test="Status = '2'">
+        <input type="button" name="btn_select" value="Start execution">
+          <xsl:attribute name="onclick">
+            javascript:document.location.href = 'SelectTask.aspx?correlationId=<xsl:value-of select="CorrelationId"/>'
+          </xsl:attribute>
+        </input>
+      </xsl:if>
+      &#160;
+      <input type="button" name="btn_back" value="Exit" onclick="javascript:history.back()"/>
+    </div>
     <form name="taskDetails" id="taskDetails" method="POST">
       <xsl:attribute name="action">CompleteTask.aspx?correlationId=<xsl:value-of select="CorrelationId"/>
       </xsl:attribute>
-
-      <div>
-        <input type="button" name="btn_complete" value="Complete task" onclick="javascript:document.getElementById('taskDetails').submit()"/>
-        <input type="button" name="btn_back" value="Exit" onclick="javascript:history.back()"/>
-      </div>
     <table cellpadding="0" cellspacing="0" >
       <col width="25%" />
       <col width="25%" />
@@ -74,7 +82,7 @@
           <xsl:value-of select="Id"/>
         </td>
         <td class="field">
-          <xsl:value-of select="Status"/>
+          <xsl:value-of select="StatusName"/>
         </td>
         <td class="field">
           <xsl:value-of select="Assignee"/>
@@ -167,5 +175,29 @@
         <xsl:attribute name="class">field_rq</xsl:attribute>
       </xsl:if>
     </input>
+  </xsl:template>
+
+  <xsl:template match="field[option]">
+    <select>
+      <xsl:attribute name="name">
+        <xsl:value-of select="@name"/>
+      </xsl:attribute>
+      <xsl:attribute name="value">
+        <xsl:value-of select="@value"/>
+      </xsl:attribute>
+      <xsl:if test="@access != 'modify' and @access != 'required'">
+        <xsl:attribute name="class">field_ro</xsl:attribute>
+        <xsl:attribute name="readonly">1</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@access = 'modify'">
+        <xsl:attribute name="class">field_rw</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@access = 'required'">
+        <xsl:attribute name="class">field_rq</xsl:attribute>
+      </xsl:if>
+      <xsl:for-each select="option">
+        <option><xsl:value-of select="."/></option>
+      </xsl:for-each>
+    </select>
   </xsl:template>
 </xsl:stylesheet>

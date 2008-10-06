@@ -5,9 +5,6 @@ using System.Xml;
 using System.IO;
 using NLog;
 using NGinn.Lib.Util;
-using Spring.Core;
-using Spring.Core.IO;
-using Spring.Context;
 using System.Xml.Schema;
 using NGinn.Lib.Data;
 
@@ -293,6 +290,27 @@ namespace NGinn.Lib.Schema
             return WriteDataSchema(sd);
         }
 
+        /// <summary>
+        /// Check if given place is a local
+        /// implicit choice (all out tasks have only 1 input place)
+        /// Currently we don't allow other than local implicit choices.
+        /// </summary>
+        /// <param name="placeId"></param>
+        /// <returns></returns>
+        public bool IsLocalImplicitChoice(string placeId)
+        {
+            Place pl = GetPlace(placeId);
+            if (pl == null) throw new Exception("Invalid place Id");
+            if (pl.NodesOut.Count <= 1) return false;
+            foreach (Task tsk in pl.NodesOut)
+            {
+                if (tsk.NodesIn.Count > 1) return false;
+            }
+            return true;
+        }
+
+        
+
 
 
         public Place Start
@@ -325,6 +343,23 @@ namespace NGinn.Lib.Schema
                 }
             }
             return l;
+        }
+
+        /// <summary>
+        /// Get list of task's input places shared with other tasks.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        public List<string> GetSharedInputPlaces(string taskId)
+        {
+            Task tsk = GetTask(taskId);
+            if (tsk == null) throw new Exception("Invalid task id");
+            List<string> lst = new List<string>();
+            foreach (Place pl in tsk.NodesIn)
+            {
+                if (pl.NodesOut.Count > 1) lst.Add(pl.Id);
+            }
+            return lst;
         }
 
         public void LoadFile(string fileName)

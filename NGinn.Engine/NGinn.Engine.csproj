@@ -89,8 +89,8 @@
     <Compile Include="Runtime\Email\SMTPEmailSender.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
-    <Compile Include="Runtime\MessageBus\ReliableMessageBus.cs" />
-    <Compile Include="Runtime\MessageBus\SimplePublisher.cs" />
+    <Compile Include="Runtime\MessageBus\ReliableMessageBroker.cs" />
+    <Compile Include="Runtime\MessageBus\SimpleMessageBroker.cs" />
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\NGEngine.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskBase.cs" />

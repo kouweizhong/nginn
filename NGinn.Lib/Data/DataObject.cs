@@ -110,7 +110,21 @@ namespace NGinn.Lib.Data
             }
         }
 
-        
+        /// <summary>
+        /// Return specified member as an array.
+        /// In case of single instance members, it creates a single element array.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IList GetArray(string name)
+        {
+            object v = this[name];
+            if (v == null) return null;
+            if (v is IList) return (IList)v;
+            IList l = new List<object>();
+            l.Add(v);
+            return l;
+        }
 
         public DataObject(StructDef recType)
         {
@@ -314,7 +328,7 @@ namespace NGinn.Lib.Data
             }
             else
             {
-                output.WriteElementString(elementName, val.ToString());
+                if (val != null) output.WriteElementString(elementName, val.ToString());
             }
         }
 
@@ -449,7 +463,11 @@ namespace NGinn.Lib.Data
                 d[md.Name] = md;
                 object v = this[md.Name];
                 TypeDef mType = recordType.ParentTypeSet.GetTypeDef(md.TypeName);
-                if (v == null && md.IsRequired) throw new Exception("Missing required value: " + md.Name);
+                if (v == null)
+                {
+                    if (md.IsRequired) throw new Exception("Missing required value: " + md.Name);
+                    continue;
+                }
                 if (md.IsArray)
                 {
                     if (v is IList)

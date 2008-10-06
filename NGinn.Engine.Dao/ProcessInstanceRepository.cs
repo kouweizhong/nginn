@@ -6,6 +6,9 @@ using NGinn.Engine.Dao.TypedQueries;
 using Sooda;
 using NLog;
 using Spring.Caching;
+using System.IO;
+using System.Xml;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine.Dao
 { 
@@ -76,6 +79,7 @@ namespace NGinn.Engine.Dao
         public void InsertNewProcessInstance(ProcessInstance pi)
         {
             pi.Passivate();
+            
             lock (this)
             {
                 if (GetProcessInstance(pi.InstanceId) != null) throw new ApplicationException("Duplicate instance ID");
@@ -92,7 +96,7 @@ namespace NGinn.Engine.Dao
             }
         }
 
-      
+        /*
         public void UpdateProcessInstance(ProcessInstance pi, NGinn.Engine.Services.Dao.INGDataSession ds)
         {
 
@@ -108,6 +112,7 @@ namespace NGinn.Engine.Dao
             pdb.RecordVersion = pdb.RecordVersion + 1;
             pdb.LastModified = DateTime.Now;
         }
+        */
         
         public void UpdateProcessInstance(ProcessInstance pi)
         {
@@ -127,6 +132,13 @@ namespace NGinn.Engine.Dao
                     pdb.LastModified = DateTime.Now;
                     st.Commit();
                     Cache.Remove(pi.InstanceId);
+                    NGinn.Lib.Data.DataObject dob = pi.SaveState();
+                    using (StreamWriter sw = new StreamWriter(string.Format("c:\\temp\\{0}.xml", pi.InstanceId)))
+                    {
+                        XmlWriter xw = XmlWriter.Create(sw);
+                        dob.ToXml("Process", xw);
+                        xw.Flush();
+                    }
                 }
             }
         }

@@ -4,12 +4,29 @@ using System.Text;
 
 namespace NGinn.Lib.Interfaces.MessageBus
 {
+    /// <summary>
+    /// Message context interface for accessing message-related information
+    /// </summary>
     public interface IMessageContext
     {
+        /// <summary>Message sender</summary>
         string Sender { get; }
+        /// <summary>Message topic</summary>
         string Topic { get; }
+        /// <summary>
+        /// Get/set the return value
+        /// </summary>
         object Retval { get; set; }
+        /// <summary>
+        /// Set this to 'true' to cancel further processing of the message - other
+        /// event subscribers will not be notified
+        /// </summary>
         bool CancelFurtherProcessing { get; set; }
+        /// <summary>
+        /// In case of async messages system will retry processing if an error occurs
+        /// in a message handler. If you don't want system to retry, set this property to false.
+        /// </summary>
+        bool RetryAfterError { get; set; }
     }
 
     ///<summary>

@@ -2,7 +2,7 @@
 <project name="NGinn" default="build" basedir="." >
     <tstamp />
 
-    <property name="nant.settings.currentframework" value="net-2.0" />
+    <property name="nant.settings.currentframework" value="net-3.5" />
 	<property name="file" value="" overwrite="false"/>
 	<property name="out" value="Graph.gif" overwrite="false" />
 	
