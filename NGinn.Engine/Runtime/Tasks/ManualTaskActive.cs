@@ -122,9 +122,9 @@ namespace NGinn.Engine.Runtime.Tasks
             }
         }
 
-        public override DataObject SaveTaskState()
+        public override DataObject SaveState()
         {
-            DataObject dob = base.SaveTaskState();
+            DataObject dob = base.SaveState();
             dob["Title"] = this.Title;
             dob["Description"] = this.Description;
             dob["AssigneeGroup"] = this.AssigneeGroup;
@@ -133,9 +133,9 @@ namespace NGinn.Engine.Runtime.Tasks
             return dob;
         }
 
-        public override void RestoreTaskState(DataObject dob)
+        public override void RestoreState(DataObject dob)
         {
-            base.RestoreTaskState(dob);
+            base.RestoreState(dob);
             Title = (string)dob["Title"];
             Description = (string)dob["Description"];
             AssigneeGroup = (string)dob["AssigneeGroup"];

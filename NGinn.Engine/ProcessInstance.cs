@@ -885,8 +885,9 @@ namespace NGinn.Engine
                     IList<Flow> flows = tsk.FlowsOutOrdered;
                     for (int i = 0; i < flows.Count; i++)
                     {
-                        if (i == flows.Count - 1) //last flow - the default one
+                        if (i == flows.Count - 1) 
                         {
+                            //last flow - the default one. Always add a token if we are here
                             AddToken(flows[i].To.Id);
                             cnt++;
                         }
@@ -911,6 +912,12 @@ namespace NGinn.Engine
                             AddToken(flows[i].To.Id);
                             cnt++;
                         }
+                    }
+                    if (cnt == 0)
+                    {
+                        //we haven't created any tokens, created the default one
+                        AddToken(flows[flows.Count - 1].To.Id);
+                        cnt++;
                     }
                 }
                 else throw new Exception();

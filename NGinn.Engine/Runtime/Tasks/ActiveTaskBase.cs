@@ -18,7 +18,7 @@ namespace NGinn.Engine.Runtime.Tasks
     /// Information: immediate tasks don't need to be serializable (they will not be serialized)
     /// </summary>
     [Serializable]
-    public abstract class ActiveTaskBase : IActiveTask
+    public abstract class ActiveTaskBase : IActiveTask, INGinnPersistent
     {
         [NonSerialized]
         protected Logger log;
@@ -334,11 +334,10 @@ namespace NGinn.Engine.Runtime.Tasks
             Context.TransitionCompleted(this.CorrelationId, dob); 
         }
 
-       
 
+        #region INGinnPersistent Members
 
-        
-        public virtual DataObject SaveTaskState()
+        public virtual DataObject SaveState()
         {
             DataObject dob = new DataObject();
             dob["TaskData"] = new DataObject(VariablesContainer);
@@ -346,7 +345,7 @@ namespace NGinn.Engine.Runtime.Tasks
             return dob;
         }
 
-        public virtual void RestoreTaskState(DataObject dob)
+        public virtual void RestoreState(DataObject dob)
         {
             if (_activated) throw new Exception("Task should not be activated when restoring state");
             _taskData = (DataObject)dob["TaskData"];
@@ -355,6 +354,6 @@ namespace NGinn.Engine.Runtime.Tasks
             if (_correlationId == null) throw new Exception("Missing CorrelationId");
         }
 
-        
+        #endregion
     }
 }

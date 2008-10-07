@@ -73,18 +73,18 @@ namespace NGinn.Engine.Runtime.Tasks
             return false;
         }
 
-        public override DataObject SaveTaskState()
+        public override DataObject SaveState()
         {
-            DataObject dob = base.SaveTaskState();
+            DataObject dob = base.SaveState();
             dob["DelayAmount"] = DelayAmount;
             dob["CompletedDate"] = _expirationTime;
 
             return dob;
         }
 
-        public override void RestoreTaskState(DataObject dob)
+        public override void RestoreState(DataObject dob)
         {
-            base.RestoreTaskState(dob);
+            base.RestoreState(dob);
             DelayAmount = (string)dob["DelayAmount"];
             if (dob.ContainsKey("CompletedDate"))
             {
