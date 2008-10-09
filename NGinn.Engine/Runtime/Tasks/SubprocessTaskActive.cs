@@ -94,6 +94,22 @@ namespace NGinn.Engine.Runtime.Tasks
             }
             return false;
         }
+
+        public override DataObject SaveState()
+        {
+            DataObject dob = base.SaveState();
+            dob["SubprocessDefinitionId"] = this.ProcessDefinitionId;
+            dob["SubprocessInstanceId"] = this._subprocessInstanceId;
+            return dob;
+        }
+
+        public override void RestoreState(DataObject dob)
+        {
+            base.RestoreState(dob);
+            
+            _subprocessDefinitionId = (string) dob["SubprocessDefinitionId"];
+            _subprocessInstanceId = (string) dob["SubprocessInstanceId"];
+        }
     }
 
     /// <summary>

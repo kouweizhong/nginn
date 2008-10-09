@@ -177,6 +177,22 @@ namespace NGinn.Lib.Data
             return value != null;
         }
 
+        public bool TryGet(string name, ref string value)
+        {
+            if (!_data.ContainsKey(name)) return false;
+            object v = _data[name];
+            value = Convert.ToString(v);
+            return true;
+        }
+
+        public bool TryGet(string name, ref DateTime value)
+        {
+            if (!_data.ContainsKey(name)) return false;
+            object v = _data[name];
+            value = Convert.ToDateTime(v);
+            return true;
+        }
+
         public override int Count
         {
             get { return _data.Count; }
@@ -546,10 +562,15 @@ namespace NGinn.Lib.Data
             else throw new Exception();
         }
 
+
         public void Validate()
         {
             if (this.GetRecordType() == null) throw new ApplicationException("Cannot validate record - record type not defined");
             Validate(GetRecordType());
         }
+
+
+        
+
     }
 }

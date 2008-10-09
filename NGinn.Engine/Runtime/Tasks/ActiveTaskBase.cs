@@ -337,6 +337,12 @@ namespace NGinn.Engine.Runtime.Tasks
 
         #region INGinnPersistent Members
 
+        /// <summary>
+        /// Save task state using NGinn custom persistence.
+        /// Override this method in your class if you have some data to persist
+        /// Call base method for default persistence of task data.
+        /// </summary>
+        /// <returns></returns>
         public virtual DataObject SaveState()
         {
             DataObject dob = new DataObject();
@@ -345,6 +351,12 @@ namespace NGinn.Engine.Runtime.Tasks
             return dob;
         }
 
+        /// <summary>
+        /// Restore task state using NGinn custom persistence.
+        /// Override this method in your class if you have data fields to restore.
+        /// Call base method for default persistence of task data.
+        /// </summary>
+        /// <param name="dob"></param>
         public virtual void RestoreState(DataObject dob)
         {
             if (_activated) throw new Exception("Task should not be activated when restoring state");

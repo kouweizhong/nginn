@@ -280,6 +280,11 @@ namespace NGinn.Engine.Dao
             */
         }
 
+        public IList<string> FindProcessesByExternalId(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         

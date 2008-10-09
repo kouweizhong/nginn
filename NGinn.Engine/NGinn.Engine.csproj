@@ -83,10 +83,12 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Runtime\Email\SMTPEmailSender.cs" />
+    <Compile Include="Runtime\Http\HttpHelper.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
     <Compile Include="Runtime\MessageBus\ReliableMessageBroker.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Runtime\Tasks\ScriptTaskActive.cs" />
     <Compile Include="Runtime\TaskShell.cs" />
     <Compile Include="Runtime\Tasks\TimerTaskActive.cs" />
+    <Compile Include="Runtime\Tasks\XmlHttpTaskActive.cs" />
     <Compile Include="Runtime\XmlProcessingUtil.cs" />
     <Compile Include="Services\Dao\INGDataSession.cs" />
     <Compile Include="Services\Dao\INGDataStore.cs" />

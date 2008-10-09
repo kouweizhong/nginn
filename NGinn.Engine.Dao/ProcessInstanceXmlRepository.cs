@@ -13,6 +13,10 @@ using NGinn.Lib.Data;
 namespace NGinn.Engine.Dao
 { 
 
+    /// <summary>
+    /// Implementation of process instance repository storing processes in a SQL database.
+    /// Custom NGinn serialization is used and processes are stored as XML.
+    /// </summary>
     class ProcessInstanceXmlRepository : IProcessInstanceRepository
     {
 
@@ -138,6 +142,11 @@ namespace NGinn.Engine.Dao
                 inst.Status = ProcessStatus.Error;
                 st.Commit();
             }
+        }
+
+        public IList<string> FindProcessesByExternalId(string id)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

@@ -110,6 +110,18 @@ namespace NGinn.Engine
             set { _correlationId = value; }
         }
 
+        private string _externalId;
+
+        /// <summary>
+        /// External identification field. You can assign any value to it
+        /// and use it for process lookup.
+        /// </summary>
+        public string ExternalId
+        {
+            get { return _externalId; }
+            set { _externalId = value; }
+        }
+
         /// <summary>
         /// Current status of the process
         /// </summary>

@@ -6,19 +6,30 @@ using NGinn.Engine.Services.Dao;
 
 namespace NGinn.Engine.Services
 {
+    /// <summary>
+    /// Process instance repository interface. Contains functions for persisting 
+    /// process instances and accessing persisted processes.
+    /// </summary>
     public interface IProcessInstanceRepository
     {
         /// <summary>
+        /// Return list of processes that can be kicked (have tokens that could be processed).
+        /// </summary>
+        /// <returns></returns>
+        IList<string> SelectProcessesWithReadyTokens();
+
+        /// <summary>
         /// Retrieve process instance from a repository
         /// </summary>
-        /// <param name="instanceId">Process instance ID</param>
-        /// <param name="ds">data session</param>
+        /// <param name="instanceId"></param>
         /// <returns></returns>
-        //ProcessInstance GetProcessInstance(string instanceId, INGDataSession ds);
+        ProcessInstance GetProcessInstance(string instanceId);
 
-        //void UpdateProcessInstance(ProcessInstance pi, INGDataSession ds);
-        //ProcessInstance InitializeNewProcessInstance(string definitionId, INGDataSession ds);
-        
+        /// <summary>
+        /// Update existing process instance
+        /// </summary>
+        /// <param name="pi"></param>
+        void UpdateProcessInstance(ProcessInstance pi);
         /// <summary>
         /// Set process instance status to 'error'.
         /// In this case engine will retry processing this instance
@@ -30,12 +41,20 @@ namespace NGinn.Engine.Services
         /// </summary>
         /// <param name="instanceId"></param>
         /// <param name="errorInfo"></param>
-        //void SetProcessInstanceErrorStatus(string instanceId, string errorInfo, INGDataSession ds);
-
-        IList<string> SelectProcessesWithReadyTokens();
-        ProcessInstance GetProcessInstance(string instanceId);
-        void UpdateProcessInstance(ProcessInstance pi);
         void SetProcessInstanceErrorStatus(string instanceId, string errorInfo);
+
+        /// <summary>
+        /// Insert new process to the repository
+        /// </summary>
+        /// <param name="pi"></param>
         void InsertNewProcessInstance(ProcessInstance pi);
+
+        /// <summary>
+        /// Searches process instance database for processes with specified 
+        /// external id. Returns a list of process instance IDs
+        /// </summary>
+        /// <param name="extid"></param>
+        /// <returns></returns>
+        IList<string> FindProcessesByExternalId(string extid);
     }
 }

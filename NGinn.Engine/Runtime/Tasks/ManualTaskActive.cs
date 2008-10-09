@@ -65,6 +65,17 @@ namespace NGinn.Engine.Runtime.Tasks
             set { _completedBy = value; }
         }
 
+        private DateTime _completedDate = DateTime.MinValue;
+
+        [TaskParameter(IsInput=false)]
+        public DateTime CompletedDate
+        {
+            get { return _completedDate; }
+            set { _completedDate = value; }
+        }
+
+
+
 
 
         protected override void DoInitiateTask()
@@ -109,6 +120,7 @@ namespace NGinn.Engine.Runtime.Tasks
             }
             else if (ite is TransitionSelectedNotification)
             {
+                TransitionSelectedNotification ts = (TransitionSelectedNotification)ite;
                 if (Context.Status == TransitionStatus.ENABLED)
                 {
                     Context.TransitionStarted(this.CorrelationId);
@@ -130,6 +142,7 @@ namespace NGinn.Engine.Runtime.Tasks
             dob["AssigneeGroup"] = this.AssigneeGroup;
             dob["AssigneeId"] = this.AssigneeId;
             dob["CompletedBy"] = this.CompletedBy;
+            dob["CompletedDate"] = CompletedDate;
             return dob;
         }
 
@@ -141,6 +154,7 @@ namespace NGinn.Engine.Runtime.Tasks
             AssigneeGroup = (string)dob["AssigneeGroup"];
             AssigneeId = (string)dob["AssigneeId"];
             CompletedBy = (string)dob["CompletedBy"];
+            dob.TryGet("CompletedDate", ref _completedDate);
         }
     }
 }

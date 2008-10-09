@@ -3,7 +3,10 @@
     <tstamp />
 
     <property name="nant.settings.currentframework" value="net-3.5" />
-	<property name="file" value="" overwrite="false"/>
+	<property name="build_dir" value="build" />
+    <property name="debug" value="Full" />
+    
+    <property name="file" value="" overwrite="false"/>
 	<property name="out" value="Graph.gif" overwrite="false" />
 	
     <property name="nxsl" value="${nant.project.basedir}\extlib\tools\nxslt-2.3-bin\nxslt2.exe" />
@@ -16,28 +19,185 @@
     <target name="clean">
     </target>
 
-	<target name="build" depends="">
-    </target>
 	
+    
+    <target name="build" depends="prepare_build, NGinn.Engine, NGinn.Engine.Dao, NGinn.Engine.Host">
+    </target>
+    
+    <target name="prepare_build">
+        <mkdir dir="${build_dir}" />
+    </target>
+    
+    <!-- nginn base library -->
+    <target name="NGinn.Lib">
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="IronyScriptDotNet.dll" />
+                <include name="Irony.dll" />
+                <include name="MutanticFramework.dll" />
+                <include name="PowerCollections.dll" />
+                <include name="NLog.dll" />
+            </fileset>
+        </copy>
+        <csc target="library" output="${build_dir}/NGinn.Lib.dll" debug="${debug}">
+            <sources basedir="NGinn.Lib">
+                <include name="**/*.cs" />
+            </sources>
+            <resources prefix="NGinn.Lib" basedir="NGinn.Lib">
+                <include name="*.xsd" />
+            </resources>
+            <references>
+                <include name="${build_dir}/Spring.Core.dll" />
+                <include name="${build_dir}/MutanticFramework.dll" />
+                <include name="${build_dir}/PowerCollections.dll" />
+                <include name="${build_dir}/NLog.dll" />
+            </references>
+        </csc>
+    </target>
+    
+    <!-- NGinn.Engine.Dao library for process instance persistence -->
+    <target name="NGinn.Engine.Dao" depends="NGinn.Engine">
+        <property name="srcdir" value="NGinn.Engine.Dao" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="NLog.dll" />
+                <include name="Sooda.dll" />
+                <include name="ICSharpCode.SharpZipLib.dll" />
+            </fileset>
+        </copy>
+        <exec program="extlib/SoodaStubGen.exe">
+            <arg value="${srcdir}/NGinn.Engine.Dao.soodaproject" />
+        </exec>
+        <csc target="library" output="${build_dir}/NGinn.Engine.Dao.dll" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <references>
+                <include name="${build_dir}/Spring.Core.dll" />
+                <include name="${build_dir}/MutanticFramework.dll" />
+                <include name="${build_dir}/PowerCollections.dll" />
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/Sooda.dll" />
+                <include name="${build_dir}/NGinn.Lib.dll" />
+                <include name="${build_dir}/NGinn.Engine.dll" />
+                <include name="${build_dir}/ICSharpCode.SharpZipLib.dll" />
+            </references>
+            <resources prefix="NGinn.Engine.Dao" basedir="${srcdir}">
+                <include name="_DBSchema.bin" />
+            </resources> 
+        </csc>
+    </target>
+    
+    <!-- NGinn.Engine library - NGinn runtime implementation -->
+    <target name="NGinn.Engine" depends="NGinn.Lib">
+        <property name="srcdir" value="NGinn.Engine" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="IronyScriptDotNet.dll" />
+                <include name="Irony.dll" />
+                <include name="MutanticFramework.dll" />
+                <include name="PowerCollections.dll" />
+                <include name="NLog.dll" />
+                <include name="Mvp.Xml.dll" />
+                <include name="SmartThreadPool.dll" />
+                <include name="Common.Logging.dll" />
+                <include name="antlr.runtime.dll" />
+            </fileset>
+        </copy>
+        <csc target="library" output="${build_dir}/NGinn.Engine.dll" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <references>
+                <include name="${build_dir}/Spring.Core.dll" />
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/NGinn.Lib.dll" />
+                <include name="${build_dir}/IronyScriptDotNet.dll" />
+                <include name="${build_dir}/Mvp.Xml.dll" />
+                <include name="${build_dir}/SmartThreadPool.dll" />
+                <include name="${build_dir}/PowerCollections.dll" />
+                <include name="${build_dir}/MutanticFramework.dll" /> 
+            </references>
+        </csc>
+    </target>
+    
+    <!-- NGinn engine host application. This is an example of how NGinn engine can be hosted in a windows service -->
+    <target name="NGinn.Engine.Host" depends="NGinn.Engine, NGinn.Engine.Dao, NGinn.Worklist">
+        <property name="srcdir" value="NGinn.Engine.Host" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="Spring.Services.dll" />
+                <include name="NLog.dll" />
+            </fileset>
+        </copy>
+        <csc target="exe" output="${build_dir}/NGinn.Engine.Host.exe" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <resources prefix="NGinn.Engine.Host" basedir="${srcdir}">
+                <include name="ProjectInstaller.resx" />
+            </resources>
+            <references>
+                <include name="${build_dir}/Spring.Core.dll" />
+                <include name="${build_dir}/MutanticFramework.dll" />
+                <include name="${build_dir}/PowerCollections.dll" />
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/NGinn.Lib.dll" />
+                <include name="${build_dir}/NGinn.Engine.dll" />
+            </references>
+        </csc>
+        <copy tofile="${build_dir}/NGinn.Engine.Host.exe.config" file="${srcdir}/App.config" />
+        <copy tofile="${build_dir}/NGinn.Engine.Host.exe.nlog" file="${srcdir}/NLog.config" />
+        <copy todir="${build_dir}" file="${srcdir}/debug.cmd" />
+    </target>
+    
+    <!-- 
+        worklist library - an example implementation of a worklist service cooperating with NGinn 
+        This is not a part of NGinn, only illustrates functionality provided by external applications.
+    -->
+	<target name="NGinn.Worklist" depends="NGinn.Lib">
+        <property name="srcdir" value="NGinn.Worklist" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="NLog.dll" />
+                <include name="Sooda.dll" />
+            </fileset>
+        </copy>
+        <exec program="extlib/SoodaStubGen.exe">
+            <arg value="${srcdir}/NGinn.Worklist.soodaproject" />
+        </exec>
+        <csc target="library" output="${build_dir}/NGinn.Worklist.dll" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <references>
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/Sooda.dll" />
+                <include name="${build_dir}/NGinn.Lib.dll" />
+                <include name="${build_dir}/NGinn.Engine.dll" />
+            </references>
+            <resources prefix="NGinn.Worklist" basedir="${srcdir}">
+                <include name="_DBSchema.bin" />
+            </resources>
+        </csc>
+    </target>
+    
+    
 	<!-- nant processgraph -D:file=filename.xml -->
     <target name="processgraph" depends="">
 		<mkdir dir="temp" />
-		<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />
-		<exec program="${dot}" commandline="temp/processgraph.dot -Tgif -o ${out}" />
+		<!--<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />
+		-->
+        <exec program="${dot}" commandline="temp/processgraph.dot -Tgif -o ${out}" />
     </target>
 
 	
-    <target name="Atmo.MSProject">
-        <csc target="library" output="${appserver.dir}/Atmo.MSProject.dll" debug="true">
-            <references>
-                <include name="${appserver.dir}/Atmo.Core.dll" />
-                <include name="${appserver.dir}/NLog.dll" />
-            </references>
-            <sources basedir="src/Atmo.MSProject">
-                <include name="**/*.cs" />
-            </sources>
-        </csc>
-    </target>
+    
     
     <!-- create nginn database dump -->
     <target name="dump-db">

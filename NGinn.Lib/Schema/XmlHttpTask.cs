@@ -12,40 +12,15 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class XmlHttpTask : Task
     {
-        private Uri _targetUri;
-        private bool _isAsync = false;
-        private string _outputDataXslFile = null;
-        private string _inputDataXslFile = null;
-        private string _httpMethod = "POST";
 
-        public Uri TargetUri
+        public override TaskParameterInfo[] GetTaskParameters()
         {
-            get { return _targetUri; }
-            set { _targetUri = value; }
-        }
-        
-        public bool IsAsync
-        {
-            get { return _isAsync; }
-            set { _isAsync = value; }
-        }
-        
-        public string OutputDataXsl
-        {
-            get { return _outputDataXslFile; }
-            set { _outputDataXslFile = value; }
-        }
-        
-        public string InputDataXsl
-        {
-            get { return _inputDataXslFile; }
-            set { _inputDataXslFile = value; }
-        }
-
-        public string HttpMethod
-        {
-            get { return _httpMethod; }
-            set { _httpMethod = value; }
+            TaskParameterInfo[] tpis = new TaskParameterInfo[] {
+                new TaskParameterInfo("Url", typeof(string), true, true, true),
+                new TaskParameterInfo("RequestXslt", typeof(string), false, true, true),
+                new TaskParameterInfo("ResponseXslt", typeof(string), false, true, true),
+            };
+            return tpis;
         }
 
         

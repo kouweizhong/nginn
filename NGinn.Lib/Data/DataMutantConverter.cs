@@ -28,7 +28,7 @@ namespace NGinn.Lib.Data
             string[] fields = mut.GetMutantFields();
             foreach (string field in fields)
             {
-               
+                dob[field] = mut.Get(field, null);
             }
             return dob;
         }
