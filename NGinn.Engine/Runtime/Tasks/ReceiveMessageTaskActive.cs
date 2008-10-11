@@ -69,5 +69,18 @@ namespace NGinn.Engine.Runtime.Tasks
             OnTaskCompleted();
             return true;
         }
+
+        public override DataObject SaveState()
+        {
+            DataObject dob= base.SaveState();
+            dob["MessageCorrelationId"] = this.MessageCorrelationId;
+            return dob;
+        }
+
+        public override void RestoreState(DataObject dob)
+        {
+            base.RestoreState(dob);
+            if (!dob.TryGet("MessageCorrelationId", ref _messageCorrelationId)) throw new Exception("MessageCorrelationId required");
+        }
     }
 }

@@ -17,6 +17,11 @@
     <property name="dbpass" value="PASS" />
     
     <target name="clean">
+        <delete>
+            <fileset basedir="${build_dir}">
+                <include name="*.*" />
+            </fileset>
+        </delete>
     </target>
 
 	
