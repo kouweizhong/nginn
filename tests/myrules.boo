@@ -1,31 +1,24 @@
 Ruleset "MyRules"
 
-v = "temp variable"
 
- 
-
-RuleDef "R1", "R2", null, {return 1 == 1}: 
+rule "R1", "R2", null, 1 == 1: 
     log.Info("AAA");
-    v = "R1 rulez"
 
-RuleDef "R2", "R3", null, {return 1 == 1}:
-    log.Info ("AAA: {0}", v)
+rule "R2", "R3", null, 1 == 1:
+    log.Info ("R2")
     
-RuleDef "R3", "R4", null, {return 1 == 1}:
-    log.Info ("AAA")
+rule "R3", "R4", null, 1 == 1:
+    log.Info ("R3")
 
-RuleDef "R4", null, "R5", {return 1 == 2}:
-    log.Info ("AAA")
+rule "R4", null, "R5", 1 == 2:
+    log.Info ("R4")
     
-RuleDef "R5", "R6", null, {return 1 == 1}:
-    log.Info ("AAA")
+rule "R5", "R6", null, 1 == 1:
+    log.Info ("R5")
 
-rule "R6", "X", null, 2 % 2 == 0, {
-    log.Info ("Rul szosty: {0}", date.Now)
-}
+rule "R6", "X", null, 2 % 2 == 0:
+    log.Info ("Rule six: {0}", date.Now)
     
-    
-
 rule "X", null, null, date.Today > date.Parse('2008-10-11'):
     log.Warn("The X Rule!!!")
 
