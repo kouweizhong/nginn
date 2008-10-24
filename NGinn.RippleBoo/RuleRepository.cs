@@ -33,14 +33,23 @@ namespace NGinn.RippleBoo
 
         public RuleRepository()
         {
-            RippleBooDslEngine eng = new RippleBooDslEngine();
-            _factory.Register(typeof(RuleSetBase), eng);
+            
+        }
+
+        private List<string> _namespaces = new List<string>();
+        public IList<string> ImportNamespaces
+        {
+            get { return _namespaces; }
         }
 
         private bool _inited = false;
         protected void Initialize()
         {
             if (_inited) return;
+            RippleBooDslEngine eng = new RippleBooDslEngine();
+            eng.BaseType = BaseType;
+            eng.Namespaces = _namespaces.ToArray();
+            _factory.Register(typeof(RuleSetBase), eng);
             _factory.BaseDirectory = BaseDirectory;
             _inited = true;
         }
@@ -53,13 +62,18 @@ namespace NGinn.RippleBoo
             return rb;
         }
 
-        public void EvaluateRules(string ruleset)
+        public void EvaluateRules(string ruleset, IDictionary<string, object> variables, IDictionary<string, object> context)
         {
             DateTime ds = DateTime.Now;
             RuleSetBase rb = GetNewRuleSet(ruleset);
             rb.Initialize();
+            rb.Variables = new QuackWrapper(variables);
+            rb.Context = new QuackWrapper(context);
             rb.Execute();
             log.Info("Rule evaluation time: {0}", DateTime.Now - ds);
+
         }
+
+        
     }
 }

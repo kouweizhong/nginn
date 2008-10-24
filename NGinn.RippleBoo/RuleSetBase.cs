@@ -36,8 +36,8 @@ namespace NGinn.RippleBoo
 
 
         
-        private IQuackFu _variables = null;
-        private IQuackFu _ctx = null;
+        private IQuackFu _variables = new QuackWrapper(new Hashtable());
+        private IQuackFu _ctx = new QuackWrapper(new Hashtable());
         private Logger _log = LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -47,6 +47,11 @@ namespace NGinn.RippleBoo
         {
             get { return _variables; }
             set { _variables = value; }
+        }
+
+        public IQuackFu V
+        {
+            get { return Variables; }
         }
 
         /// <summary>

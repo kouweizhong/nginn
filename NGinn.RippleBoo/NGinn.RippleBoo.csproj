@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuackDictionaryWrapper.cs" />
     <Compile Include="RippleBooDslEngine.cs" />
     <Compile Include="RuleRepository.cs" />
     <Compile Include="RuleSetBase.cs" />
