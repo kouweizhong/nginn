@@ -37,6 +37,7 @@ namespace NGinn.Engine.Runtime
         private ITaskCorrelationIdResolver _resolver;
         private Dictionary<string, object> _contextObjects = new Dictionary<string, object>();
         private TransactionScopeOption _transactionOption = TransactionScopeOption.RequiresNew;
+        private IProcessScriptManager _scriptManager;
 
         public NGEnvironment()
         {
@@ -78,6 +79,11 @@ namespace NGinn.Engine.Runtime
             set { _instanceRepository = value; }
         }
 
+        public IProcessScriptManager ScriptManager
+        {
+            get { return _scriptManager; }
+            set { _scriptManager = value; }
+        }
 
         public IProcessInstanceLockManager LockManager
         {

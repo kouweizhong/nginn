@@ -26,7 +26,8 @@ namespace NGinnTest
             {
                 System.Runtime.Remoting.RemotingConfiguration.Configure("NGinnTest.exe.config");
                 //_ctx = Spring.Context.Support.ContextRegistry.GetContext();
-                RippleTest();
+                BooGenTest();
+                //RippleTest();
                 //TestStartProcess();
                 //TestTaskCompleted("4f479a9e93964baaa2ce89e3960e263b", "4f479a9e93964baaa2ce89e3960e263b.0");
                 //TestTaskSelected("a614a6b8617345a8b99e9805adcf1868", "a614a6b8617345a8b99e9805adcf1868.2");
@@ -50,6 +51,12 @@ namespace NGinnTest
         {
             RippleTest rt = new RippleTest();
             rt.Test();
+        }
+
+        static void BooGenTest()
+        {
+            BooGenTest bt = new BooGenTest();
+            bt.Test();
         }
 
         static void TestProcessLoad()

@@ -4,9 +4,8 @@ using System.Text;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NLog;
-using ScriptNET;
 using System.Collections;
-
+using NGinn.Engine.Services;
 
 namespace NGinn.Engine.Runtime
 {
@@ -79,13 +78,10 @@ namespace NGinn.Engine.Runtime
 
         public override void InitiateTask(NGinn.Lib.Data.IDataObject sourceData)
         {
-            IScriptContext ctx = this.CreateTaskScriptContext(sourceData);
+            ITaskScript ctx = this.CreateTaskScriptContext(sourceData);
             log.Debug("Executing split query: {0}", TaskDefinition.MultiInstanceSplitQuery);
-            string q = TaskDefinition.MultiInstanceSplitQuery.Trim();
-            if (!q.EndsWith(";")) q += ";";
-            object ret = Script.RunCode(q, ctx);
-            log.Debug("Returned: {0}", ret);
             string alias = TaskDefinition.MultiInstanceInputVariable;
+            object ret = ctx.EvalMultiInstanceSplitQuery();
             if (!(ret is IEnumerable))
             {
                 ArrayList al = new ArrayList();
@@ -95,9 +91,9 @@ namespace NGinn.Engine.Runtime
             IEnumerable enu = ret as IEnumerable;
             foreach (object ob in enu)
             {
-                ctx.SetItem(alias, ContextItem.Variable, ob);
+                ctx.SourceData.Set(alias, null, ob);
                 DataObject taskInput = new DataObject();
-                DataBinding.ExecuteDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
+                DataBinding.ExecuteTaskInputDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
                 TaskInfo ti = new TaskInfo();
                 ti.ActiveTask = CreateActiveTask();
                 ti.ActiveTask.CorrelationId = ParentProcess.GetNextTransitionId();
@@ -156,9 +152,9 @@ namespace NGinn.Engine.Runtime
             foreach (TaskInfo ti in _activeTasks)
             {
                 if (ti.Status != TransitionStatus.COMPLETED) continue;
-                IScriptContext ctx = CreateTaskScriptContext(ti.OutputData);
+                ITaskScript ctx = CreateTaskScriptContext(ti.OutputData);
                 DataObject trg = new DataObject();
-                DataBinding.ExecuteDataBinding(trg, TaskDefinition.OutputBindings, ctx);
+                DataBinding.ExecuteTaskOutputDataBinding(trg, TaskDefinition.OutputBindings, ctx);
                 al.Add(trg);
             }
 

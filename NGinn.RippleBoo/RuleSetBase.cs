@@ -110,12 +110,9 @@ namespace NGinn.RippleBoo
             );
         }
 
-        /*
-        protected void When(Condition condition, Action action)
-        {
-            conditionsAndActions[condition] = action;
-        }
-        */
+       
+
+        
 
         /// <summary>
         /// Define new rule

@@ -12,7 +12,6 @@ using System.Xml.Serialization;
 using NGinn.Engine.Runtime;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Data;
-using ScriptNET;
 using NGinn.Engine.Runtime.Tasks;
 using System.Collections;
 
@@ -297,8 +296,11 @@ namespace NGinn.Engine
         /// Initialize new script execution context for this process instance
         /// </summary>
         /// <returns></returns>
-        protected internal IScriptContext CreateProcessScriptContext()
+        protected internal IProcessScript CreateProcessScriptContext()
         {
+            IProcessScript ps = Environment.ScriptManager.GetProcessScript(Definition);
+            return ps;
+            /*
             IScriptContext ctx = new ScriptContext();
             DataObject env = new DataObject(Environment.EnvironmentVariables);
             env["log"] = log;
@@ -316,6 +318,7 @@ namespace NGinn.Engine
                 }
             }
             return ctx;
+            */
         }
 
         
@@ -377,8 +380,8 @@ namespace NGinn.Engine
             data.Validate(procInput);
             DataObject dob = new DataObject();
             
-            IScriptContext ctx = CreateProcessScriptContext();
-            ctx.SetItem("data", ContextItem.Variable, new DOBMutant(dob));
+            IProcessScript ctx = CreateProcessScriptContext();
+            
             
             foreach (VariableDef vd in Definition.ProcessVariables)
             {
@@ -395,7 +398,7 @@ namespace NGinn.Engine
                     }
                     else
                     {
-                        object val = Script.RunCode(vd.DefaultValueExpr, ctx);
+                        object val = ctx.GetDefaultVariableValue(vd.Name);
                         dob[vd.Name] = val;
                     }
                 }
@@ -957,13 +960,9 @@ namespace NGinn.Engine
         private bool EvaluateFlowInputCondition(Flow fl)
         {
             if (fl.InputCondition == null || fl.InputCondition.Length == 0) return true; //empty condition is true
-            IScriptContext ctx = CreateProcessScriptContext();
-            string expr = fl.InputCondition.Trim();
-            if (!expr.EndsWith(";")) expr += ";";
-            log.Debug("Evaluating flow {0} input condition: {1}", fl.ToString(), expr);
-            object res = Script.RunCode(expr, ctx);
-            log.Debug("Result: {0}", res);
-            return Convert.ToBoolean(res);
+            IProcessScript ctx = CreateProcessScriptContext();
+            object v = ctx.EvaluateFlowInputCondition(fl);
+            return Convert.ToBoolean(v);
         }
 
         

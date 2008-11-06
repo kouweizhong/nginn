@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
-using ScriptNET;
 using NLog;
+using NGinn.Engine.Services;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -36,10 +36,8 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             try
             {
-                IScriptContext ctx = this.CreateScriptContext(VariablesContainer);
-                string code = ScriptBody.Trim();
-                if (!code.EndsWith(";")) code += ";";
-                Script.RunCode(code, ctx);
+                ITaskScript scr = CreateScriptContext(VariablesContainer);
+                scr.RunScriptBlock("ScriptBody");
                 OnTaskCompleted();
             }
             catch (Exception ex)

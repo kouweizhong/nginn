@@ -38,6 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\lib\NGinn.Engine.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +49,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Boo.Lang, Version=2.0.0.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Boo.Lang.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang.CodeDom, Version=2.0.0.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Boo.Lang.CodeDom.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang.Compiler, Version=2.0.0.0, Culture=neutral, PublicKeyToken=32c39770e9a21a67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Boo.Lang.Compiler.dll</HintPath>
+    </Reference>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Irony.dll</HintPath>
@@ -72,6 +85,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\PowerCollections.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.DSL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Rhino.DSL.dll</HintPath>
+    </Reference>
     <Reference Include="SmartThreadPool, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\SmartThreadPool.dll</HintPath>
@@ -79,6 +96,10 @@
     <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Spring.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="StringTemplate, Version=3.0.1.6846, Culture=neutral, PublicKeyToken=beee492b52c41e85, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\StringTemplate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -95,6 +116,13 @@
     <Compile Include="Runtime\MessageBus\SimpleMessageBroker.cs" />
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\NGEngine.cs" />
+    <Compile Include="Runtime\Scripting\BooScript\BooProcessScriptManager.cs" />
+    <Compile Include="Runtime\Scripting\BooScript\NGinnDslEngine.cs" />
+    <Compile Include="Runtime\Scripting\BooScript\BooProcessScriptBase.cs" />
+    <Compile Include="Runtime\Scripting\BooScript\BooTaskScriptBase.cs" />
+    <Compile Include="Runtime\Scripting\ScriptNet\ProcessScript.cs" />
+    <Compile Include="Runtime\Scripting\ScriptNet\ScriptNetProcessScriptManager.cs" />
+    <Compile Include="Runtime\Scripting\ScriptNet\TaskScript.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskBase.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskFactory.cs" />
     <Compile Include="DataBinding.cs" />
@@ -125,7 +153,10 @@
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />
+    <Compile Include="Services\IProcessScript.cs" />
+    <Compile Include="Services\IProcessScriptManager.cs" />
     <Compile Include="Services\ITaskCorrelationIdResolver.cs" />
+    <Compile Include="Services\ITaskScript.cs" />
     <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>

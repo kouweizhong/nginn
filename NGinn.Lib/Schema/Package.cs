@@ -6,6 +6,7 @@ using System.Xml;
 using NGinn.Lib.Services;
 using NLog;
 using NGinn.Lib.Data;
+using NGinn.Lib.Interfaces;
 
 namespace NGinn.Lib.Schema
 {
@@ -22,7 +23,7 @@ namespace NGinn.Lib.Schema
         private string _name;
         private List<string> _schemaFiles = new List<string>();
         private List<string> _processFiles = new List<string>();
-        private IPackageDataStore _ds;
+        private IProcessPackageStore _ds;
         private TypeSet _packageTypes = new TypeSet();
         
 
@@ -32,11 +33,6 @@ namespace NGinn.Lib.Schema
         /// </summary>
         private Dictionary<string, List<ProcessDefInformation>> _processInfoCache = null;
         
-        /// <summary>
-        /// process definition cache. Not serialized to save bandwidth.
-        /// </summary>
-        [NonSerialized]
-        private Dictionary<string, ProcessDefinition> _definitionCache = null;
 
         private static Logger log = LogManager.GetCurrentClassLogger();
 
@@ -56,7 +52,7 @@ namespace NGinn.Lib.Schema
             get { return _processFiles; }
         }
 
-        protected IPackageDataStore DataStore
+        protected IProcessPackageStore DataStore
         {
             get { return _ds; }
             set { _ds = value; }
@@ -68,6 +64,15 @@ namespace NGinn.Lib.Schema
         public TypeSet PackageTypes
         {
             get { return _packageTypes; }
+        }
+
+        public void Load(IProcessPackageStore store)
+        {
+            DataStore = store;
+            using (Stream stm = store.GetPackageDefinitionStream())
+            {
+                LoadXml(stm);
+            }
         }
 
         protected void LoadXml(Stream xmlStm)
@@ -128,6 +133,43 @@ namespace NGinn.Lib.Schema
             return versions;
         }
 
+        protected ProcessDefInformation GetProcessInfo(string procName, int version)
+        {
+            List<ProcessDefInformation> lst;
+            if (!ProcessInfoCache.TryGetValue(procName, out lst)) throw new ApplicationException("Invalid process name");
+            foreach (ProcessDefInformation pdi in lst)
+            {
+                if (pdi.Version == version)
+                    return pdi;
+            }
+            return null;
+        }
+
+        protected ProcessDefInformation GetProcessInfo(string procFullName)
+        {
+            int idx = procFullName.IndexOf('.');
+            int ver = -1;
+            string name = procFullName;
+            if (idx > 0)
+            {
+                name = procFullName.Substring(0, idx);
+                ver = Int32.Parse(procFullName.Substring(idx + 1));
+            }
+            return GetProcessInfo(name, ver);
+        }
+
+        public string GetProcessFileName(string procName, int version)
+        {
+            ProcessDefInformation pdi = GetProcessInfo(procName, version);
+            return pdi == null ? null : pdi.FileName;
+        }
+
+        public string GetProcessFileName(string procFullName)
+        {
+            ProcessDefInformation pdi = GetProcessInfo(procFullName);
+            return pdi == null ? null : pdi.FileName;
+        }
+
         /// <summary>
         /// Return process definition for given name.version
         /// If version is not specified, default version is returned
@@ -136,67 +178,10 @@ namespace NGinn.Lib.Schema
         /// <returns></returns>
         public ProcessDefinition GetProcessDefinition(string name)
         {
-            int ver = -1;
-            string nameBase = name;
-            int idx = name.IndexOf('.');
-            if (idx >= 0)
-            {
-                ver = Int32.Parse(name.Substring(idx + 1));
-                nameBase = name.Substring(0, idx);
-            }
-            else
-            {
-                ver = -1;
-            }
-            List<ProcessDefInformation> lpdi;
-            if (!ProcessInfoCache.TryGetValue(nameBase, out lpdi))
-            {
-                throw new ApplicationException("Process not found: " + nameBase);
-            }
-            ProcessDefInformation pdi = null;
-            if (ver < 0)
-                pdi = lpdi[lpdi.Count - 1];
-            else
-            {
-                foreach (ProcessDefInformation p in lpdi)
-                {
-                    if (p.Version == ver)
-                    {
-                        pdi = p;
-                        break;
-                    }
-                }
-            }
-            if (pdi == null) throw new ApplicationException(string.Format("Process version not found: {0}", name));
-            return GetProcessDefinition(pdi);
+            return DataStore.GetProcessDefinition(name);
         }
 
-        /// <summary>
-        /// Get specified process definition
-        /// Load from file if necessary.
-        /// </summary>
-        /// <param name="pdi"></param>
-        /// <returns></returns>
-        protected ProcessDefinition GetProcessDefinition(ProcessDefInformation pdi)
-        {
-            lock (this)
-            {
-                if (_definitionCache == null)
-                    _definitionCache = new Dictionary<string, ProcessDefinition>();
-                ProcessDefinition pd;
-                string name = string.Format("{0}.{1}.{2}", PackageName, pdi.Name, pdi.Version);
-                if (_definitionCache.TryGetValue(name, out pd)) return pd;
-                log.Info("Will load process definition {0}.{1} from file {2}", pdi.Name, pdi.Version, pdi.FileName);
-                pd = new ProcessDefinition();
-                using (Stream stm = DataStore.GetPackageContentStream(pdi.FileName))
-                {
-                    pd.Package = this;
-                    pd.Load(stm);
-                }
-                _definitionCache[name] = pd;
-                return pd;
-            }
-        }
+        
 
         public string GetSchema(string schemaFile)
         {
@@ -242,21 +227,7 @@ namespace NGinn.Lib.Schema
             }
         }
 
-        /// <summary>
-        /// Load package definition from given data store
-        /// </summary>
-        /// <param name="ds"></param>
-        /// <returns></returns>
-        public static PackageDefinition Load(IPackageDataStore ds)
-        {
-            PackageDefinition pd = new PackageDefinition();
-            pd._ds = ds;
-            using (Stream stm = ds.GetPackageDefinitionStream())
-            {
-                pd.LoadXml(stm);
-            }
-            return pd;
-        }
+        
 
         protected Dictionary<String, List<ProcessDefInformation>> ProcessInfoCache
         {

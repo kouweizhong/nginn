@@ -53,6 +53,11 @@ namespace NGinn.Engine
             get;
         }
 
+        IProcessScriptManager ScriptManager
+        {
+            get;
+        }
+
         IDictionary EnvironmentVariables { get; }
     }
 }

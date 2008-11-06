@@ -7,7 +7,7 @@ using NGinn.Lib.Interfaces;
 using NLog;
 using System.Reflection;
 using System.Diagnostics;
-using ScriptNET;
+using NGinn.Engine.Services;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -101,8 +101,14 @@ namespace NGinn.Engine.Runtime.Tasks
         /// </summary>
         /// <param name="variables"></param>
         /// <returns></returns>
-        protected IScriptContext CreateScriptContext(IDataObject variables)
+        protected ITaskScript CreateScriptContext(IDataObject sourceData)
         {
+            ITaskScript scr = Context.EnvironmentContext.ScriptManager.GetTaskScript(Context.TaskDefinition.ParentProcess, Context.TaskDefinition.Id);
+            scr.SourceData = sourceData;
+            scr.TaskContext = Context;
+            scr.TaskInstance = this;
+            return scr;
+            /*
             IScriptContext ctx = new ScriptContext();
             DataObject env = new DataObject(Context.EnvironmentContext.EnvironmentVariables);
             env["log"] = log;
@@ -118,6 +124,7 @@ namespace NGinn.Engine.Runtime.Tasks
                 }
             }
             return ctx;
+            */
         }
 
 
@@ -228,8 +235,9 @@ namespace NGinn.Engine.Runtime.Tasks
             foreach(TaskParameterInfo tpi in inputs) paramDict[tpi.Name] = tpi;
 
             IList<TaskParameterBinding> bindings = Context.TaskDefinition.ParameterBindings;
-            IScriptContext ctx = CreateScriptContext(inputData);
-
+            
+            ITaskScript tscr = CreateScriptContext(inputData);
+           
             foreach (TaskParameterBinding tb in bindings)
             {
                 TaskParameterInfo tpi;
@@ -242,6 +250,9 @@ namespace NGinn.Engine.Runtime.Tasks
                 }
                 else if (tb.BindingType == TaskParameterBinding.ParameterBindingType.Expr)
                 {
+                    object val = tscr.GetInputParameterValue(tb.PropertyName);
+                    SetTaskParameterValue(tb.PropertyName, val);
+                    /*
                     string code = tb.BindingExpression.Trim();
                     if (!code.EndsWith(";")) code += ";";
                     try
@@ -253,6 +264,7 @@ namespace NGinn.Engine.Runtime.Tasks
                     {
                         throw new ApplicationException(string.Format("Failed to evaluate binding of parameter '{0}' in task '{1}'", tb.PropertyName, this.CorrelationId), ex);
                     }
+                    */
                 }
                 else throw new Exception("Binding type not supported: " + tb.BindingType);
                 paramDict.Remove(tpi.Name);
@@ -274,8 +286,7 @@ namespace NGinn.Engine.Runtime.Tasks
             StructDef sd = Context.TaskDefinition.GetTaskInputDataSchema();
             inputData.Validate(sd);
             DataObject taskData = new DataObject();
-            IScriptContext ctx = this.CreateScriptContext(null); 
-            ctx.SetItem("data", ContextItem.Variable, new DOBMutant(taskData));
+            ITaskScript ts = CreateScriptContext(taskData);
 
             foreach (VariableDef vd in Context.TaskDefinition.TaskVariables)
             {
@@ -288,9 +299,8 @@ namespace NGinn.Engine.Runtime.Tasks
                 {
                     if (vd.DefaultValueExpr != null && vd.DefaultValueExpr.Length > 0)
                     {
-                        string code = vd.DefaultValueExpr.Trim();
-                        if (!code.EndsWith(";")) code += ";";
-                        taskData[vd.Name] = Script.RunCode(code, ctx);
+                        object defVal = ts.GetDefaultVariableValue(vd.Name);
+                        taskData[vd.Name] = defVal;
                     }
                 }
             }

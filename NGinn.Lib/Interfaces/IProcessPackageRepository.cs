@@ -15,5 +15,6 @@ namespace NGinn.Lib.Interfaces
         }
 
         PackageDefinition GetPackage(string name);
+        ProcessDefinition GetProcess(string name);
     }
 }

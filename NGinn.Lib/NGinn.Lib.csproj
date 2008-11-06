@@ -38,6 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\lib\NGinn.Lib.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -83,6 +84,7 @@
     <Compile Include="Interfaces\INGEnvironmentProcessCommunication.cs" />
     <Compile Include="Interfaces\INGinnPersistent.cs" />
     <Compile Include="Interfaces\IProcessPackageRepository.cs" />
+    <Compile Include="Interfaces\IProcessPackageStore.cs" />
     <Compile Include="Interfaces\IResourceManager.cs" />
     <Compile Include="Interfaces\Worklist\ITaskInformationProvider.cs" />
     <Compile Include="Interfaces\MessageBus\IMessageBus.cs" />
@@ -109,7 +111,9 @@
     <Compile Include="Schema\VariableBinding.cs" />
     <Compile Include="Schema\XmlHttpTask.cs" />
     <Compile Include="Services\FSPackageDataStore.cs" />
+    <Compile Include="Services\FSProcessPackageLoader.cs" />
     <Compile Include="Services\IPackageDataStore.cs" />
+    <Compile Include="Services\ProcessPackageStore.cs" />
     <Compile Include="Util\DefaultConfigProvider.cs" />
     <Compile Include="Util\XmlConst.cs" />
   </ItemGroup>

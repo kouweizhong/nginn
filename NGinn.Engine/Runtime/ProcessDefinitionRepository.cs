@@ -8,6 +8,10 @@ using NGinn.Lib.Interfaces;
 
 namespace NGinn.Engine.Runtime
 {
+    /// <summary>
+    /// This class is obsolete and should be replaced by process package repository
+    /// 
+    /// </summary>
     public class ProcessDefinitionRepository : IProcessDefinitionRepository
     {
         private IProcessPackageRepository _packageRepository;

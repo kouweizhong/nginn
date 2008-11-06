@@ -6,19 +6,19 @@ using NGinn.Engine;
 using NGinn.Lib.Schema;
 using NGinn.Lib.Data;
 using NGinn.Lib.Interfaces;
-using ScriptNET;
 using System.Diagnostics;
 using System.Collections;
+using NGinn.Engine.Services;
 
 namespace NGinn.Engine.Runtime
 {
     public enum TransitionStatus
     {
-        ENABLED,    //transition task created & offered (also for deferred choice to be selected)
-        STARTED,    //transition task started (deferred choice alternative has been selected)
-        COMPLETED,  //task finished
-        CANCELLED,  //task cancelled (other transition sharing the same token fired)
-        ERROR,      //task did not complete due to error
+        ENABLED,    ///transition task created & offered (also for deferred choice to be selected)
+        STARTED,    ///transition task started (deferred choice alternative has been selected)
+        COMPLETED,  ///task finished
+        CANCELLED,  ///task cancelled (other transition sharing the same token fired)
+        ERROR,      ///task did not complete due to error
     }
     /// <summary>
     /// Task shell wraps active task instance providing common interface between task instance and
@@ -160,7 +160,7 @@ namespace NGinn.Engine.Runtime
         /// <summary>
         /// Enable the transition.
         /// </summary>
-        /// <param name="sourceData"></param>
+        /// <param name="sourceData">Process instance data</param>
         public virtual void InitiateTask(IDataObject sourceData)
         {
             RequireActivation(true);
@@ -193,16 +193,39 @@ namespace NGinn.Engine.Runtime
         /// <returns></returns>
         protected DataObject PrepareTaskInputData(IDataObject sourceData)
         {
-            IScriptContext ctx = CreateTaskScriptContext(sourceData);
+            ITaskScript scr = CreateTaskScriptContext(sourceData);
             DataObject taskInput = new DataObject();
-            DataBinding.ExecuteDataBinding(taskInput, TaskDefinition.InputBindings, ctx);
+            foreach (VariableBinding vb in TaskDefinition.InputBindings)
+            {
+                if (vb.BindingType == VariableBinding.VarBindingType.CopyVar)
+                {
+                    taskInput[vb.VariableName] = sourceData[vb.BindingExpression];
+                }
+                else if (vb.BindingType == VariableBinding.VarBindingType.Expr)
+                {
+                    taskInput[vb.VariableName] = scr.EvalInputVariableBinding(vb.VariableName);
+                }
+                else throw new Exception("Binding type not supported");
+            }
             return taskInput;
         }
 
         protected void TransferTaskOutputDataToParent(IDataObject taskOutputData, IDataObject targetObj)
         {
-            IScriptContext ctx = CreateTaskScriptContext(taskOutputData);
-            DataBinding.ExecuteDataBinding(targetObj, TaskDefinition.OutputBindings, ctx);
+            ITaskScript scr = CreateTaskScriptContext(taskOutputData);
+            
+            foreach (VariableBinding vb in TaskDefinition.OutputBindings)
+            {
+                if (vb.BindingType == VariableBinding.VarBindingType.CopyVar)
+                {
+                    targetObj[vb.VariableName] = taskOutputData[vb.BindingExpression];
+                }
+                else if (vb.BindingType == VariableBinding.VarBindingType.Expr)
+                {
+                    targetObj[vb.VariableName] = scr.EvalOutputVariableBinding(vb.VariableName);
+                }
+                else throw new Exception("Binding type not supported");
+            }
         }
 
         public virtual void TransferTaskOutputDataToParent(IDataObject target)
@@ -212,14 +235,11 @@ namespace NGinn.Engine.Runtime
             TransferTaskOutputDataToParent(this.TaskOutputData, target);
         }
 
-        protected IScriptContext CreateTaskScriptContext(IDataObject variables)
+        protected ITaskScript CreateTaskScriptContext(IDataObject variables)
         {
-            IScriptContext ctx = new ScriptContext();
-            foreach (string fn in variables.FieldNames)
-            {
-                ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
-            }
-            return ctx;
+            ITaskScript scr = this.EnvironmentContext.ScriptManager.GetTaskScript(ParentProcess.Definition, TaskId);
+            scr.SourceData = variables;
+            return scr;
         }
 
         public virtual void Activate()

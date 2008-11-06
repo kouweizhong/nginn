@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NGinn.RippleBoo;
+using Boo.Lang.Interpreter;
 
 namespace NGinnTest
 {
@@ -36,8 +37,12 @@ namespace NGinnTest
 
             for (int i = 0; i < 10; i++)
             {
+                if (vars.ContainsKey("Counter")) vars.Remove("Counter");
+                vars["Counter"] = i;
                 rr.EvaluateRules("myrules.boo", vars, ctx);
             }
         }
+
+        
     }
 }

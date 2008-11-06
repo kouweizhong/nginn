@@ -40,6 +40,7 @@ namespace NGinn.XmlFormsWWW
             string pkgid = dt[0];
             string schema = dt[1];
             string xml = null;
+            /*
             if (string.Compare(schema, "input", true) == 0)
             {
                 xml = pdr.GetProcessInputSchema(pkgid);
@@ -72,6 +73,7 @@ namespace NGinn.XmlFormsWWW
                 else throw new Exception("Expected /task/<taskid>/[input|output|internal]");
             }
             else throw new Exception("Expected /<definition Id>/[input|output|internal|task]");
+            */
             Response.ContentType = "text/xml";
             Response.Output.Write(xml);
             Response.End();

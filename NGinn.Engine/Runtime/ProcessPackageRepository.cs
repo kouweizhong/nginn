@@ -13,14 +13,30 @@ namespace NGinn.Engine.Runtime
 {
     /// <summary>
     /// Package repository storing packages in a directory
+    /// Handles script compilation on process definition reload
     /// </summary>
     public class FSProcessPackageRepository : IProcessPackageRepository
     {
         private string _baseDir;
-        
-        private Dictionary<string, PackageDefinition> _packageCache;
 
+        private class PackageInfo
+        {
+            public ProcessPackageStore PackageStore;
+        }
+
+        private Dictionary<string, PackageInfo> _packageCache;
         private Logger log = LogManager.GetCurrentClassLogger();
+
+        private IProcessScriptManager _scriptManager;
+
+        /// <summary>
+        /// Script manager for the repository
+        /// </summary>
+        public IProcessScriptManager ScriptManager
+        {
+            get { return _scriptManager; }
+            set { _scriptManager = value; }
+        }
 
         #region IProcessPackageRepository Members
         public IList<string> PackageNames
@@ -41,7 +57,7 @@ namespace NGinn.Engine.Runtime
         private void ScanForPackages()
         {
             log.Info("Scanning directory {0} for packages", _baseDir);
-            Dictionary<string, PackageDefinition> names = new Dictionary<string, PackageDefinition>();
+            Dictionary<string, PackageInfo> names = new Dictionary<string, PackageInfo>();
             
             if (Directory.Exists(_baseDir))
             {
@@ -51,10 +67,13 @@ namespace NGinn.Engine.Runtime
                     log.Info("Found package file {0}", pkg);
                     try
                     {
-                        FSPackageDataStore ds = new FSPackageDataStore(pkg);
-                        PackageDefinition pd = PackageDefinition.Load(ds);
+                        ProcessPackageStore ps = new ProcessPackageStore(pkg);
+                        PackageDefinition pd = ps.GetPackageDefinition();
                         log.Info("Successfully loaded package {0} from {1}", pd.PackageName, pkg);
-                        names[pd.PackageName] = pd;
+                        PackageInfo pi = new PackageInfo();
+                        pi.PackageStore = ps;
+                        pi.PackageStore.ProcessReload += new ProcessPackageStore.ProcessReloadingDelegate(PackageStore_ProcessReload);
+                        names[pd.PackageName] = pi;
                     }
                     catch (Exception ex)
                     {
@@ -65,6 +84,17 @@ namespace NGinn.Engine.Runtime
             _packageCache = names;
         }
 
+        void PackageStore_ProcessReload(ProcessDefinition pd)
+        {
+            if (ScriptManager != null)
+            {
+                ScriptManager.ProcessDefinitionUpdated(pd);
+            }
+        }
+
+        /// <summary>
+        /// Process repository location
+        /// </summary>
         public string BaseDirectory
         {
             get { return _baseDir; }
@@ -83,8 +113,18 @@ namespace NGinn.Engine.Runtime
             {
                 if (_packageCache == null) ScanForPackages();
                 if (!_packageCache.ContainsKey(name)) throw new ApplicationException("Unknown package: " + name);
-                return _packageCache[name];
+                PackageInfo pi = _packageCache[name];
+                return pi.PackageStore.GetPackageDefinition();
             }
+        }
+
+        public ProcessDefinition GetProcess(string name)
+        {
+            int idx = name.IndexOf('.');
+            string pkgName = name.Substring(0, idx);
+            PackageDefinition pkg = GetPackage(pkgName);
+            if (pkg == null) throw new Exception("Package not found: " + pkgName);
+            return pkg.GetProcessDefinition(name.Substring(idx + 1));
         }
 
         #endregion

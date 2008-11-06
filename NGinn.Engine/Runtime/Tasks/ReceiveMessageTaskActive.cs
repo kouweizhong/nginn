@@ -23,6 +23,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public ReceiveMessageTaskActive(Task tsk)
             : base(tsk)
         {
+            
         }
 
         private string _messageCorrelationId = null;
