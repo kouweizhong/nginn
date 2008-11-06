@@ -85,7 +85,16 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 
         public object GetDefaultVariableValue(string variableName)
         {
-            return null;
+            string key = "DefaultVariableValue_" + variableName;
+            return ExecuteScript(key, delegate()
+            {
+                foreach (VariableDef vd in _pd.ProcessVariables)
+                {
+                    if (vd.Name == variableName)
+                        return vd.DefaultValueExpr;
+                }
+                return null;
+            });
         }
 
 

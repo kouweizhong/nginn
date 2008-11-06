@@ -299,26 +299,11 @@ namespace NGinn.Engine
         protected internal IProcessScript CreateProcessScriptContext()
         {
             IProcessScript ps = Environment.ScriptManager.GetProcessScript(Definition);
+            ps.Instance = this;
+            ps.EnvironmentContext = this.Environment;
+            ps.ProcessData = GetProcessDataSource();
             return ps;
-            /*
-            IScriptContext ctx = new ScriptContext();
-            DataObject env = new DataObject(Environment.EnvironmentVariables);
-            env["log"] = log;
-            env["messageBus"] = Environment.MessageBus;
-            env["environment"] = Environment;
-            env["processDefinition"] = Definition;
-            ctx.SetItem("__env", ContextItem.Variable, env);
             
-            IDataObject variables = GetProcessDataSource();
-            if (variables != null)
-            {
-                foreach (string fn in variables.FieldNames)
-                {
-                    ctx.SetItem(fn, ContextItem.Variable, variables[fn]);
-                }
-            }
-            return ctx;
-            */
         }
 
         

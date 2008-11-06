@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process version="1" name="ScriptTest" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
+    <!-- 
+    Date: 2008-11-06
+    Scripting test
+    -->
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  <tasks>
+    <task id="t1" type="ScriptTask">
+        <parameters>
+            <binding parameter="ScriptBody"><value><![CDATA[
+            log.Info('I am the T1 script task');
+            ]]></value>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+             </variables>
+            <input-bindings>
+            </input-bindings>
+        </data-definition>
+    </task>
+  </tasks>
+  <flows>
+    <flow from="start" to="t1" />
+    <flow from="t1" to="end" />
+    </flows>
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+		<variable name="userName" type="string" required="true" dir="In" />
+        <variable name="optionalInfo" type="string" required="false" dir="In">
+            <defaultValue><![CDATA[return 'jest: ' + DateTime.Now.ToString();]]></defaultValue>
+        </variable>
+    </variables>
+</process>

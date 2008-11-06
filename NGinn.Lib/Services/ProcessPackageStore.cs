@@ -14,7 +14,7 @@ namespace NGinn.Lib.Services
     /// Process package store.
     /// Handles loading package files and process definitions.
     /// </summary>
-    public class ProcessPackageStore : IProcessPackageStore
+    public class ProcessPackageStore : MarshalByRefObject, IProcessPackageStore
     {
         private Logger log = LogManager.GetCurrentClassLogger();
         private string _pkgFile;

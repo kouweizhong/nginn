@@ -33,7 +33,7 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 
         public IProcessScript GetProcessScript(NGinn.Lib.Schema.ProcessDefinition pd)
         {
-            return null;
+            return new ProcessScript(this, pd);
         }
 
         public ITaskScript GetTaskScript(NGinn.Lib.Schema.ProcessDefinition pd, string taskId)

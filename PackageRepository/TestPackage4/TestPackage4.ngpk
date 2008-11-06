@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package name="TestPackage4" xmlns="http://www.nginn.org/PackageDefinition.1_0">
+	<dataSchemas>
+		<!--<schema>Types.xsd</schema>-->
+	</dataSchemas>
+	<processDefinitions>
+        <process>ScriptTest.1.xml</process>
+	</processDefinitions>
+</package>

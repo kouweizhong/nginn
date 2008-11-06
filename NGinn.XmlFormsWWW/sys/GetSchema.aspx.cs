@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Spring.Context;
-using NGinn.Engine.Services;
+using NGinn.Lib.Interfaces;
 using NGinn.Lib.Schema;
 
 
@@ -27,7 +27,7 @@ namespace NGinn.XmlFormsWWW
         protected void Page_Load(object sender, EventArgs e)
         {
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)ctx.GetObject("ProcessDefinitionRepository");
+            IProcessPackageRepository rep = (IProcessPackageRepository)ctx.GetObject("PackageRepository");
             
             string pth = Request.PathInfo;
             if (pth.StartsWith("/")) pth = pth.Substring(1);
@@ -40,40 +40,43 @@ namespace NGinn.XmlFormsWWW
             string pkgid = dt[0];
             string schema = dt[1];
             string xml = null;
-            /*
+            ProcessDefinition pd = rep.GetProcess(pkgid);
+
+            
             if (string.Compare(schema, "input", true) == 0)
             {
-                xml = pdr.GetProcessInputSchema(pkgid);
+                xml = pd.GetProcessInputXmlSchema();
             }
             else if (String.Compare(schema, "output", true) == 0)
             {
-                xml = pdr.GetProcessOutputSchema(pkgid);
+                xml = pd.GetProcessOutputXmlSchema();
             }
             else if (string.Compare(schema, "internal", true) == 0)
             {
-                xml = pdr.GetProcessInternalDataSchema(pkgid);
+                throw new NotImplementedException();
             }
             else if (string.Compare(schema, "task", true) == 0)
             {
                 if (dt.Length < 4) throw new Exception("Expected task ID");
                 string taskId = dt[2];
+                Task tsk = pd.GetTask(taskId);
                 string sch2 = dt[3];
                 if (String.Compare(sch2, "input", true) == 0)
                 {
-                    xml = pdr.GetTaskInputSchema(pkgid, taskId);
+                    throw new NotImplementedException();
                 }
                 else if (String.Compare(sch2, "output", true) == 0)
                 {
-                    xml = pdr.GetTaskOutputSchema(pkgid, taskId);
+                    throw new NotImplementedException();
                 }
                 else if (String.Compare(sch2, "internal", true) == 0)
                 {
-                    xml = pdr.GetTaskInternalDataSchema(pkgid, taskId);
+                    throw new NotImplementedException();
                 }
                 else throw new Exception("Expected /task/<taskid>/[input|output|internal]");
             }
             else throw new Exception("Expected /<definition Id>/[input|output|internal|task]");
-            */
+            
             Response.ContentType = "text/xml";
             Response.Output.Write(xml);
             Response.End();
