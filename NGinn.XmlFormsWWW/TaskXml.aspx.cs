@@ -58,9 +58,9 @@ namespace NGinn.XmlFormsWWW
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment");
             DataObject dob = env.GetTaskData(tsk.CorrelationId.Value);
-            IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)ctx.GetObject("ProcessDefinitionRepository");
+            IProcessPackageRepository pdr = (IProcessPackageRepository)ctx.GetObject("PackageRepository");
             TaskInstanceInfo ti = env.GetTaskInstanceInfo(tsk.CorrelationId.Value);
-            NG.ProcessDefinition pd = pdr.GetProcessDefinition(ti.ProcessDefinitionId);
+            NG.ProcessDefinition pd = pdr.GetProcess(ti.ProcessDefinitionId);
             NG.Task ntsk = pd.GetTask(ti.TaskId);
 
             xw.WriteStartElement("NGinnTaskData");

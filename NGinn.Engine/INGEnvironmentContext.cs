@@ -10,9 +10,12 @@ using System.Collections;
 
 namespace NGinn.Engine
 {
+    /// <summary>
+    /// Environment context - aggregates services accessible to process and task instances.
+    /// </summary>
     public interface INGEnvironmentContext
     {
-        IProcessDefinitionRepository DefinitionRepository
+        IProcessPackageRepository PackageRepository
         {
             get;
         }

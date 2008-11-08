@@ -49,7 +49,7 @@ namespace NGinn.XmlFormsWWW
             {
                 IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
                 INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment");
-                IProcessDefinitionRepository pdr = (IProcessDefinitionRepository)ctx.GetObject("ProcessDefinitionRepository");
+                IProcessPackageRepository pdr = (IProcessPackageRepository)ctx.GetObject("PackageRepository");
                 int taskId;
                 using (SoodaTransaction st = new SoodaTransaction(typeof(Task).Assembly))
                 {

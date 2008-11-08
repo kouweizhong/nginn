@@ -65,7 +65,6 @@
   <ItemGroup>
     <Compile Include="ProcessInstanceXmlRepository.cs" />
     <Compile Include="NGDataStore.cs" />
-    <Compile Include="ProcessDefinitionRepository.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />
     <Compile Include="ProcessMessageTargetResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

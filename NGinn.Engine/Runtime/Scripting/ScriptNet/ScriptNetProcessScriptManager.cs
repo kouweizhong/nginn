@@ -11,6 +11,8 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
     
     public class ScriptNetProcessScriptManager : IProcessScriptManager
     {
+        private Logger log = LogManager.GetCurrentClassLogger();
+
         class ProcessScriptCache
         {
             public string DefinitionId;
@@ -23,11 +25,13 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 
         public void ProcessDefinitionUpdated(NGinn.Lib.Schema.ProcessDefinition pd)
         {
+            log.Info("Process {0} updated, removing cached scripts", pd.DefinitionId);
             _cache.Remove(pd.DefinitionId);
         }
 
         public void PackageDefinitionUpdated(NGinn.Lib.Schema.PackageDefinition pd)
         {
+            log.Info("Package {0} updated, removing cached scripts", pd.PackageName);
             _cache.Clear();
         }
 

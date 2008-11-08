@@ -35,10 +35,21 @@ namespace NGinn.Lib.Interfaces.MessageBus
     public delegate void MessageHandler(object msg, IMessageContext ctx);
 
     
-
+    /// <summary>
+    /// Message bus interface
+    /// </summary>
     public interface IMessageBus
     {
+        /// <summary>
+        /// Send a message to local message bus 
+        /// </summary>
+        /// <param name="sender">message sender. not very useful now...</param>
+        /// <param name="topic">message topic. Any string, subscribers can filter messages by topic</param>
+        /// <param name="msg">message to be sent. Should be serializable if sent asynchronously.</param>
+        /// <param name="async">false - process message synchronously, true - send message asynchronously</param>
+        /// <returns></returns>
         object Notify(string sender, string topic, object msg, bool async);
+
         /// <summary>
         /// Subscribe for specified message type and topic
         /// </summary>

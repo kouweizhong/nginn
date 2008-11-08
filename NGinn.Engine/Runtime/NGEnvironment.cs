@@ -26,7 +26,7 @@ namespace NGinn.Engine.Runtime
     {
         private Spring.Context.IApplicationContext _appCtx;
         private static Logger log = LogManager.GetCurrentClassLogger();
-        private IProcessDefinitionRepository _definitionRepository;
+        private IProcessPackageRepository _packageRepository;
         private IProcessInstanceRepository _instanceRepository;
         private IWorkListService _worklistService;
         private IProcessInstanceLockManager _lockManager;
@@ -46,10 +46,10 @@ namespace NGinn.Engine.Runtime
         /// <summary>
         /// Environment's process definition repository
         /// </summary>
-        public IProcessDefinitionRepository DefinitionRepository
+        public IProcessPackageRepository PackageRepository
         {
-            get { return _definitionRepository; }
-            set { _definitionRepository = value; }
+            get { return _packageRepository; }
+            set { _packageRepository = value; }
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace NGinn.Engine.Runtime
         {
             try
             {
-                ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
+                ProcessDefinition pd = PackageRepository.GetProcess(definitionId);
                 if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
                 StructDef sd = pd.GetProcessInputDataSchema();
                 inputData.Validate(sd);
@@ -197,7 +197,7 @@ namespace NGinn.Engine.Runtime
         {
             try
             {
-                ProcessDefinition pd = _definitionRepository.GetProcessDefinition(definitionId);
+                ProcessDefinition pd = PackageRepository.GetProcess(definitionId);
                 if (pd == null) throw new ApplicationException("Process definition not found: " + definitionId);
                 pd.ValidateProcessInputXml(inputXml);
                 using (TransactionScope ts = new TransactionScope(_transactionOption))

@@ -137,7 +137,6 @@
     <Compile Include="ProcessInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\LocalProcessInstanceLockManager.cs" />
-    <Compile Include="Runtime\ProcessDefinitionRepository.cs" />
     <Compile Include="Runtime\ProcessPackageRepository.cs" />
     <Compile Include="Runtime\Tasks\ReceiveMessageTaskActive.cs" />
     <Compile Include="Runtime\Tasks\ScriptTaskActive.cs" />
@@ -149,7 +148,6 @@
     <Compile Include="Services\Dao\INGDataStore.cs" />
     <Compile Include="Runtime\NGEnvironment.cs" />
     <Compile Include="Services\IActiveTaskFactory.cs" />
-    <Compile Include="Services\IProcessDefinitionRepository.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />

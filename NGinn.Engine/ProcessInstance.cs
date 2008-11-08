@@ -476,7 +476,7 @@ namespace NGinn.Engine
             if (Environment == null) throw new Exception("Environment not initialized. Please set the 'Environment' property");
             log = LogManager.GetLogger(string.Format("ProcessInstance.{0}", InstanceId));
             
-            _definition = Environment.DefinitionRepository.GetProcessDefinition(ProcessDefinitionId);
+            _definition = Environment.PackageRepository.GetProcess(ProcessDefinitionId);
             
             foreach (TaskShell at in _activeTransitions.Values)
             {
