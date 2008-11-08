@@ -7,7 +7,7 @@ namespace NGinn.Lib.Data
 {
     public class DataMutantConverter
     {
-        public static Mutant ToMutant(DataObject dob)
+        public static IMutant ToMutant(DataObject dob)
         {
             DataMutant dm = new DataMutant(dob, DataMutantBehavior.CreateMutantField);
             foreach (string name in dob.Keys)
@@ -22,7 +22,7 @@ namespace NGinn.Lib.Data
             return dm;
         }
 
-        public static DataObject ToDataObject(Mutant mut)
+        public static DataObject ToDataObject(IMutant mut)
         {
             DataObject dob = new DataObject();
             string[] fields = mut.GetMutantFields();

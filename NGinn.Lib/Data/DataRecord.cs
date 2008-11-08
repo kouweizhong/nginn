@@ -6,7 +6,7 @@ using NLog;
 
 namespace NGinn.Lib.Data
 {
-    public class DataRecord : DataMutant, Mutant
+    public class DataRecord : DataMutant, IMutant
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
 

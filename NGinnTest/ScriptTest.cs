@@ -110,7 +110,7 @@ namespace NGinnTest
             dob["ala"] = "kot";
             DataObject dob2 = new DataObject();
             dob2["dob"] = dob;
-            Mutant mut = new DOBMutant(dob2); // DataMutantConverter.ToMutant(dob2);
+            IMutant mut = new DOBMutant(dob2); // DataMutantConverter.ToMutant(dob2);
             //Script scr = Script.Compile("dob2.dob.ala;");
             //IScriptContext sc = scr.Context;
             IScriptContext sc = new ScriptContext();
@@ -124,7 +124,7 @@ namespace NGinnTest
         {
             DataObject dob = new DataObject();
             dob["ala"] = "Kot";
-            Mutant mut = new DOBMutant(dob);
+            IMutant mut = new DOBMutant(dob);
             IScriptContext ctx = new ScriptContext();
             ctx.SetItem("dob", ContextItem.Variable, mut);
             Script.RunCode("dob.kot = 'ma ale';", ctx);
@@ -150,7 +150,7 @@ namespace NGinnTest
             }
             log.Info("1000 compilations: {0}", DateTime.Now - st);
             Script scr = Script.Compile("dob.data = 'kot to zwierze';\nlog.Info('dob.kot.data={0}', dob.kot.data);");
-            Mutant mut = DataMutantConverter.ToMutant(dob);
+            IMutant mut = DataMutantConverter.ToMutant(dob);
             
             
         }

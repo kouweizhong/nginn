@@ -9,10 +9,10 @@
     <place id="end" type="EndPlace"></place>
   </places>
   <tasks>
-    <task id="t1" type="ScriptTask">
+    <task id="t1" type="ScriptTask" splitType="XOR">
         <parameters>
             <binding parameter="ScriptBody"><value><![CDATA[
-            log.Info('I am the T1 script task, started at {0}', Data.startedDate);
+            log.Info('I am the T1 script task, started at {0}', data.startedDate);
             ]]></value>
             </binding>
         </parameters>
@@ -27,10 +27,41 @@
             </input-bindings>
         </data-definition>
     </task>
+    
+    <task id="t2" type="ScriptTask" joinType="XOR">
+        <parameters>
+            <binding parameter="ScriptBody"><value><![CDATA[
+            log.Info('I am the T1 script task, started at {0}', data.startedDate);
+            ]]></value>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="startedDate" type="date" required="true" dir="In" />
+                <variable name="someResult" type="string" required="true" dir="Out">
+                    <defaultValue>'a to ten result!'</defaultValue>
+                </variable>
+             </variables>
+            <input-bindings>
+                <binding variable="startedDate" bindingType="Expr">
+                    <expression>DateTime.Now</expression>
+                </binding>
+            </input-bindings>
+            <output-bindings>
+                <binding variable="localInfo" bindingType="Expr">
+                    <expression>data.startedDate</expression>
+                </binding>
+            </output-bindings>
+        </data-definition>
+    </task>
   </tasks>
   <flows>
     <flow from="start" to="t1" />
+    <flow from="t1" to="t2">
+        <inputCondition><![CDATA[data.userName.StartsWith('j')]]></inputCondition>
+    </flow>
     <flow from="t1" to="end" />
+    <flow from="t2" to="end" />
     </flows>
     <processDataTypes>
     </processDataTypes>
@@ -39,5 +70,6 @@
         <variable name="optionalInfo" type="string" required="false" dir="In">
             <defaultValue><![CDATA[return 'jest: ' + DateTime.Now.ToString();]]></defaultValue>
         </variable>
+        <variable name="localInfo" type="string" required="false" dir="Local" />
     </variables>
 </process>

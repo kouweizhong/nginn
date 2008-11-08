@@ -52,8 +52,10 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
         private IScriptContext GetScriptContext()
         {
             ScriptContext sc = new ScriptContext();
-            sc.SetItem("Data", ContextItem.Variable, ProcessData);
-            sc.SetItem("ProcessDef", ContextItem.Variable, _pd);
+            sc.SetItem("data", ContextItem.Variable, new DOBMutant(ProcessData));
+            sc.SetItem("definition", ContextItem.Variable, _pd);
+            sc.SetItem("instance", ContextItem.Variable, _pi);
+            sc.SetItem("envCtx", ContextItem.Variable, EnvironmentContext); 
             sc.SetItem("log", ContextItem.Variable, log);
             return sc;
         }
@@ -100,7 +102,12 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 
         public object EvaluateFlowInputCondition(Flow fl)
         {
-            throw new NotImplementedException();
+            string key = string.Format("Flow_{0}_{1}", fl.From.Id, fl.To.Id);
+
+            return ExecuteScript(key, delegate()
+            {
+                return fl.InputCondition;
+            });
         }
     }
 }

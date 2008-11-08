@@ -23,10 +23,7 @@
             <summary>
             Base constructor
             </summary>
-            <param name="context">CompilerContext</param>
-            <param name="nonTerminal">NonTerminal</param>
-            <param name="location">SourceLocation</param>
-            <param name="childNodes">AstNodeList</param>
+            <param name="args">AstNodeList</param>
         </member>
         <member name="M:ScriptNET.ScriptAst.Code">
             <summary>
@@ -44,7 +41,7 @@
             <summary>
             Evaluates all child nodes
             </summary>
-            <param name="context">ScriptContext object</param>
+            <param name="Context">ScriptContext object</param>
             <returns>result of the last node evaluation</returns>
         </member>
         <member name="M:ScriptNET.ScriptAst.Evaluate(ScriptNET.IScriptContext)">
@@ -55,12 +52,9 @@
         </member>
         <member name="M:ScriptNET.ScriptExpr.#ctor(Irony.Compiler.AstNodeArgs)">
             <summary>
-            
+            Default constructor
             </summary>
-            <param name="context"></param>
-            <param name="nonTerminal"></param>
-            <param name="location"></param>
-            <param name="childNodes"></param>
+            <param name="args">arguments</param>
         </member>
         <member name="T:ScriptNET.ScriptFlowControlStatement">
             <summary>
@@ -162,7 +156,15 @@
             ScriptContext objects also evaluates operators
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ScriptNET.IScriptContext.EvaluateOperator(System.String,ScriptNET.ScriptValueObject,ScriptNET.ScriptValueObject)" -->
+        <member name="M:ScriptNET.IScriptContext.EvaluateOperator(System.String,ScriptNET.ScriptValueObject,ScriptNET.ScriptValueObject)">
+            <summary>
+            Evaluates binary operator
+            </summary>
+            <param name="oper">one of: +,-,*,/,%,^,|,is,==,>=,></param>
+            <param name="left">left value</param>
+            <param name="right">right value</param>
+            <returns>result of (left oper right)</returns>
+        </member>
         <member name="M:ScriptNET.IScriptContext.EvaluateUnaryOperator(System.String,ScriptNET.ScriptValueObject)">
             <summary>
             Evaluates unary operator
@@ -170,6 +172,72 @@
             <param name="oper">one of: -,!,~,--,++</param>
             <param name="value">value</param>
             <returns>result of applying unary opeartor</returns>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.CreateScope">
+            <summary>
+            Create scope
+            </summary>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.CreateScope(ScriptNET.IScriptScope)">
+            <summary>
+            Add given scope to hierarchy
+            </summary>
+            <param name="scope">new scope</param>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.RemoveLocalScope">
+            <summary>
+            Removes local scope
+            </summary>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.GetItem(System.String,ScriptNET.ContextItem)">
+            <summary>
+            Returns item from scope
+            </summary>
+            <param name="id">name</param>
+            <param name="contextItemType">type</param>
+            <returns>value</returns>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.SetItem(System.String,ScriptNET.ContextItem,System.Object)">
+            <summary>
+            Sets item to scope
+            </summary>
+            <param name="id">name</param>
+            <param name="contextItemType">type</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.AddFunctionDefinition(System.String,ScriptNET.IInvokable)">
+            <summary>
+            Adds function definition to scope
+            </summary>
+            <param name="name">name</param>
+            <param name="funcObject">function object</param>
+        </member>
+        <member name="M:ScriptNET.IScriptContext.GetFunctionDefinition(System.String)">
+            <summary>
+            Finds function definition
+            </summary>
+            <param name="name">name</param>
+            <returns>function object</returns>
+        </member>
+        <member name="P:ScriptNET.IScriptContext.Scope">
+            <summary>
+            Current scope
+            </summary>
+        </member>
+        <member name="P:ScriptNET.IScriptContext.Debugger">
+            <summary>
+            Script debugger
+            </summary>
+        </member>
+        <member name="P:ScriptNET.IScriptContext.SourceCode">
+            <summary>
+            Source code
+            </summary>
+        </member>
+        <member name="P:ScriptNET.IScriptContext.Result">
+            <summary>
+            Result of script execution
+            </summary>
         </member>
         <member name="T:ScriptNET.ScriptSwitchDefaultStatement">
             <summary>
@@ -208,8 +276,16 @@
         </member>
         <member name="T:ScriptNET.ScriptScope">
             <summary>
-            Script Scope represents a tree of local scopes
-            handling variables and types.
+            Script Scope represents a tree of local scopes.
+            Scopes stores variables and types tables.
+            
+            Run-time queries ScriptScope through ScriptContext for:
+            <list type="bullet">
+              <item>Resolving names of types and variables;</item>
+              <item>Resolving names of functions;</item>
+              <item>Adding new function into scope;</item>
+              <item>Assigning values to variables.</item>
+            </list>
             </summary>
         </member>
         <member name="M:ScriptNET.ScriptScope.#ctor">
@@ -304,6 +380,11 @@
             Null if this scope is a global (root).
             </summary>
         </member>
+        <member name="T:ScriptNET.Script">
+            <summary>
+            Compiled script
+            </summary>
+        </member>
         <member name="M:ScriptNET.Script.#ctor">
             <summary>
             Default constructor
@@ -320,6 +401,13 @@
             Executes current script returning result
             </summary>
             <returns>result of execution</returns>
+        </member>
+        <member name="M:ScriptNET.Script.Code(ScriptNET.ScriptAst)">
+            <summary>
+            Returns source code for given node
+            </summary>
+            <param name="node">Node</param>
+            <returns>source code</returns>
         </member>
         <member name="M:ScriptNET.Script.Compile(System.String)">
             <summary>
@@ -378,6 +466,11 @@
             Execution context
             </summary>
         </member>
+        <member name="P:ScriptNET.Script.SyntaxTree">
+            <summary>
+            String representing syntax tree
+            </summary>
+        </member>
         <member name="T:ScriptNET.ScriptQualifiedName">
             <summary>
             Qualified Name
@@ -385,7 +478,7 @@
         </member>
         <member name="T:ScriptNET.ScriptProg">
             <summary>
-            
+            Root of any script program
             </summary>
         </member>
         <member name="T:ScriptNET.ScriptExprList">
@@ -448,7 +541,136 @@
         </member>
         <member name="T:ScriptNET.ScriptContext">
             <summary>
-            Script Context
+            Base implementation of ScriptContext object
+            </summary>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.#ctor">
+            <summary>
+            Creates new Script Context with Default scope
+            </summary>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.CreateScope">
+            <summary>
+            Creates new default nested scope
+            </summary>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.CreateScope(ScriptNET.IScriptScope)">
+            <summary>
+            Replace existing scope with new one
+            </summary>
+            <param name="scope"></param>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.RemoveLocalScope">
+            <summary>
+            Remove Local Scope
+            </summary>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.EvaluateOperator(System.String,ScriptNET.ScriptValueObject,ScriptNET.ScriptValueObject)">
+            <summary>
+            Evaluates operator
+            </summary>
+            <param name="oper">operator symbol</param>
+            <param name="left">left argument</param>
+            <param name="right">right arument</param>
+            <returns>result of execution</returns>
+            <exception cref="T:ScriptNET.ScriptException"></exception>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.EvaluateUnaryOperator(System.String,ScriptNET.ScriptValueObject)">
+            <summary>
+            Evaluates Unary operator
+            </summary>
+            <param name="oper">Operator symbol</param>
+            <param name="value">value</param>
+            <returns>result</returns>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.SetReturn(System.Boolean)">
+            <summary>
+            Set return state of run-time
+            </summary>
+            <param name="val">true or false</param>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.SetBreak(System.Boolean)">
+            <summary>
+            Set break state of run-time
+            </summary>
+            <param name="val">true or false</param>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.SetContinue(System.Boolean)">
+            <summary>
+            Set continue state of run-time
+            </summary>
+            <param name="val">true or false</param>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.IsReturn">
+            <summary>
+            Return state
+            </summary>
+            <returns>true or false</returns>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.IsBreak">
+            <summary>
+            Break state
+            </summary>
+            <returns>true or false</returns>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.IsContinue">
+            <summary>
+            Continue state
+            </summary>
+            <returns>true or false</returns>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.AddFunctionDefinition(System.String,ScriptNET.IInvokable)">
+            <summary>
+            Adds new function definition to current scope
+            </summary>
+            <param name="name">Name of function</param>
+            <param name="funcObject">IInvokable object which represents function</param>
+        </member>
+        <member name="M:ScriptNET.ScriptContext.GetFunctionDefinition(System.String)">
+            <summary>
+            Finds function definition in current scope
+            </summary>
+            <param name="name">function name</param>
+            <returns>IInvokable object</returns>
+        </member>
+        <member name="P:ScriptNET.ScriptContext.Scope">
+            <summary>
+            Scope object
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptContext.Debugger">
+            <summary>
+            Script debugger
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptContext.SourceCode">
+            <summary>
+            Script source code. Should be provided before executing the script
+            </summary>
+        </member>
+        <member name="P:ScriptNET.ScriptContext.Result">
+            <summary>
+            Script Result object
+            </summary>
+        </member>
+        <member name="T:ScriptNET.ContextItem">
+            <summary>
+            Items that may be stored in Context tables
+            </summary>
+        </member>
+        <member name="F:ScriptNET.ContextItem.Variable">
+            <summary>
+            Variable
+            </summary>
+        </member>
+        <member name="F:ScriptNET.ContextItem.Type">
+            <summary>
+            Type definition
+            </summary>
+        </member>
+        <member name="F:ScriptNET.ContextItem.All">
+            <summary>
+            Variable, Type or Function
             </summary>
         </member>
         <member name="T:ScriptNET.ContextFlags">
@@ -543,6 +765,35 @@
             Script Array Constructor Expression
             </summary>
         </member>
+        <member name="T:ScriptNET.Runtime.ScriptContractScope">
+            <summary>
+            Scope with contracts on variables
+            </summary>
+        </member>
+        <member name="M:ScriptNET.Runtime.ScriptContractScope.#ctor(ScriptNET.IScriptContext,ScriptNET.IScriptScope)">
+            <summary>
+            Default Constructor
+            </summary>
+        </member>
+        <member name="M:ScriptNET.Runtime.ScriptContractScope.SetItem(System.String,ScriptNET.ContextItem,System.Object)">
+            <summary>
+            Checks Invariant conditions for variable and call sets value
+            </summary>
+            <param name="id"></param>
+            <param name="contextItemType"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:ScriptNET.Runtime.ScriptContractScope.AddContract(ScriptNET.ScriptFuncContract)">
+            <summary>
+            Adds new FunctionContract to the list of contracts in scope
+            </summary>
+            <param name="contract"></param>
+        </member>
+        <member name="M:ScriptNET.Runtime.ScriptContractScope.CheckInvariantCondition">
+            <summary>
+            Check conditions
+            </summary>
+        </member>
         <member name="T:ScriptNET.ScriptIfStatement">
             <summary>
             Script Array Constructor Expression
@@ -557,6 +808,35 @@
             <summary>
             ForEachStatement
             </summary>
+        </member>
+        <member name="T:ScriptNET.CustomFunctions.AboutFunc">
+            <summary>
+            About function
+            </summary>
+        </member>
+        <member name="F:ScriptNET.CustomFunctions.AboutFunc.FunctionDefinition">
+            <summary>
+            Function instance
+            </summary>
+        </member>
+        <member name="F:ScriptNET.CustomFunctions.AboutFunc.FunctionName">
+            <summary>
+            Function Name
+            </summary>
+        </member>
+        <member name="M:ScriptNET.CustomFunctions.AboutFunc.CanInvoke">
+            <summary>
+            
+            </summary>
+            <returns>Always true</returns>
+        </member>
+        <member name="M:ScriptNET.CustomFunctions.AboutFunc.Invoke(ScriptNET.IScriptContext,System.Object[])">
+            <summary>
+            Executes function
+            </summary>
+            <param name="Context"></param>
+            <param name="args"></param>
+            <returns></returns>
         </member>
         <member name="T:ScriptNET.ScriptMObject">
             <summary>

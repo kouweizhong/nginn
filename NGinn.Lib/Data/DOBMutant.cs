@@ -9,7 +9,7 @@ namespace NGinn.Lib.Data
     /// <summary>
     /// Mutantic wrapper of DataObject
     /// </summary>
-    public class DOBMutant : Mutant
+    public class DOBMutant : IMutant
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
         private IDataObject _dob;
@@ -30,7 +30,7 @@ namespace NGinn.Lib.Data
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void CaptureFields(Mutant mt)
+        public void CaptureFields(IMutant mt)
         {
             string[] lst = mt.GetMutantFields();
             foreach (string fld in lst)
@@ -92,9 +92,9 @@ namespace NGinn.Lib.Data
             {
                 v = ((DOBMutant)v)._dob;
             }
-            else if (v is Mutant)
+            else if (v is IMutant)
             {
-                v = DataMutantConverter.ToDataObject((Mutant)v);
+                v = DataMutantConverter.ToDataObject((IMutant)v);
             }
             _dob.Set(Name, index, v);
         }

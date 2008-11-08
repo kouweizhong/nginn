@@ -461,9 +461,11 @@ namespace NGinn.Lib.Schema
 
         private void LoadFlows(XmlElement el, XmlNamespaceManager nsmgr)
         {
+            int pos = 0;
             foreach(XmlElement f in el.SelectNodes("wf:flow", nsmgr))
             {
                 Flow fl = LoadFlow(f, nsmgr);
+                if (fl.EvalOrder < 0) fl.EvalOrder = pos++;
                 AddFlow(fl);
             }
         }

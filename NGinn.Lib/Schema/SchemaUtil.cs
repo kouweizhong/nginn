@@ -95,6 +95,7 @@ namespace NGinn.Lib.Schema
             fl.To = pd.GetNode(t);
             t = SchemaUtil.GetXmlElementText(el, pr + "inputCondition", nsmgr);
             fl.InputCondition = t;
+            fl.EvalOrder = -1;
             t = el.GetAttribute("evalOrder");
             if (t != null && t.Length > 0)
             {
