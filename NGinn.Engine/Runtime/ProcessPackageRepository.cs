@@ -56,32 +56,35 @@ namespace NGinn.Engine.Runtime
 
         private void ScanForPackages()
         {
-            log.Info("Scanning directory {0} for packages", _baseDir);
-            Dictionary<string, PackageInfo> names = new Dictionary<string, PackageInfo>();
-            
-            if (Directory.Exists(_baseDir))
+            lock (this)
             {
-                string[] pkgs = Directory.GetFiles(_baseDir, "*.ngpk", SearchOption.AllDirectories);
-                foreach (string pkg in pkgs)
+                log.Info("Scanning directory {0} for packages", _baseDir);
+                Dictionary<string, PackageInfo> names = new Dictionary<string, PackageInfo>();
+
+                if (Directory.Exists(_baseDir))
                 {
-                    log.Info("Found package file {0}", pkg);
-                    try
+                    string[] pkgs = Directory.GetFiles(_baseDir, "*.ngpk", SearchOption.AllDirectories);
+                    foreach (string pkg in pkgs)
                     {
-                        ProcessPackageStore ps = new ProcessPackageStore(pkg);
-                        PackageDefinition pd = ps.GetPackageDefinition();
-                        log.Info("Successfully loaded package {0} from {1}", pd.PackageName, pkg);
-                        PackageInfo pi = new PackageInfo();
-                        pi.PackageStore = ps;
-                        pi.PackageStore.ProcessReload += new ProcessPackageStore.ProcessReloadingDelegate(PackageStore_ProcessReload);
-                        names[pd.PackageName] = pi;
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error("Error reading package file: {0}: {1}", pkg, ex);
+                        log.Info("Found package file {0}", pkg);
+                        try
+                        {
+                            ProcessPackageStore ps = new ProcessPackageStore(pkg);
+                            PackageDefinition pd = ps.GetPackageDefinition();
+                            log.Info("Successfully loaded package {0} from {1}", pd.PackageName, pkg);
+                            PackageInfo pi = new PackageInfo();
+                            pi.PackageStore = ps;
+                            pi.PackageStore.ProcessReload += new ProcessPackageStore.ProcessReloadingDelegate(PackageStore_ProcessReload);
+                            names[pd.PackageName] = pi;
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Error("Error reading package file: {0}: {1}", pkg, ex);
+                        }
                     }
                 }
+                _packageCache = names;
             }
-            _packageCache = names;
         }
 
         void PackageStore_ProcessReload(ProcessDefinition pd)

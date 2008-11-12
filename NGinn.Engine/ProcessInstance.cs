@@ -1225,17 +1225,20 @@ namespace NGinn.Engine
             _transitionNumber = Convert.ToInt32(dob["TransitionNumber"]);
             _currentMarking = new Dictionary<string, int>();
             IList l = dob.GetArray("Marking");
-            foreach (DataObject d2 in l)
-            {
-                string plid = (string)d2["Place"];
-                int n = Convert.ToInt32(d2["Tokens"]);
-                _currentMarking[plid] = n;
-            }
-            _activeTransitions = new Dictionary<string, TaskShell>();
-            l = dob.GetArray("Transition");
             if (l != null)
             {
-                foreach (DataObject dob2 in l)
+                foreach (DataObject d2 in l)
+                {
+                    string plid = (string)d2["Place"];
+                    int n = Convert.ToInt32(d2["Tokens"]);
+                    _currentMarking[plid] = n;
+                }
+            }
+            _activeTransitions = new Dictionary<string, TaskShell>();
+            IList l2 = dob.GetArray("Transition");
+            if (l2 != null)
+            {
+                foreach (DataObject dob2 in l2)
                 {
                     TaskShell ts = TaskShell.RestoreTaskShell(dob2);
                     _activeTransitions[ts.CorrelationId] = ts;

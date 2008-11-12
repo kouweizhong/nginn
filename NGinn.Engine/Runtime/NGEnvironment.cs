@@ -36,7 +36,7 @@ namespace NGinn.Engine.Runtime
         private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
         private ITaskCorrelationIdResolver _resolver;
         private Dictionary<string, object> _contextObjects = new Dictionary<string, object>();
-        private TransactionScopeOption _transactionOption = TransactionScopeOption.RequiresNew;
+        private TransactionScopeOption _transactionOption = TransactionScopeOption.Suppress;
         private IProcessScriptManager _scriptManager;
 
         public NGEnvironment()
@@ -247,28 +247,16 @@ namespace NGinn.Engine.Runtime
         {
             log.Info("Kicking process {0}", instanceId);
 
-            if (!LockManager.TryAcquireLock(instanceId, 0))
-            {
-                log.Info("Failed to lock process {0}. Ignoring");
-                return;
-            }
-            bool error = false;
             try
             {
-                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                AccessProcessReadWriteLock(instanceId, delegate(ProcessInstance pi)
                 {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                    pi.Environment = this;
                     pi.Activate();
-                    log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));
                     pi.Kick();
-                    log.Info("Modified: {0}", pi.SaveState().ToXmlString("Process"));
                     pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi);
-                    ts.Complete();
-                }
+                });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.Error("Error kicking process {0} : {1}", instanceId, ex);
                 if (autoRetry)
@@ -283,12 +271,6 @@ namespace NGinn.Engine.Runtime
                     throw ex;
                 }
             }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
-            
-            
         }
 
        
@@ -317,73 +299,99 @@ namespace NGinn.Engine.Runtime
             MessageBus.Notify("NGEnvironment", "NGinn.TransitionSelected", ev, false);
         }
 
-        public DataObject GetProcessOutputData(string instanceId)
+        delegate void AccessProcessInstanceDelegate(ProcessInstance pi);
+
+        /// <summary>
+        /// Access process instance holding a readonly lock
+        /// Process instance is not updated.
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <param name="dlg"></param>
+        private void AccessProcessReadonlyLock(string instanceId, AccessProcessInstanceDelegate dlg)
         {
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
-            {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new ApplicationException("Failed to lock process instance");
-            }
-            try
+            using (IResourceLock rl = LockManager.AcquireReaderLock(instanceId, TimeSpan.MaxValue))
             {
                 ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
                 pi.Environment = this;
+                dlg(pi);
+            }
+        }
+
+        /// <summary>
+        /// Access process instance holding a write lock
+        /// Process instance will be updated in the instance repository.
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <param name="dlg"></param>
+        private void AccessProcessReadWriteLock(string instanceId, AccessProcessInstanceDelegate dlg)
+        {
+            bool ready = false;
+            using (IResourceLock rl = LockManager.AcquireWriterLock(instanceId, TimeSpan.MaxValue))
+            {
+                using (TransactionScope ts = new TransactionScope(_transactionOption))
+                {
+                    try
+                    {
+                        ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                        pi.Environment = this;
+                        log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));
+                        dlg(pi);
+                        pi.Passivate();
+                        log.Info("Modified: {0}", pi.SaveState().ToXmlString("Process"));
+                        ready = pi.Status == ProcessStatus.Ready;
+                        InstanceRepository.UpdateProcessInstance(pi);
+                        ts.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Error updating process {0} : {1}", instanceId, ex);
+                        throw;
+                    }
+                }
+            }
+            if (ready)
+            {
+                //TODO: notify others that the process is ready
+                MessageBus.Notify("NGEnvironment", "NGinn.Engine.Runtime.NGEngine.Control", "WAKEUP", false);
+            }
+        }
+
+        public DataObject GetProcessOutputData(string instanceId)
+        {
+            DataObject dob = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi) {
                 pi.Activate();
                 if (pi.Status != ProcessStatus.Finished)
                     throw new ApplicationException("Invalid process status");
-                
-                DataObject dob = pi.GetProcessOutputData();
-                return dob;
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+
+                dob = pi.GetProcessOutputData();
+            });
+            return dob;
         }
 
 
         public string GetProcessInstanceData(string instanceId)
         {
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            string str = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new ApplicationException("Failed to lock process instance");
-            }
-            try
-            {
-                
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                pi.Environment = this;
                 pi.Activate();
-                IDataObject dob = pi.GetProcessVariablesContainer();
-                return dob.ToXmlString(pi.Definition.Name);
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+                str = pi.GetProcessVariablesContainer().ToXmlString(pi.Definition.Name);
+            });
+            return str;
         }
 
         public string GetTaskInstanceXml(string correlationId)
         {
             string instanceId = correlationId.Substring(0, correlationId.IndexOf('.'));
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            string str = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new ApplicationException("Failed to lock process instance");
-            }
-            try
-            {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                pi.Environment = this;
                 pi.Activate();
                 IDataObject dob = pi.GetTaskData(correlationId);
-                return dob.ToXmlString("data");
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+                str = dob.ToXmlString("data");
+            });
+            return str;
         }
 
 
@@ -391,23 +399,13 @@ namespace NGinn.Engine.Runtime
         public DataObject GetTaskData(string correlationId)
         {
             string instanceId = correlationId.Substring(0, correlationId.IndexOf('.'));
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            DataObject dob = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                pi.Environment = this;
                 pi.Activate();
-                log.Info("Original: {0}", pi.ToString());
-                return new DataObject(pi.GetTaskData(correlationId));
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+                dob = new DataObject(pi.GetTaskData(correlationId));
+            });
+            return dob;
         }
 
         
@@ -423,34 +421,11 @@ namespace NGinn.Engine.Runtime
         protected void HandleInternalTransitionEvent(object msg, IMessageContext ctx)
         {
             InternalTransitionEvent ite = (InternalTransitionEvent)msg;
-            if (!LockManager.TryAcquireLock(ite.ProcessInstanceId, 30000))
+            AccessProcessReadWriteLock(ite.ProcessInstanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", ite.ProcessInstanceId);
-                throw new ApplicationException("Failed to lock process instance");
-            }
-            try
-            {
-                using (TransactionScope ts = new TransactionScope(_transactionOption))
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(ite.ProcessInstanceId);
-                    pi.Environment = this;
-                    pi.Activate();
-                    pi.DispatchInternalTransitionEvent(ite);
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi);
-                    ts.Complete();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error handling transition event: {0} : {1}", ite.ToString(), ex);
-                throw;
-            }
-            finally
-            {
-                LockManager.ReleaseLock(ite.ProcessInstanceId);
-            }
+                pi.Activate();
+                pi.DispatchInternalTransitionEvent(ite);
+            });
         }
 
         [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
@@ -484,31 +459,12 @@ namespace NGinn.Engine.Runtime
         public void CancelProcessInstance(string instanceId)
         {
             log.Info("Cancelling process {0}", instanceId);
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            AccessProcessReadWriteLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                using (TransactionScope ts = new TransactionScope(_transactionOption))
-                {
-                    ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                    pi.Environment = this;
-                    pi.Activate();
-                    log.Info("Original: {0}", pi.ToString());
-                    pi.CancelProcessInstance();
-                    log.Info("Modified: {0}", pi.ToString());
-                    pi.Passivate();
-                    InstanceRepository.UpdateProcessInstance(pi);
-                    ts.Complete();
-                }
-
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+                pi.Activate();
+                pi.CancelProcessInstance();
+                pi.Passivate();
+            });
         }
 
         
@@ -550,27 +506,16 @@ namespace NGinn.Engine.Runtime
 
         public ProcessInstanceInfo GetProcessInstanceInfo(string instanceId)
         {
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            ProcessInstanceInfo pii = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                if (pi == null) return null;
-                pi.Environment = this;
-                ProcessInstanceInfo pii = new ProcessInstanceInfo();
+                if (pi == null) return;
+                pii = new ProcessInstanceInfo();
                 pii.ProcessInstanceId = pi.InstanceId;
                 pii.ProcessFinished = (pi.Status == ProcessStatus.Cancelled || pi.Status == ProcessStatus.Finished);
                 pii.ProcessDefinitionId = pi.ProcessDefinitionId;
-
-                return pii;
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+            });
+            return pii;
         }
 
         public TaskInstanceInfo GetTaskInstanceInfo(string taskCorrelationId)
@@ -578,18 +523,12 @@ namespace NGinn.Engine.Runtime
             int idx = taskCorrelationId.IndexOf('.');
             if (idx < 0) throw new Exception("Invalid taskCorrelationId");
             string instanceId = taskCorrelationId.Substring(0, idx);
-            if (!LockManager.TryAcquireLock(instanceId, 30000))
+            TaskInstanceInfo tii = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                log.Info("Failed to obtain lock on process instance {0}", instanceId);
-                throw new Exception("Failed to lock process instance");
-            }
-            try
-            {
-                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                if (pi == null) return null;
-                pi.Environment = this;
+                if (pi == null) return;
                 pi.Activate();
-                TaskInstanceInfo tii = new TaskInstanceInfo();
+                tii = new TaskInstanceInfo();
                 tii.CorrelationId = taskCorrelationId;
                 tii.ProcessDefinitionId = pi.ProcessDefinitionId;
                 tii.ProcessInstanceId = pi.InstanceId;
@@ -598,13 +537,8 @@ namespace NGinn.Engine.Runtime
                 TaskShell ts = pi.GetActiveTransition(taskCorrelationId);
                 tii.TaskCompleted = ts.Status == TransitionStatus.COMPLETED || ts.Status == TransitionStatus.CANCELLED;
                 tii.TaskId = ts.TaskId;
-                pi.Passivate();
-                return tii;
-            }
-            finally
-            {
-                LockManager.ReleaseLock(instanceId);
-            }
+            });
+            return tii;
         }
     }
 }

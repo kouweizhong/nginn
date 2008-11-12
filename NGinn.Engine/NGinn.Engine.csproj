@@ -106,6 +106,10 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="Wintellect.Threading, Version=4.1.3225.27188, Culture=neutral, PublicKeyToken=167f00fdf109b063, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\extlib\Wintellect.Threading.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Runtime\Email\SMTPEmailSender.cs" />
@@ -116,6 +120,7 @@
     <Compile Include="Runtime\MessageBus\SimpleMessageBroker.cs" />
     <Compile Include="Runtime\MessageBus\SQLQueueProcessor.cs" />
     <Compile Include="Runtime\NGEngine.cs" />
+    <Compile Include="Runtime\PoolingResourceLockManager.cs" />
     <Compile Include="Runtime\Scripting\BooScript\BooProcessScriptManager.cs" />
     <Compile Include="Runtime\Scripting\BooScript\NGinnDslEngine.cs" />
     <Compile Include="Runtime\Scripting\BooScript\BooProcessScriptBase.cs" />

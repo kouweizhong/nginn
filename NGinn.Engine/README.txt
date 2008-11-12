@@ -1,8 +1,4 @@
 TODO
-* Usun¹c zapis informacji o tokenach w osobnej tabeli - niepotrzebne
-* Zrobiæ serializacjê XML ProcessInstance'u - bêdzie wgl¹d w dane. Potem kompresjê ZIP.
-* Usun¹æ z solutiona XmlForms. Zrobiæ z tego osobny solution.
-* Task 'ReceiveMessage' - taki MessageBox czekaj¹cy na komunikat z jakimœ ID
 * Parametry zadañ - mo¿liwoœæ bindowania do danych z procesu lub wpisywania wyra¿eñ w script.net
 * bindowanie parametrów do tasków
   - statyczne (wpisanie wartoœci w xml-u)

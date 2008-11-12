@@ -8,7 +8,6 @@ using System.IO;
 using NLog;
 using Rhino.DSL;
 using NGinn.Engine.Services;
-using Antlr.StringTemplate;
 
 namespace NGinn.Engine.Runtime.Scripting.BooScript
 {

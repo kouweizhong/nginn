@@ -119,6 +119,7 @@ namespace NGinn.Engine.Runtime.MessageBus
         private string _tableName = "messagequeue";
         private string _queueId;
         private MessageContentType _serializationType;
+        
 
         /*
         public SQLMessageInputPort(string connectionString, string tableName, string queueId, MessageContentType contentType)
@@ -218,6 +219,8 @@ namespace NGinn.Engine.Runtime.MessageBus
         private string _status = "";
         private Random _rand = new Random();
         private MessageContentType _contentType = MessageContentType.SerializedBinary;
+        private EventWaitHandle _waiter = new AutoResetEvent(true);
+
         private TimeSpan[] _retryTimes = new TimeSpan[] {
             TimeSpan.FromSeconds(30),
             TimeSpan.FromMinutes(2),
@@ -359,6 +362,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                 _stop = false;
                 if (_processorThread == null)
                 {
+                    _waiter.Set();
                     _processorThread = new Thread(new ThreadStart(this.ProcessorThreadLoop));
                     _processorThread.Name = "T";
                     _processorThread.IsBackground = true;
@@ -378,6 +382,11 @@ namespace NGinn.Engine.Runtime.MessageBus
                     _processorThread.Join();
                 }
             }
+        }
+
+        public void Wakeup()
+        {
+            _waiter.Set();
         }
 
         #endregion
@@ -406,7 +415,10 @@ namespace NGinn.Engine.Runtime.MessageBus
                             else if (res != MessageReadResult.Processed)
                                 System.Diagnostics.Debug.Assert(false);
                         }
-                        if (!_stop && cnt > 0) Thread.Sleep(5000);
+                        if (!_stop && cnt > 0)
+                        {
+                            _waiter.WaitOne(5000, true);
+                        }
                     }
                     catch (ThreadInterruptedException)
                     {

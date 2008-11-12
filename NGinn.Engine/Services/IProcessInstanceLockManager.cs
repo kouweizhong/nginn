@@ -5,17 +5,31 @@ using Spring.Threading;
 
 namespace NGinn.Engine.Services
 {
+    /// <summary>
+    /// Resource lock interface
+    /// </summary>
+    public interface IResourceLock : IDisposable
+    {
+        void Release();
+    }
+
+
+    /// <summary>
+    /// Process instance locking interface
+    /// </summary>
     public interface IProcessInstanceLockManager
     {
-        
         /// <summary>
-        /// Try to acquire a lock on process instance
+        /// Acquire reader lock for specified instance
         /// </summary>
-        /// <param name="instanceId">Process instance ID</param>
-        /// <param name="timeout">Lock timeout. If timeout=0, lock will be acquired only if process instance
-        /// is not currently locked. If timeout > 0, function will wait no more that specified timeout</param>
+        /// <param name="instanceId"></param>
         /// <returns></returns>
-        bool TryAcquireLock(string instanceId, int timeout);
-        void ReleaseLock(string instanceId);
+        IResourceLock AcquireReaderLock(string instanceId, TimeSpan timeout);
+        /// <summary>
+        /// Acquire write lock for specified process instance
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        IResourceLock AcquireWriterLock(string instanceId, TimeSpan timeout);
     }
 }

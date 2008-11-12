@@ -8,26 +8,18 @@ namespace NGinn.Engine.Runtime
 {
     class LocalProcessInstanceLockManager : IProcessInstanceLockManager
     {
-        private Hashtable _locks = new Hashtable();
+        private PoolingResourceLockManager _mgr = new PoolingResourceLockManager();
 
         #region IProcessInstanceLockManager Members
 
-        public bool TryAcquireLock(string instanceId, int timeout)
+        public IResourceLock AcquireReaderLock(string instanceId, TimeSpan timeout)
         {
-            lock (this)
-            {
-                if (_locks.ContainsKey(instanceId)) return false;
-                _locks[instanceId] = instanceId;
-                return true;
-            }
+            return _mgr.AcquireReaderLock(instanceId, timeout);
         }
 
-        public void ReleaseLock(string instanceId)
+        public IResourceLock AcquireWriterLock(string instanceId, TimeSpan timeout)
         {
-            lock (this)
-            {
-                _locks.Remove(instanceId);
-            }
+            return _mgr.AcquireWriterLock(instanceId, timeout);
         }
 
         #endregion

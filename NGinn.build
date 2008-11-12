@@ -110,6 +110,9 @@
                 <include name="SmartThreadPool.dll" />
                 <include name="Common.Logging.dll" />
                 <include name="antlr.runtime.dll" />
+                <include name="Boo.Lang.dll" />
+                <include name="Boo.Lang.Compiler.dll" />
+                <include name="Rhino.DSL.dll" />
             </fileset>
         </copy>
         <csc target="library" output="${build_dir}/NGinn.Engine.dll" debug="${debug}">
@@ -124,7 +127,10 @@
                 <include name="${build_dir}/Mvp.Xml.dll" />
                 <include name="${build_dir}/SmartThreadPool.dll" />
                 <include name="${build_dir}/PowerCollections.dll" />
-                <include name="${build_dir}/MutanticFramework.dll" /> 
+                <include name="${build_dir}/MutanticFramework.dll" />
+                <include name="${build_dir}/Boo.Lang.dll" />
+                <include name="${build_dir}/Boo.Lang.Compiler.dll" />
+                <include name="${build_dir}/Rhino.DSL.dll" />
             </references>
         </csc>
     </target>

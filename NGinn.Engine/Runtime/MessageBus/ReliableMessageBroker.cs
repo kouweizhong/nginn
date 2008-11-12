@@ -134,6 +134,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                 Hashtable ht = new Hashtable();
                 ht["label"] = GetMessageLabel(mw);
                 string msgid = _queueProc.GetInputPort().SendMessage(mw, ht);
+                _queueProc.Wakeup();
                 return msgid;
             }
             else return base.Notify(sender, topic, msg, false);

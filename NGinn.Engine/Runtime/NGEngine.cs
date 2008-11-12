@@ -26,6 +26,7 @@ namespace NGinn.Engine.Runtime
         private Thread _controllerThread = null;
         private IApplicationContext _ctx;
         private IMessageBus _msgBus;
+        private EventWaitHandle _procNotifier = new AutoResetEvent(true);
 
         public NGEngine()
         {
@@ -70,6 +71,10 @@ namespace NGinn.Engine.Runtime
             else if (msg == "STOP")
             {
                 Stop();
+            }
+            else if (msg == "WAKEUP")
+            {
+                Wakeup();
             }
             else throw new Exception("Unknown command: " + msg);
         }
@@ -116,11 +121,21 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+        /// <summary>
+        /// Wakeup - notify the processor thread that something interesting has happened and it should wake up
+        /// the processor thread immediately
+        /// </summary>
+        protected void Wakeup()
+        {
+            _procNotifier.Set();
+        }
+
         protected void ManagerProc()
         {
             STPStartInfo startInfo = new STPStartInfo();
             startInfo.MaxWorkerThreads = ExecutionThreads;
             SmartThreadPool st = new SmartThreadPool(startInfo);
+            
             try
             {
                 st.Start();
@@ -147,7 +162,7 @@ namespace NGinn.Engine.Runtime
                         }
                         if (st.IsIdle)
                         {
-                            Thread.Sleep(TimeSpan.FromSeconds(10));
+                            _procNotifier.WaitOne(TimeSpan.FromSeconds(10.0), true);
                         }
                         else
                         {

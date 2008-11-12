@@ -405,7 +405,7 @@ namespace NGinn.Lib.Data
 
             while (xr.Read())
             {
-                log.Debug("Node: {0} ({1})",xr.Name, xr.NodeType.ToString());
+                log.Trace("Node: {0} ({1})",xr.Name, xr.NodeType.ToString());
                 switch (xr.NodeType)
                 {
                     case XmlNodeType.EndElement:
