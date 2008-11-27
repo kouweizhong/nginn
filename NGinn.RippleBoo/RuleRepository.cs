@@ -79,13 +79,13 @@ namespace NGinn.RippleBoo
             }
         }
 
-        public void SaveRuleGraph(string ruleset, string fileName)
+        public void SaveRuleGraph(string rulesFile, string ruleset, string fileName)
         {
-            using (StreamWriter sw = new StreamWriter(fileName))
+            using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8))
             {
-                RuleSetBase rsb = GetNewRuleSet(ruleset);
+                RuleSetBase rsb = GetNewRuleSet(rulesFile);
                 rsb.Initialize();
-                rsb.ToGraph(sw);
+                rsb.ToGraph(sw, ruleset);
             }
         }
 

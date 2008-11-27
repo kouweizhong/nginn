@@ -31,6 +31,7 @@ namespace NGinn.RippleBoo
             public string TrueGoto;
             public string FalseGoto;
             public string Label;
+            public Action SideEffect;
         }
 
         public class Ruleset
@@ -169,44 +170,86 @@ namespace NGinn.RippleBoo
             _curRule = null;
         }
 
+        /// <summary>
+        /// set rule's condition
+        /// </summary>
+        /// <param name="cond"></param>
         public void condition(Condition cond)
         {
             if (_curRule == null) throw new Exception("no rule");
             _curRule.When = cond;
         }
 
-        public void action(Action act)
+        /// <summary>
+        /// configure rule action
+        /// rule action is executed when rule condition is satisfied and none of
+        /// rule exceptions fired. It means there will be only one fired rule.
+        /// </summary>
+        /// <param name="act"></param>
+        protected void action(Action act)
         {
             if (_curRule == null) throw new Exception("no rule");
             _curRule.Then = act;
         }
 
-        public void except_rule(string id)
+        /// <summary>
+        /// Configure 'except' successor. It will be evaluated when rule condition is true.
+        /// </summary>
+        /// <param name="id"></param>
+        protected void except_rule(string id)
         {
             if (_curRule == null) throw new Exception("no rule");
             _curRule.TrueGoto = id;
         }
 
-        public void else_rule(string id)
+        /// <summary>
+        /// Configure successor when rule condition is not satisfied
+        /// </summary>
+        /// <param name="id"></param>
+        protected void else_rule(string id)
         {
             if (_curRule == null) throw new Exception("no rule");
             _curRule.FalseGoto = id;
         }
 
+        /// <summary>
+        /// call another ruleset
+        /// </summary>
+        /// <param name="name"></param>
         protected void goto_ruleset(string name)
         {
             _gotoRuleset = name;
         }
 
+        /// <summary>
+        /// call another rule file
+        /// </summary>
+        /// <param name="name"></param>
         protected void goto_file(string name)
         {
             _gotoRulesFile = name;
         }
 
+        /// <summary>
+        /// configure rule label
+        /// </summary>
+        /// <param name="name"></param>
         protected void label(string name)
         {
             if (_curRule == null) throw new Exception("no rule");
             _curRule.Label = name;
+        }
+
+        /// <summary>
+        /// Configure rule side-effect
+        /// Side effect action is executed immediately after rule condition is satisfied.
+        /// It doesn't affect how further evaluation is done
+        /// </summary>
+        /// <param name="act"></param>
+        protected void side_effect(Action act)
+        {
+            if (_curRule == null) throw new Exception("no rule");
+            _curRule.SideEffect = act;
         }
 
         public void Initialize()
@@ -245,6 +288,10 @@ namespace NGinn.RippleBoo
             log.Debug("Evaluating {0}.{1}", rs.Name, r.Id);
             if (r.When())
             {
+                if (r.SideEffect != null)
+                {
+                    r.SideEffect();
+                }
                 Rule r1 = rs.GetRule(r.TrueGoto);
                 if (r1 != null)
                 {
@@ -256,8 +303,11 @@ namespace NGinn.RippleBoo
                         return true;
                     }
                 }
-                log.Debug("Firing rule {0}.{1}", rs.Name,r.Id);
-                if (r.Then != null) r.Then();
+                log.Debug("Executing final action [{0}.{1}]", rs.Name,r.Id);
+                if (r.Then != null)
+                {
+                    r.Then();
+                }
                 return true;
             }
             else
@@ -302,19 +352,17 @@ namespace NGinn.RippleBoo
             Execute(null);
         }
 
-        public void ToGraph(TextWriter tw)
+        public void ToGraph(TextWriter tw, string rulesetName)
         {
-            foreach (Ruleset rs in _ruleSets.Values)
-            {
-                ToGraph(rs, tw);
-            }
+            Ruleset rs = GetRuleset(rulesetName);
+            if (rs == null) throw new Exception("Ruleset not found");
+            ToGraph(rs, tw);
         }
 
         private void ToGraph(Ruleset rs, TextWriter tw)
         {
-            tw.WriteLine("digraph {0} {", rs.Name);
-            tw.Write("\"{0}\" [", rs.StartRule.Id);
-            tw.WriteLine("];");
+            tw.Write(string.Format("digraph \"{0}\"", rs.Name));
+            tw.WriteLine(" {");
             ArrayList rules = new ArrayList();
             rules.Add(rs.StartRule);
             foreach (Rule r in rs.Rules.Values)
@@ -325,6 +373,7 @@ namespace NGinn.RippleBoo
             foreach(Rule r in rules) 
             {
                 tw.Write("\"{0}\" [", r.Id);
+                tw.Write("label=\"{0}\"", r.Label != null ? r.Label : r.Id);
                 tw.WriteLine("];");
             }
             
@@ -333,12 +382,14 @@ namespace NGinn.RippleBoo
                 if (r.TrueGoto != null && r.TrueGoto.Length > 0)
                 {
                     tw.Write("\"{0}\" -> \"{1}\" [", r.Id, r.TrueGoto);
+                    tw.Write("label=\"T\"");
                     tw.WriteLine("];");
                 }
 
                 if (r.FalseGoto != null && r.FalseGoto.Length > 0)
                 {
                     tw.Write("\"{0}\" -> \"{1}\" [", r.Id, r.FalseGoto);
+                    tw.Write("label=\"N\"");
                     tw.WriteLine("];");
                 }
             }
