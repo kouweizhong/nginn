@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Rhino.DSL;
 using NLog;
+using System.IO;
 
 namespace NGinn.RippleBoo
 {
@@ -66,12 +67,26 @@ namespace NGinn.RippleBoo
         {
             DateTime ds = DateTime.Now;
             RuleSetBase rb = GetNewRuleSet(ruleset);
-            rb.Initialize();
             rb.Variables = new QuackWrapper(variables);
             rb.Context = new QuackWrapper(context);
+			rb.Initialize();
             rb.Execute();
             log.Info("Rule evaluation time: {0}", DateTime.Now - ds);
+            if (rb._gotoRulesFile != null)
+            {
+                log.Info("Evaluating included ruleset {1}", rb._gotoRulesFile);
+                EvaluateRules(rb._gotoRulesFile, variables, context);
+            }
+        }
 
+        public void SaveRuleGraph(string ruleset, string fileName)
+        {
+            using (StreamWriter sw = new StreamWriter(fileName))
+            {
+                RuleSetBase rsb = GetNewRuleSet(ruleset);
+                rsb.Initialize();
+                rsb.ToGraph(sw);
+            }
         }
 
         

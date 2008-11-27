@@ -11,9 +11,6 @@ namespace NGinn.RippleBoo
         protected override void Prepare()
         {
             Name = "TestRuleSet1";
-            RuleDef("R1", null, null,
-                delegate() { return DateTime.Now.Second % 2 == 0; },
-                delegate() { log.Info("R1 is alive"); });
         }
     }
 }
