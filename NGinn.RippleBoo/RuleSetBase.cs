@@ -39,6 +39,7 @@ namespace NGinn.RippleBoo
             public string Name;
             public Rule StartRule;
             public Dictionary<string, Rule> Rules;
+            public Action OnFinished;
 
             public Ruleset()
             {
@@ -148,7 +149,27 @@ namespace NGinn.RippleBoo
             if (_curRuleset == null) throw new Exception();
             _curRuleset.StartRule.Then = act;
         }
-        
+
+        /// <summary>
+        /// Code executed after ruleset evaluation is finished
+        /// Warning: in case of exception it will not be called
+        /// </summary>
+        /// <param name="act"></param>
+        public void on_finished(Action act)
+        {
+            if (_curRuleset == null) throw new Exception();
+            _curRuleset.OnFinished = act;
+        }
+
+        /// <summary>
+        /// Code executed before ruleset evaluation
+        /// </summary>
+        /// <param name="act"></param>
+        public void on_start(Action act)
+        {
+            if (_curRuleset == null) throw new Exception();
+            _curRuleset.StartRule.SideEffect = act;
+        }
 
         [Meta]
         public static Expression when(Expression expression)
@@ -328,6 +349,10 @@ namespace NGinn.RippleBoo
             _gotoRuleset = null;
             _gotoRulesFile = null;
             Execute(rs, rs.StartRule);
+            if (rs.OnFinished != null)
+            {
+                rs.OnFinished();
+            }
             if (_gotoRulesFile == null)
             {
                 if (_gotoRuleset != null)

@@ -35,13 +35,27 @@ namespace NGinn.RippleBoo
             set { _refAssemblies = value; }
         }
 
+        private bool _referAllLoaded = false;
+        /// <summary>
+        /// Set to true if all assemblies in current appdomain should be referenced
+        /// </summary>
+        public bool ReferAllLoadedAssemblies
+        {
+            get { return _referAllLoaded; }
+            set { _referAllLoaded = value; }
+        }
+
         protected override void CustomizeCompiler(Boo.Lang.Compiler.BooCompiler compiler, Boo.Lang.Compiler.CompilerPipeline pipeline, string[] urls)
         {
             compiler.Parameters.Ducky = true;
-            Assembly[] asms = _refAssemblies;
-            if (asms == null) asms = AppDomain.CurrentDomain.GetAssemblies();
+            List<Assembly> asmss = new List<Assembly>();
+            if (ReferAllLoadedAssemblies)
+            {
+                asmss.AddRange(AppDomain.CurrentDomain.GetAssemblies());
+            }
+            if (ReferencedAssemblies != null) asmss.AddRange(ReferencedAssemblies);
             
-            foreach (Assembly asm in asms)
+            foreach (Assembly asm in asmss)
             {
                 try
                 {
@@ -53,6 +67,7 @@ namespace NGinn.RippleBoo
 
             pipeline.Insert(1, new ImplicitBaseClassCompilerStep(
                 _baseType, "Prepare", _namespaces));
+            pipeline.Insert(2, new AutoReferenceFilesCompilerStep());
         }
     }
 }
