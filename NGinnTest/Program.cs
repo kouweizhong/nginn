@@ -55,8 +55,8 @@ namespace NGinnTest
 
         static void BooGenTest()
         {
-            BooGenTest bt = new BooGenTest();
-            bt.Test();
+            //BooGenTest bt = new BooGenTest();
+            //bt.Test();
         }
 
         static void TestProcessLoad()

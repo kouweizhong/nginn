@@ -5,37 +5,33 @@
     <place id="end" type="EndPlace"></place>
   </places>
   <tasks>
-    
-    <task id="init" type="EmptyTask" joinType="AND" splitType="AND">
-	</task>
-    
-    <task id="timeout" type="TimerTask" joinType="AND" splitType="AND">
-        <timerTask>
-            <delayTime>00:01:00</delayTime>
-        </timerTask>
+    <task id="init" type="EmptyTask" splitType="AND">
     </task>
-    
+    <task id="timeout" type="TimerTask" joinType="AND" splitType="AND">
+      <timerTask>
+        <delayTime>00:01:00</delayTime>
+      </timerTask>
+    </task>
     <task id="timeout2" type="TimerTask" joinType="AND" splitType="AND">
-        <timerTask>
-            <delayTime>00:01:00</delayTime>
-        </timerTask>
+      <timerTask>
+        <delayTime>00:01:00</delayTime>
+      </timerTask>
         <parameter-bindings>
             <binding parameter="DelayTime" type="Literal">28.00</binding>
         </parameter-bindings>
     </task>
-    
   </tasks>
+
   <flows>
     <flow from="start" to="init" />
     <flow from="init" to="timeout" />
     <flow from="init" to="timeout2" />
     <flow from="timeout" to="end" />
     <flow from="timeout2" to="end" />
-    
-    </flows>
-    <processDataTypes>
-    </processDataTypes>
-  	<variables>
-		<variable name="delayAmount" type="string" required="true" dir="In" />
-    </variables>
+  </flows>
+  <processDataTypes>
+  </processDataTypes>
+  <variables>
+    <variable name="delayAmount" type="string" required="true" dir="In" />
+  </variables>
 </process>

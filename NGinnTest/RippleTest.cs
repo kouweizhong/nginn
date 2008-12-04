@@ -12,15 +12,7 @@ namespace NGinnTest
         protected override void Prepare()
         {
             Name = "TestRuleSet1";
-            RuleDef("R1", "R2", "R3",
-                delegate() { return DateTime.Now.Second % 2 == 0; },
-                delegate() { log.Info("R1 is alive"); });
-            RuleDef("R2", "$8", null,
-                delegate() { return DateTime.Now.Millisecond > 500; },
-                delegate() { log.Info("R2 is alive"); });
-            RuleDef("R3", null, null,
-                delegate() { return DateTime.Now.Millisecond % 2 == 0; },
-                delegate() { log.Info("R3 is alive"); });
+            
         }
     }
 

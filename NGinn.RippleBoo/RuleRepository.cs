@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Rhino.DSL;
 using NLog;
@@ -50,7 +49,7 @@ namespace NGinn.RippleBoo
             RippleBooDslEngine eng = new RippleBooDslEngine();
             eng.BaseType = BaseType;
             eng.Namespaces = _namespaces.ToArray();
-            _factory.Register(typeof(RuleSetBase), eng);
+            _factory.Register(BaseType, eng);
             _factory.BaseDirectory = BaseDirectory;
             _inited = true;
         }

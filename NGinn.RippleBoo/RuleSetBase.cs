@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
@@ -398,7 +397,10 @@ namespace NGinn.RippleBoo
             foreach(Rule r in rules) 
             {
                 tw.Write("\"{0}\" [", r.Id);
-                tw.Write("label=\"{0}\"", r.Label != null ? r.Label : r.Id);
+                if (r.Label != null)
+                    tw.Write("label=\"{0}\\n{1}\"", r.Id, r.Label);
+                else 
+                    tw.Write("label=\"{0}\"", r.Id);
                 tw.WriteLine("];");
             }
             
@@ -407,7 +409,7 @@ namespace NGinn.RippleBoo
                 if (r.TrueGoto != null && r.TrueGoto.Length > 0)
                 {
                     tw.Write("\"{0}\" -> \"{1}\" [", r.Id, r.TrueGoto);
-                    tw.Write("label=\"T\"");
+                    tw.Write("label=\"Exc.\"");
                     tw.WriteLine("];");
                 }
 

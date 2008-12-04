@@ -29,6 +29,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -97,10 +98,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Spring.Core.dll</HintPath>
     </Reference>
-    <Reference Include="StringTemplate, Version=3.0.1.6846, Culture=neutral, PublicKeyToken=beee492b52c41e85, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\StringTemplate.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Transactions" />
@@ -112,6 +109,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Runtime\Email\EmailMessage.cs" />
+    <Compile Include="Runtime\Email\RuleEmailHandler.cs" />
     <Compile Include="Runtime\Email\SMTPEmailSender.cs" />
     <Compile Include="Runtime\Http\HttpHelper.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
@@ -167,6 +166,10 @@
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
+      <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
+      <Name>NGinn.RippleBoo</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.txt" />
@@ -196,4 +199,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Notes="&lt;Notes Project=&quot;c36a860a-1ae3-4882-ba2c-3310342df712&quot; xmlns=&quot;clr-namespace:StickyNotes.Model;assembly=StickyNotes&quot;&gt;&lt;Notes.StickyNotes&gt;&lt;Note FilePath=&quot;&quot; Content=&quot;&quot; Date=&quot;2008-12-04T20:12:07.99+01:00&quot; /&gt;&lt;/Notes.StickyNotes&gt;&lt;/Notes&gt;" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

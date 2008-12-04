@@ -7,13 +7,13 @@
   <tasks>
     
     
-    <task id="timeout" type="TimerTask" joinType="AND" splitType="AND">
+    <task id="timeout" type="TimerTask">
         <timerTask>
             <delayTime>00:01:00</delayTime>
         </timerTask>
     </task>
     
-    <task id="timeout2" type="TimerTask" joinType="AND" splitType="AND">
+    <task id="timeout2" type="TimerTask">
         <timerTask>
             <delayTime>00:01:00</delayTime>
         </timerTask>
