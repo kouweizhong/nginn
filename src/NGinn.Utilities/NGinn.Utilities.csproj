@@ -43,11 +43,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extlib\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="SharpMimeTools, Version=0.6.2377.29117, Culture=neutral, PublicKeyToken=e917783050dba165, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extlib\SharpMimeTools.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Email\EmailFetcher.cs" />
     <Compile Include="Email\EmailMessageInfo.cs" />
     <Compile Include="Email\InputEmailHandler.cs" />
     <Compile Include="Email\MimeEmailDecoder.cs" />

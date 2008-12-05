@@ -61,7 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\PowerCollections.dll</HintPath>
     </Reference>
-    <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Spring.Core, Version=1.2.0.20313, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\Spring.Core.dll</HintPath>
     </Reference>
