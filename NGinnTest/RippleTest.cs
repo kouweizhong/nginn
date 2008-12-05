@@ -12,7 +12,7 @@ namespace NGinnTest
         protected override void Prepare()
         {
             Name = "TestRuleSet1";
-            
+
         }
     }
 

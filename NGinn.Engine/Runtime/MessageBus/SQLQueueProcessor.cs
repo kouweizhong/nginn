@@ -417,7 +417,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                         }
                         if (!_stop && cnt > 0)
                         {
-                            _waiter.WaitOne(5000, true);
+                            _waiter.WaitOne(10113, true);
                         }
                     }
                     catch (ThreadInterruptedException)

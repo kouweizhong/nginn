@@ -8,6 +8,7 @@ using Amib.Threading;
 using System.Threading;
 using Spring.Context;
 using NGinn.Lib.Interfaces.MessageBus;
+using NGinn.Engine.Services.Events;
 
 namespace NGinn.Engine.Runtime
 {
@@ -24,7 +25,6 @@ namespace NGinn.Engine.Runtime
         private volatile bool _stop = false;
         private Logger log = LogManager.GetCurrentClassLogger();
         private Thread _controllerThread = null;
-        private IApplicationContext _ctx;
         private IMessageBus _msgBus;
         private EventWaitHandle _procNotifier = new AutoResetEvent(true);
 
@@ -162,18 +162,26 @@ namespace NGinn.Engine.Runtime
                         }
                         if (st.IsIdle)
                         {
-                            _procNotifier.WaitOne(TimeSpan.FromSeconds(10.0), true);
+                            _procNotifier.WaitOne(TimeSpan.FromSeconds(15.0), true);
                         }
                         else
                         {
+                            //TODO: problem here - if some process takes a long time to 
+                            //kick, it will block process scheduling
+                            //solution: we shouldn't wait for idle thread pool, but 
+                            //pump the queue all the time.
                             st.WaitForIdle(TimeSpan.FromHours(1.0));
                         }
+                        MessageBus.Notify("NGEngine", "Heartbeat", new EngineHeartbeat(), true);
                     }
                     catch (ThreadAbortException ex) {}
                     catch (ThreadInterruptedException ex) {}
                     catch (Exception ex)
                     {
                         log.Error("Manager thread error: {0}", ex);
+                        DiagnosticEvent de = new DiagnosticEvent("NGEngine", ex);
+                        de.Message = "NGEngine scheduler thread error";
+                        MessageBus.Notify("NGengine", "Error", de, false);
                         if(!_stop) Thread.Sleep(30000);
                     }
                 }

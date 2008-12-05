@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
-using NGinn.Engine.Runtime.Email;
+using NGinn.Utilities.Email;
 using Spring.Context.Support;
 
 namespace NGinn.Engine.Runtime.Tasks

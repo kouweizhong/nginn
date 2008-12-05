@@ -109,9 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Runtime\Email\EmailMessage.cs" />
-    <Compile Include="Runtime\Email\RuleEmailHandler.cs" />
-    <Compile Include="Runtime\Email\SMTPEmailSender.cs" />
+    <Compile Include="EngineEvents.cs" />
     <Compile Include="Runtime\Http\HttpHelper.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
@@ -147,28 +145,37 @@
     <Compile Include="Runtime\TaskShell.cs" />
     <Compile Include="Runtime\Tasks\TimerTaskActive.cs" />
     <Compile Include="Runtime\Tasks\XmlHttpTaskActive.cs" />
+    <Compile Include="Runtime\Utils\MessageHandlerBase.cs" />
+    <Compile Include="Runtime\Utils\ScriptableMessageRouter.cs" />
+    <Compile Include="Runtime\Utils\ScriptableMessageRouterDSLEngine.cs" />
+    <Compile Include="Runtime\Utils\LogDiagnostics.cs" />
     <Compile Include="Runtime\XmlProcessingUtil.cs" />
     <Compile Include="Services\Dao\INGDataSession.cs" />
     <Compile Include="Services\Dao\INGDataStore.cs" />
     <Compile Include="Runtime\NGEnvironment.cs" />
+    <Compile Include="Services\Events\DiagnosticEvent.cs" />
     <Compile Include="Services\IActiveTaskFactory.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />
     <Compile Include="Services\IProcessScript.cs" />
     <Compile Include="Services\IProcessScriptManager.cs" />
+    <Compile Include="Services\ISystemDiagnostics.cs" />
     <Compile Include="Services\ITaskCorrelationIdResolver.cs" />
     <Compile Include="Services\ITaskScript.cs" />
-    <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
+    <ProjectReference Include="..\src\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
       <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
       <Name>NGinn.RippleBoo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\NGinn.Utilities\NGinn.Utilities.csproj">
+      <Project>{5A96433F-BF5A-41C8-8F0A-CF15FF335FEA}</Project>
+      <Name>NGinn.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +197,9 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Runtime\Email\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

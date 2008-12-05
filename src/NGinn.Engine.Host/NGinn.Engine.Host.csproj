@@ -38,39 +38,31 @@
   <ItemGroup>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Irony.dll</HintPath>
+      <HintPath>..\..\extlib\Irony.dll</HintPath>
     </Reference>
-    <Reference Include="IronyScriptDotNet, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="IronyScriptDotNet, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\IronyScriptDotNet.dll</HintPath>
+      <HintPath>..\..\extlib\IronyScriptDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="MutanticFramework, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MutanticFramework, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\MutanticFramework.dll</HintPath>
+      <HintPath>..\..\extlib\MutanticFramework.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="PowerCollections, Version=1.0.2141.24679, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\PowerCollections.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartThreadPool, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\SmartThreadPool.dll</HintPath>
+      <HintPath>..\..\extlib\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Sooda, Version=1.0.0.438, Culture=neutral, PublicKeyToken=102bbd392415062a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Sooda.dll</HintPath>
+      <HintPath>..\..\extlib\Sooda.dll</HintPath>
     </Reference>
-    <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Spring.Core, Version=1.1.2.20226, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Spring.Core.dll</HintPath>
+      <HintPath>..\..\extlib\Spring.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Spring.Services, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Spring.Services, Version=1.1.2.20226, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Spring.Services.dll</HintPath>
+      <HintPath>..\..\extlib\Spring.Services.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -96,19 +88,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
+    <ProjectReference Include="..\..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
       <Project>{26A7F419-0571-4C06-9142-2C1793675838}</Project>
       <Name>NGinn.Engine.Dao</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">
+    <ProjectReference Include="..\..\NGinn.Engine\NGinn.Engine.csproj">
       <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
       <Name>NGinn.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
+    <ProjectReference Include="..\..\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
+    <ProjectReference Include="..\..\NGinn.Worklist\NGinn.Worklist.csproj">
       <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
       <Name>NGinn.Worklist</Name>
     </ProjectReference>

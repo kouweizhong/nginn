@@ -14,8 +14,10 @@ using NGinn.Lib.Interfaces;
 using NGinn.Lib.Interfaces.Worklist;
 using NGinn.Lib.Data;
 using NGinn.Engine.Runtime.Tasks;
+using NGinn.Engine.Runtime.Utils;
 using System.Collections;
 using System.Transactions;
+
 
 namespace NGinn.Engine.Runtime
 {
@@ -24,8 +26,7 @@ namespace NGinn.Engine.Runtime
     /// </summary>
     public class NGEnvironment : INGEnvironment, INGEnvironmentProcessCommunication, INGEnvironmentContext
     {
-        private Spring.Context.IApplicationContext _appCtx;
-        private static Logger log = LogManager.GetCurrentClassLogger();
+        private Logger log = LogManager.GetCurrentClassLogger();
         private IProcessPackageRepository _packageRepository;
         private IProcessInstanceRepository _instanceRepository;
         private IWorkListService _worklistService;
@@ -38,6 +39,7 @@ namespace NGinn.Engine.Runtime
         private Dictionary<string, object> _contextObjects = new Dictionary<string, object>();
         private TransactionScopeOption _transactionOption = TransactionScopeOption.Suppress;
         private IProcessScriptManager _scriptManager;
+        private ISystemDiagnostics _diagnostics = new LogDiagnostics();
 
         public NGEnvironment()
         {
@@ -145,6 +147,11 @@ namespace NGinn.Engine.Runtime
             }
         }
 
+        /// <summary>
+        /// Get environment variable
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public object GetEnvVariable(string name)
         {
             lock (_envVariables)
@@ -170,18 +177,21 @@ namespace NGinn.Engine.Runtime
                 using (TransactionScope ts = new TransactionScope(_transactionOption))
                 {
                     ProcessInstance pi = new ProcessInstance();
+                    pi.StartDate = DateTime.Now;
+                    pi.StartedBy = System.Threading.Thread.CurrentPrincipal.Identity.Name;
                     pi.InstanceId = Guid.NewGuid().ToString("N");
                     pi.ProcessDefinitionId = definitionId;
                     pi.Environment = this;
                     pi.CorrelationId = correlationId;
                     pi.Activate();
-
+                    
                     log.Info("Created new process instance for process {0}.{1}: {2}", pd.Name, pd.Version, pi.InstanceId);
                     pi.SetProcessInputData(inputData);
                     pi.CreateStartToken();
                     pi.Passivate();
                     InstanceRepository.InsertNewProcessInstance(pi);
                     ts.Complete();
+                    NotifyReadyProcessSaved();
                     return pi.InstanceId;    
                 }
                 
@@ -203,6 +213,8 @@ namespace NGinn.Engine.Runtime
                 using (TransactionScope ts = new TransactionScope(_transactionOption))
                 {
                     ProcessInstance pi = new ProcessInstance();
+                    pi.StartDate = DateTime.Now;
+                    pi.StartedBy = System.Threading.Thread.CurrentPrincipal.Identity.Name;
                     pi.InstanceId = Guid.NewGuid().ToString("N");
                     pi.ProcessDefinitionId = definitionId;
                     pi.Environment = this;
@@ -214,6 +226,7 @@ namespace NGinn.Engine.Runtime
                     pi.Passivate();
                     InstanceRepository.InsertNewProcessInstance(pi);
                     ts.Complete();
+                    NotifyReadyProcessSaved();
                     return pi.InstanceId;
                 }
             }
@@ -351,9 +364,17 @@ namespace NGinn.Engine.Runtime
             }
             if (ready)
             {
-                //TODO: notify others that the process is ready
-                MessageBus.Notify("NGEnvironment", "NGinn.Engine.Runtime.NGEngine.Control", "WAKEUP", false);
+                NotifyReadyProcessSaved();
             }
+        }
+
+        /// <summary>
+        /// Notify that process with 'ready' status has been saved
+        /// </summary>
+        private void NotifyReadyProcessSaved()
+        {
+            //TODO: notify others that the process is ready
+            MessageBus.Notify("NGEnvironment", "NGinn.Engine.Runtime.NGEngine.Control", "WAKEUP", false);
         }
 
         public DataObject GetProcessOutputData(string instanceId)

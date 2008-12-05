@@ -10,8 +10,8 @@
     <task id="eval_candidate" type="ManualTask" joinType="AND" splitType="AND">
         <parameters>
             <binding parameter="AssigneeId"><value>1</value></binding>
-            <binding parameter="Title"><expr><![CDATA[string.Format('Odrzuc kandydata: {0}. Masz 30 sekund.', userName);]]></expr></binding>
-            <binding parameter="Description"><expr><![CDATA[string.Format('Nowy kandydat: {0}\nEmail: {1}\n{2}', userName, email, remarks);]]></expr></binding>
+            <binding parameter="Title"><expr><![CDATA[string.Format('Odrzuc kandydata: {0}. Masz 30 sekund.', data.userName);]]></expr></binding>
+            <binding parameter="Description"><expr><![CDATA[string.Format('Nowy kandydat: {0}\nEmail: {1}\n{2}', data.userName, data.email, data.remarks);]]></expr></binding>
         </parameters>
          <data-definition>
             <variables> 

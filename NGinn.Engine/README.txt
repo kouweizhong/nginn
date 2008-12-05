@@ -56,3 +56,38 @@ PI
 czy task moze siê sam 'cancelowaæ'? na razie nie
 sk¹d task ma wiedzieæ czy siê zakoñczy³
 ma dostaæ event. Event zostanie dostarczony przez PI
+
+
+
+Definicja procesu w Boo?
+
+process "TestProcess", 1:
+	start_place "start"
+	end_place "end"
+	place "p1"
+	place "p2"
+	
+	task "t1", EmptyTask:
+		split_type XOR
+		label "My task"
+		variables:
+			variable "V1"
+		input_bindings:
+			binding_for "V1":
+				ProcessData.Variable1 + ProcessData.V2 + 10
+		output_bindings:
+			binding_for "PV1":
+				Data.Out1 + Data.Out2
+			copy_var "V2", "PV2"
+	
+	flow "start", "t1"
+	flow "t1", "p1":
+		label "V1 > 30"
+		condition Data.V1 > 30
+		
+	flow "t1", "p2":
+		label "V1 > 30"
+		condition Data.V1 <= 30
+	
+	variables:
+		variable "V1", string, Dir.In, required:true

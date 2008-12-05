@@ -13,6 +13,7 @@
         <parameters>
             <binding parameter="ScriptBody"><value><![CDATA[
             log.Info('I am the T1 script task, started at {0}', data.startedDate);
+            System.Threading.Thread.Sleep(10000);
             ]]></value>
             </binding>
         </parameters>
@@ -31,7 +32,8 @@
     <task id="t2" type="ScriptTask" joinType="XOR">
         <parameters>
             <binding parameter="ScriptBody"><value><![CDATA[
-            log.Info('I am the T1 script task, started at {0}', data.startedDate);
+            log.Info('I am the T2 script task, started at {0}', data.startedDate);
+            System.Threading.Thread.Sleep(10000);
             ]]></value>
             </binding>
         </parameters>

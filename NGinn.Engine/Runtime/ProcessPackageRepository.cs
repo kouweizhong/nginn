@@ -8,6 +8,8 @@ using NGinn.Lib.Schema;
 using NGinn.Lib.Services;
 using System.Xml;
 using NGinn.Lib.Interfaces;
+using NGinn.Lib.Interfaces.MessageBus;
+using NGinn.Engine.Services.Events;
 
 namespace NGinn.Engine.Runtime
 {
@@ -26,8 +28,9 @@ namespace NGinn.Engine.Runtime
 
         private Dictionary<string, PackageInfo> _packageCache;
         private Logger log = LogManager.GetCurrentClassLogger();
-
+        
         private IProcessScriptManager _scriptManager;
+        private IMessageBus _mbus;
 
         /// <summary>
         /// Script manager for the repository
@@ -36,6 +39,15 @@ namespace NGinn.Engine.Runtime
         {
             get { return _scriptManager; }
             set { _scriptManager = value; }
+        }
+
+        /// <summary>
+        /// Message bus
+        /// </summary>
+        public IMessageBus MessageBus
+        {
+            get { return _mbus; }
+            set { _mbus = value; }
         }
 
         #region IProcessPackageRepository Members
@@ -80,12 +92,17 @@ namespace NGinn.Engine.Runtime
                         catch (Exception ex)
                         {
                             log.Error("Error reading package file: {0}: {1}", pkg, ex);
+                            DiagnosticEvent de = new DiagnosticEvent("PackageRepository", ex);
+                            de.Message = string.Format("Error loading package {0}", pkg);
+                            if (MessageBus != null) MessageBus.Notify("ProcessPackageRepository", "Error", de, false);
                         }
                     }
                 }
                 _packageCache = names;
             }
         }
+
+        
 
         void PackageStore_ProcessReload(ProcessDefinition pd)
         {

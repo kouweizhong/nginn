@@ -176,6 +176,7 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="SoodaPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\CancelProcess.aspx.cs">
       <DependentUpon>CancelProcess.aspx</DependentUpon>
@@ -213,6 +214,7 @@
     </Compile>
     <Compile Include="sys\UpdateTaskJSON.aspx.cs">
       <DependentUpon>UpdateTaskJSON.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="sys\UpdateTaskXml.aspx.cs">
       <DependentUpon>UpdateTaskXml.aspx</DependentUpon>
@@ -220,6 +222,7 @@
     </Compile>
     <Compile Include="TaskForm.aspx.cs">
       <DependentUpon>TaskForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="tasks\TaskSubmit.aspx.cs">
       <DependentUpon>TaskSubmit.aspx</DependentUpon>
@@ -230,6 +233,7 @@
     </Compile>
     <Compile Include="TaskXml.aspx.cs">
       <DependentUpon>TaskXml.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="TODO.aspx.cs">
       <DependentUpon>TODO.aspx</DependentUpon>

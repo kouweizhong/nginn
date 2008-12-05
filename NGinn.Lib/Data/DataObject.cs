@@ -8,6 +8,7 @@ using System.Collections;
 using NLog;
 using MutantFramework;
 using System.Collections.Specialized;
+using System.Xml.Serialization;
 
 namespace NGinn.Lib.Data
 {
@@ -87,7 +88,7 @@ namespace NGinn.Lib.Data
     }
 
     [Serializable]
-    public class DataObject : DictionaryBase<string, object>, IDataObject
+    public class DataObject : DictionaryBase<string, object>, IDataObject, IXmlSerializable
     {
         private StringCollection _membersAdded = new StringCollection();
         //private List<string> _membersAdded = new List<string>();
@@ -570,7 +571,23 @@ namespace NGinn.Lib.Data
         }
 
 
-        
+        #region IXmlSerializable Members
 
+        public System.Xml.Schema.XmlSchema GetSchema()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            ToXml("DataObject", writer);
+        }
+
+        #endregion
     }
 }

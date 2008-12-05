@@ -53,16 +53,18 @@ namespace NGinn.Engine
         private IDictionary<string, TaskShell> _activeTransitions = new Dictionary<string, TaskShell>();
         /// <summary>helper map: task id -> list of active instances of the task</summary>
         private ProcessStatus _status;
-
+        /// <summary>transition id generator</summary>
         private int _transitionNumber = 0;
-        
+        /// <summary>Instance data</summary>
         private DataObject _processInstanceData = new DataObject();
         
         private string _correlationId;
-        /// <summary>
-        /// map place Id -> number of tokens
-        /// </summary>
+        /// <summary>map place Id -> number of tokens</summary>
         private Dictionary<string, int> _currentMarking = new Dictionary<string, int>();
+        /// <summary>id of user that started the process</summary>
+        private string _startedBy;
+        /// <summary>process started date</summary>
+        private DateTime _startDate = DateTime.MinValue;
 
         public ProcessInstance()
         {
@@ -148,6 +150,20 @@ namespace NGinn.Engine
             set { _environment = value; }
         }
 
+        /// <summary>Id of user who started the process</summary>
+        public string StartedBy
+        {
+            get { return _startedBy; }
+            set { _startedBy = value; }
+        }
+
+        /// <summary>Process start date</summary>
+        public DateTime StartDate
+        {
+            get { return _startDate; }
+            set { _startDate = value; }
+        }
+
         
         /// <summary>
         /// Allocate next active transition Id.
@@ -164,6 +180,7 @@ namespace NGinn.Engine
             }
             return string.Format("{0}.{1}", _instId, n);
         }
+
 
 
         /// <summary>
@@ -1176,7 +1193,8 @@ namespace NGinn.Engine
             dob["InstanceData"] = new DataObject(this.GetProcessVariablesContainer());
             dob["CorrelationId"] = this._correlationId == null ? "" : this.CorrelationId;
             dob["TransitionNumber"] = this._transitionNumber;
-
+            dob["StartedBy"] = this._startedBy;
+            dob["StartDate"] = this.StartDate.ToString();
             List<object> al = new List<object>();
             foreach (string plid in _currentMarking.Keys)
             {
@@ -1218,6 +1236,9 @@ namespace NGinn.Engine
             _definitionId = (string) dob["ProcessDefinitionId"];
             _status = (ProcessStatus)Enum.Parse(typeof(ProcessStatus), (string) dob["Status"]);
             _persistedVersion = Convert.ToInt32(dob["PersistedVersion"]);
+            _startedBy = (string)dob["StartedBy"];
+            v = (string) dob["StartDate"];
+            if (v != null) _startDate = DateTime.Parse(v);
             DataObject vars = (DataObject)dob["InstanceData"];
             _processInstanceData = new DataObject();
             _processInstanceData["variables"] = vars;

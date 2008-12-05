@@ -110,13 +110,13 @@
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
-      <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
-      <Name>NGinn.RippleBoo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
       <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
       <Name>NGinn.Worklist</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
+      <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
+      <Name>NGinn.RippleBoo</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
