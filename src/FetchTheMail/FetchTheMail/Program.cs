@@ -6,6 +6,8 @@ using NLog;
 using Rebex.Mail;
 using Rebex.Net;
 using System.Collections.Specialized;
+using System.IO;
+
 
 namespace FetchTheMail
 {
@@ -35,7 +37,6 @@ namespace FetchTheMail
 
         static void Main(string[] args)
         {
-            NLog.Config.SimpleConfigurator.ConfigureForConsoleLogging();
             if (args.Length == 0)
             {
                 PrintUsage();
@@ -81,6 +82,8 @@ namespace FetchTheMail
             try
             {
                 string outdir = RequireParam("outdir", param);
+                if (!Directory.Exists(outdir)) Directory.CreateDirectory(outdir);
+
                 string server = RequireParam("server", param);
                 int port = Convert.ToInt32(RequireParam("port", param));
 
@@ -108,6 +111,10 @@ namespace FetchTheMail
                     log.Info("Downloading message {0}", mi.SequenceNumber);
                     MailMessage mm = client.GetMailMessage(mi.SequenceNumber);
                     log.Info("Message from: {0}, to: {1}, subject: {2}", mm.From, mm.To, mm.Subject);
+                    string g = Guid.NewGuid().ToString();
+                    string file = Path.Combine(outdir, g + ".eml");
+                    log.Info("Saving message to {0}", file);
+                    mm.Save(file);
                 }
 
                 bool rollback = !"0".Equals(RequireParam("noremove", param));

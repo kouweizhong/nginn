@@ -40,7 +40,7 @@ namespace NGinn.Utilities.Email
             foreach (SharpAttachment att in sm.Attachments)
             {
             }
-            foreach (SharpMimeHeader hdr in sm.Headers)
+            foreach (object hdr in sm.Headers)
             {
                 
             }
