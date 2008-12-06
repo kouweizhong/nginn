@@ -53,17 +53,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extlib\MutanticFramework.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+    <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\NLog.dll</HintPath>
+      <HintPath>..\..\extlib\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.2141.24679, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\PowerCollections.dll</HintPath>
+      <HintPath>..\..\extlib\PowerCollections.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Core, Version=1.2.0.20313, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Spring.Core.dll</HintPath>
+      <HintPath>..\..\extlib\Spring.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

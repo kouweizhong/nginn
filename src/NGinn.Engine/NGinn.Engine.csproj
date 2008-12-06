@@ -88,7 +88,7 @@
     </Reference>
     <Reference Include="Rhino.DSL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Rhino.DSL.dll</HintPath>
+      <HintPath>..\..\extlib\Rhino.DSL.dll</HintPath>
     </Reference>
     <Reference Include="SharpMimeTools, Version=0.6.2377.29117, Culture=neutral, PublicKeyToken=e917783050dba165, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,7 +96,7 @@
     </Reference>
     <Reference Include="SmartThreadPool, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\SmartThreadPool.dll</HintPath>
+      <HintPath>..\..\extlib\SmartThreadPool.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -109,7 +109,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Wintellect.Threading, Version=4.1.3225.27188, Culture=neutral, PublicKeyToken=167f00fdf109b063, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Wintellect.Threading.dll</HintPath>
+      <HintPath>..\..\extlib\Wintellect.Threading.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

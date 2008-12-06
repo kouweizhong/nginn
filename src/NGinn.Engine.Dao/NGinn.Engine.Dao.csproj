@@ -45,9 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\PowerCollections.dll</HintPath>
     </Reference>
-    <Reference Include="Sooda, Version=1.0.0.428, Culture=neutral, PublicKeyToken=102bbd392415062a, processorArchitecture=MSIL">
+    <Reference Include="Sooda, Version=1.0.0.438, Culture=neutral, PublicKeyToken=102bbd392415062a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Sooda.dll</HintPath>
+      <HintPath>..\..\extlib\Sooda.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Core, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

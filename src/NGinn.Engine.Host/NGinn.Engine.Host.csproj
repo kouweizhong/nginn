@@ -16,6 +16,21 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <StartupObject>
     </StartupObject>
+    <PublishUrl>http://localhost/NGinn.Engine.Host/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,6 +92,7 @@
       <HintPath>..\..\extlib\Spring.Services.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
@@ -124,6 +140,27 @@
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
+      <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
+      <Name>NGinn.Worklist</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
