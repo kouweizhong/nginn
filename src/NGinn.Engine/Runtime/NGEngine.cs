@@ -172,7 +172,6 @@ namespace NGinn.Engine.Runtime
                             //pump the queue all the time.
                             st.WaitForIdle(TimeSpan.FromHours(1.0));
                         }
-                        MessageBus.Notify("NGEngine", "Heartbeat", new EngineHeartbeat(), true);
                     }
                     catch (ThreadAbortException ex) {}
                     catch (ThreadInterruptedException ex) {}
@@ -254,6 +253,14 @@ namespace NGinn.Engine.Runtime
                 throw;
             }
         }
-        
+
+        /// <summary>
+        /// send the NGinn engine heartbeat. To be called periodically
+        /// </summary>
+        public void RunHeartbeat()
+        {
+            EngineHeartbeat hb = new EngineHeartbeat();
+            MessageBus.Notify("NGEngine", "Heartbeat", hb, false);
+        }
     }
 }

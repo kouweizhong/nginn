@@ -115,6 +115,7 @@ namespace FetchTheMail
                     string file = Path.Combine(outdir, g + ".eml");
                     log.Info("Saving message to {0}", file);
                     mm.Save(file);
+                    client.Delete(mi.SequenceNumber);
                 }
 
                 bool rollback = !"0".Equals(RequireParam("noremove", param));

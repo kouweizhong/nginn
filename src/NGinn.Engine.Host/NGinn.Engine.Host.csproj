@@ -36,6 +36,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=1.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extlib\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.NLog, Version=1.2.0.2, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extlib\Common.Logging.NLog.dll</HintPath>
+    </Reference>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extlib\Irony.dll</HintPath>
@@ -59,6 +67,10 @@
     <Reference Include="Spring.Core, Version=1.1.2.20226, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extlib\Spring.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Spring.Scheduling.Quartz, Version=1.2.0.20313, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extlib\Spring.Scheduling.Quartz.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Services, Version=1.1.2.20226, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -88,24 +100,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
-      <Project>{26A7F419-0571-4C06-9142-2C1793675838}</Project>
-      <Name>NGinn.Engine.Dao</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NGinn.Engine\NGinn.Engine.csproj">
-      <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
-      <Name>NGinn.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NGinn.Lib\NGinn.Lib.csproj">
-      <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
-      <Name>NGinn.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NGinn.Worklist\NGinn.Worklist.csproj">
-      <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
-      <Name>NGinn.Worklist</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -116,6 +110,20 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
+      <Project>{26A7F419-0571-4C06-9142-2C1793675838}</Project>
+      <Name>NGinn.Engine.Dao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">
+      <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
+      <Name>NGinn.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
+      <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
+      <Name>NGinn.Lib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -64,11 +64,11 @@
     </Reference>
     <Reference Include="Irony, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Irony.dll</HintPath>
+      <HintPath>..\..\extlib\Irony.dll</HintPath>
     </Reference>
-    <Reference Include="IronyScriptDotNet, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="IronyScriptDotNet, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\IronyScriptDotNet.dll</HintPath>
+      <HintPath>..\..\extlib\IronyScriptDotNet.dll</HintPath>
     </Reference>
     <Reference Include="MutanticFramework, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +76,7 @@
     </Reference>
     <Reference Include="Mvp.Xml, Version=2.0.2158.1055, Culture=neutral, PublicKeyToken=dd92544dc05f5671, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\extlib\Mvp.Xml.dll</HintPath>
+      <HintPath>..\..\extlib\Mvp.Xml.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
@@ -170,11 +170,11 @@
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
+    <ProjectReference Include="..\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
       <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
       <Name>NGinn.RippleBoo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\NGinn.Utilities\NGinn.Utilities.csproj">
+    <ProjectReference Include="..\NGinn.Utilities\NGinn.Utilities.csproj">
       <Project>{5A96433F-BF5A-41C8-8F0A-CF15FF335FEA}</Project>
       <Name>NGinn.Utilities</Name>
     </ProjectReference>

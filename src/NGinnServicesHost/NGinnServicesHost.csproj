@@ -98,7 +98,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NGinn.Lib\NGinn.Lib.csproj">
+    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>

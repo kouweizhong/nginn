@@ -22,6 +22,7 @@ namespace NGinn.Utilities.Email
         public EmailMessageInfo ReadMessageStream(Stream stm)
         {
             SharpMessage sm = new SharpMessage(stm);
+            
             EmailMessageInfo emi = new EmailMessageInfo();
             emi.From = sm.FromAddress;
             emi.Subject = sm.Subject;
@@ -40,9 +41,10 @@ namespace NGinn.Utilities.Email
             foreach (SharpAttachment att in sm.Attachments)
             {
             }
+            
             foreach (object hdr in sm.Headers)
             {
-                
+                        
             }
             return emi;
         }

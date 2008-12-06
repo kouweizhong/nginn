@@ -8,7 +8,7 @@ using NGinn.Lib.Interfaces;
 
 namespace NGinn.Utilities.Email
 {
-    abstract internal class EmailRulesBase : NGinn.RippleBoo.RuleSetBase
+    public abstract  class EmailRulesBase : NGinn.RippleBoo.RuleSetBase
     {
         protected EmailMessageInfo Message;
         protected IMessageBus MessageBus;
@@ -32,6 +32,9 @@ namespace NGinn.Utilities.Email
         public InputEmailHandler()
         {
             _rulez.BaseType = typeof(EmailRulesBase);
+            _rulez.ImportNamespaces.Add("NGinn.Lib.Data");
+            _rulez.ImportNamespaces.Add("NGinn.Lib.Interfaces");
+            _rulez.ImportNamespaces.Add("NGinn.Utilities.Email");
         }
 
         public string BaseDirectory
@@ -40,12 +43,27 @@ namespace NGinn.Utilities.Email
             set { _rulez.BaseDirectory = value; }
         }
 
+        private string _rulesFile = "email_rules.boo";
+        public string RulesFile
+        {
+            get { return _rulesFile; }
+            set { _rulesFile = value; }
+        }
+
+        private IDictionary<string, object> _extCtx = new Dictionary<string, object>();
+
+        public IDictionary<string, object> Context
+        {
+            get { return _extCtx; }
+            set { _extCtx = value; }
+        }
+
+
         public void HandleEmail(EmailMessageInfo emi)
         {
             Dictionary<string, object> vars = new Dictionary<string,object>();
-            Dictionary<string, object> ctx = new Dictionary<string,object>();
             vars["Message"] = emi;
-            _rulez.EvaluateRules("email_rules.boo", vars, ctx);
+            _rulez.EvaluateRules(RulesFile, vars, _extCtx);
         }
 
     }

@@ -3,5 +3,5 @@ message_type NGinn.Engine.EngineHeartbeat
 message_topic '*'
 
 handler:
-    log.Info('HARTBIT')
+    log.Debug('BOOM BOOM')
     

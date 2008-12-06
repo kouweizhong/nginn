@@ -98,25 +98,21 @@
     <Compile Include="XmlTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
-      <Project>{26A7F419-0571-4C06-9142-2C1793675838}</Project>
-      <Name>NGinn.Engine.Dao</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">
+    <ProjectReference Include="..\src\NGinn.Engine\NGinn.Engine.csproj">
       <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
       <Name>NGinn.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
+    <ProjectReference Include="..\src\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
-      <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
-      <Name>NGinn.Worklist</Name>
     </ProjectReference>
     <ProjectReference Include="..\src\NGinn.RippleBoo\NGinn.RippleBoo.csproj">
       <Project>{CB36B406-D512-41BC-A094-5E462D4A486A}</Project>
       <Name>NGinn.RippleBoo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\NGinn.Utilities\NGinn.Utilities.csproj">
+      <Project>{5A96433F-BF5A-41C8-8F0A-CF15FF335FEA}</Project>
+      <Name>NGinn.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -244,25 +244,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NGinn.Engine.Dao\NGinn.Engine.Dao.csproj">
-      <Project>{26A7F419-0571-4C06-9142-2C1793675838}</Project>
-      <Name>NGinn.Engine.Dao</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NGinn.Engine\NGinn.Engine.csproj">
+    <None Include="ext\resources\resources.jsb" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\NGinn.Engine\NGinn.Engine.csproj">
       <Project>{C36A860A-1AE3-4882-BA2C-3310342DF712}</Project>
       <Name>NGinn.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Lib\NGinn.Lib.csproj">
+    <ProjectReference Include="..\src\NGinn.Lib\NGinn.Lib.csproj">
       <Project>{F4C0CF5D-2246-4727-B10B-F3E3E13510A2}</Project>
       <Name>NGinn.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NGinn.Worklist\NGinn.Worklist.csproj">
+    <ProjectReference Include="..\src\NGinn.Worklist\NGinn.Worklist.csproj">
       <Project>{2A62D383-3B3A-4D57-9711-367E1D064B80}</Project>
       <Name>NGinn.Worklist</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ext\resources\resources.jsb" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
