@@ -3,8 +3,14 @@
 	 process definition into dot.exe graph description file.
 	 It is used for generating process graphical representation.
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:ng="http://www.nginn.org/WorkflowDefinition.1_0.xsd">
-	<xsl:output method="text" indent="yes" />
+<xsl:stylesheet version="1.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" 
+    xmlns:ng="http://www.nginn.org/WorkflowDefinition.1_0.xsd"
+    xmlns:str="http://exslt.org/strings"
+    extension-element-prefixes="str">
+	
+    <xsl:output method="text" indent="yes" />
 	<xsl:template match="/">
 		<xsl:apply-templates select="ng:process" />
 	</xsl:template>
@@ -65,6 +71,7 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
         ];
+        <xsl:apply-templates select="ng:cancelSet" />
 	</xsl:template>
 	
 	<xsl:template match="ng:flow">
@@ -88,4 +95,12 @@
 			</xsl:choose>
 			];
 	</xsl:template>
+    
+    <xsl:template match="ng:cancelSet">
+        <xsl:variable name="tid" select="./../@id" />
+        <xsl:for-each select="str:tokenize(.,'[,\s]+')">
+            <xsl:value-of select="$tid" /> -&gt; <xsl:value-of select="." /> [color=red, style=dashed ];
+        </xsl:for-each>
+        
+    </xsl:template>
 </xsl:stylesheet>

@@ -37,12 +37,6 @@ namespace NGinn.XmlFormsWWW
 
         protected void HandlePost()
         {
-            string msgId = Request["messageCorrelationId"];
-            if (msgId == null)
-            {
-                ReportError("Missing messageCorrelationId");
-                return;
-            }
             string xml = null;
             using (StreamReader sr = new StreamReader(Request.InputStream, Request.ContentEncoding))
             {
@@ -51,7 +45,25 @@ namespace NGinn.XmlFormsWWW
             log.Info("Input XML: {0}", xml);
             IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
             DataObject dob = xml.Length == 0 ? new DataObject() : DataObject.ParseXml(xml);
+            
             INGEnvironment env = (INGEnvironment)ctx.GetObject("NGEnvironment");
+            string msgId = Request["messageCorrelationId"];
+            if (msgId == null)
+            {
+                string msgExpr = Request["correlationIdField"];
+                if (msgExpr == null)
+                {
+                    ReportError("Missing messageCorrelationId or correlationIdField");
+                    Response.End();
+                }
+                msgId = (string) dob.GetValue(msgExpr);
+                if (msgId == null || msgId.Length == 0)
+                {
+                    ReportError("correlationIdField returned no data");
+                    Response.End();
+                }
+            }
+
             env.DispatchProcessMessage(msgId, dob);
             Response.End();
         }

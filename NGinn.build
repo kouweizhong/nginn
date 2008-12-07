@@ -46,7 +46,7 @@
             </fileset>
         </copy>
         <csc target="library" output="${build_dir}/NGinn.Lib.dll" debug="${debug}">
-            <sources basedir="NGinn.Lib">
+            <sources basedir="src/NGinn.Lib">
                 <include name="**/*.cs" />
             </sources>
             <resources prefix="NGinn.Lib" basedir="NGinn.Lib">
@@ -61,9 +61,63 @@
         </csc>
     </target>
     
+    <!--  -->
+    <target name="NGinn.RippleBoo" depends="">
+        <property name="srcdir" value="src/NGinn.RippleBoo" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Rhino.DSL.dll" />
+                <include name="NLog.dll" />
+                <include name="Boo.Lang.dll" />
+                <include name="Boo.Lang.Compiler.dll" />
+            </fileset>
+        </copy>
+        <csc target="library" output="${build_dir}/NGinn.RippleBoo.dll" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <references>
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/Rhino.DSL.dll" />
+                <include name="${build_dir}/Boo.Lang.dll" />
+                <include name="${build_dir}/Boo.Lang.Compiler.dll" />
+            </references>
+        </csc>
+    </target>
+    
+    <!-- NGinn.Utilities -->
+    <target name="NGinn.Utilities" depends="NGinn.RippleBoo, NGinn.Lib">
+        <property name="srcdir" value="src/NGinn.Utilities" />
+        <copy todir="${build_dir}">
+            <fileset basedir="extlib">
+                <include name="Spring.Core.dll" />
+                <include name="NLog.dll" />
+                <include name="Rhino.DSL.dll" />
+                <include name="Boo.Lang.dll" />
+                <include name="Boo.Lang.Compiler.dll" />
+                <include name="SharpMimeTools.dll" />
+            </fileset>
+        </copy>
+        <csc target="library" output="${build_dir}/NGinn.Utilities.dll" debug="${debug}">
+            <sources basedir="${srcdir}">
+                <include name="**/*.cs" />
+            </sources>
+            <references>
+                <include name="${build_dir}/Spring.Core.dll" />
+                <include name="${build_dir}/Rhino.DSL.dll" />
+                <include name="${build_dir}/SharpMimeTools.dll" />
+                <include name="${build_dir}/NLog.dll" />
+                <include name="${build_dir}/Boo.Lang.dll" />
+                <include name="${build_dir}/Boo.Lang.Compiler.dll" />
+                <include name="${build_dir}/NGinn.Lib.dll" />
+                <include name="${build_dir}/NGinn.RippleBoo.dll" />
+            </references> 
+        </csc>
+    </target>
+    
     <!-- NGinn.Engine.Dao library for process instance persistence -->
     <target name="NGinn.Engine.Dao" depends="NGinn.Engine">
-        <property name="srcdir" value="NGinn.Engine.Dao" />
+        <property name="srcdir" value="src/NGinn.Engine.Dao" />
         <copy todir="${build_dir}">
             <fileset basedir="extlib">
                 <include name="Spring.Core.dll" />
@@ -96,8 +150,8 @@
     </target>
     
     <!-- NGinn.Engine library - NGinn runtime implementation -->
-    <target name="NGinn.Engine" depends="NGinn.Lib">
-        <property name="srcdir" value="NGinn.Engine" />
+    <target name="NGinn.Engine" depends="NGinn.Lib, NGinn.Utilities">
+        <property name="srcdir" value="src/NGinn.Engine" />
         <copy todir="${build_dir}">
             <fileset basedir="extlib">
                 <include name="Spring.Core.dll" />
@@ -113,6 +167,8 @@
                 <include name="Boo.Lang.dll" />
                 <include name="Boo.Lang.Compiler.dll" />
                 <include name="Rhino.DSL.dll" />
+                <include name="Wintellect.Threading.dll" />
+                
             </fileset>
         </copy>
         <csc target="library" output="${build_dir}/NGinn.Engine.dll" debug="${debug}">
@@ -131,13 +187,16 @@
                 <include name="${build_dir}/Boo.Lang.dll" />
                 <include name="${build_dir}/Boo.Lang.Compiler.dll" />
                 <include name="${build_dir}/Rhino.DSL.dll" />
+                <include name="${build_dir}/NGinn.RippleBoo.dll" />
+                <include name="${build_dir}/NGinn.Utilities.dll" />
+                <include name="${build_dir}/Wintellect.Threading.dll" />
             </references>
         </csc>
     </target>
     
     <!-- NGinn engine host application. This is an example of how NGinn engine can be hosted in a windows service -->
     <target name="NGinn.Engine.Host" depends="NGinn.Engine, NGinn.Engine.Dao, NGinn.Worklist">
-        <property name="srcdir" value="NGinn.Engine.Host" />
+        <property name="srcdir" value="src/NGinn.Engine.Host" />
         <copy todir="${build_dir}">
             <fileset basedir="extlib">
                 <include name="Spring.Core.dll" />
@@ -171,7 +230,7 @@
         This is not a part of NGinn, only illustrates functionality provided by external applications.
     -->
 	<target name="NGinn.Worklist" depends="NGinn.Lib">
-        <property name="srcdir" value="NGinn.Worklist" />
+        <property name="srcdir" value="src/NGinn.Worklist" />
         <copy todir="${build_dir}">
             <fileset basedir="extlib">
                 <include name="Spring.Core.dll" />
@@ -202,8 +261,8 @@
 	<!-- nant processgraph -D:file=filename.xml -->
     <target name="processgraph" depends="">
 		<mkdir dir="temp" />
-		<!--<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />
-		-->
+		<exec program="${nxsl}" commandline="${file} Tools\processgraph.xsl -o temp/processgraph.dot" />
+		
         <exec program="${dot}" commandline="temp/processgraph.dot -Tgif -o ${out}" />
     </target>
 

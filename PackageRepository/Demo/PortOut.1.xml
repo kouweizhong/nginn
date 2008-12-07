@@ -5,6 +5,7 @@
     <place id="start" type="StartPlace"></place>
     <place id="end" type="EndPlace"></place>
     <place id="p1" type="Place" />
+    <place id="p2" type="Place" />
     <place id="pt1" type="Place" />
     <place id="pt2" type="Place" />
     <place id="pt3" type="Place" />
@@ -23,32 +24,32 @@
         </data-definition>
     </task>
     
-    <task id="timeout_1" type="TimerTask" joinType="AND" splitType="AND">
-        <parameters>
-            <binding parameter="DelayAmount"><value>00:00:10</value></binding>
-        </parameters>
-    </task>
-    
-    <task id="timeout_2" type="TimerTask" joinType="AND" splitType="AND">
+    <task id="timeout_1" type="TimerTask" label="T1">
         <parameters>
             <binding parameter="DelayAmount"><value>00:00:30</value></binding>
         </parameters>
     </task>
     
-    <task id="timeout_3" type="TimerTask" joinType="AND" splitType="AND">
+    <task id="timeout_2" type="TimerTask" label="T2">
         <parameters>
             <binding parameter="DelayAmount"><value>00:01:00</value></binding>
         </parameters>
     </task>
     
-    <task id="escalation_mail1" type="NotificationTask" joinType="AND" splitType="AND">
+    <task id="timeout_3" type="TimerTask" label="T3">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:02:00</value></binding>
+        </parameters>
+    </task>
+    
+    <task id="escalation_mail1" type="NotificationTask" label="Eskalacja 1">
         <parameters>
             <binding parameter="Recipients"><value>rafal.gwizdala@gmail.com</value></binding>
             <binding parameter="Subject">
-                <expr><![CDATA[string.Format('Brak dokumentów dla MSISDN {0}, eskalacja 1', data.MSISDN);]]></expr>
+                <expr><![CDATA[string.Format('Brak dokumentów dla MSISDN:{0}, eskalacja 1', data.MSISDN);]]></expr>
             </binding>
             <binding parameter="Body">
-                <expr><![CDATA[string.Format('Nadal nie otrzymaliśmy dokumentów dla MSISDN {0}, eskalacja 1', data.MSISDN);]]></expr>
+                <expr><![CDATA[string.Format('Nie otrzymaliśmy dokumentów dla MSISDN {0}, eskalacja pierwsza', data.MSISDN);]]></expr>
             </binding>
         </parameters>
          <data-definition>
@@ -61,13 +62,87 @@
         </data-definition>
     </task>
     
+    <task id="escalation_mail2" type="NotificationTask" label="Eskalacja 2">
+        <parameters>
+            <binding parameter="Recipients"><value>rafal.gwizdala@gmail.com</value></binding>
+            <binding parameter="Subject">
+                <expr><![CDATA[string.Format('Brak dokumentów dla MSISDN:{0}, eskalacja 2', data.MSISDN);]]></expr>
+            </binding>
+            <binding parameter="Body">
+                <expr><![CDATA[string.Format('Nadal nie otrzymaliśmy dokumentów dla MSISDN {0}, eskalacja druga', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.request.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="escalation_mail3" type="NotificationTask" label="Eskalacja 3">
+        <parameters>
+            <binding parameter="Recipients"><value>rafal.gwizdala@gmail.com</value></binding>
+            <binding parameter="Subject">
+                <expr><![CDATA[string.Format('Brak dokumentów dla MSISDN:{0}, eskalacja 3', data.MSISDN);]]></expr>
+            </binding>
+            <binding parameter="Body">
+                <expr><![CDATA[string.Format('Nadal nie otrzymaliśmy dokumentów dla MSISDN {0}, eskalacja trzecia i ostatnia', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.request.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
 
-    <task id="t3" type="ManualTask">
+    <task id="wait_doc" type="ReceiveMessageTask" label="Czekaj na załącznik">
+         <parameters>
+            <binding parameter="MessageCorrelationId"><expr>data.MSISDN;</expr></binding>
+         </parameters>
+         <cancelSet>pt1, pt2, pt3</cancelSet>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="InOut" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.request.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
+
+    <task id="continue_nodoc" type="ManualTask" label="Kontynuuj bez dokumentów">
+        
         <parameters>
             <binding parameter="AssigneeId"><value>1</value></binding>
             <binding parameter="Title"><value>Kontynuuj obsługę bez dokumentów</value></binding>
             <binding parameter="Description">
                 <expr><![CDATA[string.Format('Kontynuuj obsługę bez dokumentów - MPN Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet>pt1, pt2, pt3</cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.request.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
+    
+    <task id="handle_portout" type="ManualTask">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Zweryfikuj klienta i wyślij komunikat</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Zweryfikuj klienta i wyślij komunikat - MPN Port Out dla {0}', data.MSISDN);]]></expr>
             </binding>
         </parameters>
         <data-definition>
@@ -79,7 +154,6 @@
             </input-bindings>
         </data-definition>
     </task>
-    
   </tasks>
   <flows>
     <flow from="start" to="t1" />
@@ -92,12 +166,20 @@
     <flow from="pt2" to="timeout_2" />
     <flow from="pt3" to="timeout_3" />
     
-    <flow from="p1" to="t3" />
+    <flow from="p1" to="continue_nodoc" />
+    <flow from="p1" to="wait_doc" />
+    
     <flow from="timeout_1" to="escalation_mail1" />
-    <flow from="timeout_2" to="end" />
-    <flow from="timeout_3" to="end" />
+    <flow from="timeout_2" to="escalation_mail2" />
+    <flow from="timeout_3" to="escalation_mail3" />
     <flow from="escalation_mail1" to="end" />
-    <flow from="t3" to="end" />
+    <flow from="escalation_mail2" to="end" />
+    <flow from="escalation_mail3" to="end" />
+    
+    <flow from="continue_nodoc" to="p2" />
+    <flow from="wait_doc" to="p2" />
+    <flow from="p2" to="handle_portout" />
+    <flow from="handle_portout" to="end" />
   </flows>
     <processDataTypes>
         <enum name="CustomerType">

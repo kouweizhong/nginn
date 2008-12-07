@@ -398,7 +398,7 @@ namespace NGinn.Lib.Data
                 return null;
             string txtval = null;
             DataObject dob = null;
-            string nodeName = xr.Name;
+            string nodeName = xr.LocalName;
             if (xr.HasAttributes)
             {
                 log.Warn("Ignoring XML attributes");
@@ -427,7 +427,7 @@ namespace NGinn.Lib.Data
                         continue;
                         break;
                     case XmlNodeType.Element:
-                        string elName = xr.Name;
+                        string elName = xr.LocalName;
                         object elValue = DeserializeXmlElement(xr);
                         if (txtval != null) throw new ApplicationException("Element cannot have mixed content: " + nodeName);
                         if (dob == null) dob = new DataObject();
