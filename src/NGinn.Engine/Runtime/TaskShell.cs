@@ -254,7 +254,7 @@ namespace NGinn.Engine.Runtime
                 if (TaskId == null) throw new Exception("TaskId not set");
                 _taskDefinition = ParentProcess.Definition.GetTask(this.TaskId);
                 log = LogManager.GetCurrentClassLogger();
-                
+                if (_taskDefinition == null) throw new Exception("Task definition not found: " + this.TaskId);
                 if (_taskState != null)
                 {
                     log.Debug("TaskShell {0}: Restoring task state from {1}", CorrelationId, _taskState.ToString());

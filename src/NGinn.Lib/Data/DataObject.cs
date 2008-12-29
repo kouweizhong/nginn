@@ -354,6 +354,7 @@ namespace NGinn.Lib.Data
             StringBuilder sb = new StringBuilder();
             XmlWriterSettings ws = new XmlWriterSettings();
             ws.OmitXmlDeclaration = true;
+            ws.Indent = true;
             XmlWriter xw = XmlWriter.Create(sb, ws);
             ToXml(elementName, xw);
             xw.Flush();

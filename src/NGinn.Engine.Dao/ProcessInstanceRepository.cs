@@ -29,6 +29,7 @@ namespace NGinn.Engine.Dao
         public ProcessInstanceRepository()
         {
             _cache = new Spring.Caching.NonExpiringCache();
+            
         }
 
         #region IProcessInstanceRepository Members

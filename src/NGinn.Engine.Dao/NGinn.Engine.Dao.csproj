@@ -37,6 +37,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extlib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate, Version=2.0.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extlib\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=1.0.0.501, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\extlib\NLog.dll</HintPath>
@@ -59,10 +63,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessInstanceHibernator.cs" />
+    <Compile Include="ProcessInstanceData.cs" />
+    <Compile Include="ProcessInstanceStatus.cs" />
     <Compile Include="ProcessInstanceXmlRepository.cs" />
     <Compile Include="NGDataStore.cs" />
     <Compile Include="ProcessInstanceRepository.cs" />
@@ -92,8 +101,14 @@
     <Content Include="NGinn.Engine.Dao.Schema.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProcessInstanceStatus.hbm.xml">
+      <SubType>Form</SubType>
+    </EmbeddedResource>
     <Content Include="NGinn.Engine.Dao.soodaproject">
     </Content>
+    <EmbeddedResource Include="ProcessInstanceData.hbm.xml">
+      <SubType>Form</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

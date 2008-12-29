@@ -104,7 +104,7 @@ namespace FetchTheMail
                 Pop3MessageCollection messages = client.GetMessageList();
                 log.Info("There are {0} messages", messages.Count);
                 int maxcount = Convert.ToInt32(RequireParam("maxcount", param));
-                if (maxcount <= 0) maxcount = messages.Count;
+                if (maxcount <= 0 || maxcount > messages.Count) maxcount = messages.Count;
                 for (int i = 0; i < maxcount; i++)
                 {
                     Pop3MessageInfo mi = messages[i];
