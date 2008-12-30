@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Engine.Services;
 using NLog;
-using Sooda;
-using NGinn.Engine.Dao.TypedQueries;
 using NHibernate;
 
 namespace NGinn.Engine.Dao
