@@ -45,8 +45,11 @@ namespace NGinn.Engine.Dao
         {
             using (ISession sess = SessionFactory.OpenSession())
             {
-                ProcessInstanceData pid = sess.Load<ProcessInstanceData>(instanceId);
-                DataObject dob = DataObject.ParseXml(pid.ProcessData);
+                IQuery qq = sess.CreateQuery("select p from ProcessInstanceData as p where p.id = :instId");
+                qq.SetString("instId", instanceId);
+                IList<ProcessInstanceData> lst = qq.List<ProcessInstanceData>();
+                if (lst.Count == 0) return null;
+                DataObject dob = DataObject.ParseXml(lst[0].ProcessData);
                 return dob;
             }
         }
@@ -64,13 +67,15 @@ namespace NGinn.Engine.Dao
         /// <returns></returns>
         public ProcessInstance GetProcessInstance(string instanceId)
         {
-            ProcessInstance pi = new ProcessInstance();
             DataObject dob = (DataObject) Cache.Get(instanceId);
             if (dob == null)
             {
                 dob = GetProcessState(instanceId);
-                Cache.Insert(instanceId, dob, TimeSpan.FromMinutes(15));
+                if (dob != null)
+                    Cache.Insert(instanceId, dob, TimeSpan.FromMinutes(15));
             }
+            if (dob == null) return null;
+            ProcessInstance pi = new ProcessInstance();
             pi.RestoreState(dob);
             return pi;
         }
@@ -84,15 +89,19 @@ namespace NGinn.Engine.Dao
                 if (GetProcessInstance(pi.InstanceId) != null) throw new ApplicationException("Duplicate instance ID");
                 using (ISession ss = SessionFactory.OpenSession())
                 {
-                    ProcessInstanceData pid = new ProcessInstanceData();
-                    pid.InstanceId = pi.InstanceId;
-                    pid.DefinitionId = pi.ProcessDefinitionId;
-                    pid.StartDate = pi.StartDate;
-                    pid.Status = ss.Load<ProcessInstanceStatus>((int)pi.Status);
-                    pid.RecordVersion = pi.PersistedVersion;
-                    pid.LastModified = DateTime.Now;
-                    pid.ProcessData = dob.ToXmlString("ProcessInstance");
-                    ss.Save(pid);
+                    using (ITransaction tr = ss.BeginTransaction())
+                    {
+                        ProcessInstanceData pid = new ProcessInstanceData();
+                        pid.InstanceId = pi.InstanceId;
+                        pid.DefinitionId = pi.ProcessDefinitionId;
+                        pid.StartDate = pi.StartDate;
+                        pid.Status = ss.Load<ProcessInstanceStatus>((int)pi.Status);
+                        pid.RecordVersion = pi.PersistedVersion;
+                        pid.LastModified = DateTime.Now;
+                        pid.ProcessData = dob.ToXmlString("ProcessInstance");
+                        ss.Save(pid);
+                        tr.Commit();
+                    }
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace NGinn.Engine.Runtime
         private IActiveTaskFactory _activeTaskFactory = new ActiveTaskFactory();
         private ITaskCorrelationIdResolver _resolver;
         private Dictionary<string, object> _contextObjects = new Dictionary<string, object>();
-        private TransactionScopeOption _transactionOption = TransactionScopeOption.Suppress;
+        private TransactionScopeOption _transactionOption = TransactionScopeOption.Required;
         private IProcessScriptManager _scriptManager;
         private ISystemDiagnostics _diagnostics = new LogDiagnostics();
 
