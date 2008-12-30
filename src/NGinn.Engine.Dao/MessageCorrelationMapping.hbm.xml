@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+    namespace="NGinn.Engine.Dao" assembly="NGinn.Engine.Dao">
+
+  <class name="MessageCorrelationMapping" table="MessageCorrelationMapping">
+    <id name="Id" type="Int32">
+      <column name="id" not-null="true"/>
+      <generator class="hilo">
+        <param name="table">hilo_key</param>
+        <param name="column">key1</param>
+      </generator>
+    </id>
+    <property name="MessageId" type="String">
+      <column name="message_id" sql-type="varchar(40)" not-null="true" />
+    </property>
+    <property name="TaskCorrelationId" type="String">
+      <column name="correlation_id" sql-type="varchar(40)" not-null="true" />
+    </property>
+
+  </class>
+
+</hibernate-mapping>

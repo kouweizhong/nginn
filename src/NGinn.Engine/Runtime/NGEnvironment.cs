@@ -450,6 +450,21 @@ namespace NGinn.Engine.Runtime
         }
 
         [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
+        protected void CleanupMessageMappings(object msg, IMessageContext ctx)
+        {
+            ProcessFinished pf = (ProcessFinished)msg;
+            try
+            {
+                CorrelationIdResolver.RemoveAllProcessMappings(pf.InstanceId);
+            }
+            catch (Exception ex)
+            {
+                log.Warn("Failed to remove message id mappings for process {0}", pf.InstanceId);
+            }
+        }
+
+
+        [MessageBusSubscriber(typeof(ProcessFinished), "ProcessInstance.*")]
         protected void HandleProcessFinished(object msg, IMessageContext ctx)
         {
             ProcessFinished pf = (ProcessFinished)msg;

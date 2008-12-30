@@ -8,17 +8,19 @@ using NGinn.Lib.Interfaces.MessageBus;
 using System.Reflection;
 using System.Collections.Generic;
 using B = Boo.Lang;
+using Spring.Context;
 
 namespace NGinn.Utilities.MessageBus
 {
     /// <summary>
     /// Message router for message bus that uses boo scripts for processing the messages.
     /// </summary>
-    public class ScriptableMessageProcessor : Spring.Objects.Factory.IInitializingObject
+    public class ScriptableMessageProcessor : IApplicationContextAware
     {
         private DslFactory _fact = new DslFactory();
         private IMessageBus _msgBus;
         private List<string> _subscriptions = new List<string>();
+        private Logger log = LogManager.GetCurrentClassLogger();
 
         public ScriptableMessageProcessor()
         {
@@ -72,16 +74,54 @@ namespace NGinn.Utilities.MessageBus
             {
                 b.Initialize();
                 b.MessageBus = this.MessageBus;
-                if (Context != null) b.Context = new NGinn.RippleBoo.QuackWrapper(Context);
+                if (Context != null) b.Context = new MessageRouterContext(_appCtx, Context);
                 string sid = MessageBus.Subscribe(b.MessageType, b.MessageTopic, new MessageHandler(b.Execute));
+                _subscriptions.Add(sid);
             }
         }
 
-        #region IInitializingObject Members
 
-        public void AfterPropertiesSet()
+        #region IApplicationContextAware Members
+        private IApplicationContext _appCtx;
+        public IApplicationContext ApplicationContext
         {
-            Initialize();
+            set 
+            { 
+                _appCtx = value;
+                Initialize();
+            }
+        }
+
+        #endregion
+    }
+
+    class MessageRouterContext : B.IQuackFu
+    {
+        private IApplicationContext _ctx;
+        private IDictionary<string, object> _dic;
+        public MessageRouterContext(IApplicationContext ctx, IDictionary<string, object> dic)
+        {
+            _ctx = ctx;
+            _dic = dic;
+        }
+
+        #region IQuackFu Members
+
+        public object QuackGet(string name, object[] parameters)
+        {
+            object v;
+            if (_dic.TryGetValue(name, out v)) return v;
+            return _ctx.GetObject(name);
+        }
+
+        public object QuackInvoke(string name, params object[] args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object QuackSet(string name, object[] parameters, object value)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -5,6 +5,7 @@ using NGinn.Engine.Services;
 using NLog;
 using Sooda;
 using NGinn.Engine.Dao.TypedQueries;
+using NHibernate;
 
 namespace NGinn.Engine.Dao
 {
@@ -15,6 +16,15 @@ namespace NGinn.Engine.Dao
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
         private Dictionary<string, string> _cache = new Dictionary<string, string>();
+
+        private ISessionFactory _fact;
+
+        public ISessionFactory SessionFactory
+        {
+            get { return _fact; }
+            set { _fact = value; }
+        }
+
 
         #region ITaskCorrelationIdResolver Members
 
@@ -27,12 +37,13 @@ namespace NGinn.Engine.Dao
                 log.Info("Mapping {0}->{1} already registered", id, taskCorrelationId);
                 return;
             }
-            using (SoodaTransaction st = new SoodaTransaction(typeof(MessageCorrelationIdMapping).Assembly))
+            using (ISession ss = SessionFactory.OpenSession())
             {
-                MessageCorrelationIdMapping m = new MessageCorrelationIdMapping();
-                m.MessageId = id;
-                m.TaskCorrelationId = taskCorrelationId;
-                st.Commit();
+                MessageCorrelationMapping mm = new MessageCorrelationMapping();
+                mm.MessageId = id;
+                mm.TaskCorrelationId = taskCorrelationId;
+                ss.Save(mm);
+                ss.Flush();
             }
         }
 
@@ -42,9 +53,11 @@ namespace NGinn.Engine.Dao
             {
                 string ret;
                 if (_cache.TryGetValue(id, out ret)) return ret;
-                using (SoodaTransaction st = new SoodaTransaction(typeof(MessageCorrelationIdMapping).Assembly))
+                using (ISession ss = SessionFactory.OpenSession())
                 {
-                    MessageCorrelationIdMappingList lst = MessageCorrelationIdMapping.GetList(MessageCorrelationIdMappingField.MessageId == id);
+                    IQuery qq = ss.CreateQuery("from MessageCorrelationMapping m where m.MessageId = :mid");
+                    qq.SetString("mid", id);
+                    IList<MessageCorrelationMapping> lst = qq.List<MessageCorrelationMapping>();
                     if (lst.Count == 0) return null;
                     if (lst.Count > 1)
                     {
@@ -62,17 +75,35 @@ namespace NGinn.Engine.Dao
             lock (this)
             {
                 _cache.Remove(id);
-                using (SoodaTransaction st = new SoodaTransaction(typeof(MessageCorrelationIdMapping).Assembly))
+                using (ISession ss = SessionFactory.OpenSession())
                 {
-                    MessageCorrelationIdMappingList lst = MessageCorrelationIdMapping.GetList(MessageCorrelationIdMappingField.MessageId == id);
-                    foreach (MessageCorrelationIdMapping m in lst)
+                    using (ITransaction t = ss.BeginTransaction())
                     {
-                        if (taskCorrelationId != m.TaskCorrelationId) throw new Exception("Task correlation ID does not match current mapping");    
-                        log.Info("Removing mapping {0}", m.Id);
-                        m.MarkForDelete();
+                        IList<MessageCorrelationMapping> lst = ss.CreateQuery("from MessageCorrelationMapping m where m.MessageId = :mid").SetString("mid", id).List<MessageCorrelationMapping>();
+                        foreach (MessageCorrelationMapping m in lst)
+                        {
+                            if (taskCorrelationId != m.TaskCorrelationId) throw new Exception("Task correlation ID does not match current mapping");
+                            log.Info("Removing mapping {0}", m.Id);
+                            ss.Delete(m);
+                        }
+                        ss.Flush();
+                        t.Commit();
                     }
-                    st.Commit();
                 }
+            }
+        }
+
+        #endregion
+
+        #region ITaskCorrelationIdResolver Members
+
+
+        public void RemoveAllProcessMappings(string processInstanceId)
+        {
+            using (ISession ss = SessionFactory.OpenSession())
+            {
+                ss.Delete(string.Format("from MessageCorrelationMapping where TaskCorrelationId like '{0}.%'", processInstanceId));
+                ss.Flush();
             }
         }
 

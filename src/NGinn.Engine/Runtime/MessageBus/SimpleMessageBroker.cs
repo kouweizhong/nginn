@@ -132,6 +132,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                     _typeToSubscriberInfo[eventType] = al;
                 }
                 al.Add(si);
+                log.Debug("Subscribed {0}.{1} for event type {2} and topic '{3}'. Subscription {4}", handler.Target.GetType().Name, handler.Method.Name, eventType.Name, eventTopic, id);
                 return id;
             }
         }
@@ -205,6 +206,7 @@ namespace NGinn.Engine.Runtime.MessageBus
 
         public void SubscribeType(Type t)
         {
+            log.Debug("Subscribing type: {0}", t.Name);
             foreach (MethodInfo mi in t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 object[] attrs = mi.GetCustomAttributes(typeof(MessageBusSubscriberAttribute), true);
@@ -214,7 +216,6 @@ namespace NGinn.Engine.Runtime.MessageBus
                     MessageHandler mh = (MessageHandler)System.Delegate.CreateDelegate(typeof(MessageHandler), mi);
                     foreach (MessageBusSubscriberAttribute sa in attrs)
                     {
-                        log.Info("Subscribing {0}.{1} for EventType {2} and Topic {3}", t.Name, mi.Name, sa.EventType.Name, sa.EventTopic);
                         this.Subscribe(sa.EventType, sa.EventTopic, mh);
                     }
                 }
@@ -242,7 +243,6 @@ namespace NGinn.Engine.Runtime.MessageBus
                         MessageHandler mh = (MessageHandler)System.Delegate.CreateDelegate(typeof(MessageHandler), obj, mi, true);
                         foreach (MessageBusSubscriberAttribute sa in attrs)
                         {
-                            log.Info("Subscribing {0}.{1} for EventType {2} and Topic {3}", t.Name, mi.Name, sa.EventType.Name, sa.EventTopic);
                             this.Subscribe(sa.EventType, sa.EventTopic, mh);
                         }
                     }

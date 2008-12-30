@@ -25,5 +25,6 @@ namespace NGinn.Engine.Services
         void RegisterMapping(string id, string taskCorrelationId);
         string GetCorrelationId(string id);
         void RemoveMapping(string id, string taskCorrelationId);
+        void RemoveAllProcessMappings(string processInstanceId);
     }
 }

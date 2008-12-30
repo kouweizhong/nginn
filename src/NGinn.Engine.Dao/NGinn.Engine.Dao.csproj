@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageCorrelationMapping.cs" />
     <Compile Include="ProcessInstanceHibernator.cs" />
     <Compile Include="ProcessInstanceData.cs" />
     <Compile Include="ProcessInstanceStatus.cs" />
@@ -102,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProcessInstanceStatus.hbm.xml">
+      <SubType>Form</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MessageCorrelationMapping.hbm.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
     <Content Include="NGinn.Engine.Dao.soodaproject">
