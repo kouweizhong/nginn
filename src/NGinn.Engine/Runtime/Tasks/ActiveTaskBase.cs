@@ -309,11 +309,11 @@ namespace NGinn.Engine.Runtime.Tasks
             this._taskData = taskData;
         }
 
-        /// <summary>
-        /// Return task output data.
-        /// Performs output data validation
-        /// </summary>
-        /// <returns></returns>
+        protected virtual void ValidateOutputData()
+        {
+            GetOutputData();
+        }
+
         public virtual IDataObject GetOutputData()
         {
             StructDef sd = Context.TaskDefinition.GetTaskOutputDataSchema();
@@ -371,7 +371,11 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             if (_activated) throw new Exception("Task should not be activated when restoring state");
             _taskData = (DataObject)dob["TaskData"];
-            if (_taskData == null) _taskData = new DataObject();
+            if (_taskData == null)
+            {
+                log.Warn("No task data for task {0}: {1}", this.CorrelationId, dob.ToString());
+                _taskData = new DataObject();
+            }
             _correlationId = (string)dob["CorrelationId"];
             if (_correlationId == null) throw new Exception("Missing CorrelationId");
         }

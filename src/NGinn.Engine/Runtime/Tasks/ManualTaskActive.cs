@@ -106,16 +106,21 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             if (ite is TaskCompletedNotification)
             {
+                TaskCompletedNotification ev = (TaskCompletedNotification)ite;
                 if (Context.Status != TransitionStatus.ENABLED &&
                     Context.Status != TransitionStatus.STARTED)
                 {
                     log.Info("Invalid task status - ignoring the notification");
                     return false;
                 }
-                TaskCompletedNotification tn = (TaskCompletedNotification)ite;
+                this.CompletedBy = ev.CompletedBy;
+                if (ev.TaskData != null)
+                {
+                    UpdateTaskData(ev.TaskData);
+                }
+                ValidateOutputData();
                 Context.EnvironmentContext.WorklistService.WorkItemCompleted(CorrelationId);
-                this.CompletedBy = tn.CompletedBy;
-                DefaultHandleTaskCompletedEvent((TaskCompletedNotification)ite);
+                OnTaskCompleted();
                 return true;
             }
             else if (ite is TransitionSelectedNotification)

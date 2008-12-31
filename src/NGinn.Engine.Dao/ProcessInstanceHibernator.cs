@@ -108,9 +108,7 @@ namespace NGinn.Engine.Dao
 
         protected virtual void UpdateProcessInstanceData(ProcessInstance pi)
         {
-            pi.Passivate();
-            DataObject dob = pi.SaveState();
-
+            
             using (ISession ss = SessionFactory.OpenSession())
             {
                 using (ITransaction tr = ss.BeginTransaction())
@@ -121,6 +119,9 @@ namespace NGinn.Engine.Dao
                         log.Warn("Process {0}: Persisted version is {1} and memory version is {2}", pi.InstanceId, pid.RecordVersion, pi.PersistedVersion);
                     }
                     pid.RecordVersion += 1;
+                    pi.PersistedVersion = pid.RecordVersion;
+                    pi.Passivate();
+                    DataObject dob = pi.SaveState();
                     pid.ProcessData = dob.ToXmlString("ProcessInstance");
                     pid.Status = ss.Load<ProcessInstanceStatus>((int)pi.Status);
                     pid.LastModified = DateTime.Now;

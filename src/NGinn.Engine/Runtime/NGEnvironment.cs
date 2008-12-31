@@ -264,9 +264,9 @@ namespace NGinn.Engine.Runtime
             {
                 AccessProcessReadWriteLock(instanceId, delegate(ProcessInstance pi)
                 {
-                    pi.Activate();
+                    //pi.Activate();
                     pi.Kick();
-                    pi.Passivate();
+                    //pi.Passivate();
                 });
             }
             catch (Exception ex)
@@ -326,6 +326,7 @@ namespace NGinn.Engine.Runtime
             {
                 ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
                 pi.Environment = this;
+                pi.Activate();
                 dlg(pi);
             }
         }
@@ -347,6 +348,7 @@ namespace NGinn.Engine.Runtime
                     {
                         ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
                         pi.Environment = this;
+                        pi.Activate();
                         log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));
                         dlg(pi);
                         pi.Passivate();
@@ -381,7 +383,7 @@ namespace NGinn.Engine.Runtime
         {
             DataObject dob = null;
             AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi) {
-                pi.Activate();
+                //pi.Activate();
                 if (pi.Status != ProcessStatus.Finished)
                     throw new ApplicationException("Invalid process status");
 
@@ -396,7 +398,7 @@ namespace NGinn.Engine.Runtime
             string str = null;
             AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                pi.Activate();
+                //pi.Activate();
                 str = pi.GetProcessVariablesContainer().ToXmlString(pi.Definition.Name);
             });
             return str;
@@ -408,7 +410,7 @@ namespace NGinn.Engine.Runtime
             string str = null;
             AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                pi.Activate();
+                //pi.Activate();
                 IDataObject dob = pi.GetTaskData(correlationId);
                 str = dob.ToXmlString("data");
             });
@@ -423,7 +425,7 @@ namespace NGinn.Engine.Runtime
             DataObject dob = null;
             AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
-                pi.Activate();
+                //pi.Activate();
                 dob = new DataObject(pi.GetTaskData(correlationId));
             });
             return dob;
@@ -444,7 +446,7 @@ namespace NGinn.Engine.Runtime
             InternalTransitionEvent ite = (InternalTransitionEvent)msg;
             AccessProcessReadWriteLock(ite.ProcessInstanceId, delegate(ProcessInstance pi)
             {
-                pi.Activate();
+                //pi.Activate();
                 pi.DispatchInternalTransitionEvent(ite);
             });
         }
@@ -459,7 +461,7 @@ namespace NGinn.Engine.Runtime
             }
             catch (Exception ex)
             {
-                log.Warn("Failed to remove message id mappings for process {0}", pf.InstanceId);
+                log.Warn("Failed to remove message id mappings for process {0}: {1}", pf.InstanceId, ex);
             }
         }
 
@@ -497,9 +499,9 @@ namespace NGinn.Engine.Runtime
             log.Info("Cancelling process {0}", instanceId);
             AccessProcessReadWriteLock(instanceId, delegate(ProcessInstance pi)
             {
-                pi.Activate();
+                //pi.Activate();
                 pi.CancelProcessInstance();
-                pi.Passivate();
+                //pi.Passivate();
             });
         }
 
@@ -563,7 +565,7 @@ namespace NGinn.Engine.Runtime
             AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
             {
                 if (pi == null) return;
-                pi.Activate();
+                //pi.Activate();
                 tii = new TaskInstanceInfo();
                 tii.CorrelationId = taskCorrelationId;
                 tii.ProcessDefinitionId = pi.ProcessDefinitionId;

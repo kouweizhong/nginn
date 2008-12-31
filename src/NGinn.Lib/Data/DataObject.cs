@@ -210,10 +210,8 @@ namespace NGinn.Lib.Data
             {
                 lock (this)
                 {
-                    if (!ContainsKey(key))
-                    {
+                    if (_membersAdded.IndexOf(key) < 0)
                         _membersAdded.Add(key);
-                    }
                     _data[key] = value;
                 }
             }

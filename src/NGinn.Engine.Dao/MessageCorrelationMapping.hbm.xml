@@ -8,6 +8,7 @@
       <generator class="hilo">
         <param name="table">hilo_key</param>
         <param name="column">key1</param>
+        <param name="max_lo">50</param>
       </generator>
     </id>
     <property name="MessageId" type="String">
