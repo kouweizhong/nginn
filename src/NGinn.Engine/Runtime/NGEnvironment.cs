@@ -578,5 +578,19 @@ namespace NGinn.Engine.Runtime
             });
             return tii;
         }
+
+        #region INGEnvironment Members
+
+
+        public void UpdateTaskData(string correlationId, DataObject updatedData)
+        {
+            string instId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(correlationId);
+            AccessProcessReadWriteLock(instId, delegate(ProcessInstance pi)
+            {
+                pi.UpdateTaskData(correlationId, updatedData);
+            });
+        }
+
+        #endregion
     }
 }

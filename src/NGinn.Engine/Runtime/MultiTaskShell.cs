@@ -218,7 +218,24 @@ namespace NGinn.Engine.Runtime
         public override void RestoreState(DataObject state)
         {
             base.RestoreState(state);
+        }
 
+        public override void UpdateTaskData(IDataObject updatedData, string taskCorrId)
+        {
+            ActivationRequired(true);
+            if (this.Status != TransitionStatus.ENABLED &&
+                this.Status != TransitionStatus.STARTED)
+            {
+                throw new ApplicationException("Cannot update data for inactive task");
+            }
+            TaskInfo ti = this.GetActiveTask(taskCorrId);
+            if (ti == null) throw new ApplicationException("Invalid task correlation Id");
+            if (ti.Status != TransitionStatus.ENABLED &&
+                ti.Status != TransitionStatus.STARTED)
+            {
+                throw new ApplicationException("Cannot update data for inactive task");
+            }
+            ti.ActiveTask.UpdateTaskData(updatedData);
         }
     }
 }

@@ -133,6 +133,13 @@ namespace NGinn.Lib.Interfaces
         /// <param name="correlationId"></param>
         /// <param name="userId"></param>
         void NotifyTaskExecutionStarted(string correlationId, string userId);
+
+        /// <summary>
+        /// Update task variables without completing the task
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="updatedData"></param>
+        void UpdateTaskData(string correlationId, DataObject updatedData);
         /// <summary>
         /// Return information about a process instance
         /// </summary>

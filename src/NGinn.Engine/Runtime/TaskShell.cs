@@ -453,6 +453,24 @@ namespace NGinn.Engine.Runtime
             ts.RestoreState(state);
             return ts;
         }
+        
+        /// <summary>
+        /// Update task data without completing the task.
+        /// Works only for enabled or started tasks.
+        /// </summary>
+        /// <param name="updatedData">updated variables</param>
+        /// <param name="taskCorrId">correlation id of subtask in multi-tasks. Ignored for single tasks</param>
+        public virtual void UpdateTaskData(IDataObject updatedData, string taskCorrId)
+        {
+            if (taskCorrId != null && taskCorrId != this.CorrelationId) throw new Exception("Invalid task correlation id");
+            ActivationRequired(true);
+            if (this.Status != TransitionStatus.ENABLED &&
+                this.Status != TransitionStatus.STARTED)
+            {
+                throw new ApplicationException("Cannot update data for inactive task");
+            }
+            this.ActiveTask.UpdateTaskData(updatedData);
+        }
 
         #endregion
 

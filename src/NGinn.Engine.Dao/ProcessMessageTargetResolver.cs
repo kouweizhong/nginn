@@ -100,7 +100,7 @@ namespace NGinn.Engine.Dao
         {
             using (ISession ss = SessionFactory.OpenSession())
             {
-                ss.Delete(string.Format("from MessageCorrelationMapping where TaskCorrelationId like '{0}.%'", processInstanceId));
+                ss.Delete(string.Format("from MessageCorrelationMapping m where m.TaskCorrelationId like '{0}.%'", processInstanceId));
                 ss.Flush();
             }
         }

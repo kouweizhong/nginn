@@ -998,11 +998,32 @@ namespace NGinn.Engine
             if (at == null)
             {
                 MultiTaskShell mti = FindMultiInstanceTransitionWithSubtask(correlationId);
+                
                 //if (mti != null) at = mti.GetChildTransition(correlationId);
                 
                 throw new NotImplementedException();
             }
             return at.GetTaskData();
+        }
+         
+        /// <summary>
+        /// Update task variables
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="taskData"></param>
+        public void UpdateTaskData(string correlationId, IDataObject taskData)
+        {
+            if (!_activated) throw new Exception("Activation");
+            TaskShell at = GetActiveTransition(correlationId);
+            if (at == null)
+            {
+                at = FindMultiInstanceTransitionWithSubtask(correlationId);
+            }
+            if (at == null)
+                throw new ApplicationException("Invalid correlation id");
+            at.UpdateTaskData(taskData, correlationId);
+            
+
         }
 
  
