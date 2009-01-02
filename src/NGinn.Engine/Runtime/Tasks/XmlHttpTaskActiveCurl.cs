@@ -117,12 +117,7 @@ namespace NGinn.Engine.Runtime.Tasks
             if (!dob.TryGet("Url", ref _url)) throw new Exception("Missing Url");
         }
 
-        private IHttpClient _httpClient;
-        public IHttpClient HttpClient
-        {
-            get { return _httpClient; }
-            set { _httpClient = value; }
-        }
+       
 
         private string _curlArguments;
         [TaskParameter(IsInput = true, Required = false, DynamicAllowed = true)]

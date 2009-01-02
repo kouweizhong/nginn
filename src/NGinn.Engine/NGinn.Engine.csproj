@@ -110,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EngineEvents.cs" />
-    <Compile Include="Runtime\Http\CurlHttpHelper.cs" />
     <Compile Include="Runtime\Http\HttpHelper.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
@@ -155,7 +154,6 @@
     <Compile Include="Runtime\NGEnvironment.cs" />
     <Compile Include="Services\Events\DiagnosticEvent.cs" />
     <Compile Include="Services\IActiveTaskFactory.cs" />
-    <Compile Include="Services\IHttpClient.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />

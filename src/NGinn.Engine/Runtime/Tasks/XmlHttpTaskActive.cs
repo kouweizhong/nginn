@@ -159,6 +159,14 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return _httpStatus; }
         }
 
+        private string _requesttEncoding = "utf-8";
+        [TaskParameter(IsInput = true, Required=false, DynamicAllowed=true)]
+        public string RequestEncoding
+        {
+            get { return _requesttEncoding; }
+            set { _requesttEncoding = value; }
+        }
+
         protected string TransformXml(string xmlStr, string xsltName)
         {
             if (xsltName == null || xsltName.Length == 0) return xmlStr;
@@ -296,7 +304,7 @@ namespace NGinn.Engine.Runtime.Tasks
         protected void PreparePostRequest(HttpWebRequest wrq)
         {
             IDictionary<string, string> dic = GetRequestData();
-            ASCIIEncoding encoding = new ASCIIEncoding();
+            Encoding encoding = Encoding.GetEncoding(RequestEncoding);
             StringBuilder postData = new StringBuilder();
             foreach (string key in dic.Keys)
             {
@@ -401,6 +409,7 @@ namespace NGinn.Engine.Runtime.Tasks
             dob["AuthMethod"] = AuthMethod;
             dob["UserName"] = UserName;
             return dob;
+            
         }
 
         public override void RestoreState(DataObject dob)

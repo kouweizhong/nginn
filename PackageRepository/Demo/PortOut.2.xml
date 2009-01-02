@@ -62,6 +62,7 @@
         </data-definition>
     </task>
     
+	<!--
     <task id="escalation_mail2" type="NotificationTask" label="Eskalacja 2">
         <parameters>
             <binding parameter="Recipients"><value>rafal.gwizdala@gmail.com</value></binding>
@@ -81,6 +82,32 @@
             </input-bindings>
         </data-definition>
     </task>
+	-->
+	
+	<task id="escalation_mail2" type="XmlHttpTask" joinType="AND" splitType="AND">
+        <parameters>
+			<binding parameter="Url"><value>http://twitter.com/direct_messages/new.xml</value></binding>
+			<binding parameter="UserName"><value>nginn</value></binding>
+			<binding parameter="Password"><value>1212qw</value></binding>
+			<binding parameter="RequestMode"><value>HttpPost</value></binding>
+			<binding parameter="ResponseMode"><value>Xml</value></binding>
+			<binding parameter="AuthMethod"><value>Basic</value></binding>
+		</parameters>
+         <data-definition>
+            <variables> 
+				<variable name="user" type="string" dir="In" required="true" />
+				<variable name="text" type="string" dir="In" required="true" />
+				<variable name="id" type="string" dir="Out" required="true" />
+            </variables>
+            <input-bindings>
+				<binding variable="user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
+				<binding variable="text" bindingType="Expr"><expression>'Dlaczego tak sie wlecze MNP Port Out dla nr ' + data.request.MSISDN;</expression></binding>
+            </input-bindings>
+			<output-bindings>
+			</output-bindings>
+        </data-definition>
+    </task>
+	
     
     <task id="escalation_mail3" type="NotificationTask" label="Eskalacja 3">
         <parameters>
