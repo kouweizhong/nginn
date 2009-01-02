@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects xmlns="http://www.springframework.net" xmlns:r="http://www.springframework.net/remoting">
+
+  
+
+  <object name="TimerTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.TimerTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="EmptyTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.EmptyTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="NotificationTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.NotificationTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="ManualTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.ManualTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="ScriptTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.ScriptTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="ReceiveMessageTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.ReceiveMessageTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="XmlHttpTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.XmlHttpTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="SubprocessTask" lazy-init="true" type="NGinn.Engine.Runtime.Tasks.SubprocessTaskActive, NGinn.Engine">
+    <constructor-arg>
+      <object type="NGinn.Lib.Schema.Task, NGinn.Lib"/>
+    </constructor-arg>
+  </object>
+
+  <object name="NGinnTaskFactory" type="NGinn.Engine.Runtime.Tasks.SpringTaskFactory, NGinn.Engine">
+    <property name="TaskFactoryNames">
+      <dictionary>
+        <entry key="EmptyTask" value="EmptyTask"/>
+        <entry key="TimerTask" value="TimerTask"/>
+        <entry key="ManualTask" value="ManualTask"/>
+        <!-- and so on...-->
+      </dictionary>
+    </property>
+  </object>
+
+</objects>

@@ -640,7 +640,7 @@ namespace NGinn.Lib.Schema
             sd.ParentTypeSet = DataTypes;
             foreach (VariableDef vd in ProcessVariables)
             {
-                if (vd.VariableDir == VariableDef.Dir.In || vd.VariableDir == VariableDef.Dir.InOut)
+                if (vd.VariableDir == VariableDef.Dir.Out || vd.VariableDir == VariableDef.Dir.InOut)
                 {
                     sd.Members.Add(vd);
                 }

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<process name="Tweet" version="1" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<process name="NotifyDealer" version="1" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <places>
     <place id="start" type="StartPlace"></place>
     <place id="end" type="EndPlace"></place>
   </places>
   
   <tasks>
-    <!--
+    
 	<task id="t1" type="XmlHttpTask" joinType="AND" splitType="AND">
         <parameters>
 			<binding parameter="Url"><value>http://twitter.com/direct_messages/new.xml</value></binding>
@@ -23,31 +23,13 @@
 				<variable name="id" type="string" dir="Out" required="true" />
             </variables>
             <input-bindings>
-				<binding variable="user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
-				<binding variable="text" bindingType="Expr"><expression>'Uwaga, nowa robota: ' + data.greeting</expression></binding>
+				<binding variable="user" bindingType="Expr"><expression>data.twit_user</expression></binding>
+				<binding variable="text" bindingType="Expr"><expression>'Sprzedawco, klient załatwiony: ' + data.MSISDN</expression></binding>
             </input-bindings>
 			<output-bindings>
-				<binding variable="message_id" bindingType="CopyVar" sourceVariable="id"></binding>
 			</output-bindings>
         </data-definition>
     </task>
-	-->
-	<task id="t1" type="SubprocessTask">
-		<parameters>
-			<binding parameter="ProcessDefinitionId"><value>Demo.NotifyDealer.1</value></binding>
-		</parameters>
-		<data-definition>
-			<variables>
-				<variable name="twit_user" type="string" dir="In" required="true" />
-        		<variable name="MSISDN" type="string" dir="In" required="true" />
-			</variables>
-			<input-bindings>
-				<binding variable="twit_user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
-				<binding variable="MSISDN" bindingType="Expr"><expression>'48123166666'</expression></binding>
-            </input-bindings>
-		</data-definition>
-	</task>
-	
 	
   </tasks>
   <flows>
@@ -57,7 +39,7 @@
     <processDataTypes>
     </processDataTypes>
   	<variables>
-		<variable name="greeting" type="string" dir="In" required="true" />
-        <variable name="message_id" type="string" dir="Local" required="false" />
+		<variable name="twit_user" type="string" dir="In" required="true" />
+        <variable name="MSISDN" type="string" dir="In" required="true" />
     </variables>
 </process>

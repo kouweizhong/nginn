@@ -37,13 +37,7 @@ namespace NGinn.Engine.Runtime.Tasks
             get { return _expirationTime; }
         }
 
-        public string DoTestProperty
-        {
-            set
-            {
-                log.Warn("AAAAAA: DOTEST: {0}", value);
-            }
-        }
+        
         
         protected override void DoInitiateTask()
         {

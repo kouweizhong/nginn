@@ -325,8 +325,11 @@ namespace NGinn.Engine.Runtime
             using (IResourceLock rl = LockManager.AcquireReaderLock(instanceId, TimeSpan.MaxValue))
             {
                 ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                pi.Environment = this;
-                pi.Activate();
+                if (pi != null)
+                {
+                    pi.Environment = this;
+                    pi.Activate();
+                }
                 dlg(pi);
             }
         }
@@ -347,6 +350,12 @@ namespace NGinn.Engine.Runtime
                     try
                     {
                         ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                        if (pi == null)
+                        {
+                            log.Warn("Process instance not found: {0}", instanceId);
+                            dlg(null);
+                            return;
+                        }
                         pi.Environment = this;
                         pi.Activate();
                         log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));

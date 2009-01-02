@@ -36,23 +36,17 @@ namespace NGinn.Engine.Runtime.Tasks
 
         
 
-        public override void InitiateTask(IDataObject inputData)
+        protected override void DoInitiateTask()
         {
             INGEnvironment env = (INGEnvironment)Context.EnvironmentContext;
 
             IDictionary<string, object> inputVars = new Dictionary<string, object>();
             inputVars["_NGinn_ParentProcess"] = Context.ProcessInstanceId;
             log.Info("Starting subprocess {0}", ProcessDefinitionId);
-            IDataObject dob = inputData;
-            string xml = dob.ToXmlString("data");
-            string id = env.StartProcessInstance(ProcessDefinitionId, xml, GetSubprocessCorrelationId(this.CorrelationId));
+            DataObject dob = VariablesContainer;
+            string id = env.StartProcessInstance(ProcessDefinitionId, dob, null, GetSubprocessCorrelationId(this.CorrelationId));
             log.Info("Process started: Instance ID={0}", id);
             this._subprocessInstanceId = id;
-        }
-
-        protected override void DoInitiateTask()
-        {
-            throw new NotImplementedException();
         }
 
 

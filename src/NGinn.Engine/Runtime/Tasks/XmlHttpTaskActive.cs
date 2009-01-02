@@ -401,8 +401,6 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             DataObject dob = base.SaveState();
             dob["Url"] = _url;
-            dob["RequestXslt"] = _requestXslt;
-            dob["ResponseXslt"] = _responseXslt;
             dob["ResponseStatus"] = _httpStatus;
             dob["RequestMode"] = RequestMode.ToString();
             dob["ResponseMode"] = ResponseMode.ToString();
@@ -415,9 +413,7 @@ namespace NGinn.Engine.Runtime.Tasks
         public override void RestoreState(DataObject dob)
         {
             base.RestoreState(dob);
-            if (!dob.TryGet("Url", ref _url)) throw new Exception("Missing Url");
-            dob.TryGet("RequestXslt", ref _requestXslt);
-            dob.TryGet("ResponseXslt", ref _responseXslt);
+            dob.TryGet("Url", ref _url);
             dob.TryGet("ResponseStatus", ref _httpStatus);
             string s = null;
             dob.TryGet("RequestMode", ref s);
