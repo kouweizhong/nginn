@@ -14,7 +14,7 @@ namespace NGinn.Engine.Runtime.Tasks
     {
         public IActiveTask CreateActiveTask(Task tsk)
         {
-            
+               
             IActiveTask at;
             if (tsk is EmptyTask)
             {

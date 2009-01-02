@@ -42,6 +42,16 @@ namespace NGinn.Lib.Schema
         }
 
         /// <summary>
+        /// Return string identifying task implementation to be used.
+        /// Meaning of this string depends on the active task factory
+        /// used by NGinn engine.
+        /// </summary>
+        public virtual string ImplementationFactory
+        {
+            get { return this.GetType().Name; }
+        }
+
+        /// <summary>
         /// Expression that will return an IEnumerable that will be used
         /// as data provider for multi-instance tasks
         /// </summary>
@@ -314,6 +324,14 @@ namespace NGinn.Lib.Schema
         public virtual IList<TaskParameterBinding> ParameterBindings
         {
             get { return _parameterBindings; }
+        }
+
+
+        public TaskParameterBinding GetInputParameterBinding(string name)
+        {
+            foreach (TaskParameterBinding tb in ParameterBindings)
+                if (tb.PropertyName == name) return tb;
+            return null;
         }
 
         protected virtual bool RequireInputParameter(string name)

@@ -28,11 +28,14 @@ namespace NGinn.Engine.Runtime.Tasks
         [NonSerialized]
         private IActiveTaskContext _ctx;
 
+        private static int _cnt = 0;
+
         private DataObject _taskData = new DataObject();
 
         public ActiveTaskBase(Task tsk)
-        {
+        { 
             log = LogManager.GetCurrentClassLogger();
+            log.Warn("Created task {0}: {1}", _cnt++, this.GetType().Name);
         }
 
         #region IActiveTask Members
@@ -90,7 +93,11 @@ namespace NGinn.Engine.Runtime.Tasks
             DataObject td = VariablesContainer;
             foreach (string fn in dob.FieldNames)
             {
-                td[fn] = dob[fn];
+                VariableDef vd = Context.TaskDefinition.GetVariable(fn);
+                if (vd != null)
+                    td[fn] = dob[fn];
+                else
+                    log.Debug("Task {0}: Ignoring variable {1}", this.CorrelationId, fn);
             }
             StructDef internalSchema = Context.TaskDefinition.GetTaskInternalDataSchema();
             td.Validate(internalSchema);
@@ -152,7 +159,15 @@ namespace NGinn.Engine.Runtime.Tasks
         {
             PropertyInfo pi = GetType().GetProperty(paramName);
             if (pi == null) throw new ApplicationException("Parameter not found: " + paramName);
-            object v = Convert.ChangeType(value, pi.PropertyType);
+            object v;
+            if (pi.PropertyType.IsEnum && value is string)
+            {
+                v = Enum.Parse(pi.PropertyType, (string)value);
+            }
+            else
+            {
+                v = Convert.ChangeType(value, pi.PropertyType);
+            }
             pi.SetValue(this, v, null);
         }
 

@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EngineEvents.cs" />
+    <Compile Include="Runtime\Http\CurlHttpHelper.cs" />
     <Compile Include="Runtime\Http\HttpHelper.cs" />
     <Compile Include="Runtime\InternalTransitionEvent.cs" />
     <Compile Include="Runtime\MessageBus\Interfaces.cs" />
@@ -128,6 +129,8 @@
     <Compile Include="Runtime\Tasks\ActiveTaskBase.cs" />
     <Compile Include="Runtime\Tasks\ActiveTaskFactory.cs" />
     <Compile Include="DataBinding.cs" />
+    <Compile Include="Runtime\Tasks\SpringTaskFactory.cs" />
+    <Compile Include="Runtime\Tasks\XmlHttpTaskActiveCurl.cs" />
     <Compile Include="Runtime\Tasks\EmptyTaskActive.cs" />
     <Compile Include="INGEnvironmentContext.cs" />
     <Compile Include="Runtime\IActiveTask.cs" />
@@ -152,6 +155,7 @@
     <Compile Include="Runtime\NGEnvironment.cs" />
     <Compile Include="Services\Events\DiagnosticEvent.cs" />
     <Compile Include="Services\IActiveTaskFactory.cs" />
+    <Compile Include="Services\IHttpClient.cs" />
     <Compile Include="Services\IProcessInstanceLockManager.cs" />
     <Compile Include="Services\IProcessInstanceRepository.cs" />
     <Compile Include="Runtime\Tasks\SubprocessTaskActive.cs" />
@@ -176,6 +180,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="default_nginn_factory.xml" />
+    <EmbeddedResource Include="default_engine_setup.xml" />
     <Content Include="README.txt" />
   </ItemGroup>
   <ItemGroup>

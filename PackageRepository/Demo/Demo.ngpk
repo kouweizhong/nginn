@@ -6,5 +6,6 @@
 	<processDefinitions>
         <process>PortOut.1.xml</process>
 		<process>PortOut.2.xml</process>
+		<process>Tweet.1.xml</process>
 	</processDefinitions>
 </package>

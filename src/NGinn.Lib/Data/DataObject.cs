@@ -194,6 +194,14 @@ namespace NGinn.Lib.Data
             return true;
         }
 
+        public bool TryGet(string name, ref int value)
+        {
+            if (!_data.ContainsKey(name)) return false;
+            object v = _data[name];
+            value = Convert.ToInt32(v);
+            return true;
+        }
+
         public override int Count
         {
             get { return _data.Count; }

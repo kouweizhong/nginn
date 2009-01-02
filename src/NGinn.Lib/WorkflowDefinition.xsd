@@ -104,7 +104,7 @@
       <xs:enumeration value="ScriptTask" />
       <xs:enumeration value="SubprocessTask" />
       <xs:enumeration value="TimerTask" />
-      <xs:enumeration value="CallWSTask" />
+      <xs:enumeration value="XmlHttpTask" />
       <xs:enumeration value="ExternalTask" />
       <xs:enumeration value="NotificationTask" />
       <xs:enumeration value="EmptyTask" />

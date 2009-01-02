@@ -43,6 +43,17 @@ namespace NGinn.Engine.Runtime.Http
 
         }
 
+        public delegate void RequestDelegate(HttpWebRequest wrq);
+        public delegate void ResponseDelegate(HttpWebResponse resp);
+
+        public void DoRequest(string url, RequestDelegate prepareRq, ResponseDelegate handleResp)
+        {
+            HttpWebRequest wrq = (HttpWebRequest) WebRequest.Create(url);
+            prepareRq(wrq);
+            HttpWebResponse resp = (HttpWebResponse) wrq.GetResponse();
+            
+        }
+
         
     }
 }

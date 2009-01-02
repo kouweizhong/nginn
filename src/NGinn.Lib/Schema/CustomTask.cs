@@ -12,9 +12,15 @@ namespace NGinn.Lib.Schema
     [Serializable]
     public class CustomTask : Task
     {
-        private bool _isImmediate;
-        
-
+        public override string ImplementationFactory
+        {
+            get
+            {
+                TaskParameterBinding tb = GetInputParameterBinding("ImplementationFactory");
+                if (tb == null) return base.ImplementationFactory;
+                return tb.BindingExpression;
+            }
+        }
        
         public override TaskParameterInfo[] GetTaskParameters()
         {
