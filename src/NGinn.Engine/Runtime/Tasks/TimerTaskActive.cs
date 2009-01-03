@@ -12,8 +12,10 @@ namespace NGinn.Engine.Runtime.Tasks
     [Serializable]
     public class TimerTaskActive : ActiveTaskBase
     {
-        private DateTime _expirationTime;
-        private TimeSpan _delayAmount;
+        private DateTime _actualExpiration;
+        private TimeSpan _delayAmount = TimeSpan.MaxValue;
+        private DateTime _setExpiration = DateTime.MinValue;
+
         private static Logger log = LogManager.GetCurrentClassLogger();
 
         public TimerTaskActive(Task tsk)
@@ -29,23 +31,32 @@ namespace NGinn.Engine.Runtime.Tasks
             set { _delayAmount = TimeSpan.Parse(value); }
         }
 
-        
+        [TaskParameter(IsInput = true, Required = false, DynamicAllowed = true)]
+        public DateTime ExpirationDate
+        {
+            get { return _setExpiration; }
+            set { _setExpiration = value; }
+        }
 
         [TaskParameter(IsInput = false, Required = false, DynamicAllowed = true)]
         public DateTime CompletedDate
         {
-            get { return _expirationTime; }
+            get { return _actualExpiration; }
         }
 
         
         
         protected override void DoInitiateTask()
         {
-            _expirationTime = DateTime.Now + _delayAmount;
+            if (_setExpiration != DateTime.MinValue)
+                _actualExpiration = _setExpiration;
+            else
+                _actualExpiration = DateTime.Now + _delayAmount;
+            
             TimerExpiredEvent tex = new TimerExpiredEvent();
             tex.CorrelationId = this.CorrelationId;
             tex.ProcessInstanceId = ProcessInstance.ProcessInstanceIdFromTaskCorrelationId(this.CorrelationId);
-            tex.ExpirationDate = _expirationTime;
+            tex.ExpirationDate = _actualExpiration;
             log.Debug("Timer task {0} expiration date: {1}", CorrelationId, tex.ExpirationDate);
             Context.EnvironmentContext.MessageBus.Notify("TimerTaskActive", "TimerTaskActive.TimerExpirationEvent." + CorrelationId, new ScheduledMessage(tex, tex.ExpirationDate), false);
 
@@ -67,6 +78,7 @@ namespace NGinn.Engine.Runtime.Tasks
                 if (Context.Status == TransitionStatus.ENABLED ||
                     Context.Status == TransitionStatus.STARTED)
                 {
+                    _actualExpiration = DateTime.Now;
                     OnTaskCompleted();
                     return true;
                 }
@@ -77,20 +89,23 @@ namespace NGinn.Engine.Runtime.Tasks
         public override DataObject SaveState()
         {
             DataObject dob = base.SaveState();
-            dob["DelayAmount"] = DelayAmount;
-            dob["CompletedDate"] = _expirationTime;
-
+            if (_delayAmount != TimeSpan.MaxValue) dob["DelayAmount"] = DelayAmount;
+            if (_setExpiration != DateTime.MinValue) dob["ExpirationDate"] = _setExpiration;
+            dob["CompletedDate"] = _actualExpiration;
+           
             return dob;
         }
 
         public override void RestoreState(DataObject dob)
         {
             base.RestoreState(dob);
-            DelayAmount = (string)dob["DelayAmount"];
+            if (dob.ContainsKey("DelayAmount"))
+                DelayAmount = (string)dob["DelayAmount"];
             if (dob.ContainsKey("CompletedDate"))
             {
-                _expirationTime = (DateTime) Convert.ChangeType(dob["CompletedDate"], typeof(DateTime));
+                _actualExpiration = (DateTime) Convert.ChangeType(dob["CompletedDate"], typeof(DateTime));
             }
+            dob.TryGet("ExpirationDate", ref _setExpiration);
         }
     }
 

@@ -111,8 +111,13 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
                 }
             }
             if (tb == null) throw new ApplicationException("No binding for parameter: " + paramName);
-            IScriptContext sc = GetScriptContext();
-            return Script.RunCode(tb.BindingExpression, sc);
+
+            string key = string.Format("Task_{0}_InputParameter_{1}", _taskDef.Id, tb.PropertyName);
+
+            return ExecuteScript(key, delegate()
+            {
+                return tb.BindingExpression;
+            });
         }
 
         public object GetDefaultVariableValue(string variableName)

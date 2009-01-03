@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process name="MNPPortOut" version="2" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+    <place id="p1" type="Place" />
+	
+  </places>
+  
+  <tasks>
+   
+	
+	<task id="retain_timeout" type="TimerTask" label="T1 - czas na utrzymanie">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:01:30</value></binding>
+        </parameters>
+    </task>
+    
+	
+    <task id="retain_customer" type="ManualTask" label="Utrzymaj klienta" splitType="XOR">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Utrzymaj klienta</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Utrzymaj klienta - MPN Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+				<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+				<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+				<variable name="CustomerRetained" type="bool" required="true" isArray="false" dir="Out" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+				<binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="AccountId" bindingType="CopyVar" sourceVariable="AccountId" />
+				<binding variable="Operator" bindingType="CopyVar" sourceVariable="Operator" />
+				<binding variable="PlayAccountType" bindingType="CopyVar" sourceVariable="PlayAccountType" />
+				<binding variable="OperatorAccountType" bindingType="CopyVar" sourceVariable="OperatorAccountType" />
+				<binding variable="Attorney" bindingType="CopyVar" sourceVariable="Attorney" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="CustomerRetained" bindingType="CopyVar" sourceVariable="CustomerRetained" />
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="send_e06" type="ManualTask" label="Wyślij E06" joinType="XOR">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Wyślij zgodę na zwolnienie numeru (E06)</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Wyślij komunikat E06 w sprawie MNP Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+				<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+				<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+				<binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="AccountId" bindingType="CopyVar" sourceVariable="AccountId" />
+				<binding variable="Operator" bindingType="CopyVar" sourceVariable="Operator" />
+				<binding variable="PlayAccountType" bindingType="CopyVar" sourceVariable="PlayAccountType" />
+				<binding variable="OperatorAccountType" bindingType="CopyVar" sourceVariable="OperatorAccountType" />
+				<binding variable="Attorney" bindingType="CopyVar" sourceVariable="Attorney" />
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+    <task id="send_e17" type="ManualTask" label="Wyślij E17">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Wyślij rezygnację z procesu (E17)</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Wyślij rezygnację z procesu (E17) w sprawie MNP Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+				<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+				<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+				<binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="AccountId" bindingType="CopyVar" sourceVariable="AccountId" />
+				<binding variable="Operator" bindingType="CopyVar" sourceVariable="Operator" />
+				<binding variable="PlayAccountType" bindingType="CopyVar" sourceVariable="PlayAccountType" />
+				<binding variable="OperatorAccountType" bindingType="CopyVar" sourceVariable="OperatorAccountType" />
+				<binding variable="Attorney" bindingType="CopyVar" sourceVariable="Attorney" />
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="wait_e12" type="ReceiveMessageTask" label="Czekaj na E12">
+         <parameters>
+            <binding parameter="MessageCorrelationId"><expr>data.NASA_Case;</expr></binding>
+         </parameters>
+         
+         <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" dir="In" required="true" />
+				<variable name="RequestedActivationDate" type="dateTime" dir="Out" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="RequestedActivationDate" bindingType="CopyVar" sourceVariable="RequestedActivationDate" />
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="e12_timeout" type="TimerTask" label="T2 - timeout E12">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:02:00</value></binding>
+        </parameters>
+    </task>
+	
+	<task id="send_e17_2" type="ManualTask" label="Wyślij E17 (2)" joinType="XOR">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Wyślij E17 - numer nieaktywny</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Wyślij E12 - numer nieaktywny w sprawie MNP Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+				<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+				<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+				<binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="AccountId" bindingType="CopyVar" sourceVariable="AccountId" />
+				<binding variable="Operator" bindingType="CopyVar" sourceVariable="Operator" />
+				<binding variable="PlayAccountType" bindingType="CopyVar" sourceVariable="PlayAccountType" />
+				<binding variable="OperatorAccountType" bindingType="CopyVar" sourceVariable="OperatorAccountType" />
+				<binding variable="Attorney" bindingType="CopyVar" sourceVariable="Attorney" />
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="e13_timeout" type="TimerTask" label="T3 - czas E13">
+        <parameters>
+			<binding parameter="ExpirationDate"><expr>data.RequestedActivationDate</expr></binding>
+        </parameters>
+		<data-definition>
+			<variables>
+				<variable name="RequestedActivationDate" type="dateTime" dir="In" required="true" />
+			</variables>
+			<input-bindings>
+				<binding variable="RequestedActivationDate" bindingType="CopyVar" sourceVariable="RequestedActivationDate" />
+			</input-bindings>
+		</data-definition>
+    </task>
+	
+	<task id="send_e13" type="ManualTask" label="Wyślij E13" joinType="XOR">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Wyślij komunikat E13</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Wyślij komunikat E13 w sprawie MNP Port Out dla {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+				<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+				<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+				<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="NASA_Case" bindingType="CopyVar" sourceVariable="NASA_Case" />
+				<binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="AccountId" bindingType="CopyVar" sourceVariable="AccountId" />
+				<binding variable="Operator" bindingType="CopyVar" sourceVariable="Operator" />
+				<binding variable="PlayAccountType" bindingType="CopyVar" sourceVariable="PlayAccountType" />
+				<binding variable="OperatorAccountType" bindingType="CopyVar" sourceVariable="OperatorAccountType" />
+				<binding variable="Attorney" bindingType="CopyVar" sourceVariable="Attorney" />
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+	</tasks>
+  <flows>
+    <flow from="start" to="retain_customer" />
+	<flow from="start" to="retain_timeout" />
+	<flow from="retain_customer" to="send_e06" label="Nie utrzymany?">
+		<inputCondition>data.CustomerRetained == false</inputCondition>
+	</flow>
+	<flow from="retain_customer" to="send_e17" label="Utrzymany?">
+		<inputCondition>data.CustomerRetained == true</inputCondition>
+	</flow>
+	<flow from="retain_timeout" to="send_e06" label="Timeout" />
+	<flow from="send_e17" to="end" />
+	<flow from="send_e06" to="p1" />
+	<flow from="p1" to="wait_e12" />
+	<flow from="p1" to="e12_timeout" />
+	<flow from="e12_timeout" to="send_e17_2" />
+	<flow from="wait_e12" to="e13_timeout" />
+	<flow from="send_e17_2" to="end" />
+	<flow from="e13_timeout" to="send_e13" />
+	<flow from="send_e13" to="end" />
+  </flows>
+    <processDataTypes>
+        <enum name="ServiceType">
+            <value>Prepaid</value>
+            <value>Postpaid</value>
+        </enum>
+		
+		<enum name="Operator">
+            <value>Era</value>
+            <value>Orange</value>
+			<value>Plus</value>
+			<value>Mobil-King</value>
+        </enum>
+        <enum name="YesNo">
+			<value>No</value>
+			<value>Yes</value>
+		</enum>
+    </processDataTypes>
+  	<variables>
+		<variable name="NASA_Case" type="string" required="true" dir="In" isArray="false" />
+		<variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+		<variable name="AccountId" type="string" required="true" dir="In" isArray="false" />
+		<variable name="Operator" type="Operator" required="true" dir="In" isArray="false" />
+		<variable name="PlayAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+		<variable name="OperatorAccountType" type="ServiceType" required="true" dir="In" isArray="false" />
+		<variable name="Attorney" type="YesNo" required="true" dir="In" isArray="false" />
+		<variable name="ProposedReleaseDate" type="dateTime" required="true" dir="In" isArray="false" />
+		
+        <variable name="CustomerRetained" type="bool" dir="Out" required="true" />
+		<variable name="RequestedActivationDate" type="dateTime" dir="Local" />
+    </variables>
+</process>

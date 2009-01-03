@@ -15,8 +15,9 @@ namespace NGinn.Lib.Data
         public static readonly SimpleTypeDef TYPE_INT = new SimpleTypeDef("int", typeof(Int32));
         public static readonly SimpleTypeDef TYPE_DOUBLE = new SimpleTypeDef("double", typeof(double));
         public static readonly SimpleTypeDef TYPE_DATE = new SimpleTypeDef("date", typeof(DateTime));
-        public static readonly SimpleTypeDef TYPE_DATETIME = new SimpleTypeDef("datetime", typeof(DateTime));
-        
+        public static readonly SimpleTypeDef TYPE_DATETIME = new SimpleTypeDef("dateTime", typeof(DateTime));
+        public static readonly SimpleTypeDef TYPE_BOOL = new SimpleTypeDef("bool", typeof(bool));
+
         private Dictionary<string, TypeDef> _types;
 
         static TypeSet()
@@ -32,6 +33,7 @@ namespace NGinn.Lib.Data
             _types.Add(TYPE_DOUBLE.Name, TYPE_DOUBLE);
             _types.Add(TYPE_DATETIME.Name, TYPE_DATETIME);
             _types.Add(TYPE_DATE.Name, TYPE_DATE);
+            _types.Add(TYPE_BOOL.Name, TYPE_BOOL);
         }
 
         public bool IsBasicType(string typeName)

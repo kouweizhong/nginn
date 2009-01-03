@@ -98,9 +98,10 @@
     
     <xsl:template match="ng:cancelSet">
         <xsl:variable name="tid" select="./../@id" />
-        <xsl:for-each select="str:tokenize(.,'[,\s]+')">
+        <xsl:if test=". != ''">
+		<xsl:for-each select="str:tokenize(.,'[,\s]+')">
             <xsl:value-of select="$tid" /> -&gt; <xsl:value-of select="." /> [color=red, style=dashed ];
         </xsl:for-each>
-        
+        </xsl:if>
     </xsl:template>
 </xsl:stylesheet>

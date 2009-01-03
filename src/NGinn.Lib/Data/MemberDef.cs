@@ -138,8 +138,12 @@ namespace NGinn.Lib.Data
                 xw.WriteStartElement("element", SchemaUtil.SCHEMA_NS);
                 xw.WriteAttributeString("name", member.Name);
                 TypeDef td = ParentTypeSet.GetTypeDef(member.TypeName);
-                if (td.IsSimpleType) 
+                if (td.IsSimpleType)
+                {
                     xw.WriteAttributeString("type", "xs:" + td.Name);
+                    if (member.IsRequired)
+                        xw.WriteAttributeString("nillable", "false");
+                }
                 else
                     xw.WriteAttributeString("type", td.Name);
                 xw.WriteAttributeString("minOccurs", member.IsRequired ? "1" : "0");

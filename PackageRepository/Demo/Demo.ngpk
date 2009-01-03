@@ -8,5 +8,7 @@
 		<process>PortOut.2.xml</process>
 		<process>Tweet.1.xml</process>
 		<process>NotifyDealer.1.xml</process>
+		<process>MNPPortOut.1.xml</process>
+		<process>MNPPortOut.2.xml</process>
 	</processDefinitions>
 </package>

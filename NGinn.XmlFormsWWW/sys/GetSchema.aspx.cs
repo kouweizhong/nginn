@@ -11,6 +11,7 @@ using System.Web.UI.HtmlControls;
 using Spring.Context;
 using NGinn.Lib.Interfaces;
 using NGinn.Lib.Schema;
+using NGinn.Lib.Data;
 
 
 namespace NGinn.XmlFormsWWW
@@ -63,15 +64,15 @@ namespace NGinn.XmlFormsWWW
                 string sch2 = dt[3];
                 if (String.Compare(sch2, "input", true) == 0)
                 {
-                    throw new NotImplementedException();
+                    xml = pd.GetTaskInputXmlSchema(taskId);
                 }
                 else if (String.Compare(sch2, "output", true) == 0)
                 {
-                    throw new NotImplementedException();
+                    xml = pd.GetTaskOutputXmlSchema(taskId);
                 }
                 else if (String.Compare(sch2, "internal", true) == 0)
                 {
-                    throw new NotImplementedException();
+                    xml = pd.GetTaskInternalXmlSchema(taskId);
                 }
                 else throw new Exception("Expected /task/<taskid>/[input|output|internal]");
             }
