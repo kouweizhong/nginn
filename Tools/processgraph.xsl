@@ -60,7 +60,12 @@
 	</xsl:template>
 	
 	<xsl:template match="ng:task">
-		<xsl:value-of select="@id" /> [shape=box, style=filled, fillcolor=yellow, color=black, peripheries=1
+		<xsl:value-of select="@id" /> [style=filled, fillcolor=yellow, color=black, peripheries=1
+		<xsl:choose>
+			<xsl:when test="@type='ManualTask'">,shape=note</xsl:when>
+			<xsl:when test="@type='TimerTask'">,shape=octagon</xsl:when>
+			<xsl:otherwise>,shape=box</xsl:otherwise>
+		</xsl:choose>
         <xsl:if test="@label">
             ,label="<xsl:value-of select="@label" />"
         </xsl:if>

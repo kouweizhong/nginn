@@ -115,7 +115,7 @@
         </data-definition>
     </task>
 	
-	<task id="wait_e12" type="ReceiveMessageTask" label="Czekaj na E12">
+	<task id="wait_e12" type="ReceiveMessageTask" splitType="XOR" label="Czekaj na E12">
          <parameters>
             <binding parameter="MessageCorrelationId"><expr>data.NASA_Case;</expr></binding>
          </parameters>
@@ -134,7 +134,7 @@
         </data-definition>
     </task>
 	
-	<task id="e12_timeout" type="TimerTask" label="T2 - timeout E12">
+	<task id="e12_timeout" type="TimerTask" label="T2 - brak E12\n(timeout)">
         <parameters>
             <binding parameter="DelayAmount"><value>00:02:00</value></binding>
         </parameters>
@@ -171,7 +171,7 @@
         </data-definition>
     </task>
 	
-	<task id="e13_timeout" type="TimerTask" label="T3 - czas E13">
+	<task id="e13_timeout" type="TimerTask" label="T3 - data z E12">
         <parameters>
 			<binding parameter="ExpirationDate"><expr>data.RequestedActivationDate</expr></binding>
         </parameters>
@@ -232,7 +232,8 @@
 	<flow from="p1" to="wait_e12" />
 	<flow from="p1" to="e12_timeout" />
 	<flow from="e12_timeout" to="send_e17_2" />
-	<flow from="wait_e12" to="e13_timeout" />
+	<flow from="wait_e12" to="e13_timeout"><inputCondition>1 == 1</inputCondition></flow>
+	<flow from="wait_e12" to="send_e17_2" label="przeterminowany?"><inputCondition>1 == 2</inputCondition></flow>
 	<flow from="send_e17_2" to="end" />
 	<flow from="e13_timeout" to="send_e13" />
 	<flow from="send_e13" to="end" />
