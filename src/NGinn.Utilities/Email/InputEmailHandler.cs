@@ -5,6 +5,8 @@ using NLog;
 using NGinn.RippleBoo;
 using NGinn.Lib.Interfaces.MessageBus;
 using NGinn.Lib.Interfaces;
+using Spring.Context;
+using Boo.Lang;
 
 namespace NGinn.Utilities.Email
 {
@@ -12,7 +14,7 @@ namespace NGinn.Utilities.Email
     {
         protected EmailMessageInfo Message;
         protected IMessageBus MessageBus;
-
+        
         public override void Initialize()
         {
             Message = (EmailMessageInfo)this.Variables.QuackGet("Message", null);
@@ -50,20 +52,19 @@ namespace NGinn.Utilities.Email
             set { _rulesFile = value; }
         }
 
-        private IDictionary<string, object> _extCtx = new Dictionary<string, object>();
-
-        public IDictionary<string, object> Context
+        private IQuackFu _appCtx;
+        public IQuackFu Context
         {
-            get { return _extCtx; }
-            set { _extCtx = value; }
+            get { return _appCtx; }
+            set { _appCtx = value; }
         }
-
 
         public void HandleEmail(EmailMessageInfo emi)
         {
-            Dictionary<string, object> vars = new Dictionary<string,object>();
+            IDictionary<string, object> vars = new Dictionary<string,object>();
             vars["Message"] = emi;
-            _rulez.EvaluateRules(RulesFile, vars, _extCtx);
+            IQuackFu v = new QuackWrapper(vars);
+            _rulez.EvaluateRules(RulesFile, v, Context);
         }
 
     }

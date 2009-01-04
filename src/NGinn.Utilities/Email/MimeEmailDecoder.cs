@@ -11,15 +11,20 @@ namespace NGinn.Utilities.Email
     /// </summary>
     public class MimeEmailDecoder
     {
-        public EmailMessageInfo ReadMessageFile(string fileName)
+        public EmailMessageInfo ReadMessageFile(string fileName, string attachmentDir)
         {
             using (FileStream fs = new FileStream(fileName, FileMode.Open))
             {
-                return ReadMessageStream(fs);
+                if (attachmentDir == null)
+                {
+                    string fname = Path.GetFileNameWithoutExtension(fileName);
+                    attachmentDir = Path.Combine(Path.GetDirectoryName(fileName), fname);
+                }
+                return ReadMessageStream(fs, attachmentDir);
             }
         }
 
-        public EmailMessageInfo ReadMessageStream(Stream stm)
+        public EmailMessageInfo ReadMessageStream(Stream stm, string attachmentDir)
         {
             SharpMessage sm = new SharpMessage(stm);
             
@@ -40,11 +45,17 @@ namespace NGinn.Utilities.Email
             emi.BodyText = sm.Body;
             foreach (SharpAttachment att in sm.Attachments)
             {
+                if (!Directory.Exists(attachmentDir)) Directory.CreateDirectory(attachmentDir);
+                AttachmentInfo ai = new AttachmentInfo();
+                ai.Name = att.Name;
+                string saveFile = Path.Combine(attachmentDir, att.Name);
+                att.Save(saveFile, true);
+                ai.FileName = saveFile;
+                emi.Attachments.Add(ai);
             }
             
             foreach (object hdr in sm.Headers)
             {
-                        
             }
             return emi;
         }

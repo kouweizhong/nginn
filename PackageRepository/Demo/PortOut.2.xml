@@ -84,7 +84,7 @@
     </task>
 	-->
 	
-	<task id="escalation_mail2" type="XmlHttpTask" joinType="AND" splitType="AND">
+	<task id="escalation_mail2" type="XmlHttpTask" joinType="AND" splitType="AND" label="Eskalacja 2 (Twitter)">
         <parameters>
 			<binding parameter="Url"><value>http://twitter.com/direct_messages/new.xml</value></binding>
 			<binding parameter="UserName"><value>nginn</value></binding>
@@ -101,7 +101,7 @@
             </variables>
             <input-bindings>
 				<binding variable="user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
-				<binding variable="text" bindingType="Expr"><expression>'Dlaczego tak sie wlecze MNP Port Out dla nr ' + data.request.MSISDN;</expression></binding>
+				<binding variable="text" bindingType="Expr"><expression>'Nadal brak dokumentów dla nr ' + data.request.MSISDN;</expression></binding>
             </input-bindings>
 			<output-bindings>
 			</output-bindings>
@@ -150,7 +150,7 @@
             <binding parameter="AssigneeId"><value>1</value></binding>
             <binding parameter="Title"><value>Kontynuuj obsługę bez dokumentów</value></binding>
             <binding parameter="Description">
-                <expr><![CDATA[string.Format('Kontynuuj obsługę bez dokumentów - MPN Port Out dla {0}', data.MSISDN);]]></expr>
+                <expr><![CDATA[string.Format('Kontynuuj obsługę bez dokumentów - zgłoszenie na nr {0}', data.MSISDN);]]></expr>
             </binding>
         </parameters>
         <cancelSet>pt1, pt2, pt3</cancelSet>
@@ -164,12 +164,12 @@
         </data-definition>
     </task>
     
-    <task id="handle_portout" type="ManualTask">
+    <task id="handle_portout" type="ManualTask" label="Obsłuż zgłoszenie">
         <parameters>
             <binding parameter="AssigneeId"><value>1</value></binding>
-            <binding parameter="Title"><value>Zweryfikuj klienta i wyślij komunikat</value></binding>
+            <binding parameter="Title"><value>Zgłoszenie klienta</value></binding>
             <binding parameter="Description">
-                <expr><![CDATA[string.Format('Zweryfikuj klienta i wyślij komunikat - MPN Port Out dla {0}', data.MSISDN);]]></expr>
+                <expr><![CDATA[string.Format('Obsłuż zgłoszenie klienta <b>{0}</b>. Niestety, nie wiemy o co mu chodzi.', data.MSISDN);]]></expr>
             </binding>
         </parameters>
         <data-definition>

@@ -9,6 +9,8 @@ using NLog;
 using MutantFramework;
 using System.Collections.Specialized;
 using System.Xml.Serialization;
+using System.IO;
+
 
 namespace NGinn.Lib.Data
 {
@@ -477,6 +479,16 @@ namespace NGinn.Lib.Data
             XmlReader xr = XmlReader.Create(new System.IO.StringReader(xml));
             xr.MoveToContent();
             return ParseXmlElement(xr);
+        }
+
+        public static DataObject LoadXmlFile(string fileName)
+        {
+            using (StreamReader sr = new StreamReader(fileName, Encoding.UTF8))
+            {
+                XmlReader xr = XmlReader.Create(sr);
+                xr.MoveToContent();
+                return ParseXmlElement(xr);
+            }
         }
 
         public void Validate(StructDef recordType)

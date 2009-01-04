@@ -4,6 +4,7 @@ using System.Text;
 using Rhino.DSL;
 using NLog;
 using System.IO;
+using B=Boo.Lang;
 
 namespace NGinn.RippleBoo
 {
@@ -64,17 +65,30 @@ namespace NGinn.RippleBoo
 
         public void EvaluateRules(string ruleset, IDictionary<string, object> variables, IDictionary<string, object> context)
         {
-            DateTime ds = DateTime.Now;
-            RuleSetBase rb = GetNewRuleSet(ruleset);
-            rb.Variables = new QuackWrapper(variables);
-            rb.Context = new QuackWrapper(context);
-			rb.Initialize();
-            rb.Execute();
-            log.Info("Rule evaluation time: {0}", DateTime.Now - ds);
-            if (rb._gotoRulesFile != null)
+            EvaluateRules(ruleset, new QuackWrapper(variables), new QuackWrapper(context));
+        }
+
+        public void EvaluateRules(string ruleset, B.IQuackFu variables, B.IQuackFu context)
+        {
+            try
             {
-                log.Info("Evaluating included ruleset {1}", rb._gotoRulesFile);
-                EvaluateRules(rb._gotoRulesFile, variables, context);
+                DateTime ds = DateTime.Now;
+                RuleSetBase rb = GetNewRuleSet(ruleset);
+                rb.Variables = variables;
+                rb.Context = context;
+                rb.Initialize();
+                rb.Execute();
+                log.Info("Rule evaluation time: {0}", DateTime.Now - ds);
+                if (rb._gotoRulesFile != null)
+                {
+                    log.Info("Evaluating included ruleset {1}", rb._gotoRulesFile);
+                    EvaluateRules(rb._gotoRulesFile, variables, context);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Rule evaluation exception in ruleset {0}: {1}", ruleset, ex);
+                throw ex;
             }
         }
 

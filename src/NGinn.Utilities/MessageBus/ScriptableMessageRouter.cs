@@ -51,12 +51,7 @@ namespace NGinn.Utilities.MessageBus
             set { _fact.BaseDirectory = value; }
         }
 
-        private IDictionary<string, object> _ctx = new Dictionary<string, object>();
-        public IDictionary<string, object> Context
-        {
-            get { return _ctx; }
-            set { _ctx = value; }
-        }
+       
 
         
 
@@ -74,7 +69,7 @@ namespace NGinn.Utilities.MessageBus
             {
                 b.Initialize();
                 b.MessageBus = this.MessageBus;
-                if (Context != null) b.Context = new MessageRouterContext(_appCtx, Context);
+                b.Context = new NGinn.Utilities.AppContextQuackFu(_appCtx);
                 string sid = MessageBus.Subscribe(b.MessageType, b.MessageTopic, new MessageHandler(b.Execute));
                 _subscriptions.Add(sid);
             }
@@ -95,35 +90,5 @@ namespace NGinn.Utilities.MessageBus
         #endregion
     }
 
-    class MessageRouterContext : B.IQuackFu
-    {
-        private IApplicationContext _ctx;
-        private IDictionary<string, object> _dic;
-        public MessageRouterContext(IApplicationContext ctx, IDictionary<string, object> dic)
-        {
-            _ctx = ctx;
-            _dic = dic;
-        }
-
-        #region IQuackFu Members
-
-        public object QuackGet(string name, object[] parameters)
-        {
-            object v;
-            if (_dic.TryGetValue(name, out v)) return v;
-            return _ctx.GetObject(name);
-        }
-
-        public object QuackInvoke(string name, params object[] args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object QuackSet(string name, object[] parameters, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
+    
 }

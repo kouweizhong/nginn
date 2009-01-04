@@ -1,0 +1,1 @@
+bin\debug\NGinnServicesHost.exe -debug

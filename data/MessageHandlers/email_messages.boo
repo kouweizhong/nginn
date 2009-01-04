@@ -4,5 +4,5 @@ message_type NGinn.Utilities.Email.EmailMessageInfo
 message_topic '*'
 
 handler:
-    log.Info('Nowa wiadomość: ' + Message.Subject)
+    log.Info('Nowa wiadomość: {0}', Message)
     Context.EmailHandler.HandleEmail(Message)    

@@ -15,6 +15,7 @@ namespace NGinn.Utilities.Email
     public class EmailMessageInfo
     {
         public string Channel;
+        public string MessageId;
         public string From;
         public string[] To;
         public string[] Cc;
@@ -23,5 +24,17 @@ namespace NGinn.Utilities.Email
         public string BodyText;
         public List<AttachmentInfo> Attachments = new List<AttachmentInfo>();
         public Dictionary<string, string> Headers = new Dictionary<string, string>();
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Message {0} from: {1}, to: {2}, channel: {3}\n", MessageId, From, To.Length > 0 ? To[0] : "", Channel);
+            sb.AppendFormat("Subject: {0}\n", Subject);
+            foreach (AttachmentInfo ai in Attachments)
+            {
+                sb.AppendFormat("Attachment {0} ({1})\n", ai.Name, ai.FileName);
+            }
+            return sb.ToString();
+        }
     }
 }

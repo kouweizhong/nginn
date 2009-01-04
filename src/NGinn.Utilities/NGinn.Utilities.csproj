@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppContextQuackFu.cs" />
+    <Compile Include="DirectoryInputProcessor.cs" />
     <Compile Include="Email\EmailEvents.cs" />
     <Compile Include="Email\EmailFetcher.cs" />
     <Compile Include="Email\EmailMessageInfo.cs" />

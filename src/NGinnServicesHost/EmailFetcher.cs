@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using NLog;
@@ -31,9 +30,7 @@ namespace NGinnServicesHost
             try
             {
                 if (!Directory.Exists(BaseDirectory)) Directory.CreateDirectory(BaseDirectory);
-
                 Fetch();
-                Notify();
             }
             catch (Exception ex)
             {
@@ -58,19 +55,7 @@ namespace NGinnServicesHost
         
         }
 
-        protected void Notify()
-        {
-            string[] filz = Directory.GetFiles(BaseDirectory, "*.eml");
-            MimeEmailDecoder med = new MimeEmailDecoder();
-            foreach (string file in filz)
-            {
-                log.Debug("Message file found: {0}. Decoding.", file);
-                EmailMessageInfo emi = med.ReadMessageFile(file);
-                emi.Channel = this.Name;
-                TargetMessageBus.Notify("EmailFetcher." + Name, "IncomingEmail", emi, true);
-                File.Delete(file);
-            }
-        }
+        
 
         private string _cmdLine;
         public string CommandLine
