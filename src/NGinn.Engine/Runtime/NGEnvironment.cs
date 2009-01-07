@@ -600,6 +600,16 @@ namespace NGinn.Engine.Runtime
             });
         }
 
+        public DataObject GetProcessData(string instanceId)
+        {
+            DataObject dob = null;
+            AccessProcessReadonlyLock(instanceId, delegate(ProcessInstance pi)
+            {
+                dob = new DataObject(pi.GetProcessVariablesContainer());
+            });
+            return dob;
+        }
+
         #endregion
     }
 }

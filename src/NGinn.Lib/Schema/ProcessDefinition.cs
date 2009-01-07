@@ -631,6 +631,21 @@ namespace NGinn.Lib.Schema
         }
 
         /// <summary>
+        /// Return the definition of process internal data
+        /// </summary>
+        /// <returns></returns>
+        public StructDef GetProcessInternalDataSchema()
+        {
+            StructDef sd = new StructDef();
+            sd.ParentTypeSet = DataTypes;
+            foreach (VariableDef vd in ProcessVariables)
+            {
+                sd.Members.Add(vd);
+            }
+            return sd;
+        }
+
+        /// <summary>
         /// Return the definition of process output data
         /// </summary>
         /// <returns></returns>
@@ -646,6 +661,18 @@ namespace NGinn.Lib.Schema
                 }
             }
             return sd;
+        }
+
+        /// <summary>
+        /// Return variable with specified name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public VariableDef GetVariable(string name)
+        {
+            foreach (VariableDef vd in this.ProcessVariables)
+                if (vd.Name == name) return vd;
+            return null;
         }
 
         

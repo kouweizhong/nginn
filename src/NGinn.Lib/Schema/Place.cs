@@ -19,6 +19,13 @@ namespace NGinn.Lib.Schema
             set { _id = value; }
         }
 
+        private string _label;
+        public string Label
+        {
+            get { return _label; }
+            set { _label = value; }
+        }
+
         /// <summary>
         /// List of flows going out from the node
         /// </summary>

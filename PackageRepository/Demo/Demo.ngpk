@@ -10,5 +10,6 @@
 		<process>NotifyDealer.1.xml</process>
 		<process>MNPPortOut.1.xml</process>
 		<process>MNPPortOut.2.xml</process>
+		<process>MNPPortOut.3.xml</process>
 	</processDefinitions>
 </package>
