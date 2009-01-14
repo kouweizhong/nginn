@@ -66,10 +66,11 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
         private IScriptContext GetScriptContext()
         {
             ScriptContext sc = new ScriptContext();
-            sc.SetItem("data",  ContextItem.Variable, new DOBMutant(SourceData));
-            sc.SetItem("task", ContextItem.Variable, TaskInstance);
-            sc.SetItem("taskDef", ContextItem.Variable, _taskDef);
-            sc.SetItem("log", ContextItem.Variable, log);
+            
+            sc.SetVariable("data",  new DOBMutant(SourceData));
+            sc.SetVariable("task", TaskInstance);
+            sc.SetVariable("taskDef", _taskDef);
+            sc.SetVariable("log", log);
             return sc;
         }
 

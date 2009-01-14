@@ -52,11 +52,12 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
         private IScriptContext GetScriptContext()
         {
             ScriptContext sc = new ScriptContext();
-            sc.SetItem("data", ContextItem.Variable, new DOBMutant(ProcessData));
-            sc.SetItem("definition", ContextItem.Variable, _pd);
-            sc.SetItem("instance", ContextItem.Variable, _pi);
-            sc.SetItem("envCtx", ContextItem.Variable, EnvironmentContext); 
-            sc.SetItem("log", ContextItem.Variable, log);
+            
+            sc.SetVariable("data", new DOBMutant(ProcessData));
+            sc.SetVariable("definition", _pd);
+            sc.SetVariable("instance", _pi);
+            sc.SetVariable("envCtx", EnvironmentContext);
+            sc.SetVariable("log", log);
             return sc;
         }
 
@@ -77,6 +78,7 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
                         sc = sc.Trim();
                         if (!sc.EndsWith(";")) sc += ";";
                         scr = Script.Compile(sc);
+                        
                         _mgr.SetCachedProcessScript(_pd.DefinitionId, scriptKey, scr);
                     }
                 }

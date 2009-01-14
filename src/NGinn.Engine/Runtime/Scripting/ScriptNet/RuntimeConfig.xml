@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+
+  <References>
+    <Assembly name="MutanticFramework.dll" sn="false" />
+    <Assembly name="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" sn="true"/>
+  </References>
+  
+  <Types>
+    <Type alias="string" name="System.String" />
+    <Type alias="int" name="System.Int32" />
+    <Type alias="long" name="System.Int64" />
+    <Type alias="char" name="System.Char" />
+    <Type alias="bool" name="System.Boolean" />
+    <Type alias="boolean" name="System.Boolean" />    
+    <Type alias="double" name="System.Double" />
+    <Type alias="float" name="System.Single" />
+    <Type alias="object" name="System.Object" />
+
+    <!--<Type alias="Array" name="List<object>" />-->
+    
+    <Type alias="mobject" name="MutantFramework.DataMutant" />
+    <Type alias="MObject" name="MutantFramework.DataMutant" />
+
+  </Types>
+
+  <Initialization>
+    <![CDATA[
+    ]]>
+  </Initialization>
+</Configuration>

@@ -7,7 +7,13 @@
   
   <tasks>
     
-	<task id="t1" type="XmlHttpTask" joinType="AND" splitType="AND">
+	<task id="t0" type="EmptyTask" splitType="AND">
+		<parameters />
+		<data-definition/>
+	</task>
+	
+	<!--
+	<task id="t1" type="XmlHttpTask" label="Tweet!">
         <parameters>
 			<binding parameter="Url"><value>http://twitter.com/direct_messages/new.xml</value></binding>
 			<binding parameter="UserName"><value>nginn</value></binding>
@@ -30,11 +36,35 @@
 			</output-bindings>
         </data-definition>
     </task>
+	-->
+	
+	<task id="sms1" type="NotificationTask" label="Wyślij SMS">
+        <parameters>
+            <binding parameter="Recipients">
+                <expr>'' + data.MSISDN + '@sms2email.pl'</expr>
+            </binding>
+			<binding parameter="Subject"><value>brak</value></binding>
+            <binding parameter="Body">
+                <expr>'Nadal nie otrzymalismy dokumentow, eskalacja trzecia i ostatnia\nKONIEC'</expr>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
 	
   </tasks>
   <flows>
-    <flow from="start" to="t1" />
-    <flow from="t1" to="end" />
+    <flow from="start" to="t0" />
+	<!--<flow from="t0" to="t1" />-->
+	<flow from="t0" to="sms1" />
+	<flow from="sms1" to="end" />
+    <!--<flow from="t1" to="end" />-->
   </flows>
     <processDataTypes>
     </processDataTypes>

@@ -4,7 +4,8 @@ using System.Text;
 using NGinn.Engine.Runtime;
 using NGinn.Engine.Services;
 using NLog;
-using ScriptNET;
+using SN = ScriptNET;
+using System.IO;
 
 namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 {
@@ -13,10 +14,40 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
     {
         private Logger log = LogManager.GetCurrentClassLogger();
 
+        private string _runtimeConfigPath;
+
+        public string RuntimeConfigPath
+        {
+            get { return _runtimeConfigPath; }
+            set { _runtimeConfigPath = value; }
+        }
+
+        public ScriptNetProcessScriptManager()
+        {
+            
+        }
+
         class ProcessScriptCache
         {
             public string DefinitionId;
-            public Dictionary<string, Script> ScriptsCache = new Dictionary<string, Script>();
+            public Dictionary<string, SN.Script> ScriptsCache = new Dictionary<string, SN.Script>();
+        }
+
+        private bool _inited = false;
+        public void Init()
+        {
+            string s = RuntimeConfigPath;
+            if (s == null || s.Length == 0)
+            {
+                s = typeof(ScriptNetProcessScriptManager).Assembly.Location;
+                s = Path.Combine(Path.GetDirectoryName(s), "Runtime/Scripting/ScriptNet/RuntimeConfig.xml");
+            }
+            log.Info("Initializing script runtime from {0}", s);
+            using (FileStream fs = new FileStream(s, FileMode.Open))
+            {
+                SN.Runtime.RuntimeHost.Initialize(fs);
+            }
+            _inited = true;
         }
 
         private Dictionary<string, ProcessScriptCache> _cache = new Dictionary<string, ProcessScriptCache>();
@@ -48,16 +79,16 @@ namespace NGinn.Engine.Runtime.Scripting.ScriptNet
 
         #endregion
 
-        internal Script GetCachedProcessScript(string definitionId, string scriptId)
+        internal SN.Script GetCachedProcessScript(string definitionId, string scriptId)
         {
             ProcessScriptCache pc;
             if (!_cache.TryGetValue(definitionId, out pc)) return null;
-            Script scr;
+            SN.Script scr;
             if (!pc.ScriptsCache.TryGetValue(scriptId, out scr)) return null;
             return scr;
         }
 
-        internal void SetCachedProcessScript(string definitionId, string scriptId, Script scr)
+        internal void SetCachedProcessScript(string definitionId, string scriptId, SN.Script scr)
         {
             ProcessScriptCache pc;
             lock (this)

@@ -35,3 +35,22 @@ ruleset "email_rules":
 			dob["BodyPlainText"] = Message.BodyPlainText
 			dob["Body"] = Message.BodyText
 			Context.NGEnvironment.DispatchProcessMessage(corrid, dob)
+		else_rule "sms2email"
+			
+	rule "sms2email":
+		label "SMS z bramki"
+		when Message.From.EndsWith("sms2email.pl")
+		action:
+			log.Info("Mail z bramki: {0}", Message.From)
+			m = /(48\d+)@/.Match(Message.From)
+			raise 'Invalid message sender' unless m.Success
+			msisdn = m.Groups[1].Value
+			body = Message.BodyPlainText
+			m = /---\n([\w\s]+)\n---/.Match(Message.BodyPlainText)
+			if m.Success:
+				body = m.Groups[1].Value
+			log.Info("Body: {0}", body)
+			dob = DataObject()
+			dob["MSISDN"] = msisdn
+			dob["Response"] = body
+			Context.NGEnvironment.DispatchProcessMessage("Example.1.${msisdn}", dob)

@@ -70,7 +70,7 @@
             </variables>
             <input-bindings>
 				<binding variable="user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
-				<binding variable="text" bindingType="Expr"><expression><![CDATA[string.Format('Poszedł komunikat E06 w sprawie MNP {0}, MSISDN {1}', data.NASA_Case, data.MSISDN);]]></expression></binding>
+				<binding variable="text" bindingType="Expr"><expression><![CDATA[string.Format('Poszedl komunikat E06 w sprawie MNP {0}, MSISDN {1}', data.NASA_Case, data.MSISDN);]]></expression></binding>
             </input-bindings>
         </data-definition>
     </task>

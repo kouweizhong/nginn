@@ -181,6 +181,9 @@
     <EmbeddedResource Include="default_nginn_factory.xml" />
     <EmbeddedResource Include="default_engine_setup.xml" />
     <Content Include="README.txt" />
+    <EmbeddedResource Include="Runtime\Scripting\ScriptNet\RuntimeConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

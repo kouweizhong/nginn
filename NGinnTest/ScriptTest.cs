@@ -74,8 +74,8 @@ namespace NGinnTest
             
             for (int i = 0; i < 1000; i++)
             {
-                scr.Context.SetItem("__inputStr", ContextItem.Variable, "dob2.dob.data[1]");
-                scr.Context.SetItem("dob2", ContextItem.All, dmu);
+                scr.Context.SetVariable("__inputStr", "dob2.dob.data[1]");
+                scr.Context.SetVariable("dob2", dmu);
                 //object v = dob2.GetValue("");
                 object v = scr.Execute();
                 //log.Debug("V: " + v);
@@ -98,7 +98,7 @@ namespace NGinnTest
             IScriptContext sc = scr.Context;
             //ScriptContext sc = new ScriptContext();
             log.Debug("Scope: {0}", sc.Scope.Name);
-            sc.SetItem("dob2", ContextItem.Variable, dmu);
+            sc.SetVariable("dob2", dmu);
 
             object ret = scr.Execute();
             log.Debug("Result: {0}", ret);
@@ -114,7 +114,7 @@ namespace NGinnTest
             //Script scr = Script.Compile("dob2.dob.ala;");
             //IScriptContext sc = scr.Context;
             IScriptContext sc = new ScriptContext();
-            sc.SetItem("dob2", ContextItem.Variable, mut);
+            sc.SetVariable("dob2", mut);
             //object ret = scr.Execute();
             object ret = Script.RunCode("dob2.dob.ala;", sc);
             log.Debug("Result: {0}", ret);
@@ -126,7 +126,7 @@ namespace NGinnTest
             dob["ala"] = "Kot";
             IMutant mut = new DOBMutant(dob);
             IScriptContext ctx = new ScriptContext();
-            ctx.SetItem("dob", ContextItem.Variable, mut);
+            ctx.SetVariable("dob", mut);
             Script.RunCode("dob.kot = 'ma ale';", ctx);
             log.Debug("Kot: {0}", dob["kot"]);
             Script.RunCode("dob.ala = dob.kot;", ctx);
