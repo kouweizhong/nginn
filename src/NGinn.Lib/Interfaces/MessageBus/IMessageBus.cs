@@ -49,7 +49,20 @@ namespace NGinn.Lib.Interfaces.MessageBus
         /// <param name="async">false - process message synchronously, true - send message asynchronously</param>
         /// <returns></returns>
         object Notify(string sender, string topic, object msg, bool async);
+        /// <summary>
+        /// Send async message to message bus
+        /// </summary>
+        /// <param name="sender">message sender</param>
+        /// <param name="topic">msg topic</param>
+        /// <param name="msg">the message</param>
+        /// <returns>message id</returns>
+        string NotifyAsync(string sender, string topic, object msg);
 
+        /// <summary>
+        /// Cancel async message if it hasn't been processed yet
+        /// </summary>
+        /// <param name="id"></param>
+        void CancelAsyncMessage(string id);
         /// <summary>
         /// Subscribe for specified message type and topic
         /// </summary>

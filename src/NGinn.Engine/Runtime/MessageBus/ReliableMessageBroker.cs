@@ -127,17 +127,29 @@ namespace NGinn.Engine.Runtime.MessageBus
         {
             if (async && _queueProc != null)
             {
-                MessageWrapper mw = new MessageWrapper();
-                mw.Sender = sender;
-                mw.Topic = topic;
-                mw.Body = msg;
-                Hashtable ht = new Hashtable();
-                ht["label"] = GetMessageLabel(mw);
-                string msgid = _queueProc.GetInputPort().SendMessage(mw, ht);
-                _queueProc.Wakeup();
-                return msgid;
+                return NotifyAsync(sender, topic, msg);
             }
             else return base.Notify(sender, topic, msg, false);
+        }
+
+        public override void CancelAsyncMessage(string id)
+        {
+            if (_queueProc == null) return;
+            _queueProc.CancelMessage(id);
+        }
+
+        public override string NotifyAsync(string sender, string topic, object msg)
+        {
+            if (_queueProc == null) throw new Exception("Async messages not configured");
+            MessageWrapper mw = new MessageWrapper();
+            mw.Sender = sender;
+            mw.Topic = topic;
+            mw.Body = msg;
+            Hashtable ht = new Hashtable();
+            ht["label"] = GetMessageLabel(mw);
+            string msgid = _queueProc.GetInputPort().SendMessage(mw, ht);
+            _queueProc.Wakeup();
+            return msgid;
         }
 
         public void HandleMessage(object msg, IDictionary headers)
@@ -147,6 +159,7 @@ namespace NGinn.Engine.Runtime.MessageBus
             base.Notify(mw.Sender, mw.Topic, mw.Body, false);
         }
 
+        
         
     }
 }

@@ -77,7 +77,7 @@
 	
 	<task id="timeout_1" type="TimerTask" label="T1">
         <parameters>
-            <binding parameter="DelayAmount"><value>00:05:00</value></binding>
+            <binding parameter="DelayAmount"><value>00:10:00</value></binding>
         </parameters>
     </task>
 	

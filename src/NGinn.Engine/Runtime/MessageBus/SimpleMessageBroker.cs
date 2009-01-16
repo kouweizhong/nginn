@@ -266,5 +266,20 @@ namespace NGinn.Engine.Runtime.MessageBus
             }
         }
 
+
+        #region IMessageBus Members
+
+
+        public virtual string NotifyAsync(string sender, string topic, object msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void CancelAsyncMessage(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

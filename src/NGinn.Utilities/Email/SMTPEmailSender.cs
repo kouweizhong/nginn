@@ -10,7 +10,10 @@ namespace NGinn.Utilities.Email
     [Serializable]
     public class EmailMsgOut
     {
+        public string CorrelationId;
         public string Recipients;
+        public string Cc;
+        public string Bcc;
         public string Subject;
         public string Body;
     }

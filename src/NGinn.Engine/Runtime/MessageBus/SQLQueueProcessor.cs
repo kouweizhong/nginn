@@ -14,10 +14,15 @@ using System.Runtime.Remoting.Messaging;
 using System.IO;
 using System.Xml;
 using NGinn.Lib.Interfaces.MessageBus;
+using System.Diagnostics;
 
 namespace NGinn.Engine.Runtime.MessageBus
 {
-    
+    /// <summary>
+    /// Kolejka:
+    /// getNextForProcessing()
+    /// processingFinished()
+    /// </summary>
 
     public class SerializationUtil
     {
@@ -406,14 +411,8 @@ namespace NGinn.Engine.Runtime.MessageBus
                         cnt = 50;
                         while (!_stop && cnt > 0)
                         {
-                            cnt--;
-                            MessageReadResult res = ProcessInputMessages();
-                            if (res == MessageReadResult.NoMessages)
-                                break;
-                            else if (res == MessageReadResult.RetryLock)
-                                Thread.Sleep(_rand.Next(50, 500));
-                            else if (res != MessageReadResult.Processed)
-                                System.Diagnostics.Debug.Assert(false);
+                            MessageReadResult mrr = ProcessInputMessages();
+                            if (mrr == MessageReadResult.NoMessages) break;
                         }
                         if (!_stop && cnt > 0)
                         {
@@ -502,7 +501,7 @@ namespace NGinn.Engine.Runtime.MessageBus
         /// <param name="id"></param>
         /// <param name="errorInfo"></param>
         /// <param name="conn"></param>
-        private void HandleUnexpectedMessageError(string id, string errorInfo, SqlConnection conn)
+        private void HandleUnexpectedMessageError(string id, string errorInfo, IDbConnection conn)
         {
             string sql = @"update {0} with(rowlock) set 
                             subqueue = case when retry_count < {1} then 'R' else 'F' end, 
@@ -511,7 +510,7 @@ namespace NGinn.Engine.Runtime.MessageBus
                             last_processed=getdate(), 
                             error_info=@error_info  where id={1}";
             sql = string.Format(sql, _queueTable, id);
-            using (SqlCommand cmd = conn.CreateCommand())
+            using (SqlCommand cmd = (SqlCommand) conn.CreateCommand())
             {
                 cmd.CommandText = sql;
                 cmd.Parameters.Add("@error_info", SqlDbType.Text);
@@ -528,112 +527,243 @@ namespace NGinn.Engine.Runtime.MessageBus
             NoMessages
         }
 
-        private MessageReadResult ProcessNextMessage(SqlConnection conn, out string id)
+        private Queue<string> _execQueue = new Queue<string>();
+        private Dictionary<string, string> _processing = new Dictionary<string, string>();
+
+        protected delegate void Action();
+        /// <summary>
+        /// Execute given action locking the queue
+        /// </summary>
+        /// <param name="act"></param>
+        protected void QueueLocked(Action act)
         {
-            string dblock = null;
-            id = null;
-            using (IDbTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted))
+            lock(_processing) 
             {
-                bool abort = true; //abort transaction?
+                act();
+                //Debug.Assert(_execQueue.Count == _processing.Count);
+                log.Debug("ExecQueue length: {0}", _processing.Count);
+            }
+        }
+        /// <summary>
+        /// Check if message is already enqueued for execution
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        protected bool IsScheduledForExecution(string messageId)
+        {
+            bool b = false;
+            QueueLocked(delegate()
+            {
+                b =_processing.ContainsKey(messageId);
+            });
+            return b;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageId"></param>
+        protected void AddToExecutionQueue(string messageId)
+        {
+            QueueLocked(delegate()
+            {
+                _processing[messageId] = messageId;
+                //_execQueue.Enqueue(messageId);
+            });
+            log.Debug("Message {0} added to exec queue. Length: {1}", messageId, _processing.Count);
+        }
+
+        /// <summary>
+        /// Report message processed
+        /// </summary>
+        /// <param name="messageId"></param>
+        protected void ReportProcessed(string messageId)
+        {
+            log.Debug("Message {0} has been processed", messageId);
+            QueueLocked(delegate()
+            {
+                bool b = _processing.Remove(messageId);
+                if (!b)
+                {
+                    Debug.Assert(false);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Enqueue message for processing
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool EnqueueMessage(string id)
+        {
+            bool ret = false;
+            QueueLocked(delegate()
+            {
+                if (!IsScheduledForExecution(id))
+                {
+                    ret = true;
+                    AddToExecutionQueue(id);
+                }
+            });
+            if (ret)
+            {
+                ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessMessage), id);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Number of messages currently being processed
+        /// </summary>
+        public int ProcessingQueueLength
+        {
+            get
+            {
+                return _processing.Count;
+            }
+        }
+
+        public void ProcessMessage(object id)
+        {
+            try
+            {
+                using (IDbConnection conn = OpenConnection())
+                {
+                    ProcessMessage(conn, (string) id);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Unexpected error processing message: {0}: {1}", id, ex);
+            }
+            finally
+            {
+                ReportProcessed((string) id);
+            }
+        }
+
+        public void ProcessMessage(IDbConnection conn, string id)
+        {
+            DateTime dt = DateTime.Now;
+
+                bool abort = true;
+                string dblock = null;
                 try
                 {
-                    using (IDbCommand cmd = conn.CreateCommand())
+                    using (IDbTransaction trans = conn.BeginTransaction(IsolationLevel.ReadUncommitted))
                     {
-                        string sql = string.Format("select top 1 id, lock from {0} with (nolock) where queue_name='{1}' and subqueue='I' order by id", _queueTable, _queueId);
-                        cmd.CommandText = sql;
-                        cmd.Transaction = trans;
-
-                        using (IDataReader dr = cmd.ExecuteReader())
-                        {
-                            if (!dr.Read()) return MessageReadResult.NoMessages;
-                            id = Convert.ToString(dr["id"]);
-                            dblock = Convert.ToString(dr["lock"]);
-                        }
-
-                        string mylock = Guid.NewGuid().ToString("N");
-                        sql = string.Format("update {0} with(rowlock) set lock='{1}' where id={2} and lock='{3}'", _queueTable, mylock, id, dblock);
-                        cmd.CommandText = sql;
-                        int rows = cmd.ExecuteNonQuery();
-                        if (rows == 0)
-                        {
-                            log.Debug("Failed to obtain lock on message {0}, will retry", id);
-                            return MessageReadResult.RetryLock;
-                        }
-                        log.Debug("Locked message {0}", id);
-                        
-                        object msg_body = null;
-                        int retry_count = 0;
-                        Stream msg_data = new MemoryStream();
-
-                        sql = string.Format("select retry_count, msg_body from {0} with(rowlock) where id={1} and subqueue='I'", _queueTable, id);
-                        cmd.CommandText = sql;
-                        using (IDataReader dr = cmd.ExecuteReader())
-                        {
-                            if (!dr.Read())
-                            {
-                                log.Debug("Message {0} not in input queue, probably already handled - skipping", id);
-                                return MessageReadResult.Processed; //retry next message immediately
-                            }
-                            else
-                            {
-                                retry_count = Convert.ToInt32(dr["retry_count"]);
-                                byte[] buf = new byte[100];
-                                long n, bytesread = 0;
-                                while ((n = dr.GetBytes(dr.GetOrdinal("msg_body"), bytesread, buf, 0, buf.Length)) > 0)
-                                {
-                                    msg_data.Write(buf, 0, (int)n);
-                                    bytesread += n;
-                                }
-                                msg_data.Seek(0, SeekOrigin.Begin);
-                            }
-                        }
-
                         try
                         {
-                            abort = false;
-                            Hashtable headers = new Hashtable();
-                            headers["id"] = id;
-                            msg_body = SerializationUtil.Deserialize(msg_data, _contentType);
-                            log.Debug("Deserialized message {0}: {1}", id, msg_body.ToString());
-                            _handler.HandleMessage(msg_body, headers);
-                            log.Debug("Message {0} processed successfully", id);
-                            MarkMessageProcessed(id, mylock, trans);
+                            using (IDbCommand cmd = conn.CreateCommand())
+                            {
+                                cmd.Transaction = trans;
+                                string sql = string.Format("select  id, lock from {0} with (nolock) where id={1}", _queueTable, id);
+                                cmd.CommandText = sql;
+
+                                using (IDataReader dr = cmd.ExecuteReader())
+                                {
+                                    if (!dr.Read())
+                                    {
+                                        log.Debug("Message probably processed, ignoring");
+                                        return;
+                                    }
+                                    dblock = Convert.ToString(dr["lock"]);
+                                }
+
+                                string mylock = Guid.NewGuid().ToString("N");
+                                sql = string.Format("update {0} with(rowlock) set lock='{1}' where id={2} and lock='{3}'", _queueTable, mylock, id, dblock);
+                                cmd.CommandText = sql;
+                                int rows = cmd.ExecuteNonQuery();
+                                if (rows == 0)
+                                {
+                                    log.Debug("Failed to obtain lock on message {0}, ignoring", id);
+                                    return;
+                                }
+
+                                log.Debug("Locked message {0}", id);
+
+                                object msg_body = null;
+                                int retry_count = 0;
+                                Stream msg_data = new MemoryStream();
+
+                                sql = string.Format("select retry_count, msg_body from {0} with(rowlock) where id={1} and subqueue='I'", _queueTable, id);
+                                cmd.CommandText = sql;
+                                using (IDataReader dr = cmd.ExecuteReader())
+                                {
+                                    if (!dr.Read())
+                                    {
+                                        log.Debug("Message {0} not in input queue, probably already handled - skipping", id);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        retry_count = Convert.ToInt32(dr["retry_count"]);
+                                        byte[] buf = new byte[2000];
+                                        long n, bytesread = 0;
+                                        while ((n = dr.GetBytes(dr.GetOrdinal("msg_body"), bytesread, buf, 0, buf.Length)) > 0)
+                                        {
+                                            msg_data.Write(buf, 0, (int)n);
+                                            bytesread += n;
+                                        }
+                                        msg_data.Seek(0, SeekOrigin.Begin);
+                                    }
+                                }
+
+
+                                try
+                                {
+                                    abort = false;
+                                    Hashtable headers = new Hashtable();
+                                    headers["id"] = id;
+                                    msg_body = SerializationUtil.Deserialize(msg_data, _contentType);
+                                    log.Debug("Deserialized message {0}: {1}", id, msg_body.ToString());
+                                    _handler.HandleMessage(msg_body, headers);
+                                    log.Debug("Message {0} processed successfully", id);
+                                    MarkMessageProcessed(id, mylock, trans);
+                                }
+                                catch (ThreadAbortException)
+                                {
+                                    throw;
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.Warn("Error processing message {0}: {1}", id, ex);
+                                    if (retry_count >= _retryTimes.Length)
+                                    {
+                                        log.Info("Message {0} retry count exceeded, moving to failed queue", id);
+                                        MarkMessageFailed(id, mylock, ex.ToString(), trans);
+                                    }
+                                    else
+                                    {
+                                        MarkMessageRetry(id, mylock, ex.ToString(), DateTime.Now.Add(_retryTimes[retry_count]), trans);
+                                    }
+                                }
+                            }
                         }
-                        catch (ThreadAbortException)
+                        catch (SqlException ex)
                         {
+                            log.Error("SQL error processing message {0}: {1}", id, ex);
+                            abort = true;
                             throw;
                         }
-                        catch (Exception ex)
+                        finally
                         {
-                            log.Warn("Error processing message {0}: {1}", id, ex);
-                            if (retry_count >= _retryTimes.Length)
-                            {
-                                log.Info("Message {0} retry count exceeded, moving to failed queue", id);
-                                MarkMessageFailed(id, mylock, ex.ToString(), trans);
-                            }
+                            if (abort)
+                                trans.Rollback();
                             else
-                            {
-                                MarkMessageRetry(id, mylock, ex.ToString(), DateTime.Now.Add(_retryTimes[retry_count]), trans);
-                            }
+                                trans.Commit();
                         }
                     }
                 }
-                catch (SqlException ex)
+                catch (Exception ex)
                 {
-                    log.Error("SQL error processing message {0}: {1}", id, ex);
-                    abort = true;
-                    throw;
+                    log.Info("Unexpected message processing error {0}: {1}", id, ex);
+                    HandleUnexpectedMessageError(id, ex.ToString(), conn);
                 }
-                finally
-                {
-                    if (abort)
-                        trans.Rollback();
-                    else
-                        trans.Commit();
-                }
-                return MessageReadResult.Processed; //try next immediately
-            }
         }
+
+        
 
         /// <summary>
         /// Zwraca true gdy pozosta³y jeszcze jakies wiadomosci do przetworzenia,
@@ -647,21 +777,27 @@ namespace NGinn.Engine.Runtime.MessageBus
                 log.Info("No message handler");
                 return MessageReadResult.NoMessages;
             }
+            int cnt = 0;
             using (SqlConnection conn = OpenConnection())
             {
-                string id = null;
-                try
+                using (IDbTransaction dbt = conn.BeginTransaction(IsolationLevel.ReadUncommitted))
                 {
-                    MessageReadResult res = ProcessNextMessage(conn, out id);
-                    return res;
-                }
-                catch (Exception ex)
-                {
-                    log.Error("Unexpected error processing message: {0}: {1}", id, ex);
-                    if (id != null) HandleUnexpectedMessageError(id, ex.ToString(), conn);
-                    return MessageReadResult.NoMessages;
+                    using (IDbCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.Transaction = dbt;
+                        cmd.CommandText = string.Format("select top 100 id from {0} where queue_name = '{1}' and subqueue = 'I' order by id", _queueTable, _queueId);
+                        using (IDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                string id = Convert.ToString(dr["id"]);
+                                if (EnqueueMessage(id)) cnt++;
+                            }
+                        }
+                    }
                 }
             }
+            return cnt == 0 ? MessageReadResult.NoMessages : MessageReadResult.Processed;
         }
 
         /// <summary>
@@ -734,12 +870,16 @@ namespace NGinn.Engine.Runtime.MessageBus
             get { return _contentType; }
             set { _contentType = value; }
         }
-
+        /// <summary>
+        /// Cancel message if it hasn't been completed yet
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>true if message was really cancelled</returns>
         public bool CancelMessage(string id)
         {
             using (IDbConnection conn = OpenConnection())
             {
-                string sql = "delete {0} where id={1} and subqueue in ('I', 'R')";
+                string sql = string.Format("update {0} set subqueue='C' where id={1} and subqueue in ('I', 'R')", _queueTable, id);
                 using (IDbCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = sql;

@@ -1,1 +1,2 @@
-..\lib\NGinn.Engine.Host.exe -debug
+cd ..\lib
+NGinn.Engine.Host.exe -debug

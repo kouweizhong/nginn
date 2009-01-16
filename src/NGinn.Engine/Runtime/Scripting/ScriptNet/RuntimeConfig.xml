@@ -3,7 +3,8 @@
 
   <References>
     <Assembly name="MutanticFramework.dll" sn="false" />
-    <Assembly name="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" sn="true"/>
+    <!--<Assembly name="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" sn="true"/>
+	-->
   </References>
   
   <Types>
@@ -16,7 +17,7 @@
     <Type alias="double" name="System.Double" />
     <Type alias="float" name="System.Single" />
     <Type alias="object" name="System.Object" />
-
+ 
     <!--<Type alias="Array" name="List<object>" />-->
     
     <Type alias="mobject" name="MutantFramework.DataMutant" />

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using NGinn.Lib.Schema;
 using NGinn.Utilities.Email;
-using Spring.Context.Support;
+using NGinn.Lib;
+using NGinn.Lib.Interfaces.MessageBus;
+using NGinn.Lib.Data;
 
 namespace NGinn.Engine.Runtime.Tasks
 {
@@ -54,28 +56,59 @@ namespace NGinn.Engine.Runtime.Tasks
             set { _body = value; }
         }
 
+        private bool _async = true;
+        [TaskParameter(IsInput = true, Required = false, DynamicAllowed = true)]
+        public bool Async
+        {
+            get { return _async; }
+            set { _async = value; }
+        }
+
        
 
         public override void CancelTask()
         {
-            throw new NotImplementedException();
+            if (_msgid != null)
+            {
+                Context.EnvironmentContext.MessageBus.CancelAsyncMessage(_msgid);
+            }
         }
+
+        private string _msgid = null;
 
         protected override void DoInitiateTask()
         {
             EmailMsgOut msg = new EmailMsgOut();
+            msg.CorrelationId = this.CorrelationId;
             msg.Recipients = this.Recipients;
             msg.Subject = this.Subject;
             msg.Body = this.Body;
-            SMTPEmailSender sender;
-            Spring.Context.IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
-            sender = (SMTPEmailSender) ctx.GetObject(SenderName);
-            sender.SendMessage(msg);
-            OnTaskCompleted();
+            //SMTPEmailSender sender;
+            //Spring.Context.IApplicationContext ctx = Spring.Context.Support.ContextRegistry.GetContext();
+            //sender = (SMTPEmailSender) ctx.GetObject(SenderName);
+            //sender.SendMessage(msg);
+            //OnTaskCompleted();
+            _msgid = Context.EnvironmentContext.MessageBus.NotifyAsync("NotificationTaskActive." + CorrelationId, "SendEmail." + this.SenderName, msg);
+            log.Debug("Message sent: {0}", _msgid);
         }
 
-        
+        public override bool HandleInternalTransitionEvent(InternalTransitionEvent ite)
+        {
+            return base.HandleInternalTransitionEvent(ite);
+        }
 
+        public override NGinn.Lib.Data.DataObject SaveState()
+        {
+            DataObject dob = base.SaveState();
+            if (_msgid != null) dob["msgid"] = _msgid;
+            return dob;
+        }
+
+        public override void RestoreState(DataObject dob)
+        {
+            base.RestoreState(dob);
+            dob.TryGet("msgid", ref _msgid);
+        }
         
     }
 }

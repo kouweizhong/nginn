@@ -28,15 +28,18 @@ namespace NGinn.Engine.Dao
 
         public void RegisterMapping(string id, string taskCorrelationId)
         {
-            string s = GetCorrelationId(id);
-            if (s != null && s != taskCorrelationId) throw new Exception("Mapping already registered for id=" + id);
-            if (taskCorrelationId.Equals(s))
-            {
-                log.Info("Mapping {0}->{1} already registered", id, taskCorrelationId);
-                return;
-            }
             using (ISession ss = SessionFactory.OpenSession())
             {
+                IQuery qq = ss.CreateQuery("from MessageCorrelationMapping m where m.MessageId = :mid and m.TaskCorrelationId = :cid");
+                qq.SetString("mid", id);
+                qq.SetString("cid", taskCorrelationId);
+                IList<MessageCorrelationMapping> lst = qq.List<MessageCorrelationMapping>();
+                if (lst.Count > 0)
+                {
+                    log.Info("Mapping {0}->{1} already registered", id, taskCorrelationId);
+                    return;
+                }
+                    
                 MessageCorrelationMapping mm = new MessageCorrelationMapping();
                 mm.MessageId = id;
                 mm.TaskCorrelationId = taskCorrelationId;
@@ -80,7 +83,7 @@ namespace NGinn.Engine.Dao
                         IList<MessageCorrelationMapping> lst = ss.CreateQuery("from MessageCorrelationMapping m where m.MessageId = :mid").SetString("mid", id).List<MessageCorrelationMapping>();
                         foreach (MessageCorrelationMapping m in lst)
                         {
-                            if (taskCorrelationId != m.TaskCorrelationId) throw new Exception("Task correlation ID does not match current mapping");
+                            if (taskCorrelationId != m.TaskCorrelationId) continue;
                             log.Info("Removing mapping {0}", m.Id);
                             ss.Delete(m);
                         }
