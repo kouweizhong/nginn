@@ -125,6 +125,7 @@ namespace NGinn.Engine.Dao
                     pid.ProcessData = dob.ToXmlString("ProcessInstance");
                     pid.Status = ss.Load<ProcessInstanceStatus>((int)pi.Status);
                     pid.LastModified = DateTime.Now;
+                    pid.FinishDate = pi.FinishDate;
 
                     tr.Commit();
                     Cache.Remove(pi.InstanceId);

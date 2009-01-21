@@ -65,6 +65,7 @@ namespace NGinn.Engine
         private string _startedBy;
         /// <summary>process started date</summary>
         private DateTime _startDate = DateTime.MinValue;
+        private DateTime? _finishDate = null;
 
         public ProcessInstance()
         {
@@ -162,6 +163,12 @@ namespace NGinn.Engine
         {
             get { return _startDate; }
             set { _startDate = value; }
+        }
+
+        public DateTime? FinishDate
+        {
+            get { return _finishDate; }
+            set { _finishDate = value; }
         }
 
         
@@ -578,6 +585,7 @@ namespace NGinn.Engine
             Debug.Assert(GetTotalProcessTokens() - GetTotalTokens(Definition.Finish.Id) == 0);
             Debug.Assert(GetActiveTransitions().Count == 0);
             _status = ProcessStatus.Finished;
+            _finishDate = DateTime.Now;
             ProcessFinished pf = new ProcessFinished();
             pf.InstanceId = InstanceId;
             pf.DefinitionId = ProcessDefinitionId;
@@ -1183,6 +1191,7 @@ namespace NGinn.Engine
                 }
                 _currentMarking = new Dictionary<string, int>();
                 _status = ProcessStatus.Cancelled;
+                FinishDate = DateTime.Now;
             }
             log.Info("Process cancelled");
             ProcessCancelled pc = new ProcessCancelled();
@@ -1216,6 +1225,8 @@ namespace NGinn.Engine
             dob["TransitionNumber"] = this._transitionNumber;
             dob["StartedBy"] = this._startedBy;
             dob["StartDate"] = this.StartDate.ToString();
+            if (FinishDate.HasValue)
+                dob["FinishDate"] = this.FinishDate.Value.ToString();
             List<object> al = new List<object>();
             foreach (string plid in _currentMarking.Keys)
             {
@@ -1253,13 +1264,14 @@ namespace NGinn.Engine
             {
                 log.Warn("Trying to restore process state from version {0}. API version is {1}", v, APIVERSION);
             }
+            DateTime dt = DateTime.MinValue;
             _instId = (string) dob["InstanceId"];
             _definitionId = (string) dob["ProcessDefinitionId"];
             _status = (ProcessStatus)Enum.Parse(typeof(ProcessStatus), (string) dob["Status"]);
             _persistedVersion = Convert.ToInt32(dob["PersistedVersion"]);
             _startedBy = (string)dob["StartedBy"];
-            v = (string) dob["StartDate"];
-            if (v != null) _startDate = DateTime.Parse(v);
+            dob.TryGet("StartDate", ref _startDate);
+            if (dob.TryGet("FinishDate", ref dt)) FinishDate = dt;
             DataObject vars = (DataObject)dob["InstanceData"];
             _processInstanceData = new DataObject();
             _processInstanceData["variables"] = vars;
