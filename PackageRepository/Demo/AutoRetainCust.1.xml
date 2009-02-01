@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process name="AutoRetainCust" version="1" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+	<place id="p1" type="Place" />
+  </places>
+  
+  <tasks>
+	
+	<task id="sms1" type="NotificationTask" label="Wyślij SMS">
+        <parameters>
+            <binding parameter="Recipients">
+                <expr>'' + data.MSISDN + '@sms2email.pl'</expr>
+            </binding>
+			<binding parameter="Subject"><value>brak</value></binding>
+            <binding parameter="Body">
+                <expr><![CDATA['Nie zostawiaj nas! Odpowiedz "WRACAM" i zapomnimy o wszystkim.\nTwoj operator\nKONIEC']]></expr>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.MSISDN;</expression></binding>
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="wait_response" type="ReceiveMessageTask" splitType="AND" label="Czekaj na odpowiedź">
+         <parameters>
+            <binding parameter="MessageCorrelationId"><expr>'Example.1.' + data.MSISDN;</expr></binding>
+         </parameters>
+         
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+				<variable name="Response" type="string" dir="Out" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="CustResponse" bindingType="CopyVar" sourceVariable="Response" />
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="verify" type="ScriptTask" label="V1">
+		<parameters>
+            <binding parameter="ScriptBody"><value><![CDATA[
+			data.Retained = false;
+			if (string.Compare(data.Response, 'WRACAM', true) == 0) data.Retained = true;
+            ]]></value>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="Response" type="string" dir="In" required="true" />
+				<variable name="Retained" type="bool" dir="Out" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="Response" bindingType="CopyVar" sourceVariable="CustResponse" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="CustomerRetained" bindingType="CopyVar" sourceVariable="Retained" />
+			</output-bindings>
+        </data-definition>
+	</task>
+    
+	
+	<task id="timeout_1" type="TimerTask" label="T1">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:10:00</value></binding>
+        </parameters>
+		<data-definition>
+            <variables> 
+             </variables>
+            <output-bindings>
+				<binding variable="CustResponse" bindingType="Expr"><expression>''</expression></binding>
+				<binding variable="CustomerRetained" bindingType="Expr"><expression>false</expression></binding>
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	
+  </tasks>
+  
+  <flows>
+    <flow from="start" to="sms1" />
+	<flow from="sms1" to="p1" />
+	<flow from="p1" to="wait_response" />
+	<flow from="p1" to="timeout_1" />
+	<flow from="wait_response" to="verify" />
+	<flow from="verify" to="end" />
+	<flow from="timeout_1" to="end" />
+  </flows>
+  
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+        <variable name="MSISDN" type="string" dir="In" required="true" />
+		<variable name="CustResponse" type="string" dir="Local" required="false" />
+		<variable name="CustomerRetained" type="bool" dir="Out" required="true" />
+    </variables>
+</process>

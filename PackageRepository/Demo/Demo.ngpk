@@ -8,9 +8,9 @@
 		<process>PortOut.2.xml</process>
 		<process>Tweet.1.xml</process>
 		<process>NotifyDealer.1.xml</process>
-		<process>MNPPortOut.1.xml</process>
-		<process>MNPPortOut.2.xml</process>
-		<process>MNPPortOut.3.xml</process>
+		<process>MNPPortOut.4.xml</process>
+		<process>MNPPortOut.5.xml</process>
 		<process>Example.1.xml</process>
+		<process>AutoRetainCust.1.xml</process>
 	</processDefinitions>
 </package>

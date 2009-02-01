@@ -345,17 +345,17 @@ namespace NGinn.Engine.Runtime
             bool ready = false;
             using (IResourceLock rl = LockManager.AcquireWriterLock(instanceId, TimeSpan.MaxValue))
             {
+                ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
+                if (pi == null)
+                {
+                    log.Warn("Process instance not found: {0}", instanceId);
+                    dlg(null);
+                    return;
+                }
                 using (TransactionScope ts = new TransactionScope(_transactionOption))
                 {
                     try
                     {
-                        ProcessInstance pi = InstanceRepository.GetProcessInstance(instanceId);
-                        if (pi == null)
-                        {
-                            log.Warn("Process instance not found: {0}", instanceId);
-                            dlg(null);
-                            return;
-                        }
                         pi.Environment = this;
                         pi.Activate();
                         log.Info("Original: {0}", pi.SaveState().ToXmlString("Process"));
@@ -561,6 +561,19 @@ namespace NGinn.Engine.Runtime
                 pii.ProcessInstanceId = pi.InstanceId;
                 pii.ProcessFinished = (pi.Status == ProcessStatus.Cancelled || pi.Status == ProcessStatus.Finished);
                 pii.ProcessDefinitionId = pi.ProcessDefinitionId;
+                pii.Marking = new Dictionary<string, int>();
+                foreach (Place pl in pi.Definition.Places)
+                {
+                    if (pi.GetTotalTokens(pl.Id) > 0)
+                        pii.Marking[pl.Id] = pi.GetTotalTokens(pl.Id);
+                }
+                pii.ActiveTransitions = new List<string>();
+                foreach (Task tsk in pi.Definition.Tasks)
+                {
+                    TaskShell ts = pi.GetActiveInstanceOfTask(tsk.Id);
+                    if (ts != null && (ts.Status == TransitionStatus.ENABLED || ts.Status == TransitionStatus.STARTED))
+                        pii.ActiveTransitions.Add(tsk.Id);
+                }
             });
             return pii;
         }

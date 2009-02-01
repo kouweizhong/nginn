@@ -5,12 +5,15 @@ using NGinn.Lib.Data;
 
 namespace NGinn.Lib.Interfaces
 {
+
     [Serializable]
     public class ProcessInstanceInfo
     {
         public string ProcessInstanceId;
         public string ProcessDefinitionId;
         public bool ProcessFinished;
+        public List<string> ActiveTransitions;
+        public Dictionary<string, int> Marking;
     }
 
     [Serializable]

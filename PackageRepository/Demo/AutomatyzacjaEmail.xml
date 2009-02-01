@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<process name="AutomatyzacjaEmail" version="1" xmlns="http://www.nginn.org/WorkflowDefinition.1_0.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <places>
+    <place id="start" type="StartPlace"></place>
+    <place id="end" type="EndPlace"></place>
+  </places>
+  
+  <tasks>
+    
+	
+	<task id="notify_customer" type="ManualTask" label="Powiadom klienta">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Kampania X: Wyślij powiadomienie</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Wyślij powiadomienie na nr {0}', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Text" type="string" required="true" dir="Out" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="NotificationText" bindingType="CopyVar" sourceVariable="Text" />
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	
+	<task id="sms1" type="NotificationTask" label="Wyślij SMS">
+        <parameters>
+            <binding parameter="Recipients">
+                <expr>'' + data.MSISDN + '@sms2email.pl'</expr>
+            </binding>
+			<binding parameter="Subject"><value>brak</value></binding>
+            <binding parameter="Body">
+                <expr><![CDATA[string.Format('{0}\nKONIEC', data.Text);]]></expr>
+            </binding>
+        </parameters>
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+				<variable name="Text" type="string" dir="In" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="Expr"><expression>data.MSISDN;</expression></binding>
+				<binding variable="Text" bindingType="Expr"><expression>data.NotificationText;</expression></binding>
+				
+            </input-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="wait_response" type="ReceiveMessageTask" splitType="AND" label="Czekaj na odpowiedź">
+         <parameters>
+            <binding parameter="MessageCorrelationId"><expr>'Example.1.' + data.MSISDN;</expr></binding>
+         </parameters>
+         
+         <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" dir="In" required="true" />
+				<variable name="Response" type="string" dir="Out" required="true" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+            </input-bindings>
+			<output-bindings>
+				<binding variable="CustResponse" bindingType="CopyVar" sourceVariable="Response" />
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="timeout_1" type="TimerTask" label="T1">
+        <parameters>
+            <binding parameter="DelayAmount"><value>00:10:00</value></binding>
+        </parameters>
+    </task>
+	
+	<task id="noreply" type="ManualTask" label="Brak odpowiedzi">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Kampania X: Brak odpowiedzi</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Zrób coś, bo {0} nie odpowiedział', data.MSISDN);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+            </input-bindings>
+			<output-bindings>
+			</output-bindings>
+        </data-definition>
+    </task>
+    
+	<task id="response_received" type="ManualTask" label="Odpowiedź od klienta">
+        <parameters>
+            <binding parameter="AssigneeId"><value>1</value></binding>
+            <binding parameter="Title"><value>Kampania X: Odpowiedź od klienta</value></binding>
+            <binding parameter="Description">
+                <expr><![CDATA[string.Format('Klient {0} odpowiedział: {1}', data.MSISDN, data.Response);]]></expr>
+            </binding>
+        </parameters>
+        <cancelSet></cancelSet>
+        <data-definition>
+            <variables> 
+                <variable name="MSISDN" type="string" required="true" dir="In" isArray="false" />
+				<variable name="Response" type="string" required="true" dir="In" />
+             </variables>
+            <input-bindings>
+                <binding variable="MSISDN" bindingType="CopyVar" sourceVariable="MSISDN" />
+				<binding variable="Response" bindingType="CopyVar" sourceVariable="CustResponse" />
+            </input-bindings>
+			<output-bindings>
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+	<task id="tweet" type="XmlHttpTask" label="Tweet!">
+        <parameters>
+			<binding parameter="Url"><value>http://twitter.com/direct_messages/new.xml</value></binding>
+			<binding parameter="UserName"><value>nginn</value></binding>
+			<binding parameter="Password"><value>1212qw</value></binding>
+			<binding parameter="RequestMode"><value>HttpPost</value></binding>
+			<binding parameter="ResponseMode"><value>Xml</value></binding>
+			<binding parameter="AuthMethod"><value>Basic</value></binding>
+		</parameters>
+         <data-definition>
+            <variables> 
+				<variable name="user" type="string" dir="In" required="true" />
+				<variable name="text" type="string" dir="In" required="true" />
+				<variable name="id" type="string" dir="Out" required="true" />
+            </variables>
+            <input-bindings>
+				<binding variable="user" bindingType="Expr"><expression>'nginn_dev'</expression></binding>
+				<binding variable="text" bindingType="Expr"><expression>'Odpowiedź od klienta: ' + data.MSISDN</expression></binding>
+            </input-bindings>
+			<output-bindings>
+			</output-bindings>
+        </data-definition>
+    </task>
+	
+  </tasks>
+  
+  <flows>
+    <flow from="start" to="notify_customer" />
+	<flow from="notify_customer" to="sms1" />
+	<flow from="sms1" to="p1" />
+	<flow from="p1" to="wait_response" />
+	<flow from="p1" to="timeout_1" />
+	<flow from="timeout_1" to="noreply" />
+	<flow from="noreply" to="end" />
+	<flow from="wait_response" to="response_received" />
+	<flow from="wait_response" to="tweet" />
+	<flow from="response_received" to="end" />
+	<flow from="tweet" to="end" />
+  </flows>
+  
+    <processDataTypes>
+    </processDataTypes>
+  	<variables>
+        <variable name="MSISDN" type="string" dir="In" required="true" />
+		<variable name="NotificationText" type="string" dir="Local" />
+		<variable name="CustResponse" type="string" dir="Local" />
+    </variables>
+</process>

@@ -32,6 +32,7 @@ namespace FetchTheMail
             nvc["auth"] = "Auto";
             nvc["noremove"] = "0";
             nvc["maxcount"] = "-1";
+            nvc["ssl"] = "";
             return nvc;
         }
 
@@ -86,13 +87,18 @@ namespace FetchTheMail
 
                 string server = RequireParam("server", param);
                 int port = Convert.ToInt32(RequireParam("port", param));
+                string ssl = param["ssl"];
+                if (ssl.Length == 0)
+                    ssl = port == 995 ? "1" : "0";
 
                 TlsParameters par = new TlsParameters();
                 par.CommonName = server;
                 par.CertificateVerifier = CertificateVerifier.AcceptAll;
                 Pop3Security sec = (Pop3Security)Enum.Parse(typeof(Pop3Security), RequireParam("security", param));
-                log.Info("Connecting to {0}:{1}", server, port);
+                log.Info("Connecting to {0}:{1}. SSL: {2}", server, port, ssl);
+                
                 string sess = client.Connect(server, port, par, sec);
+                
                 connected = true;
                 log.Info("Connected: {0}", sess);
                 Pop3Authentication auth = (Pop3Authentication)Enum.Parse(typeof(Pop3Authentication), RequireParam("auth", param));

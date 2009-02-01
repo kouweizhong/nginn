@@ -48,7 +48,7 @@ ruleset "email_rules":
 			body = Message.BodyPlainText
 			m = /---\n([\w\s]+)\n---/.Match(Message.BodyPlainText)
 			if m.Success:
-				body = m.Groups[1].Value
+				body = m.Groups[1].Value.Trim()
 			log.Info("Body: {0}", body)
 			dob = DataObject()
 			dob["MSISDN"] = msisdn

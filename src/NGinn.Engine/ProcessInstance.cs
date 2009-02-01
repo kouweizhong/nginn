@@ -989,7 +989,7 @@ namespace NGinn.Engine
             return at;
         }
 
-        private TaskShell GetActiveInstanceOfTask(string taskDefId)
+        internal TaskShell GetActiveInstanceOfTask(string taskDefId)
         {
             foreach (TaskShell ts in _activeTransitions.Values)
             {
