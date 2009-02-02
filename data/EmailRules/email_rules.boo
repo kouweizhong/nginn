@@ -15,9 +15,9 @@ ruleset "email_rules":
 		label "Nowa sprawa MNP Port Out?"
 		when Message.Subject.IndexOf("MNPPortOut") >= 0 and Message.Attachments.Count > 0
 		action:
-			log.Info("Starting process MNPPortOut.2")
+			log.Info("Starting process MNPPortOut.4")
 			dob = DataObject.LoadXmlFile(Message.Attachments[0].FileName)
-			instid = Context.NGEnvironment.StartProcessInstance("Demo.MNPPortOut.2", dob, Message.From, null)
+			instid = Context.NGEnvironment.StartProcessInstance("Demo.MNPPortOut.4", dob, Message.From, null)
 			log.Info("Process started: {0}", instid)
 		else_rule "R2"
 	

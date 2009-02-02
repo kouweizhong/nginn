@@ -179,7 +179,7 @@
 			<!--
 			<binding parameter="ExpirationDate"><expr>data.RequestedActivationDate</expr></binding>
 			-->
-			<binding parameter="DelayAmount"><value>00:02:00</value></binding>
+			<binding parameter="DelayAmount"><value>00:01:00</value></binding>
         </parameters>
 		<data-definition>
 			<variables>
@@ -227,10 +227,10 @@
     <flow from="start" to="retain_customer" />
 	<flow from="start" to="retain_timeout" />
 	<flow from="retain_customer" to="send_e06" label="Nie utrzymany?">
-		<inputCondition>data.CustomerRetained == false</inputCondition>
+		<inputCondition>Convert.ToBoolean(data.CustomerRetained) == false</inputCondition>
 	</flow>
 	<flow from="retain_customer" to="send_e17" label="Utrzymany?">
-		<inputCondition>data.CustomerRetained == true</inputCondition>
+		<inputCondition>Convert.ToBoolean(data.CustomerRetained) == true</inputCondition>
 	</flow>
 	<flow from="retain_timeout" to="send_e06" label="Timeout" />
 	<flow from="send_e17" to="end" />
